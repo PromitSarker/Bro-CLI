@@ -15,7 +15,7 @@ class ClientError(Exception):
 
 
 class GeminiClient:
-    def __init__(self, api_key: str, model: str = "gemini-2.5-flash-lite") -> None:
+    def __init__(self, api_key: str, model: str = "gemini-2.0-flash") -> None:
         if genai is None:
             raise ClientError(
                 "Missing dependency: google-genai. Install bro again with its Python dependencies.",
