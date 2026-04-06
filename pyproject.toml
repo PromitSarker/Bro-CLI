@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bro-cli"
+version = "0.1.0"
+description = "Linux terminal Gemini client with secure local API key config"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Aether" }]
+dependencies = [
+  "google-genai>=1.20.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+]
+
+[project.scripts]
+bro = "bro_cli.main:main"
+
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["bro_cli*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
