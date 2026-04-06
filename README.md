@@ -19,6 +19,8 @@ python -m pip install -e .
 
 This creates the `bro` command in your Python environment.
 
+The client now uses the supported `google-genai` package instead of the deprecated `google.generativeai` package.
+
 ## Configure API key
 
 ```bash
@@ -44,6 +46,8 @@ Single prompt:
 ```bash
 bro "what is the command for renaming a file?"
 ```
+
+If you type `bro who are you?`, the first word is treated as the start of the prompt.
 
 Interactive mode:
 

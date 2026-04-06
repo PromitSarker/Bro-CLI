@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-import google.generativeai as genai
+try:
+    from google import genai
+except ImportError:  # pragma: no cover - depends on local install state
+    genai = None
 
 
 @dataclass
@@ -13,18 +16,26 @@ class ClientError(Exception):
 
 class GeminiClient:
     def __init__(self, api_key: str, model: str = "gemini-2.0-flash") -> None:
-        genai.configure(api_key=api_key)
-        self._model = genai.GenerativeModel(model)
+        if genai is None:
+            raise ClientError(
+                "Missing dependency: google-genai. Install bro again with its Python dependencies.",
+                exit_code=1,
+            )
+        self._client = genai.Client(api_key=api_key)
+        self._model = model
 
     def ask(self, prompt: str) -> str:
-        response = self._model.generate_content(prompt)
+        response = self._client.models.generate_content(
+            model=self._model,
+            contents=prompt,
+        )
         text = getattr(response, "text", None)
         if text and text.strip():
             return text.strip()
         return "No response text returned by Gemini."
 
     def start_chat(self) -> "GeminiChatSession":
-        return GeminiChatSession(self._model.start_chat(history=[]))
+        return GeminiChatSession(self._client.chats.create(model=self._model, history=[]))
 
 
 class GeminiChatSession:

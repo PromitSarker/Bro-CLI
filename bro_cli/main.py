@@ -13,10 +13,16 @@ def build_parser() -> argparse.ArgumentParser:
         prog="bro",
         description="Linux terminal client for chatting with Gemini",
     )
-    parser.add_argument("prompt", nargs="*", help="Question to ask Gemini")
-
-    subparsers = parser.add_subparsers(dest="subcommand")
-    subparsers.add_parser("config", help="Set or update Gemini API key")
+    parser.add_argument(
+        "command",
+        nargs="?",
+        help="Use config to set the API key, or provide a prompt to chat",
+    )
+    parser.add_argument(
+        "prompt",
+        nargs=argparse.REMAINDER,
+        help="Question to ask Gemini",
+    )
     return parser
 
 
@@ -93,11 +99,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
 
-    if args.subcommand == "config":
+    if args.command == "config" and not args.prompt:
         return run_config()
 
-    if args.prompt:
-        return run_single_prompt(" ".join(args.prompt))
+    if args.command == "config" and args.prompt:
+        parser.error("'config' does not accept a chat prompt")
+
+    if args.command is not None:
+        prompt_parts = [args.command, *args.prompt]
+        return run_single_prompt(" ".join(prompt_parts).strip())
 
     # No prompt and no subcommand means REPL mode.
     return run_interactive_chat()
