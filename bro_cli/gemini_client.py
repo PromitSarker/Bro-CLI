@@ -8,6 +8,15 @@ except ImportError:  # pragma: no cover - depends on local install state
     genai = None
 
 
+SYSTEM_INSTRUCTION = (
+    "You are a Linux terminal assistant. Answer directly and concisely. "
+    "Do not use conversational filler (e.g., 'Here is what you need', 'Hope this helps'). "
+    "Provide straightcut, specific answers. Do not use markdown formatting like "
+    "asterisks (* or **) for lists or bold text; use plain text spacing and indentation "
+    "suitable for a clean terminal output."
+)
+
+
 @dataclass
 class ClientError(Exception):
     message: str
@@ -28,6 +37,7 @@ class GeminiClient:
         response = self._client.models.generate_content(
             model=self._model,
             contents=prompt,
+            config={"system_instruction": SYSTEM_INSTRUCTION},
         )
         text = getattr(response, "text", None)
         if text and text.strip():
@@ -35,7 +45,13 @@ class GeminiClient:
         return "No response text returned by Gemini."
 
     def start_chat(self) -> "GeminiChatSession":
-        return GeminiChatSession(self._client.chats.create(model=self._model, history=[]))
+        return GeminiChatSession(
+            self._client.chats.create(
+                model=self._model,
+                history=[],
+                config={"system_instruction": SYSTEM_INSTRUCTION},
+            )
+        )
 
 
 class GeminiChatSession:
