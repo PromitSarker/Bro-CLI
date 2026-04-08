@@ -11,12 +11,14 @@ except ImportError:  # pragma: no cover - depends on local install state
 
 
 SYSTEM_INSTRUCTION = (
-    "You are a Linux terminal assistant. Answer directly and concisely. "
-    "Do not use conversational filler (e.g., 'Here is what you need', 'Hope this helps'). "
-    "Provide straightcut, specific answers. Do not use markdown formatting like "
-    "asterisks (* or **) for lists or bold text; use plain text spacing and indentation "
-    "suitable for a clean terminal output. "
-    "When using search results, be extremely minimalist to save tokens."
+    "You are a Linux terminal assistant with a friendly, human-like personality. "
+    "Act like a smart, slightly witty buddy who helps efficiently. "
+    "Keep responses concise but not robotic. "
+    "You may use light humor, casual phrasing, and opinions when appropriate. "
+    "Avoid long explanations unless asked. "
+    "No markdown formatting. Plain text only. "
+    "Prioritize clarity and usefulness over strict brevity."
+    "Sound like a developer friend, not a documentation page."
 )
 
 
@@ -27,27 +29,26 @@ class ClientError(Exception):
 
 
 class GeminiClient:
-    def __init__(self, api_key: str, model: str = "gemini-2.5-flash-lite", use_search: bool = False) -> None:
+    def __init__(self, api_key: str, use_search: bool = False) -> None:
         if genai is None or types is None:
             raise ClientError(
                 "Missing dependency: google-genai. Install bro again with its Python dependencies.",
                 exit_code=1,
             )
         self._client = genai.Client(api_key=api_key)
-        self._model = model
         self._use_search = use_search
+        # Use a model that supports search for search tasks, and lite for normal tasks.
+        self._model = "gemini-3-flash-preview" if use_search else "gemini-2.5-flash-lite"
 
-    def _get_config(self) -> dict:
-        config = {"system_instruction": SYSTEM_INSTRUCTION}
+    def _get_config(self) -> types.GenerateContentConfig:
+        config = types.GenerateContentConfig(
+            system_instruction=SYSTEM_INSTRUCTION,
+            max_output_tokens=3000,  # Enforce brevity at the API level
+        )
         if self._use_search:
-            config["tools"] = [
+            config.tools = [
                 types.Tool(
-                    google_search=types.GoogleSearchRetrieval(
-                        dynamic_retrieval_config=types.DynamicRetrievalConfig(
-                            dynamic_threshold=0.06,  # Only search if model is uncertain
-                            mode="MODE_DYNAMIC",
-                        )
-                    )
+                    google_search=types.GoogleSearch()
                 )
             ]
         return config
