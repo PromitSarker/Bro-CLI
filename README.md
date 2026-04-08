@@ -41,7 +41,7 @@ pipx upgrade bro-cli
 
 ## Configuration
 
-Before using the client, you must configure your Google Gemini API key. Run the following command:
+Before using the client, you *must* configure your Google Gemini API key. Run the following command:
 
 ```bash
 bro config
