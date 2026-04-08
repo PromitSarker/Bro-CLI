@@ -14,6 +14,12 @@ def build_parser() -> argparse.ArgumentParser:
         description="Linux terminal client for chatting with Gemini",
     )
     parser.add_argument(
+        "-s",
+        "--search",
+        action="store_true",
+        help="Enable web search capability (grounding)",
+    )
+    parser.add_argument(
         "command",
         nargs="?",
         help="Use config to set the API key, or provide a prompt to chat",
@@ -38,19 +44,19 @@ def run_config() -> int:
     return 0
 
 
-def _load_client() -> GeminiClient:
+def _load_client(use_search: bool = False) -> GeminiClient:
     api_key = resolve_api_key()
     if not api_key:
         raise ClientError(
             "Gemini API key is missing. Run 'bro config' to set it.",
             exit_code=1,
         )
-    return GeminiClient(api_key=api_key)
+    return GeminiClient(api_key=api_key, use_search=use_search)
 
 
-def run_single_prompt(prompt_text: str) -> int:
+def run_single_prompt(prompt_text: str, use_search: bool = False) -> int:
     try:
-        client = _load_client()
+        client = _load_client(use_search=use_search)
         print(client.ask(prompt_text))
         return 0
     except ClientError as exc:
@@ -62,15 +68,16 @@ def run_single_prompt(prompt_text: str) -> int:
         return err.exit_code
 
 
-def run_interactive_chat() -> int:
+def run_interactive_chat(use_search: bool = False) -> int:
     try:
-        client = _load_client()
+        client = _load_client(use_search=use_search)
         chat = client.start_chat()
     except ClientError as exc:
         print(exc.message, file=sys.stderr)
         return exc.exit_code
 
-    print("Interactive mode. Type 'exit' or 'quit' to leave.")
+    mode_info = " (Search enabled)" if use_search else ""
+    print(f"Interactive mode{mode_info}. Type 'exit' or 'quit' to leave.")
     while True:
         try:
             user_input = input("bro> ").strip()
@@ -107,10 +114,10 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     if args.command is not None:
         prompt_parts = [args.command, *args.prompt]
-        return run_single_prompt(" ".join(prompt_parts).strip())
+        return run_single_prompt(" ".join(prompt_parts).strip(), use_search=args.search)
 
     # No prompt and no subcommand means REPL mode.
-    return run_interactive_chat()
+    return run_interactive_chat(use_search=args.search)
 
 
 if __name__ == "__main__":
