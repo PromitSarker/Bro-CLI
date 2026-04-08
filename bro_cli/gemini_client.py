@@ -43,7 +43,7 @@ class GeminiClient:
     def _get_config(self) -> types.GenerateContentConfig:
         config = types.GenerateContentConfig(
             system_instruction=SYSTEM_INSTRUCTION,
-            max_output_tokens=3000,  # Enforce brevity at the API level
+            max_output_tokens=500,  # Enforce brevity at the API level
         )
         if self._use_search:
             config.tools = [

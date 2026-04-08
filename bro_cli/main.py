@@ -4,8 +4,23 @@ import argparse
 import sys
 from typing import Sequence
 
+from rich.console import Console
+from rich.panel import Panel
+from rich.prompt import Prompt
+from rich.theme import Theme
+
 from .config import get_config_path, prompt_for_api_key, resolve_api_key, save_api_key
 from .gemini_client import ClientError, GeminiClient, map_exception
+
+# Professional Cyberpunk Theme
+custom_theme = Theme({
+    "info": "cyan",
+    "warning": "yellow",
+    "error": "bold red",
+    "prompt": "bold green",
+    "ai_name": "bold magenta",
+})
+console = Console(theme=custom_theme)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -57,14 +72,23 @@ def _load_client(use_search: bool = False) -> GeminiClient:
 def run_single_prompt(prompt_text: str, use_search: bool = False) -> int:
     try:
         client = _load_client(use_search=use_search)
-        print(client.ask(prompt_text))
+        with console.status("[bold cyan]Bro is thinking...", spinner="dots"):
+            response = client.ask(prompt_text)
+        
+        console.print(Panel(
+            response,
+            title="[ai_name]Bro",
+            title_align="left",
+            border_style="magenta",
+            padding=(1, 2)
+        ))
         return 0
     except ClientError as exc:
-        print(exc.message, file=sys.stderr)
+        console.print(f"[error]{exc.message}[/error]", style="red")
         return exc.exit_code
     except Exception as exc:  # pragma: no cover - defensive layer
         err = map_exception(exc)
-        print(err.message, file=sys.stderr)
+        console.print(f"[error]{err.message}[/error]", style="red")
         return err.exit_code
 
 
@@ -73,32 +97,40 @@ def run_interactive_chat(use_search: bool = False) -> int:
         client = _load_client(use_search=use_search)
         chat = client.start_chat()
     except ClientError as exc:
-        print(exc.message, file=sys.stderr)
+        console.print(f"[error]{exc.message}[/error]")
         return exc.exit_code
 
-    mode_info = " (Search enabled)" if use_search else ""
-    print(f"Interactive mode{mode_info}. Type 'exit' or 'quit' to leave.")
+    mode_info = " [dim](Search enabled)[/dim]" if use_search else ""
+    console.print(f"[info]Interactive mode{mode_info}. Type 'exit' or 'quit' to leave.[/info]")
+    
     while True:
         try:
-            user_input = input("bro> ").strip()
-        except KeyboardInterrupt:
-            print("\nExiting.")
-            return 0
-        except EOFError:
-            print("\nExiting.")
+            # Styled prompt using rich.prompt.Prompt or just console.print
+            user_input = Prompt.ask("[prompt]bro[/prompt]")
+        except (KeyboardInterrupt, EOFError):
+            console.print("\n[info]Exiting. Catch ya later![/info]")
             return 0
 
         if not user_input:
             continue
         if user_input.lower() in {"exit", "quit"}:
-            print("Exiting.")
+            console.print("[info]Exiting. Catch ya later![/info]")
             return 0
 
         try:
-            print(chat.ask(user_input))
+            with console.status("[bold cyan]Thinking...", spinner="dots"):
+                response = chat.ask(user_input)
+            
+            console.print(Panel(
+                response,
+                title="[ai_name]Bro",
+                title_align="left",
+                border_style="magenta",
+                padding=(1, 2)
+            ))
         except Exception as exc:
             err = map_exception(exc)
-            print(err.message, file=sys.stderr)
+            console.print(f"[error]{err.message}[/error]")
             return err.exit_code
 
 
