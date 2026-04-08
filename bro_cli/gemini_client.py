@@ -4,8 +4,10 @@ from dataclasses import dataclass
 
 try:
     from google import genai
+    from google.genai import types
 except ImportError:  # pragma: no cover - depends on local install state
     genai = None
+    types = None
 
 
 SYSTEM_INSTRUCTION = (
@@ -13,7 +15,8 @@ SYSTEM_INSTRUCTION = (
     "Do not use conversational filler (e.g., 'Here is what you need', 'Hope this helps'). "
     "Provide straightcut, specific answers. Do not use markdown formatting like "
     "asterisks (* or **) for lists or bold text; use plain text spacing and indentation "
-    "suitable for a clean terminal output."
+    "suitable for a clean terminal output. "
+    "When using search results, be extremely minimalist to save tokens."
 )
 
 
@@ -24,20 +27,36 @@ class ClientError(Exception):
 
 
 class GeminiClient:
-    def __init__(self, api_key: str, model: str = "gemini-2.5-flash-lite") -> None:
-        if genai is None:
+    def __init__(self, api_key: str, model: str = "gemini-2.5-flash-lite", use_search: bool = False) -> None:
+        if genai is None or types is None:
             raise ClientError(
                 "Missing dependency: google-genai. Install bro again with its Python dependencies.",
                 exit_code=1,
             )
         self._client = genai.Client(api_key=api_key)
         self._model = model
+        self._use_search = use_search
+
+    def _get_config(self) -> dict:
+        config = {"system_instruction": SYSTEM_INSTRUCTION}
+        if self._use_search:
+            config["tools"] = [
+                types.Tool(
+                    google_search=types.GoogleSearchRetrieval(
+                        dynamic_retrieval_config=types.DynamicRetrievalConfig(
+                            dynamic_threshold=0.06,  # Only search if model is uncertain
+                            mode="MODE_DYNAMIC",
+                        )
+                    )
+                )
+            ]
+        return config
 
     def ask(self, prompt: str) -> str:
         response = self._client.models.generate_content(
             model=self._model,
             contents=prompt,
-            config={"system_instruction": SYSTEM_INSTRUCTION},
+            config=self._get_config(),
         )
         text = getattr(response, "text", None)
         if text and text.strip():
@@ -49,7 +68,7 @@ class GeminiClient:
             self._client.chats.create(
                 model=self._model,
                 history=[],
-                config={"system_instruction": SYSTEM_INSTRUCTION},
+                config=self._get_config(),
             )
         )
 
