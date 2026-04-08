@@ -61,7 +61,7 @@ bro "Why life so hard ?"
 
 *Note: You can also skip the quotes for simple queries:*
 ```bash
-bro how to go and breathe
+bro how to go and breathe ?
 ```
 
 ### Interactive Mode
