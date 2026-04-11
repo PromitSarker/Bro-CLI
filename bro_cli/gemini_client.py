@@ -148,8 +148,14 @@ def map_exception(exc: Exception) -> ClientError:
     exc_name = exc.__class__.__name__.lower()
     raw_message = str(exc).lower()
 
-    if "unauth" in exc_name or "permission" in exc_name or "api key" in raw_message:
-        return ClientError("API key rejected. Run 'bro config' to update it.", exit_code=1)
+    if "leaked" in raw_message:
+        return ClientError(
+            "API key was reported as leaked by Google. Generate a new key at aistudio.google.com and run 'bro config'.",
+            exit_code=1,
+        )
+
+    if "unauth" in exc_name or "permission" in exc_name or "api key" in raw_message or "permission_denied" in raw_message:
+        return ClientError("API key rejected. Run 'bro config' to update your key.", exit_code=1)
 
     if "resourceexhausted" in exc_name or "ratelimit" in raw_message or "429" in raw_message:
         return ClientError("Rate limited by Gemini. Please retry shortly.", exit_code=2)
