@@ -1,12 +1,11 @@
-from __future__ import annotations
-
 import argparse
+import subprocess
 import sys
 from typing import Sequence
 
 from rich.console import Console
 from rich.panel import Panel
-from rich.prompt import Prompt
+from rich.prompt import Confirm, Prompt
 from rich.theme import Theme
 
 from .config import get_config_path, prompt_for_api_key, resolve_api_key, save_api_key
@@ -59,14 +58,54 @@ def run_config() -> int:
     return 0
 
 
-def _load_client(use_search: bool = False) -> GeminiClient:
+def run_and_confirm_command(command: str) -> str:
+    """Callback to display, confirm, and execute a command."""
+    console.print(Panel(
+        f"[bold yellow]$ {command}[/bold yellow]",
+        title="[warning]Proposed Command[/warning]",
+        title_align="left",
+        border_style="yellow",
+        padding=(0, 1)
+    ))
+    
+    if not Confirm.ask("[prompt]Execute this command?[/prompt]", default=False):
+        return "User refused to execute the command."
+
+    try:
+        # Use shell=True to allow pipes and redirections
+        result = subprocess.run(
+            command,
+            shell=True,
+            capture_output=True,
+            text=True,
+            check=False
+        )
+        output = result.stdout + result.stderr
+        if not output.strip():
+            output = "(Command executed with no output)"
+        
+        # Optionally show output to user too? 
+        # Usually Bro will summarize it, but seeing it is good.
+        if output.strip():
+            console.print("[dim]Output snippet:[/dim]")
+            snippet = output.strip()[:500] + ("..." if len(output) > 500 else "")
+            console.print(f"[dim]{snippet}[/dim]")
+            
+        return output
+    except Exception as e:
+        return f"Error executing command: {str(e)}"
+
+
+def _load_client(use_search: bool = False, agentic: bool = True) -> GeminiClient:
     api_key = resolve_api_key()
     if not api_key:
         raise ClientError(
             "Gemini API key is missing. Run 'bro config' to set it.",
             exit_code=1,
         )
-    return GeminiClient(api_key=api_key, use_search=use_search)
+    
+    executor = run_and_confirm_command if agentic else None
+    return GeminiClient(api_key=api_key, use_search=use_search, executor_callback=executor)
 
 
 def run_single_prompt(prompt_text: str, use_search: bool = False) -> int:

@@ -1,6 +1,5 @@
-from __future__ import annotations
-
 from dataclasses import dataclass
+from typing import Callable, Sequence
 
 try:
     from google import genai
@@ -17,14 +16,18 @@ SYSTEM_INSTRUCTION = (
     "Try to keep conversation in between 2 to 3 lines. "
     "You may use light humor, casual phrasing, and opinions when appropriate. "
     "Avoid long explanations unless asked. "
-    "No markdown formatting. Plain text only. "
+    "No markdown formatting for dialogue. Plain text only. "
     "Prioritize clarity and usefulness over strict brevity."
     "Sound like a developer friend, not a documentation page."
-    "STRICT RULE: NEVER use Markdown symbols. NO asterisks (*), NO hashtags (#), "
+    "STRICT RULE: NEVER use Markdown symbols in chat. NO asterisks (*), NO hashtags (#), "
     "NO bold text, NO bullet points using *. "
     "For lists, use plain dashes (-) or simple indentation. "
     "Your output must be pure plain text that looks good in a raw terminal. "
-    "Sound like a developer friend chatting, not a documentation page."
+    "You have the capability to execute terminal commands locally on the user's system "
+    "using the 'execute_terminal_command' tool. If a task requires checking files, "
+    "running scripts, or gathering system info, use this tool. "
+    "ALWAYS explain briefly what you are going to do before calling the tool. "
+    "The user will be asked for confirmation before each command executes."
 )
 
 
@@ -35,8 +38,20 @@ class ClientError(Exception):
     exit_code: int = 1
 
 
+def execute_terminal_command(command: str) -> str:
+    """Execute a shell command in the local terminal. Returns stdout and stderr combined."""
+    # This is a placeholder for the tool definition schema. 
+    # The actual execution happens via the callback in GeminiClient.
+    return ""
+
+
 class GeminiClient:
-    def __init__(self, api_key: str, use_search: bool = False) -> None:
+    def __init__(
+        self, 
+        api_key: str, 
+        use_search: bool = False,
+        executor_callback: Callable[[str], str] | None = None
+    ) -> None:
         if genai is None or types is None:
             raise ClientError(
                 "Missing dependency: google-genai. Install bro again with its Python dependencies.",
@@ -44,32 +59,30 @@ class GeminiClient:
             )
         self._client = genai.Client(api_key=api_key)
         self._use_search = use_search
-        # Use a model that supports search for search tasks, and lite for normal tasks.
-        self._model = "gemini-3-flash-preview" if use_search else "gemini-2.5-flash-lite"
+        self._executor = executor_callback
+        # Use a model that supports search for search tasks, and flash-2.0 for agentic tasks.
+        # Note: Flash 2.0/3.0 is better at tool calling.
+        self._model = "gemini-2.0-flash" if not use_search else "gemini-3-flash-preview"
 
     def _get_config(self) -> types.GenerateContentConfig:
-        config = types.GenerateContentConfig(
-            system_instruction=SYSTEM_INSTRUCTION,
-            max_output_tokens=3000,  
-        )
+        tools = []
         if self._use_search:
-            config.tools = [
-                types.Tool(
-                    google_search=types.GoogleSearch()
-                )
-            ]
-        return config
+            tools.append(types.Tool(google_search=types.GoogleSearch()))
+        
+        if self._executor:
+            tools.append(execute_terminal_command)
+
+        return types.GenerateContentConfig(
+            system_instruction=SYSTEM_INSTRUCTION,
+            max_output_tokens=3000,
+            tools=tools if tools else None,
+        )
 
     def ask(self, prompt: str) -> str:
-        response = self._client.models.generate_content(
-            model=self._model,
-            contents=prompt,
-            config=self._get_config(),
-        )
-        text = getattr(response, "text", None)
-        if text and text.strip():
-            return text.strip()
-        return "No response text returned by Gemini."
+        # For single prompts, we still want to support tool calling loops.
+        # Minimal way is to use a one-off chat session.
+        chat = self.start_chat()
+        return chat.ask(prompt)
 
     def start_chat(self) -> "GeminiChatSession":
         return GeminiChatSession(
@@ -77,20 +90,57 @@ class GeminiClient:
                 model=self._model,
                 history=[],
                 config=self._get_config(),
-            )
+            ),
+            executor=self._executor
         )
 
 
 class GeminiChatSession:
-    def __init__(self, chat_session) -> None:
+    def __init__(self, chat_session, executor: Callable[[str], str] | None = None) -> None:
         self._chat_session = chat_session
+        self._executor = executor
 
     def ask(self, prompt: str) -> str:
         response = self._chat_session.send_message(prompt)
-        text = getattr(response, "text", None)
-        if text and text.strip():
-            return text.strip()
-        return "No response text returned by Gemini."
+        
+        while True:
+            # Check for tool calls in the response candidates
+            tool_calls = []
+            if response.candidates:
+                for part in response.candidates[0].content.parts:
+                    if part.function_call:
+                        tool_calls.append(part.function_call)
+
+            if not tool_calls:
+                break
+
+            # Handle tool calls
+            tool_responses = []
+            for call in tool_calls:
+                if call.name == "execute_terminal_command" and self._executor:
+                    command = call.args.get("command")
+                    result = self._executor(command)
+                    tool_responses.append(
+                        types.Part.from_function_response(
+                            name=call.name,
+                            response={"result": result}
+                        )
+                    )
+                else:
+                    # Unhandled tool call
+                    tool_responses.append(
+                        types.Part.from_function_response(
+                            name=call.name,
+                            response={"result": f"Error: Tool {call.name} not implemented or no executor."}
+                        )
+                    )
+
+            # Send tool responses back to Gemini
+            response = self._chat_session.send_message(tool_responses)
+
+        if response.text:
+            return response.text.strip()
+        return "No response text after tool execution."
 
 
 def map_exception(exc: Exception) -> ClientError:
