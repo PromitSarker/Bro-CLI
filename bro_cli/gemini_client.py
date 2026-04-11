@@ -62,7 +62,7 @@ class GeminiClient:
         self._executor = executor_callback
         # Use a model that supports search for search tasks, and flash-2.0 for agentic tasks.
         # Note: Flash 2.0/3.0 is better at tool calling.
-        self._model = "gemini-2.0-flash" if not use_search else "gemini-3-flash-preview"
+        self._model = "gemini-2.5-flash" if not use_search else "gemini-3-flash-preview"
 
     def _get_config(self) -> types.GenerateContentConfig:
         tools = []
