@@ -1,195 +1,128 @@
 import argparse
-import subprocess
 import sys
-from typing import Sequence
+from typing import Sequence, Optional
 
-from rich.console import Console
-from rich.panel import Panel
-from rich.prompt import Confirm, Prompt
-from rich.theme import Theme
+# UI & Formatting
+from .ui.terminal import console, Prompt, print_panel, Panel
 
-from .config import get_config_path, prompt_for_api_key, resolve_api_key, save_api_key
-from .gemini_client import ClientError, GeminiClient, map_exception
+# Configuration
+from .config import (
+    get_config_path, resolve_api_key, save_config, 
+    resolve_provider, load_config
+)
 
-# Professional Cyberpunk Theme
-custom_theme = Theme({
-    "info": "cyan",
-    "warning": "yellow",
-    "error": "bold red",
-    "prompt": "bold green",
-    "ai_name": "bold magenta",
-})
-console = Console(theme=custom_theme)
+# Engine & Utilities
+from .engine.manager import Manager
+from .engine.memory import KnowledgeBase
+from .utils.shell import run_and_confirm_command
 
+# Providers
+from .providers.gemini import GeminiClient, map_exception as gemini_map_exception, ClientError as GeminiClientError
+from .providers.groq import GroqClient, ClientError as GroqClientError
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="bro",
-        description="Linux terminal client for chatting with Gemini",
+        description="Your AI Bro in the terminal.",
     )
-    parser.add_argument(
-        "-s",
-        "--search",
-        action="store_true",
-        help="Enable web search capability (grounding)",
-    )
-    parser.add_argument(
-        "command",
-        nargs="?",
-        help="Use config to set the API key, or provide a prompt to chat",
-    )
-    parser.add_argument(
-        "prompt",
-        nargs=argparse.REMAINDER,
-        help="Question to ask Gemini",
-    )
+    parser.add_argument("-s", "--search", action="store_true", help="Enable web search capability")
+    parser.add_argument("-p", "--provider", choices=["gemini", "groq"], help="Choose AI provider")
+    parser.add_argument("command", nargs="?", help="Subcommand or prompt")
+    parser.add_argument("prompt", nargs=argparse.REMAINDER, help="User prompt")
     return parser
 
-
 def run_config() -> int:
-    existing = resolve_api_key()
-    if existing:
-        print("An API key is already configured. Saving will overwrite the stored key.")
+    while True:
+        config_data = load_config()
+        existing_gemini = config_data.get("gemini_api_key")
+        existing_groq = config_data.get("groq_api_key")
+        existing_provider = config_data.get("provider", "gemini")
 
-    api_key = prompt_for_api_key()
-    path = save_api_key(api_key)
-    print("API key saved.")
-    print(f"Config file: {path}")
+        console.print("\n")
+        console.print(Panel.fit(
+            f"Default AI: [bold cyan]{existing_provider.upper()}[/bold cyan]\n"
+            f"Gemini Key: {'[bold green]VALID[/bold green]' if existing_gemini else '[bold red]NOT SET[/bold red]'}\n"
+            f"Groq Key:   {'[bold green]VALID[/bold green]' if existing_groq else '[bold red]NOT SET[/bold red]'}\n",
+            title="[bold]Bro-CLI Settings[/bold]",
+            border_style="cyan"
+        ))
+
+        console.print("[1] [bold cyan]Switch Default AI[/bold cyan]")
+        console.print("[2] [bold cyan]Manage API Credentials[/bold cyan]")
+        console.print("[3] [bold cyan]Exit[/bold cyan]")
+        
+        choice = Prompt.ask("\nChoose an option", choices=["1", "2", "3"], default="3")
+
+        if choice == "3":
+            break
+
+        if choice == "1":
+            new_provider = Prompt.ask("Choose default provider", choices=["gemini", "groq"], default=existing_provider)
+            config_data["provider"] = new_provider
+            save_config(**config_data)
+        elif choice == "2":
+            console.print("[warning]Press Enter to keep current keys.[/warning]")
+            gemini_key = Prompt.ask("Gemini API key", password=True) or existing_gemini
+            groq_key = Prompt.ask("Groq Cloud API key", password=True) or existing_groq
+            
+            config_data.update({"gemini_api_key": gemini_key, "groq_api_key": groq_key})
+            save_config(**config_data)
+            console.print("[success]Credentials saved![/success]")
+
     return 0
 
-
-def run_and_confirm_command(command: str) -> str:
-    """Callback to display, confirm, and execute a command."""
-    console.print(Panel(
-        f"[bold yellow]$ {command}[/bold yellow]",
-        title="[warning]Proposed Command[/warning]",
-        title_align="left",
-        border_style="yellow",
-        padding=(0, 1)
-    ))
+def _load_agent(use_search: bool = False, provider: str | None = None):
+    provider = provider or resolve_provider()
+    api_key = resolve_api_key(provider)
     
-    if not Confirm.ask("[prompt]Execute this command?[/prompt]", default=False):
-        return "User refused to execute the command."
-
-    try:
-        # Use shell=True to allow pipes and redirections
-        result = subprocess.run(
-            command,
-            shell=True,
-            capture_output=True,
-            text=True,
-            check=False
-        )
-        output = result.stdout + result.stderr
-        if not output.strip():
-            output = "(Command executed with no output)"
-        
-        # Optionally show output to user too? 
-        # Usually Bro will summarize it, but seeing it is good.
-        if output.strip():
-            console.print("[dim]Output snippet:[/dim]")
-            snippet = output.strip()[:500] + ("..." if len(output) > 500 else "")
-            console.print(f"[dim]{snippet}[/dim]")
-            
-        return output
-    except Exception as e:
-        return f"Error executing command: {str(e)}"
-
-
-def _load_client(use_search: bool = False, agentic: bool = True) -> GeminiClient:
-    api_key = resolve_api_key()
     if not api_key:
-        raise ClientError(
-            "Gemini API key is missing. Run 'bro config' to set it.",
-            exit_code=1,
-        )
+        raise GeminiClientError(f"API key for '{provider}' missing. Run 'bro config'.", exit_code=1)
     
-    executor = run_and_confirm_command if agentic else None
-    return GeminiClient(api_key=api_key, use_search=use_search, executor_callback=executor)
+    # Initialize Provider
+    if provider == "groq":
+        client = GroqClient(api_key=api_key, use_search=use_search, executor_callback=run_and_confirm_command, console=console)
+    else:
+        client = GeminiClient(api_key=api_key, use_search=use_search, executor_callback=run_and_confirm_command, console=console)
+    
+    # Initialize Engine
+    db_path = get_config_path().parent / "knowledge.db"
+    return Manager(client, KnowledgeBase(db_path))
 
-
-def run_single_prompt(prompt_text: str, use_search: bool = False) -> int:
+def run_task(prompt_text: str, use_search: bool = False, provider: str | None = None) -> int:
     try:
-        client = _load_client(use_search=use_search)
-        with console.status("[bold cyan]Bro is thinking...", spinner="dots"):
-            response = client.ask(prompt_text)
-        
-        console.print(Panel(
-            response,
-            title="[ai_name]Bro",
-            title_align="left",
-            border_style="magenta",
-            padding=(1, 2)
-        ))
+        agent = _load_agent(use_search=use_search, provider=provider)
+        response = agent.run(prompt_text)
+        print_panel(response, title=f"Bro ({provider or resolve_provider()})")
         return 0
-    except ClientError as exc:
-        console.print(f"[error]{exc.message}[/error]", style="red")
-        return exc.exit_code
-    except Exception as exc:  # pragma: no cover - defensive layer
-        err = map_exception(exc)
-        console.print(f"[error]{err.message}[/error]", style="red")
-        return err.exit_code
-
-
-def run_interactive_chat(use_search: bool = False) -> int:
-    try:
-        client = _load_client(use_search=use_search)
-        chat = client.start_chat()
-    except ClientError as exc:
+    except (GeminiClientError, GroqClientError) as exc:
         console.print(f"[error]{exc.message}[/error]")
         return exc.exit_code
-
-    mode_info = " [dim](Search enabled)[/dim]" if use_search else ""
-    console.print(f"[info]Interactive mode{mode_info}. Type 'exit' or 'quit' to leave.[/info]")
-    
-    while True:
-        try:
-            # Styled prompt using rich.prompt.Prompt or just console.print
-            user_input = Prompt.ask("[prompt]bro[/prompt]")
-        except (KeyboardInterrupt, EOFError):
-            console.print("\n[info]Exiting. Catch ya later![/info]")
-            return 0
-
-        if not user_input:
-            continue
-        if user_input.lower() in {"exit", "quit"}:
-            console.print("[info]Exiting. Catch ya later![/info]")
-            return 0
-
-        try:
-            with console.status("[bold cyan]Thinking...", spinner="dots"):
-                response = chat.ask(user_input)
-            
-            console.print(Panel(
-                response,
-                title="[ai_name]Bro",
-                title_align="left",
-                border_style="magenta",
-                padding=(1, 2)
-            ))
-        except Exception as exc:
-            err = map_exception(exc)
-            console.print(f"[error]{err.message}[/error]")
-            return err.exit_code
-
+    except Exception as exc:
+        console.print(f"[error]Fatal error: {exc}[/error]")
+        return 1
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
 
-    if args.command == "config" and not args.prompt:
+    if args.command == "config":
         return run_config()
 
-    if args.command == "config" and args.prompt:
-        parser.error("'config' does not accept a chat prompt")
-
-    if args.command is not None:
-        prompt_parts = [args.command, *args.prompt]
-        return run_single_prompt(" ".join(prompt_parts).strip(), use_search=args.search)
-
-    # No prompt and no subcommand means REPL mode.
-    return run_interactive_chat(use_search=args.search)
-
+    prompt = " ".join([args.command, *args.prompt]).strip() if args.command else None
+    
+    if prompt:
+        return run_task(prompt, use_search=args.search, provider=args.provider)
+    
+    # REPL Mode
+    console.print(f"[info]Bro-CLI Interactive Mode. Type 'exit' to leave.[/info]")
+    while True:
+        try:
+            line = Prompt.ask("[prompt]bro[/prompt]")
+            if line.lower() in {"exit", "quit"}: break
+            run_task(line, use_search=args.search, provider=args.provider)
+        except (KeyboardInterrupt, EOFError):
+            break
+    return 0
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    sys.exit(main())

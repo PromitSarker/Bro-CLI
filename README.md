@@ -1,80 +1,79 @@
-# Bro CLI
+# 🕶️ Bro-CLI: The Agentic Terminal Bro
 
-A lightweight, fast, and secure Linux terminal client for Google's Gemini AI. 
+**Bro-CLI** isn't just another LLM wrapper—it's an **agentic terminal assistant** that actually *does* things. Built for developers who want a smart buddy in their Linux environment to help find files, initialize repos, fix bugs, and automate the mundane.
 
-`bro` allows you to interact with Gemini directly from your command line, offering both single-prompt execution and a persistent interactive chat mode. It securely manages your API credentials using standard Linux XDG directories.
+---
 
-## Features
+## 🔥 Key Features
 
-- **Interactive & Single-Prompt Modes:** Seamlessly switch between quick one-off questions and interactive conversational sessions.
-- **Secure Credential Management:** API keys are stored securely in `~/.config/bro/config.json` with strict user-only (`0600`) file permissions.
-- **Environment Variable Support:** Override stored configurations on the fly using the `BRO_GEMINI_KEY` environment variable.
-- **Terminal-Optimized Output:** Instructs Gemini to return direct, concise answers without unnecessary markdown formatting or conversational filler.
+- **🧠 Agentic & Stateful**: Doesn't just talk; it proposes and executes terminal commands.
+- **💾 Local Memory**: Remembers past successes and lessons in a local SQLite database.
+- **🔒 Security First**: Masked API key entry and automatic suppression of permission-denied noise.
+- **🚀 Multi-Provider**: Switch between **Google Gemini (Flash 2.5/3.0)** and **Groq Cloud (Llama 3.3)** on the fly.
+- **📂 Clean Architecture**: Modular, professionally structured codebase that's easy to hack on.
 
-## Requirements
+---
 
-- Linux
-- Python 3.10 or higher
-- [pipx](https://pipx.pypa.io/) (Required for isolated global CLI installation)
+## 🛠️ Project Structure
 
-## Installation
+For developers looking to contribute or customize, here is the "Bro" blueprint:
 
-Install `bro-cli` globally as an isolated application using `pipx`. 
-
-To install directly from your Git repository:
-
-```bash
-pipx install git+https://github.com/PromitSarker/Bro-CLI.git
+```text
+bro_cli/
+├── main.py            # Clean CLI entry point & command routing
+├── config.py          # Secure local configuration management
+├── engine/            # 🧠 The Brains
+│   ├── manager.py     # Task orchestrator
+│   ├── planner.py     # Hierarchical step decomposition
+│   ├── worker.py      # Command execution loop
+│   ├── reflection.py  # Post-task analysis & learning
+│   └── memory.py      # Local SQLite Knowledge Base
+├── providers/         # 🤖 AI Backends
+│   ├── base.py        # Standardized client interface
+│   ├── gemini.py      # Google GenAI implementation
+│   └── groq.py        # Groq Cloud implementation
+├── ui/                # 🎨 Aesthetics
+│   └── terminal.py    # Custom cyberpunk theme & Rich panels
+└── utils/             # 🔧 Toolbox
+    └── shell.py       # Safe subprocess execution & CWD tracking
 ```
 
-**Local Installation:**
-If you have cloned the repository to your local machine, you can navigate to the project folder and install it by running:
+---
+
+## ⚡ Quick Start
+
+### 1. Installation
 ```bash
-pipx install .
+pip install -e .
 ```
 
-**Updating:**
-To upgrade to the latest version in the future:
-```bash
-pipx upgrade bro-cli
-```
-
-## Configuration
-
-Before using the client, you *must* configure your Google Gemini API key. Run the following command:
-
+### 2. Configuration
 ```bash
 bro config
 ```
+*Choose your favorite provider and securely paste your API keys.*
 
-You will be prompted to paste your API key. It will be saved securely to your system.
-
-## Usage
-
-### Single Prompt
-
-Ask a direct question. The client will return the answer to your standard output and exit:
-
+### 3. Usage
 ```bash
-bro "Why life so hard ?"
-```
+# Direct task execution
+bro "Find my Laboratory folder and check for any .py files"
 
-*Note: You can also skip the quotes for simple queries:*
-```bash
-bro how to go and breathe ?
-```
-
-### Interactive Mode
-
-Start a multi-turn chat session by running the command without any arguments:
-
-```bash
+# Interactive mode
 bro
+
+# Use a specific provider
+bro -p groq "Explain the current directory structure"
 ```
 
-*Inside the interactive prompt, type `exit`, `quit`, or press `Ctrl+C`/`Ctrl+D` to end the session.*
+---
 
-## Technical Details
+## 🛡️ Privacy & Security
 
-- **Default Model:** `gemini-2.5-flash-lite`
-- **SDK:** Powered by the official `google-genai` Python SDK.
+- **No Remote Telemetry**: Your commands and data never leave your machine except for the specific truncated context sent to your chosen AI provider.
+- **Full Control**: Every command is proposed with a `[y/n]` confirmation. You are always the boss.
+- **Secure Storage**: API keys are stored in a `json` file with restricted `0600` permissions.
+
+---
+
+## 📜 License
+MIT - Feel free to fork, hack, and make it your own. Stay agentic! 🛡️
