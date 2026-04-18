@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from typing import Callable, Sequence
+from typing import Callable, Sequence, Any, Optional
+from .base import BaseClient
 
 try:
     from google import genai
@@ -27,7 +28,10 @@ SYSTEM_INSTRUCTION = (
     "using the 'execute_terminal_command' tool. If a task requires checking files, "
     "running scripts, or gathering system info, use this tool. "
     "ALWAYS explain briefly what you are going to do before calling the tool. "
-    "The user will be asked for confirmation before each command executes."
+    "The user will be asked for confirmation before each command executes. "
+    "CRITICAL: Do NOT say you have finished a task (e.g., 'Done!', 'I created...' ) "
+    "unless you have already called the 'execute_terminal_command' tool and it returned success. "
+    "If you just talk without calling the tool, the task is NOT done."
 )
 
 
@@ -45,12 +49,13 @@ def execute_terminal_command(command: str) -> str:
     return ""
 
 
-class GeminiClient:
+class GeminiClient(BaseClient):
     def __init__(
         self, 
         api_key: str, 
         use_search: bool = False,
-        executor_callback: Callable[[str], str] | None = None
+        executor_callback: Callable | None = None,
+        console: Any = None
     ) -> None:
         if genai is None or types is None:
             raise ClientError(
@@ -60,11 +65,18 @@ class GeminiClient:
         self._client = genai.Client(api_key=api_key)
         self._use_search = use_search
         self._executor = executor_callback
+        self._console = console
+        self._command_history = [] # Cross-step persistence
+        self._current_cwd = None # Tracks state across tool calls
         # Use a model that supports search for search tasks, and flash-2.0 for agentic tasks.
         # Note: Flash 2.0/3.0 is better at tool calling.
         self._model = "gemini-2.5-flash" if not use_search else "gemini-3-flash-preview"
 
-    def _get_config(self) -> types.GenerateContentConfig:
+    def clear_history(self) -> None:
+        """Clear the loop-detection command history for a new task."""
+        self._command_history = []
+
+    def _get_config(self, system_instruction: str | None = None) -> types.GenerateContentConfig:
         tools = []
         if self._use_search:
             tools.append(types.Tool(google_search=types.GoogleSearch()))
@@ -73,35 +85,41 @@ class GeminiClient:
             tools.append(execute_terminal_command)
 
         return types.GenerateContentConfig(
-            system_instruction=SYSTEM_INSTRUCTION,
+            system_instruction=system_instruction or SYSTEM_INSTRUCTION,
             max_output_tokens=3000,
             tools=tools if tools else None,
         )
 
-    def ask(self, prompt: str) -> str:
+    def ask(self, prompt: str, system_instruction: str | None = None) -> str:
         # For single prompts, we still want to support tool calling loops.
         # Minimal way is to use a one-off chat session.
-        chat = self.start_chat()
+        chat = self.start_chat(system_instruction=system_instruction)
         return chat.ask(prompt)
 
-    def start_chat(self) -> "GeminiChatSession":
+    def start_chat(self, system_instruction: str | None = None) -> "GeminiChatSession":
         return GeminiChatSession(
             self._client.chats.create(
                 model=self._model,
                 history=[],
-                config=self._get_config(),
+                config=self._get_config(system_instruction=system_instruction),
             ),
-            executor=self._executor
+            executor=self._executor,
+            parent_client=self
         )
 
 
 class GeminiChatSession:
-    def __init__(self, chat_session, executor: Callable[[str], str] | None = None) -> None:
+    def __init__(self, chat_session, executor: Callable | None = None, parent_client: GeminiClient | None = None) -> None:
         self._chat_session = chat_session
         self._executor = executor
+        self._parent = parent_client
 
     def ask(self, prompt: str) -> str:
-        response = self._chat_session.send_message(prompt)
+        if self._parent and self._parent._console:
+            with self._parent._console.status(f"[bold cyan]Bro is thinking...", spinner="dots"):
+                response = self._chat_session.send_message(prompt)
+        else:
+            response = self._chat_session.send_message(prompt)
         
         while True:
             # Check for tool calls in the response candidates
@@ -119,7 +137,26 @@ class GeminiChatSession:
             for call in tool_calls:
                 if call.name == "execute_terminal_command" and self._executor:
                     command = call.args.get("command")
-                    result = self._executor(command)
+                    
+                    # Detect and break loops
+                    if self._parent and command in self._parent._command_history:
+                        result = (
+                            f"LOOP DETECTED: You already tried '{command}'. "
+                            "It did not provide the expected result. "
+                            "DO NOT repeat it. Try a different approach or refine your search terms."
+                        )
+                    else:
+                        if self._parent:
+                            self._parent._command_history.append(command)
+                        # Pass the current CWD from the parent client
+                        cwd = self._parent._current_cwd if self._parent else None
+                        
+                        result, new_cwd = self._executor(command, cwd=cwd)
+                        
+                        # Update the parent client's CWD for future steps
+                        if self._parent:
+                            self._parent._current_cwd = new_cwd
+                        
                     tool_responses.append(
                         types.Part.from_function_response(
                             name=call.name,
@@ -136,7 +173,11 @@ class GeminiChatSession:
                     )
 
             # Send tool responses back to Gemini
-            response = self._chat_session.send_message(tool_responses)
+            if self._parent and self._parent._console:
+                with self._parent._console.status(f"[bold cyan]Bro is thinking...", spinner="dots"):
+                    response = self._chat_session.send_message(tool_responses)
+            else:
+                response = self._chat_session.send_message(tool_responses)
 
         if response.text:
             return response.text.strip()

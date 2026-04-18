@@ -1,13 +1,14 @@
 # Environments
 .env
+.env.*
+!.env.example
 .venv
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
-tests/ 
-test_*.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -34,8 +35,6 @@ share/python-wheels/
 MANIFEST
 
 # PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
 
@@ -58,11 +57,24 @@ coverage.xml
 .pytest_cache/
 cover/
 
+# MyPy and Ruff cache
+.mypy_cache/
+.ruff_cache/
+
 # macOS
 .DS_Store
+.AppleDouble
+.LSOverride
 
 # IDEs
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
+.project
+.pydevproject
+.settings/
+
+# Local history
+.history/
