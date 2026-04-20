@@ -1,6 +1,7 @@
 from typing import Callable, Sequence, Dict, Any, List, Optional
 from .base import BaseClient
 import json
+import time
 
 try:
     import groq
@@ -25,7 +26,7 @@ class GroqClient(BaseClient):
                 "Missing dependency: groq. Install bro again with its Python dependencies.",
                 exit_code=1,
             )
-        self._client = Groq(api_key=api_key)
+        self._client = Groq(api_key=api_key, max_retries=3)
         self._use_search = use_search  # Groq does not support google search directly like Gemini yet. We ignore or simulate.
         self._executor = executor_callback
         self._console = console
@@ -37,17 +38,30 @@ class GroqClient(BaseClient):
         """Clear the loop-detection command history for a new task."""
         self._command_history = []
 
-    def ask(self, prompt: str, system_instruction: str | None = None) -> str:
-        chat = self.start_chat(system_instruction=system_instruction)
+    def ask(self, prompt: str, system_instruction: str | None = None, disable_tools: bool = False) -> str:
+        chat = self.start_chat(system_instruction=system_instruction, disable_tools=disable_tools)
         return chat.ask(prompt)
 
-    def start_chat(self, system_instruction: str | None = None) -> "GroqChatSession":
+    def start_chat(self, system_instruction: str | None = None, disable_tools: bool = False) -> "GroqChatSession":
+        sys_inst = system_instruction or SYSTEM_INSTRUCTION
+        if self._use_search and not disable_tools:
+            search_addon = (
+                "\n\n[WEB SEARCH ENABLED]\n"
+                "If the user asks you to search the web or find latest information, "
+                "you MUST NOT use xdg-open or open a browser. You MUST use the `execute_terminal_command` tool to fetch web results.\n"
+                "You can use `curl`, write a Python script using `urllib.request`, or use `wget -qO-`. "
+                "For web searches, you can try `curl -s 'https://lite.duckduckgo.com/lite/' -d 'q=your+query' | grep -o 'class=\"result-snippet\"[^>]*>[^<]*'`. "
+                "Retrieve the text, digest it silently, and then answer the user directly."
+            )
+            sys_inst += search_addon
+
         return GroqChatSession(
             client=self._client,
             model=self._model,
-            executor=self._executor,
+            executor=self._executor if not disable_tools else None,
             parent_client=self,
-            system_instruction=system_instruction
+            system_instruction=sys_inst,
+            disable_tools=disable_tools
         )
 
 
@@ -57,8 +71,9 @@ class GroqChatSession:
         client: "Groq", 
         model: str, 
         executor: Callable | None = None, 
-        parent_client: GroqClient | None = None,
-        system_instruction: str | None = None
+        parent_client: Optional["GroqClient"] = None,
+        system_instruction: str | None = None,
+        disable_tools: bool = False
     ) -> None:
         self._client = client
         self._model = model
@@ -67,7 +82,7 @@ class GroqChatSession:
         self._history = [{"role": "system", "content": system_instruction or SYSTEM_INSTRUCTION}]
         
         self._tools = []
-        if self._executor:
+        if self._executor and not disable_tools:
             self._tools.append({
                 "type": "function",
                 "function": {
@@ -88,15 +103,20 @@ class GroqChatSession:
 
     def _map_groq_exception(self, exc: Exception) -> ClientError:
         raw_message = str(exc).lower()
-        if "unauth" in raw_message or "invalid_api_key" in raw_message:
-            return ClientError("Groq API key rejected. Run 'bro config' to update your key.", exit_code=1)
+        if "unauth" in raw_message or "invalid_api_key" in raw_message or "authentication" in raw_message:
+            return ClientError("Authentication Failed: Your Groq API key is rejected or invalid. Run 'bro config' to update it.", exit_code=1)
+        if "tokens per day" in raw_message or "tpd" in raw_message:
+            return ClientError("Rate Limited (Tokens Per Day): You have exceeded your daily Groq free tier limit. Try using Gemini with 'bro -p gemini' or wait until tomorrow.", exit_code=2)
         if "rate_limit" in raw_message or "429" in raw_message:
-            return ClientError("Rate limited by Groq Cloud. Please retry shortly.", exit_code=2)
-        if "503" in raw_message:
-            return ClientError("Groq service unavailable. Retry in a moment.", exit_code=2)
+            return ClientError("Rate Limited: Groq Cloud is receiving too many requests. Please wait a moment and try again.", exit_code=2)
+        if "503" in raw_message or "service_unavailable" in raw_message:
+            return ClientError("Service Unavailable: Groq service is currently down. Try again later.", exit_code=2)
         if "connection" in raw_message or "network" in raw_message or "timeout" in raw_message:
-            return ClientError("Network error while contacting Groq Cloud.", exit_code=2)
-        return ClientError(f"Unexpected Groq error: {exc}", exit_code=2)
+            return ClientError("Network Error: Could not connect to Groq Cloud. Check your internet connection.", exit_code=2)
+        
+        # Clean up generic errors so it doesn't print a huge unreadable JSON block from the API
+        short_error = str(exc).split('\n')[0][:150]
+        return ClientError(f"API Error ({type(exc).__name__}): {short_error}", exit_code=2)
 
     def ask(self, prompt: str) -> str:
         self._history.append({"role": "user", "content": prompt})
@@ -112,11 +132,40 @@ class GroqChatSession:
                     kwargs["tools"] = self._tools
                     kwargs["tool_choice"] = "auto"
                     
-                if self._parent and self._parent._console:
-                    with self._parent._console.status(f"[bold cyan]Bro is thinking...", spinner="dots"):
-                        response = self._client.chat.completions.create(**kwargs)
+                # We add an internal retry loop for the completion call to handle 
+                # transient 429s without restarting the whole tool interaction.
+                last_exc = None
+                for attempt in range(5):
+                    try:
+                        if self._parent and self._parent._console:
+                            with self._parent._console.status(f"[bold cyan]Bro is thinking...", spinner="dots"):
+                                response = self._client.chat.completions.create(**kwargs)
+                        else:
+                            response = self._client.chat.completions.create(**kwargs)
+                        break
+                    except Exception as e:
+                        last_exc = e
+                        raw_msg = str(e).lower()
+                        if "rate_limit" in raw_msg or "429" in raw_msg:
+                            import re
+                            import time
+                            
+                            # Check if it's a daily limit or long penalty
+                            if "tpd" in raw_msg or "tokens per day" in raw_msg:
+                                raise self._map_groq_exception(e) # It's a huge limit, do not sleep
+
+                            # Short term rate limiting retry
+                            match = re.search(r"try again in ([0-9\.]+)s", raw_msg)
+                            wait_time = float(match.group(1)) + 0.5 if match else (2 ** (attempt + 1))
+                            
+                            if self._parent and self._parent._console:
+                                self._parent._console.print(f"[warning]Rate limited. Retrying in {wait_time:.1f}s...[/warning]")
+                            time.sleep(wait_time)
+                            continue
+                        raise self._map_groq_exception(e)
                 else:
-                    response = self._client.chat.completions.create(**kwargs)
+                    if last_exc:
+                        raise self._map_groq_exception(last_exc)
 
                 message = response.choices[0].message
                 

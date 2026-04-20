@@ -12,6 +12,7 @@ Rules:
 4. Be specific and concise. Do NOT include conversation or markdown formatting.
 5. PRESERVE SEARCH TERMS: If a user asks to find "Laboratory", do NOT search for "*.py" or other unrelated patterns. Search for the EXACT term provided.
 6. FOLDER SEARCH: When searching for a "folder" or "directory", use folder-specific flags like `find . -type d -name "NAME" 2>/dev/null`.
+7. CONVERSATIONAL SKIP: If the user is just saying hello, asking who you are, or making small talk that doesn't require terminal actions, return an empty list [].
 
 Example:
 User: "Create a new git repo in a folder called 'project' and add a readme"
@@ -39,7 +40,7 @@ class Planner:
         try:
             # We use the client to generate the plan. 
             # We override the system instruction to be strict and logic-focused.
-            response = self.client.ask(full_prompt, system_instruction=PLANNER_SYSTEM_PROMPT)
+            response = self.client.ask(full_prompt, system_instruction=PLANNER_SYSTEM_PROMPT, disable_tools=True)
             
             # Try to find JSON in the response if the LLM added fluff
             start = response.find("[")

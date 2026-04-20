@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import Callable, Sequence, Any, Optional
+import time
 from .base import BaseClient
 
 try:
@@ -76,12 +77,12 @@ class GeminiClient(BaseClient):
         """Clear the loop-detection command history for a new task."""
         self._command_history = []
 
-    def _get_config(self, system_instruction: str | None = None) -> types.GenerateContentConfig:
+    def _get_config(self, system_instruction: str | None = None, disable_tools: bool = False) -> "types.GenerateContentConfig":
         tools = []
-        if self._use_search:
+        if self._use_search and not disable_tools:
             tools.append(types.Tool(google_search=types.GoogleSearch()))
         
-        if self._executor:
+        if self._executor and not disable_tools:
             tools.append(execute_terminal_command)
 
         return types.GenerateContentConfig(
@@ -90,20 +91,20 @@ class GeminiClient(BaseClient):
             tools=tools if tools else None,
         )
 
-    def ask(self, prompt: str, system_instruction: str | None = None) -> str:
+    def ask(self, prompt: str, system_instruction: str | None = None, disable_tools: bool = False) -> str:
         # For single prompts, we still want to support tool calling loops.
         # Minimal way is to use a one-off chat session.
-        chat = self.start_chat(system_instruction=system_instruction)
+        chat = self.start_chat(system_instruction=system_instruction, disable_tools=disable_tools)
         return chat.ask(prompt)
 
-    def start_chat(self, system_instruction: str | None = None) -> "GeminiChatSession":
+    def start_chat(self, system_instruction: str | None = None, disable_tools: bool = False) -> "GeminiChatSession":
         return GeminiChatSession(
             self._client.chats.create(
                 model=self._model,
                 history=[],
-                config=self._get_config(system_instruction=system_instruction),
+                config=self._get_config(system_instruction=system_instruction, disable_tools=disable_tools),
             ),
-            executor=self._executor,
+            executor=self._executor if not disable_tools else None,
             parent_client=self
         )
 
@@ -115,11 +116,26 @@ class GeminiChatSession:
         self._parent = parent_client
 
     def ask(self, prompt: str) -> str:
-        if self._parent and self._parent._console:
-            with self._parent._console.status(f"[bold cyan]Bro is thinking...", spinner="dots"):
-                response = self._chat_session.send_message(prompt)
+        last_exc = None
+        for attempt in range(3):
+            try:
+                if self._parent and self._parent._console:
+                    with self._parent._console.status(f"[bold cyan]Bro is thinking...", spinner="dots"):
+                        response = self._chat_session.send_message(prompt)
+                else:
+                    response = self._chat_session.send_message(prompt)
+                break
+            except Exception as e:
+                last_exc = e
+                # Check for rate limit (429) or resource exhaustion
+                raw_msg = str(e).lower()
+                if "429" in raw_msg or "resource_exhausted" in raw_msg or "rate_limit" in raw_msg:
+                    time.sleep(2 * (attempt + 1))
+                    continue
+                raise map_exception(e)
         else:
-            response = self._chat_session.send_message(prompt)
+            if last_exc:
+                raise map_exception(last_exc)
         
         while True:
             # Check for tool calls in the response candidates
@@ -173,11 +189,25 @@ class GeminiChatSession:
                     )
 
             # Send tool responses back to Gemini
-            if self._parent and self._parent._console:
-                with self._parent._console.status(f"[bold cyan]Bro is thinking...", spinner="dots"):
-                    response = self._chat_session.send_message(tool_responses)
+            last_exc = None
+            for attempt in range(3):
+                try:
+                    if self._parent and self._parent._console:
+                        with self._parent._console.status(f"[bold cyan]Bro is thinking...", spinner="dots"):
+                            response = self._chat_session.send_message(tool_responses)
+                    else:
+                        response = self._chat_session.send_message(tool_responses)
+                    break
+                except Exception as e:
+                    last_exc = e
+                    raw_msg = str(e).lower()
+                    if "429" in raw_msg or "resource_exhausted" in raw_msg or "rate_limit" in raw_msg:
+                        time.sleep(2 * (attempt + 1))
+                        continue
+                    raise map_exception(e)
             else:
-                response = self._chat_session.send_message(tool_responses)
+                if last_exc:
+                    raise map_exception(last_exc)
 
         if response.text:
             return response.text.strip()
@@ -191,20 +221,21 @@ def map_exception(exc: Exception) -> ClientError:
 
     if "leaked" in raw_message:
         return ClientError(
-            "API key was reported as leaked by Google. Generate a new key at aistudio.google.com and run 'bro config'.",
+            "Security Alert: Your API key was reported as leaked by Google. Generate a new key at aistudio.google.com and run 'bro config'.",
             exit_code=1,
         )
 
     if "unauth" in exc_name or "permission" in exc_name or "api key" in raw_message or "permission_denied" in raw_message:
-        return ClientError("API key rejected. Run 'bro config' to update your key.", exit_code=1)
+        return ClientError("Authentication Failed: Gemini API key rejected. Run 'bro config' to update your key.", exit_code=1)
 
     if "resourceexhausted" in exc_name or "ratelimit" in raw_message or "429" in raw_message:
-        return ClientError("Rate limited by Gemini. Please retry shortly.", exit_code=2)
+        return ClientError("Rate Limited: Too many requests to Gemini. Please wait and retry shortly.", exit_code=2)
 
     if "serviceunavailable" in exc_name or "503" in raw_message:
-        return ClientError("Gemini service unavailable. Retry in a moment.", exit_code=2)
+        return ClientError("Service Unavailable: Gemini response failed. Try again in a moment.", exit_code=2)
 
     if "connection" in raw_message or "network" in raw_message or "timeout" in raw_message:
-        return ClientError("Network error while contacting Gemini.", exit_code=2)
+        return ClientError("Network Error: Could not connect to Gemini. Check your internet connection.", exit_code=2)
 
-    return ClientError(f"Unexpected Gemini error: {exc}", exit_code=2)
+    short_error = str(exc).split('\n')[0][:150]
+    return ClientError(f"API Error ({type(exc).__name__}): {short_error}", exit_code=2)

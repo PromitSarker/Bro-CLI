@@ -24,4 +24,4 @@ class Reflection:
             outcome=outcome
         )
         
-        return self.client.ask(formatted_prompt, system_instruction=REFLECTION_SYSTEM_PROMPT)
+        return self.client.ask(formatted_prompt, system_instruction=REFLECTION_SYSTEM_PROMPT, disable_tools=True)
