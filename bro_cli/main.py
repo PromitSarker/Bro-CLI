@@ -98,10 +98,11 @@ def run_task(prompt_text: str, agent=None, use_search: bool = False, provider: s
         print_panel(response, title=f"Bro ({provider or resolve_provider()})")
         return 0
     except (GeminiClientError, GroqClientError) as exc:
-        console.print(f"[error]{exc.message}[/error]")
-        return exc.exit_code
+        console.print(f"[error]✗ {exc.message}[/error]")
+        return getattr(exc, "exit_code", 1)
     except Exception as exc:
-        console.print(f"[error]Fatal error: {exc}[/error]")
+        console.print(f"\n[error]💥 Fatal system error:[/error] {type(exc).__name__}")
+        console.print(f"[dim]{str(exc).splitlines()[0]}[/dim]\n")
         return 1
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -129,6 +130,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     while True:
         try:
             line = Prompt.ask("[prompt]bro[/prompt]")
+            if not line:
+                continue
             if line.lower() in {"exit", "quit"}: break
             run_task(line, agent=agent, use_search=args.search, provider=args.provider)
         except (KeyboardInterrupt, EOFError):
