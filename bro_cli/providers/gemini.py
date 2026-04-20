@@ -221,20 +221,21 @@ def map_exception(exc: Exception) -> ClientError:
 
     if "leaked" in raw_message:
         return ClientError(
-            "API key was reported as leaked by Google. Generate a new key at aistudio.google.com and run 'bro config'.",
+            "Security Alert: Your API key was reported as leaked by Google. Generate a new key at aistudio.google.com and run 'bro config'.",
             exit_code=1,
         )
 
     if "unauth" in exc_name or "permission" in exc_name or "api key" in raw_message or "permission_denied" in raw_message:
-        return ClientError("API key rejected. Run 'bro config' to update your key.", exit_code=1)
+        return ClientError("Authentication Failed: Gemini API key rejected. Run 'bro config' to update your key.", exit_code=1)
 
     if "resourceexhausted" in exc_name or "ratelimit" in raw_message or "429" in raw_message:
-        return ClientError("Rate limited by Gemini. Please retry shortly.", exit_code=2)
+        return ClientError("Rate Limited: Too many requests to Gemini. Please wait and retry shortly.", exit_code=2)
 
     if "serviceunavailable" in exc_name or "503" in raw_message:
-        return ClientError("Gemini service unavailable. Retry in a moment.", exit_code=2)
+        return ClientError("Service Unavailable: Gemini response failed. Try again in a moment.", exit_code=2)
 
     if "connection" in raw_message or "network" in raw_message or "timeout" in raw_message:
-        return ClientError("Network error while contacting Gemini.", exit_code=2)
+        return ClientError("Network Error: Could not connect to Gemini. Check your internet connection.", exit_code=2)
 
-    return ClientError(f"Unexpected Gemini error: {exc}", exit_code=2)
+    short_error = str(exc).split('\n')[0][:150]
+    return ClientError(f"API Error ({type(exc).__name__}): {short_error}", exit_code=2)

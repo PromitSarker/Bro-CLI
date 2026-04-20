@@ -49,10 +49,15 @@ def run_and_confirm_command(command: str, cwd: Optional[str] = None) -> Tuple[st
             snippet = output.strip()[:500] + ("..." if len(output) > 500 else "")
             console.print(f"[dim]{snippet}[/dim]")
 
+        # Strip ANSI escape codes to save massive amounts of LLM tokens
+        import re
+        ansi_escape = re.compile(r'(?:\x1B[@-_]|[\x80-\x9F])[0-?]*[ -/]*[@-~]')
+        clean_output = ansi_escape.sub('', output)
+
         # Context reduction for the AI
-        agent_output = output
-        if len(agent_output) > 1000:
-            agent_output = agent_output[:1000] + "\n... (omitted for brevity)"
+        agent_output = clean_output
+        if len(agent_output) > 1500:
+            agent_output = agent_output[:1500] + "\n... (omitted for brevity)"
             
         return agent_output, new_cwd
     except Exception as e:
