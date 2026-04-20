@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import Callable, Sequence, Any, Optional
+import time
 from .base import BaseClient
 
 try:
@@ -76,12 +77,12 @@ class GeminiClient(BaseClient):
         """Clear the loop-detection command history for a new task."""
         self._command_history = []
 
-    def _get_config(self, system_instruction: str | None = None) -> types.GenerateContentConfig:
+    def _get_config(self, system_instruction: str | None = None, disable_tools: bool = False) -> "types.GenerateContentConfig":
         tools = []
-        if self._use_search:
+        if self._use_search and not disable_tools:
             tools.append(types.Tool(google_search=types.GoogleSearch()))
         
-        if self._executor:
+        if self._executor and not disable_tools:
             tools.append(execute_terminal_command)
 
         return types.GenerateContentConfig(
@@ -90,20 +91,20 @@ class GeminiClient(BaseClient):
             tools=tools if tools else None,
         )
 
-    def ask(self, prompt: str, system_instruction: str | None = None) -> str:
+    def ask(self, prompt: str, system_instruction: str | None = None, disable_tools: bool = False) -> str:
         # For single prompts, we still want to support tool calling loops.
         # Minimal way is to use a one-off chat session.
-        chat = self.start_chat(system_instruction=system_instruction)
+        chat = self.start_chat(system_instruction=system_instruction, disable_tools=disable_tools)
         return chat.ask(prompt)
 
-    def start_chat(self, system_instruction: str | None = None) -> "GeminiChatSession":
+    def start_chat(self, system_instruction: str | None = None, disable_tools: bool = False) -> "GeminiChatSession":
         return GeminiChatSession(
             self._client.chats.create(
                 model=self._model,
                 history=[],
-                config=self._get_config(system_instruction=system_instruction),
+                config=self._get_config(system_instruction=system_instruction, disable_tools=disable_tools),
             ),
-            executor=self._executor,
+            executor=self._executor if not disable_tools else None,
             parent_client=self
         )
 
@@ -115,11 +116,26 @@ class GeminiChatSession:
         self._parent = parent_client
 
     def ask(self, prompt: str) -> str:
-        if self._parent and self._parent._console:
-            with self._parent._console.status(f"[bold cyan]Bro is thinking...", spinner="dots"):
-                response = self._chat_session.send_message(prompt)
+        last_exc = None
+        for attempt in range(3):
+            try:
+                if self._parent and self._parent._console:
+                    with self._parent._console.status(f"[bold cyan]Bro is thinking...", spinner="dots"):
+                        response = self._chat_session.send_message(prompt)
+                else:
+                    response = self._chat_session.send_message(prompt)
+                break
+            except Exception as e:
+                last_exc = e
+                # Check for rate limit (429) or resource exhaustion
+                raw_msg = str(e).lower()
+                if "429" in raw_msg or "resource_exhausted" in raw_msg or "rate_limit" in raw_msg:
+                    time.sleep(2 * (attempt + 1))
+                    continue
+                raise map_exception(e)
         else:
-            response = self._chat_session.send_message(prompt)
+            if last_exc:
+                raise map_exception(last_exc)
         
         while True:
             # Check for tool calls in the response candidates
@@ -173,11 +189,25 @@ class GeminiChatSession:
                     )
 
             # Send tool responses back to Gemini
-            if self._parent and self._parent._console:
-                with self._parent._console.status(f"[bold cyan]Bro is thinking...", spinner="dots"):
-                    response = self._chat_session.send_message(tool_responses)
+            last_exc = None
+            for attempt in range(3):
+                try:
+                    if self._parent and self._parent._console:
+                        with self._parent._console.status(f"[bold cyan]Bro is thinking...", spinner="dots"):
+                            response = self._chat_session.send_message(tool_responses)
+                    else:
+                        response = self._chat_session.send_message(tool_responses)
+                    break
+                except Exception as e:
+                    last_exc = e
+                    raw_msg = str(e).lower()
+                    if "429" in raw_msg or "resource_exhausted" in raw_msg or "rate_limit" in raw_msg:
+                        time.sleep(2 * (attempt + 1))
+                        continue
+                    raise map_exception(e)
             else:
-                response = self._chat_session.send_message(tool_responses)
+                if last_exc:
+                    raise map_exception(last_exc)
 
         if response.text:
             return response.text.strip()

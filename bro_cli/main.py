@@ -61,10 +61,12 @@ def run_config() -> int:
             config_data["provider"] = new_provider
             save_config(**config_data)
         elif choice == "2":
-            console.print("[warning]Press Enter to keep current keys.[/warning]")
-            gemini_key = Prompt.ask("Gemini API key", password=True) or existing_gemini
-            groq_key = Prompt.ask("Groq Cloud API key", password=True) or existing_groq
+            console.print("[warning]Press Enter to keep current keys or skip.[/warning]")
+            gemini_key = Prompt.ask("Gemini API key", password=True, default=existing_gemini or "")
+            groq_key = Prompt.ask("Groq Cloud API key", password=True, default=existing_groq or "")
             
+            # If the user enters empty string, we want to save it as empty or keep existing?
+            # It already has the default filled in if it was existing.
             config_data.update({"gemini_api_key": gemini_key, "groq_api_key": groq_key})
             save_config(**config_data)
             console.print("[success]Credentials saved![/success]")
@@ -88,9 +90,10 @@ def _load_agent(use_search: bool = False, provider: str | None = None):
     db_path = get_config_path().parent / "knowledge.db"
     return Manager(client, KnowledgeBase(db_path))
 
-def run_task(prompt_text: str, use_search: bool = False, provider: str | None = None) -> int:
+def run_task(prompt_text: str, agent=None, use_search: bool = False, provider: str | None = None) -> int:
     try:
-        agent = _load_agent(use_search=use_search, provider=provider)
+        if agent is None:
+            agent = _load_agent(use_search=use_search, provider=provider)
         response = agent.run(prompt_text)
         print_panel(response, title=f"Bro ({provider or resolve_provider()})")
         return 0
@@ -115,11 +118,19 @@ def main(argv: Sequence[str] | None = None) -> int:
     
     # REPL Mode
     console.print(f"[info]Bro-CLI Interactive Mode. Type 'exit' to leave.[/info]")
+    
+    # Load agent once for the whole interactive session.
+    try:
+        agent = _load_agent(use_search=args.search, provider=args.provider)
+    except (GeminiClientError, GroqClientError) as exc:
+        console.print(f"[error]{exc.message}[/error]")
+        return exc.exit_code
+
     while True:
         try:
             line = Prompt.ask("[prompt]bro[/prompt]")
             if line.lower() in {"exit", "quit"}: break
-            run_task(line, use_search=args.search, provider=args.provider)
+            run_task(line, agent=agent, use_search=args.search, provider=args.provider)
         except (KeyboardInterrupt, EOFError):
             break
     return 0

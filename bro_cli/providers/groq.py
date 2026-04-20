@@ -1,6 +1,7 @@
 from typing import Callable, Sequence, Dict, Any, List, Optional
 from .base import BaseClient
 import json
+import time
 
 try:
     import groq
@@ -25,7 +26,7 @@ class GroqClient(BaseClient):
                 "Missing dependency: groq. Install bro again with its Python dependencies.",
                 exit_code=1,
             )
-        self._client = Groq(api_key=api_key)
+        self._client = Groq(api_key=api_key, max_retries=3)
         self._use_search = use_search  # Groq does not support google search directly like Gemini yet. We ignore or simulate.
         self._executor = executor_callback
         self._console = console
@@ -37,17 +38,18 @@ class GroqClient(BaseClient):
         """Clear the loop-detection command history for a new task."""
         self._command_history = []
 
-    def ask(self, prompt: str, system_instruction: str | None = None) -> str:
-        chat = self.start_chat(system_instruction=system_instruction)
+    def ask(self, prompt: str, system_instruction: str | None = None, disable_tools: bool = False) -> str:
+        chat = self.start_chat(system_instruction=system_instruction, disable_tools=disable_tools)
         return chat.ask(prompt)
 
-    def start_chat(self, system_instruction: str | None = None) -> "GroqChatSession":
+    def start_chat(self, system_instruction: str | None = None, disable_tools: bool = False) -> "GroqChatSession":
         return GroqChatSession(
             client=self._client,
             model=self._model,
-            executor=self._executor,
+            executor=self._executor if not disable_tools else None,
             parent_client=self,
-            system_instruction=system_instruction
+            system_instruction=system_instruction,
+            disable_tools=disable_tools
         )
 
 
@@ -57,8 +59,9 @@ class GroqChatSession:
         client: "Groq", 
         model: str, 
         executor: Callable | None = None, 
-        parent_client: GroqClient | None = None,
-        system_instruction: str | None = None
+        parent_client: Optional["GroqClient"] = None,
+        system_instruction: str | None = None,
+        disable_tools: bool = False
     ) -> None:
         self._client = client
         self._model = model
@@ -67,7 +70,7 @@ class GroqChatSession:
         self._history = [{"role": "system", "content": system_instruction or SYSTEM_INSTRUCTION}]
         
         self._tools = []
-        if self._executor:
+        if self._executor and not disable_tools:
             self._tools.append({
                 "type": "function",
                 "function": {
@@ -112,11 +115,27 @@ class GroqChatSession:
                     kwargs["tools"] = self._tools
                     kwargs["tool_choice"] = "auto"
                     
-                if self._parent and self._parent._console:
-                    with self._parent._console.status(f"[bold cyan]Bro is thinking...", spinner="dots"):
-                        response = self._client.chat.completions.create(**kwargs)
+                # We add an internal retry loop for the completion call to handle 
+                # transient 429s without restarting the whole tool interaction.
+                last_exc = None
+                for attempt in range(3):
+                    try:
+                        if self._parent and self._parent._console:
+                            with self._parent._console.status(f"[bold cyan]Bro is thinking...", spinner="dots"):
+                                response = self._client.chat.completions.create(**kwargs)
+                        else:
+                            response = self._client.chat.completions.create(**kwargs)
+                        break
+                    except Exception as e:
+                        last_exc = e
+                        raw_msg = str(e).lower()
+                        if "rate_limit" in raw_msg or "429" in raw_msg:
+                            time.sleep(2 * (attempt + 1))
+                            continue
+                        raise self._map_groq_exception(e)
                 else:
-                    response = self._client.chat.completions.create(**kwargs)
+                    if last_exc:
+                        raise self._map_groq_exception(last_exc)
 
                 message = response.choices[0].message
                 
