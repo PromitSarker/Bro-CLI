@@ -29,7 +29,7 @@ jobs:
 
     - name: Compile Windows Installer (Inno Setup)
       run: |
-        "C:\Program Files (x86)\Inno Setup 6\iscc.exe" installer.iss
+        & "C:\Program Files (x86)\Inno Setup 6\iscc.exe" installer.iss
 
     - name: Upload Setup.exe Artifact
       uses: actions/upload-artifact@v4
