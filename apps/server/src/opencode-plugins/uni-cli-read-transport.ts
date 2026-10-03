@@ -11,7 +11,7 @@ export type uniCliEngineReader = {
 };
 
 /** Per-call host transport. Native plugins never inherit the host credential. */
-export type uniCliReadTransport = {
+export type UniCliReadTransport = {
   /** Engine `get` reads. Defaults to v1. */
   engine?: uniCliEngine;
   activity?(workspaceId: string, sessionId: string): Promise<SessionActivity>;
@@ -21,4 +21,4 @@ export type uniCliReadTransport = {
   post(path: string, body: Record<string, unknown>, signal?: AbortSignal): Promise<unknown>;
 };
 
-export const uniCliReadTransport = new AsyncLocalStorage<uniCliReadTransport>();
+export const uniCliReadTransport = new AsyncLocalStorage<UniCliReadTransport>();

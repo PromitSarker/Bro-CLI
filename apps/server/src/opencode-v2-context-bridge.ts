@@ -2,7 +2,7 @@ import { randomBytes } from "node:crypto";
 import { z } from "zod";
 import { serve } from "./serve-node.js";
 import { UniCliExtensionsPreview } from "./opencode-plugins/uni-cli-extensions-preview.js";
-import { uniCliReadTransport, type uniCliReadTransport } from "./opencode-plugins/uni-cli-read-transport.js";
+import { uniCliReadTransport, type UniCliReadTransport } from "./opencode-plugins/uni-cli-read-transport.js";
 import { createV2ReadAdapter, readV2SessionActivity } from "./opencode-v2-read-adapter.js";
 import { isRecord } from "./workspace-kv-store.js";
 
@@ -39,7 +39,7 @@ export async function createV2ContextBridge(hostRequest: (path: string, init?: R
         signal.throwIfAborted();
         return hostRequest(path, { ...init, signal });
       };
-      const transport: uniCliReadTransport = {
+      const transport: UniCliReadTransport = {
         engine: "v2",
         activity: (workspaceId: string, sessionId: string) => readV2SessionActivity(path => read(path), workspaceId, sessionId),
         get: createV2ReadAdapter(path => read(path)),
