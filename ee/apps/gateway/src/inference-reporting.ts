@@ -10,7 +10,7 @@ export type InferenceRequestReport = {
   orgMembershipId: string
   inferenceKeyId: string
   gatewayKeyId?: never
-  uni-cliRequestId: string
+  uniCliRequestId: string
   route: string
   method: string
   incomingModel: string | null
@@ -26,7 +26,7 @@ export type InferenceHandledErrorReport = {
   orgMembershipId?: string
   inferenceKeyId?: string
   gatewayKeyId?: string
-  uni-cliRequestId?: string
+  uniCliRequestId?: string
   route: string
   method: string
   incomingModel?: string | null
@@ -42,7 +42,7 @@ export type InferenceHandledErrorReport = {
 export type InferenceReporter = {
   request(report: InferenceRequestReport): void
   handledError(report: InferenceHandledErrorReport): void
-  completion?(report: ChatCompletionReport & { uni-cliRequestId: string; organizationId: string; orgMembershipId: string; modelAlias: string }): void
+  completion?(report: ChatCompletionReport & { uniCliRequestId: string; organizationId: string; orgMembershipId: string; modelAlias: string }): void
 }
 
 export function sanitizeIncomingHeaders(headers: Headers) {
@@ -101,7 +101,7 @@ function reportAttributes(report: InferenceRequestReport | InferenceHandledError
     orgMembershipId: report.orgMembershipId,
     inferenceKeyId: report.inferenceKeyId,
     gatewayKeyId: report.gatewayKeyId,
-    uni-cliRequestId: report.uni-cliRequestId,
+    uniCliRequestId: report.uniCliRequestId,
     route: report.route,
     method: report.method,
     incomingModel: report.incomingModel,
@@ -132,7 +132,7 @@ export const sentryInferenceReporter: InferenceReporter = {
     // Exceptions often contain request/SQL parameters. Never send them to Sentry.
     Sentry.captureMessage(`Uni-CLI Gateway handled error: ${report.reason}`, {
       level: "error",
-      tags: { organization_id: report.organizationId, inference_key_id: report.inferenceKeyId, uni-cli_request_id: report.uni-cliRequestId, route: report.route, method: report.method },
+      tags: { organization_id: report.organizationId, inference_key_id: report.inferenceKeyId, uni-cli_request_id: report.uniCliRequestId, route: report.route, method: report.method },
       contexts: { inference: attributes },
     })
   },

@@ -239,7 +239,7 @@ function MarkdownBlockInner({
       if (videoCleanups.current.has(video)) continue;
       let cancelled = false;
       let objectUrl: string | null = null;
-      const href = video.dataset.uni-cliVideoPath ?? "";
+      const href = video.dataset.uniCliVideoPath ?? "";
       const showError = () => {
         const notice = video.parentElement?.querySelector("[data-uni-cli-video-error]");
         if (notice instanceof HTMLElement) notice.hidden = false;
@@ -294,7 +294,7 @@ function MarkdownBlockInner({
       event.preventDefault();
       event.stopPropagation();
       if (event.type !== "mousedown" && (event.button === 0 || event.button === 1)) {
-        const destination = link.dataset.uni-cliSessionReference ?? "";
+        const destination = link.dataset.uniCliSessionReference ?? "";
         const reference = resolveReference?.(destination);
         if (reference && link.getAttribute("href") === destination) references?.openReference(reference);
       }
@@ -320,7 +320,7 @@ function MarkdownBlockInner({
       if (inlineCodePath instanceof HTMLElement) {
         event.preventDefault();
         event.stopPropagation();
-        openArtifactPath(inlineCodePath.dataset.uni-cliInlineCodePath ?? "");
+        openArtifactPath(inlineCodePath.dataset.uniCliInlineCodePath ?? "");
         return;
       }
 
@@ -344,7 +344,7 @@ function MarkdownBlockInner({
       if (chevron instanceof HTMLElement) {
         event.preventDefault();
         event.stopPropagation();
-        const href = chevron.dataset.uni-cliLinkChevron ?? "";
+        const href = chevron.dataset.uniCliLinkChevron ?? "";
         const target = openTargetForHref(href, openTargets, workspaceRoot);
         if (target) {
           setLinkMenu({ target, rect: chevron.getBoundingClientRect() });
@@ -354,7 +354,7 @@ function MarkdownBlockInner({
 
       const link = event.target.closest("a[data-uni-cli-link-href]");
       if (link instanceof HTMLAnchorElement) {
-        const href = link.dataset.uni-cliLinkHref ?? link.getAttribute("href") ?? "";
+        const href = link.dataset.uniCliLinkHref ?? link.getAttribute("href") ?? "";
         const target = openTargetForHref(href, openTargets, workspaceRoot);
 
         if (target && onOpenTarget) {
@@ -378,7 +378,7 @@ function MarkdownBlockInner({
       if (!(event.target instanceof Element) || !onOpenTarget) return;
       const link = event.target.closest("[data-uni-cli-link-href], [data-uni-cli-link-chevron]");
       if (!(link instanceof HTMLElement)) return;
-      const href = link.dataset.uni-cliLinkHref ?? link.dataset.uni-cliLinkChevron ?? "";
+      const href = link.dataset.uniCliLinkHref ?? link.dataset.uniCliLinkChevron ?? "";
       const target = openTargetForHref(href, openTargets, workspaceRoot);
       if (target?.kind !== "file") return;
       event.preventDefault();
@@ -392,7 +392,7 @@ function MarkdownBlockInner({
 
       event.preventDefault();
       event.stopPropagation();
-      openArtifactPath(event.target.dataset.uni-cliInlineCodePath ?? "");
+      openArtifactPath(event.target.dataset.uniCliInlineCodePath ?? "");
     };
 
     root.addEventListener("load", handleLoad, true);

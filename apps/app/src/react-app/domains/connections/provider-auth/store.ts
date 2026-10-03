@@ -17,16 +17,16 @@ import {
 } from "../../../../app/lib/den";
 import { readGatewayUsageScope } from "../../../../app/lib/gateway-usage-scope";
 import { refreshGatewayUsageAfterCloudSync } from "../../cloud/gateway-usage-refresh";
-import { getuni-cliGatewayOrigin } from "../../../../app/lib/gateway-runtime";
+import { getuniCliGatewayOrigin } from "../../../../app/lib/gateway-runtime";
 import { unwrap, waitForHealthy } from "../../../../app/lib/opencode";
 import {
   readOpencodeConfig,
   writeOpencodeConfig,
   engineRestart,
-  workspaceuni-cliRead,
-  workspaceuni-cliWrite,
+  workspaceuniCliRead,
+  workspaceuniCliWrite,
 } from "../../../../app/lib/desktop";
-import { uni-cliServerError } from "../../../../app/lib/uni-cli-server";
+import { uniCliServerError } from "../../../../app/lib/uni-cli-server";
 import type {
   Client,
   ProviderListItem,
@@ -45,24 +45,24 @@ import {
   getConnectedProviderItems,
 } from "../../../infra/provider-list-query";
 import type {
-  uni-cliCloudProviderSyncRun,
-  uni-cliCloudProviderSyncSkippedProvider,
+  uniCliCloudProviderSyncRun,
+  uniCliCloudProviderSyncSkippedProvider,
 } from "../../../../app/lib/uni-cli-server";
-import type { uni-cliServerStoreSnapshot } from "../uni-cli-server-store";
+import type { uniCliServerStoreSnapshot } from "../uni-cli-server-store";
 
 /**
  * The slice of the uni-cli-server store this store actually consumes.
  * The settings route passes the full store; the session route passes a
  * lightweight endpoint-backed adapter (previously forced through `as never`).
  */
-export type ProviderAuthuni-cliServer = {
+export type ProviderAuthuniCliServer = {
   getSnapshot: () => Pick<
-    uni-cliServerStoreSnapshot,
-    "uni-cliServerStatus" | "uni-cliServerClient"
+    uniCliServerStoreSnapshot,
+    "uniCliServerStatus" | "uniCliServerClient"
   > & {
-    uni-cliServerAuth?: { token?: string; hostToken?: string };
-    uni-cliServerHostInfo?: { generation: number | null } | null;
-    uni-cliServerCapabilities: { config?: { read?: boolean; write?: boolean }; providerSync?: boolean } | null;
+    uniCliServerAuth?: { token?: string; hostToken?: string };
+    uniCliServerHostInfo?: { generation: number | null } | null;
+    uniCliServerCapabilities: { config?: { read?: boolean; write?: boolean }; providerSync?: boolean } | null;
   };
 };
 import {
@@ -117,7 +117,7 @@ type CloudProviderSyncReason =
   | "settings_cloud_opened"
   | "manual";
 
-type CloudProviderSyncWorkResult = void | uni-cliCloudProviderSyncRun;
+type CloudProviderSyncWorkResult = void | uniCliCloudProviderSyncRun;
 
 type GlobalCloudProviderSyncOutcome = { contextKey: string } & (
   | { status: "completed"; result: CloudProviderSyncWorkResult }
@@ -295,7 +295,7 @@ export type CloudProviderServerSyncState = {
   lastRun?: { at: string | number; status: "applied" | "noop" | "failed" | "no_session"; message?: string } | null;
   lastVerifiedAt?: string | number | null;
   reloadPending: boolean;
-  skippedProviders: Record<string, uni-cliCloudProviderSyncSkippedProvider>;
+  skippedProviders: Record<string, uniCliCloudProviderSyncSkippedProvider>;
 };
 
 export type ProviderLoadState = {
@@ -331,7 +331,7 @@ type CreateProviderAuthStoreOptions = {
   selectedWorkspaceRoot: () => string;
   runtimeWorkspaceId: () => string | null;
   ensureRuntimeWorkspaceId?: () => Promise<string | null | undefined>;
-  uni-cliServer: ProviderAuthuni-cliServer;
+  uniCliServer: ProviderAuthuniCliServer;
   setProviders: (value: ProviderListItem[]) => void;
   setProviderDefaults: (value: Record<string, string>) => void;
   setProviderConnectedIds: (value: string[]) => void;
@@ -462,49 +462,49 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
     return Array.from(merged.values()).toSorted(compareProviders);
   };
 
-  const resolveuni-cliConfigTarget = async (mode: "read" | "write") => {
-    const uni-cliSnapshot = options.uni-cliServer.getSnapshot();
-    const uni-cliClient = uni-cliSnapshot.uni-cliServerClient;
-    let uni-cliWorkspaceId = options.runtimeWorkspaceId()?.trim() || null;
-    if (!uni-cliWorkspaceId && uni-cliSnapshot.uni-cliServerStatus === "connected" && uni-cliClient) {
-      uni-cliWorkspaceId = (await options.ensureRuntimeWorkspaceId?.())?.trim() || null;
+  const resolveuniCliConfigTarget = async (mode: "read" | "write") => {
+    const uniCliSnapshot = options.uniCliServer.getSnapshot();
+    const uniCliClient = uniCliSnapshot.uniCliServerClient;
+    let uniCliWorkspaceId = options.runtimeWorkspaceId()?.trim() || null;
+    if (!uniCliWorkspaceId && uniCliSnapshot.uniCliServerStatus === "connected" && uniCliClient) {
+      uniCliWorkspaceId = (await options.ensureRuntimeWorkspaceId?.())?.trim() || null;
     }
-    const hasuni-cliTarget =
-      uni-cliSnapshot.uni-cliServerStatus === "connected" &&
-      Boolean(uni-cliClient && uni-cliWorkspaceId);
-    const canUseuni-cliServer =
-      hasuni-cliTarget &&
-      uni-cliSnapshot.uni-cliServerCapabilities?.config?.[mode] !== false;
+    const hasuniCliTarget =
+      uniCliSnapshot.uniCliServerStatus === "connected" &&
+      Boolean(uniCliClient && uniCliWorkspaceId);
+    const canUseuniCliServer =
+      hasuniCliTarget &&
+      uniCliSnapshot.uniCliServerCapabilities?.config?.[mode] !== false;
     return {
-      uni-cliClient,
-      uni-cliWorkspaceId,
-      hasuni-cliTarget,
-      canUseuni-cliServer,
+      uniCliClient,
+      uniCliWorkspaceId,
+      hasuniCliTarget,
+      canUseuniCliServer,
     };
   };
 
   const serverHandlesProviderSync = () => {
-    const uni-cliSnapshot = options.uni-cliServer.getSnapshot();
+    const uniCliSnapshot = options.uniCliServer.getSnapshot();
     return Boolean(
-      uni-cliSnapshot.uni-cliServerStatus === "connected" &&
-      uni-cliSnapshot.uni-cliServerCapabilities?.providerSync === true &&
-      uni-cliSnapshot.uni-cliServerAuth?.hostToken?.trim() &&
-      uni-cliSnapshot.uni-cliServerClient,
+      uniCliSnapshot.uniCliServerStatus === "connected" &&
+      uniCliSnapshot.uniCliServerCapabilities?.providerSync === true &&
+      uniCliSnapshot.uniCliServerAuth?.hostToken?.trim() &&
+      uniCliSnapshot.uniCliServerClient,
     );
   };
 
   const getDenSessionDeliveryKey = () => {
-    const uni-cliSnapshot = options.uni-cliServer.getSnapshot();
+    const uniCliSnapshot = options.uniCliServer.getSnapshot();
     const settings = readDenSettings();
     if (!serverHandlesProviderSync() || !settings.authToken?.trim() || !settings.activeOrgId?.trim()) return "";
     return JSON.stringify([
       settings.apiBaseUrl ?? resolveDenBaseUrls(settings).apiBaseUrl,
       settings.activeOrgId.trim(),
       settings.authToken.trim(),
-      uni-cliSnapshot.uni-cliServerClient?.baseUrl,
-      uni-cliSnapshot.uni-cliServerAuth?.token,
-      uni-cliSnapshot.uni-cliServerAuth?.hostToken,
-      uni-cliSnapshot.uni-cliServerHostInfo?.generation,
+      uniCliSnapshot.uniCliServerClient?.baseUrl,
+      uniCliSnapshot.uniCliServerAuth?.token,
+      uniCliSnapshot.uniCliServerAuth?.hostToken,
+      uniCliSnapshot.uniCliServerHostInfo?.generation,
     ]);
   };
 
@@ -535,8 +535,8 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
 
   const pushDenSession = (mode: "identity" | "sync" = "sync", force = false): Promise<boolean> => {
     const delivery = syncDenSessionDelivery();
-    const uni-cliClient = options.uni-cliServer.getSnapshot().uni-cliServerClient;
-    if (!delivery || !uni-cliClient || disposed) return Promise.resolve(false);
+    const uniCliClient = options.uniCliServer.getSnapshot().uniCliServerClient;
+    if (!delivery || !uniCliClient || disposed) return Promise.resolve(false);
     if (!force && delivery.key === (mode === "identity" ? lastDenIdentityPushKey : lastDenSessionPushKey)) return Promise.resolve(true);
     if (denSessionPushInFlight) {
       if (denSessionPushInFlight.mode === mode) return denSessionPushInFlight.promise;
@@ -557,7 +557,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
       for (let attempt = 0; attempt < 3; attempt += 1) {
         if (!isCurrentDenSessionDelivery(delivery)) return false;
         try {
-          const put = mode === "identity" ? uni-cliClient.putDenIdentity : uni-cliClient.putDenSession;
+          const put = mode === "identity" ? uniCliClient.putDenIdentity : uniCliClient.putDenSession;
           await put({ baseUrl: apiBaseUrl, token, orgId }, delivery.controller.signal);
           if (!isCurrentDenSessionDelivery(delivery)) return false;
           lastDenIdentityPushKey = delivery.key;
@@ -565,7 +565,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
           return true;
         } catch (error) {
           if (!isCurrentDenSessionDelivery(delivery)) return false;
-          const retryable = error instanceof uni-cliServerError
+          const retryable = error instanceof uniCliServerError
             ? (error.status === 403 && error.code === "policy_unavailable") || error.status === 408 || error.status >= 500
             : error instanceof TypeError || (error instanceof Error && error.message === "Request timed out.");
           if (!retryable || attempt === 2) throw error;
@@ -644,8 +644,8 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
   ) => {
     const trimmedKey = apiKey.trim();
     if (!trimmedKey) return;
-    const uni-cliClient = options.uni-cliServer.getSnapshot().uni-cliServerClient;
-    if (!uni-cliClient) return;
+    const uniCliClient = options.uniCliServer.getSnapshot().uniCliServerClient;
+    if (!uniCliClient) return;
     const entries = [...resolvedEnvEntries];
     if (entries.length === 0) {
       entries.push(
@@ -662,29 +662,29 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
       if (baseUrl) entries.push({ key: "UNICLI_INFERENCE_BASE_URL", value: baseUrl });
     }
     if (entries.length === 0) return;
-    await uni-cliClient.upsertUserEnv(entries);
+    await uniCliClient.upsertUserEnv(entries);
   };
 
-  const readWorkspaceuni-cliConfigRecord = async (): Promise<
+  const readWorkspaceuniCliConfigRecord = async (): Promise<
     Record<string, unknown>
   > => {
     const root = options.selectedWorkspaceRoot().trim();
     const isLocalWorkspace =
       options.selectedWorkspaceDisplay().workspaceType === "local";
-    const { uni-cliClient, uni-cliWorkspaceId, hasuni-cliTarget, canUseuni-cliServer } =
-      await resolveuni-cliConfigTarget("read");
+    const { uniCliClient, uniCliWorkspaceId, hasuniCliTarget, canUseuniCliServer } =
+      await resolveuniCliConfigTarget("read");
 
-    if (canUseuni-cliServer && uni-cliClient && uni-cliWorkspaceId) {
-      const config = await uni-cliClient.getConfig(uni-cliWorkspaceId);
+    if (canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
+      const config = await uniCliClient.getConfig(uniCliWorkspaceId);
       return config.uni-cli ?? {};
     }
 
-    if (hasuni-cliTarget) {
+    if (hasuniCliTarget) {
       return {};
     }
 
     if (isLocalWorkspace && isDesktopRuntime() && root) {
-      return (await workspaceuni-cliRead({
+      return (await workspaceuniCliRead({
         workspacePath: root,
       })) as unknown as Record<string, unknown>;
     }
@@ -692,28 +692,28 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
     return {};
   };
 
-  const writeWorkspaceuni-cliConfigRecord = async (
+  const writeWorkspaceuniCliConfigRecord = async (
     config: Record<string, unknown>,
     isCurrent = () => true,
   ) => {
     const root = options.selectedWorkspaceRoot().trim();
     const isLocalWorkspace =
       options.selectedWorkspaceDisplay().workspaceType === "local";
-    const { uni-cliClient, uni-cliWorkspaceId, hasuni-cliTarget, canUseuni-cliServer } =
-      await resolveuni-cliConfigTarget("write");
+    const { uniCliClient, uniCliWorkspaceId, hasuniCliTarget, canUseuniCliServer } =
+      await resolveuniCliConfigTarget("write");
     if (!isCurrent()) return false;
 
-    if (canUseuni-cliServer && uni-cliClient && uni-cliWorkspaceId) {
-      await uni-cliClient.patchConfig(uni-cliWorkspaceId, { uni-cli: config });
+    if (canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
+      await uniCliClient.patchConfig(uniCliWorkspaceId, { uni-cli: config });
       return true;
     }
 
-    if (hasuni-cliTarget) {
+    if (hasuniCliTarget) {
       return false;
     }
 
     if (isLocalWorkspace && isDesktopRuntime() && root) {
-      const result = await workspaceuni-cliWrite({
+      const result = await workspaceuniCliWrite({
         workspacePath: root,
         config: config as never,
       });
@@ -733,7 +733,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
     currentWorkspaceKey(),
     options.selectedWorkspaceDisplay().workspaceType,
     options.providerBaseUrl(),
-    options.uni-cliServer.getSnapshot().uni-cliServerClient?.baseUrl,
+    options.uniCliServer.getSnapshot().uniCliServerClient?.baseUrl,
   ]);
 
   const refreshImportedCloudProviders = async (refreshOptions?: { strict?: boolean; verifiedScope?: number }) => {
@@ -741,9 +741,9 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
       if (serverHandlesProviderSync()) {
         const delivery = syncDenSessionDelivery();
         const contextKey = getCloudProviderSyncContextKey();
-        const uni-cliClient = options.uni-cliServer.getSnapshot().uni-cliServerClient;
-        if (!uni-cliClient) throw new Error("Uni-CLI server unavailable.");
-        const status = await uni-cliClient.getCloudProviderSyncStatus();
+        const uniCliClient = options.uniCliServer.getSnapshot().uniCliServerClient;
+        if (!uniCliClient) throw new Error("Uni-CLI server unavailable.");
+        const status = await uniCliClient.getCloudProviderSyncStatus();
         if (!isCurrentDenSessionDelivery(delivery) || contextKey !== getCloudProviderSyncContextKey()) return state.importedCloudProviders;
         const next = Object.fromEntries(status.providers.map((provider) => [provider.cloudProviderId, provider]));
         if (status.hasSession && refreshOptions?.verifiedScope === readGatewayUsageScope().generation) {
@@ -773,7 +773,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
       const generation = cloudOrgProvidersGeneration;
       const contextKey = getCloudProviderSyncContextKey();
       const workspaceKey = cloudImportWorkspaceKey();
-      const config = await readWorkspaceuni-cliConfigRecord();
+      const config = await readWorkspaceuniCliConfigRecord();
       const cloudImports = readWorkspaceCloudImports(config);
       const next = cloudImports.providers;
       if (
@@ -818,7 +818,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
     nextProviders: Record<string, CloudImportedProvider>,
     isCurrent = () => true,
   ) => {
-    const config = await readWorkspaceuni-cliConfigRecord();
+    const config = await readWorkspaceuniCliConfigRecord();
     if (!isCurrent()) return;
     const cloudImports = readWorkspaceCloudImports(config);
     const nextCloudImports = {
@@ -828,7 +828,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
     const nextConfig = withWorkspaceCloudImports(config, {
       ...nextCloudImports,
     });
-    const persisted = await writeWorkspaceuni-cliConfigRecord(nextConfig, isCurrent);
+    const persisted = await writeWorkspaceuniCliConfigRecord(nextConfig, isCurrent);
     if (!isCurrent()) return;
     if (!persisted) {
       throw new Error(
@@ -842,14 +842,14 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
     const root = options.selectedWorkspaceRoot().trim();
     const isLocalWorkspace =
       options.selectedWorkspaceDisplay().workspaceType === "local";
-    const { uni-cliClient, uni-cliWorkspaceId, hasuni-cliTarget, canUseuni-cliServer } =
-      await resolveuni-cliConfigTarget("read");
+    const { uniCliClient, uniCliWorkspaceId, hasuniCliTarget, canUseuniCliServer } =
+      await resolveuniCliConfigTarget("read");
 
-    if (canUseuni-cliServer && uni-cliClient && uni-cliWorkspaceId) {
-      return await uni-cliClient.readOpencodeConfigFile(uni-cliWorkspaceId, "project");
+    if (canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
+      return await uniCliClient.readOpencodeConfigFile(uniCliWorkspaceId, "project");
     }
 
-    if (hasuni-cliTarget) {
+    if (hasuniCliTarget) {
       throw new Error("Uni-CLI server config API is unavailable for this workspace.");
     }
 
@@ -864,13 +864,13 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
     const root = options.selectedWorkspaceRoot().trim();
     const isLocalWorkspace =
       options.selectedWorkspaceDisplay().workspaceType === "local";
-    const { uni-cliClient, uni-cliWorkspaceId, hasuni-cliTarget, canUseuni-cliServer } =
-      await resolveuni-cliConfigTarget("write");
+    const { uniCliClient, uniCliWorkspaceId, hasuniCliTarget, canUseuniCliServer } =
+      await resolveuniCliConfigTarget("write");
     if (!isCurrent()) return false;
 
-    if (canUseuni-cliServer && uni-cliClient && uni-cliWorkspaceId) {
-      const result = await uni-cliClient.writeOpencodeConfigFile(
-        uni-cliWorkspaceId,
+    if (canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
+      const result = await uniCliClient.writeOpencodeConfigFile(
+        uniCliWorkspaceId,
         "project",
         content,
       ) as { ok: boolean; stderr?: string; stdout?: string };
@@ -880,7 +880,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
       return true;
     }
 
-    if (hasuni-cliTarget) {
+    if (hasuniCliTarget) {
       throw new Error("Uni-CLI server config API is unavailable for this workspace.");
     }
 
@@ -902,13 +902,13 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
    * is no read-modify-write race and no edit of the user's opencode.jsonc.
    */
   const patchRuntimeProviders = async (update: Record<string, unknown>, isCurrent = () => true) => {
-    const { uni-cliClient, uni-cliWorkspaceId, canUseuni-cliServer } =
-      await resolveuni-cliConfigTarget("write");
+    const { uniCliClient, uniCliWorkspaceId, canUseuniCliServer } =
+      await resolveuniCliConfigTarget("write");
     if (!isCurrent()) return;
-    if (!canUseuni-cliServer || !uni-cliClient || !uni-cliWorkspaceId) {
+    if (!canUseuniCliServer || !uniCliClient || !uniCliWorkspaceId) {
       throw new Error("Uni-CLI server unavailable. Connect to manage cloud providers.");
     }
-    await uni-cliClient.patchConfig(uni-cliWorkspaceId, {
+    await uniCliClient.patchConfig(uniCliWorkspaceId, {
       opencode: { provider: update },
     });
   };
@@ -917,18 +917,18 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
     providerUpdate: Record<string, unknown>,
     nextProviders: Record<string, CloudImportedProvider>,
   ) => {
-    const { uni-cliClient, uni-cliWorkspaceId, canUseuni-cliServer } =
-      await resolveuni-cliConfigTarget("write");
-    if (!canUseuni-cliServer || !uni-cliClient || !uni-cliWorkspaceId) {
+    const { uniCliClient, uniCliWorkspaceId, canUseuniCliServer } =
+      await resolveuniCliConfigTarget("write");
+    if (!canUseuniCliServer || !uniCliClient || !uniCliWorkspaceId) {
       throw new Error("Uni-CLI server unavailable. Connect to manage cloud providers.");
     }
-    const config = await readWorkspaceuni-cliConfigRecord();
+    const config = await readWorkspaceuniCliConfigRecord();
     const cloudImports = readWorkspaceCloudImports(config);
     const nextConfig = withWorkspaceCloudImports(config, {
       ...cloudImports,
       providers: nextProviders,
     });
-    await uni-cliClient.patchConfig(uni-cliWorkspaceId, {
+    await uniCliClient.patchConfig(uniCliWorkspaceId, {
       opencode: { provider: providerUpdate },
       uni-cli: nextConfig,
     });
@@ -979,10 +979,10 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
     }
 
     const c = options.client();
-    const uni-cliSnapshot = options.uni-cliServer.getSnapshot();
+    const uniCliSnapshot = options.uniCliServer.getSnapshot();
     const workspaceId = options.runtimeWorkspaceId();
     const workspaceType = options.selectedWorkspaceDisplay().workspaceType;
-    const canUseManagedRuntime = Boolean(uni-cliSnapshot.uni-cliServerClient && workspaceId?.trim() && workspaceType === "local");
+    const canUseManagedRuntime = Boolean(uniCliSnapshot.uniCliServerClient && workspaceId?.trim() && workspaceType === "local");
     if (!c && !canUseManagedRuntime) {
       throw new Error(t("providers.not_connected"));
     }
@@ -990,7 +990,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
     const next = fallbackUpdate(config);
     await updateManagedDisabledProviders({
       opencodeClient: c,
-      uni-cliClient: uni-cliSnapshot.uni-cliServerClient,
+      uniCliClient: uniCliSnapshot.uniCliServerClient,
       workspaceId,
       workspaceType,
       disabledProviders: next.disabled_providers,
@@ -1063,7 +1063,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
     // the user's opencode.jsonc. Fall back to project config only when the
     // managed runtime endpoint is unavailable.
     const c = options.client();
-    const uni-cliSnapshot = options.uni-cliServer.getSnapshot();
+    const uniCliSnapshot = options.uniCliServer.getSnapshot();
     const workspaceId = options.runtimeWorkspaceId();
     const workspaceType = options.selectedWorkspaceDisplay().workspaceType;
     // Before the first workspace exists the client reaches the engine root,
@@ -1073,13 +1073,13 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
       return false;
     }
     const canUseManagedRuntime = Boolean(
-      uni-cliSnapshot.uni-cliServerClient && workspaceId?.trim() && workspaceType === "local",
+      uniCliSnapshot.uniCliServerClient && workspaceId?.trim() && workspaceType === "local",
     );
 
     if (canUseManagedRuntime || c) {
       const result = await updateManagedDisabledProviders({
         opencodeClient: c,
-        uni-cliClient: uni-cliSnapshot.uni-cliServerClient,
+        uniCliClient: uniCliSnapshot.uniCliServerClient,
         workspaceId,
         workspaceType,
         disabledProviders: nextDisabled,
@@ -1147,10 +1147,10 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
 
     // Runtime-managed orphans (`lpr_*` keys in the workspace runtime config).
     try {
-      const { uni-cliClient, uni-cliWorkspaceId, canUseuni-cliServer } =
-        await resolveuni-cliConfigTarget("write");
-      if (canUseuni-cliServer && uni-cliClient && uni-cliWorkspaceId) {
-        const merged = await uni-cliClient.getConfig(uni-cliWorkspaceId);
+      const { uniCliClient, uniCliWorkspaceId, canUseuniCliServer } =
+        await resolveuniCliConfigTarget("write");
+      if (canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
+        const merged = await uniCliClient.getConfig(uniCliWorkspaceId);
         const runtimeProvider = isRecord(merged.opencode) ? merged.opencode.provider : null;
         const runtimeOrphans = isRecord(runtimeProvider)
           ? Object.keys(runtimeProvider).filter((key) => /^lpr_/i.test(key))
@@ -1704,7 +1704,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
     const force = Boolean(optionsArg?.dispose || optionsArg?.force || state.providerLoadState.error);
     setStateField("providerLoadState", { status: "loading", error: state.providerLoadState.error });
 
-    const serverClient = options.uni-cliServer.getSnapshot().uni-cliServerClient;
+    const serverClient = options.uniCliServer.getSnapshot().uniCliServerClient;
     const liveCatalog = optionsArg?.dispose && serverClient && options.selectedWorkspaceDisplay().workspaceType !== "remote"
       ? await serverClient.getEngineV2PreviewStatus().then(status => status.enabled && status.chatRouting).catch(() => false)
       : false;
@@ -1724,19 +1724,19 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
         lastGlobalProviderDisposeRefreshAt = now;
         if (shouldUseServerReload) {
           try {
-            const uni-cliSnapshot = options.uni-cliServer.getSnapshot();
-            const uni-cliClient = uni-cliSnapshot.uni-cliServerClient;
-            if (uni-cliSnapshot.uni-cliServerStatus === "connected" && uni-cliClient) {
+            const uniCliSnapshot = options.uniCliServer.getSnapshot();
+            const uniCliClient = uniCliSnapshot.uniCliServerClient;
+            if (uniCliSnapshot.uniCliServerStatus === "connected" && uniCliClient) {
               const workspaceId =
                 options.runtimeWorkspaceId()?.trim() ||
                 (await options.ensureRuntimeWorkspaceId?.())?.trim() ||
                 "";
               if (workspaceId) {
                 try {
-                  await uni-cliClient.reloadEngine(workspaceId);
+                  await uniCliClient.reloadEngine(workspaceId);
                 } catch (error) {
                   const unreachable =
-                    error instanceof uni-cliServerError && error.code === "opencode_engine_unreachable";
+                    error instanceof uniCliServerError && error.code === "opencode_engine_unreachable";
                   if (!unreachable || !isDesktopRuntime()) {
                     throw error;
                   }
@@ -1771,7 +1771,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
     try {
       const disabledProviders = await readManagedDisabledProviders({
         opencodeClient: activeClient,
-        uni-cliClient: options.uni-cliServer.getSnapshot().uni-cliServerClient,
+        uniCliClient: options.uniCliServer.getSnapshot().uniCliServerClient,
         workspaceId: options.runtimeWorkspaceId(),
         workspaceType: options.selectedWorkspaceDisplay().workspaceType,
       });
@@ -1954,15 +1954,15 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
       await assertCloudProviderImportSafe(provider);
 
       if (envEntries.length > 0) {
-        const uni-cliClient = options.uni-cliServer.getSnapshot().uni-cliServerClient;
-        if (!uni-cliClient) {
+        const uniCliClient = options.uniCliServer.getSnapshot().uniCliServerClient;
+        if (!uniCliClient) {
           throw new CloudProviderNeedsServerError(
             `${provider.name} needs environment variables (${envEntries
               .map((entry) => entry.key)
               .join(", ")}) but the Uni-CLI server is not available.`,
           );
         }
-        await uni-cliClient.upsertUserEnv(envEntries);
+        await uniCliClient.upsertUserEnv(envEntries);
       }
       if (primaryApiKey) {
         await c.auth.set({
@@ -2221,14 +2221,14 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
     // the target resolves made the baseline read fall back to an empty source
     // and re-import every org provider — engine dispose churn on settings open.
     const [readTarget, target] = await Promise.all([
-      resolveuni-cliConfigTarget("read"),
-      resolveuni-cliConfigTarget("write"),
+      resolveuniCliConfigTarget("read"),
+      resolveuniCliConfigTarget("write"),
     ]);
     if (
-      !readTarget.canUseuni-cliServer ||
-      !target.canUseuni-cliServer ||
-      !target.uni-cliClient ||
-      !target.uni-cliWorkspaceId
+      !readTarget.canUseuniCliServer ||
+      !target.canUseuniCliServer ||
+      !target.uniCliClient ||
+      !target.uniCliWorkspaceId
     ) {
       return;
     }
@@ -2377,9 +2377,9 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
 
   async function startGatewayProviderOAuth(providerId: string, credentialSetId?: string, signal?: AbortSignal) {
     const orgId = readDenSettings().activeOrgId;
-    const client = options.uni-cliServer.getSnapshot().uni-cliServerClient;
+    const client = options.uniCliServer.getSnapshot().uniCliServerClient;
     if (!orgId || !client) throw new Error("Sign in to Uni-CLI before connecting this provider.");
-    if (getuni-cliGatewayOrigin()) throw new Error("Open My Model Connections in Den to connect your Google account, then refresh models here.");
+    if (getuniCliGatewayOrigin()) throw new Error("Open My Model Connections in Den to connect your Google account, then refresh models here.");
     const contextKey = getCloudProviderSyncContextKey();
     const isCurrent = () => !disposed && !signal?.aborted && contextKey === getCloudProviderSyncContextKey();
     if (!isCurrent() || !await pushDenSession() || !isCurrent()) {
@@ -2416,7 +2416,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
       }
       // The trusted local server needs the session before the engine or
       // workspace is ready. Provider materialization still waits for both.
-      if (delivery && !getuni-cliGatewayOrigin()) {
+      if (delivery && !getuniCliGatewayOrigin()) {
         try {
           await pushDenSession("identity");
         } catch (error) {
@@ -2425,7 +2425,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
       }
       return;
     }
-    if (getuni-cliGatewayOrigin()) {
+    if (getuniCliGatewayOrigin()) {
       await refreshUsageOnly();
       if (!isCurrent()) return;
       if (!loggedGatewayCloudProviderSyncSkip) {
@@ -2448,16 +2448,16 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
           `server:${contextKey}`,
           async () => {
             if (!isCurrent()) return;
-            const uni-cliClient = options.uni-cliServer.getSnapshot().uni-cliServerClient;
-            if (!uni-cliClient) throw new Error("Uni-CLI server unavailable.");
+            const uniCliClient = options.uniCliServer.getSnapshot().uniCliServerClient;
+            if (!uniCliClient) throw new Error("Uni-CLI server unavailable.");
             // An old server session can still return noop after a failed token
             // refresh. Delivery must succeed before every run, not just no_session.
             if (!await pushDenSession() || !isCurrent()) return;
-            let result = await uni-cliClient.runCloudProviderSyncNow(reason, delivery?.controller.signal);
+            let result = await uniCliClient.runCloudProviderSyncNow(reason, delivery?.controller.signal);
             if (!isCurrent()) return;
             if (result.status === "no_session") {
               if (!await pushDenSession("sync", true) || !isCurrent()) return;
-              result = await uni-cliClient.runCloudProviderSyncNow(reason, delivery?.controller.signal);
+              result = await uniCliClient.runCloudProviderSyncNow(reason, delivery?.controller.signal);
             }
             if (isCurrent()) void refreshGatewayUsageAfterCloudSync(usageScope);
             return result;
@@ -2801,7 +2801,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
             const isCurrent = () => !disposed && generation === cloudOrgProvidersGeneration && workspaceKey === currentWorkspaceKey();
             setStateField("importedCloudProviders", {});
             void (async () => {
-              const cleared = await options.uni-cliServer.getSnapshot().uni-cliServerClient?.deleteDenSession().then(() => true, () => false);
+              const cleared = await options.uniCliServer.getSnapshot().uniCliServerClient?.deleteDenSession().then(() => true, () => false);
               if (!isCurrent()) return;
               // The server removes cloud-owned environment entries from disk,
               // but a running OpenCode child retains its spawn environment.
@@ -2910,7 +2910,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
       ) return;
       if (serverHandlesProviderSync()) {
         if (!readDenSettings().authToken?.trim()) {
-          void options.uni-cliServer.getSnapshot().uni-cliServerClient?.deleteDenSession().catch(() => undefined);
+          void options.uniCliServer.getSnapshot().uniCliServerClient?.deleteDenSession().catch(() => undefined);
         }
         return;
       }

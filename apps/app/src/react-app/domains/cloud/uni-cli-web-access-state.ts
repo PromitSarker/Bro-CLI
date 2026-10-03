@@ -1,22 +1,22 @@
-import type { DenUni-CLIWebAccessSource } from "../../../app/lib/den";
+import type { DenUniCliWebAccessSource } from "../../../app/lib/den";
 
-export type Uni-CLIWebAccessCheck = {
+export type UniCliWebAccessCheck = {
   scope: string;
   state: "granted" | "denied" | "error";
-  accessSource: DenUni-CLIWebAccessSource;
+  accessSource: DenUniCliWebAccessSource;
 };
 
-export type Uni-CLIWebAccessGateState = "inactive" | "checking" | "granted" | "denied" | "error";
+export type UniCliWebAccessGateState = "inactive" | "checking" | "granted" | "denied" | "error";
 
-export function resolveUni-CLIWebAccessGateState(input: {
+export function resolveUniCliWebAccessGateState(input: {
   gatewayMode: boolean;
   authStatus: "checking" | "signed_in" | "unavailable" | "signed_out";
   authToken: string;
   organizationId: string;
   verifiedIdentity: { principalId: string; organizationId: string } | null;
   expectedScope: string | null;
-  check: Uni-CLIWebAccessCheck | null;
-}): Uni-CLIWebAccessGateState {
+  check: UniCliWebAccessCheck | null;
+}): UniCliWebAccessGateState {
   if (!input.gatewayMode || !input.authToken || !input.organizationId) return "inactive";
   if (input.authStatus === "unavailable") return "error";
   if (input.authStatus !== "signed_in") return "checking";

@@ -23,7 +23,7 @@ function sanitizeContext(input: FeedbackContext | undefined) {
     entrypoint: sanitizeValue(input?.entrypoint),
     deployment: sanitizeValue(input?.deployment),
     appVersion: sanitizeValue(input?.appVersion),
-    uni-cliServerVersion: sanitizeValue(input?.uni-cliServerVersion),
+    uniCliServerVersion: sanitizeValue(input?.uniCliServerVersion),
     opencodeVersion: sanitizeValue(input?.opencodeVersion),
     osName: sanitizeValue(input?.osName),
     osVersion: sanitizeValue(input?.osVersion),

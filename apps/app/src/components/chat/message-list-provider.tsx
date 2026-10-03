@@ -8,7 +8,7 @@ import type {
 } from "@/components/tools/error-attribution"
 import * as React from "react"
 import type { ConnectorToolIdentity } from "@/react-app/domains/connections/connector-tool-identity"
-import type { uni-cliServerClient } from "@/app/lib/uni-cli-server"
+import type { uniCliServerClient } from "@/app/lib/uni-cli-server"
 import type { McpAppOrigin } from "./mcp-app-origin"
 import type { ChatConnectionDecisionBinding } from "@/react-app/domains/session/surface/mcp-chat-reconnect"
 
@@ -55,7 +55,7 @@ interface MessageListContextValue {
 const MessageListContext = React.createContext<MessageListContextValue | null>(null)
 
 interface MessageListProviderProps {
-  client?: uni-cliServerClient
+  client?: uniCliServerClient
   mcpAppEngine?: "v1" | "v2"
   readOnly?: boolean
   children: React.ReactNode

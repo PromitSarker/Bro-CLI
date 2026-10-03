@@ -28,7 +28,7 @@ const cli = join(packageRoot, "bin", "uni-cli.mjs")
 const temp = mkdtempSync(join(tmpdir(), "uni-cli-bootstrap-e2e-"))
 const installDir = join(temp, "install")
 const binDir = join(temp, "bin")
-const installeduni-cli = join(binDir, process.platform === "win32" ? "uni-cli-bootstrap.cmd" : "uni-cli-bootstrap")
+const installeduniCli = join(binDir, process.platform === "win32" ? "uni-cli-bootstrap.cmd" : "uni-cli-bootstrap")
 const outDir = join(repoRoot, "evals", "results", "uni-cli-bootstrap-cli")
 mkdirSync(outDir, { recursive: true })
 
@@ -84,9 +84,9 @@ try {
     action: "node bin/uni-cli.mjs install --install-dir <tmp> --bin-dir <tmp>/bin --json",
     assert: "exit 0 and installed executable path returned",
     evidence: { status: install.status, body: install.json },
-  }, install.status === 0 && install.json?.ok === true && install.json?.install?.executable === installeduni-cli)
+  }, install.status === 0 && install.json?.ok === true && install.json?.install?.executable === installeduniCli)
 
-  const doctor = run(installeduni-cli, ["doctor", "--install-dir", installDir, "--bin-dir", binDir, "--base-url", baseUrl, "--json"])
+  const doctor = run(installeduniCli, ["doctor", "--install-dir", installDir, "--bin-dir", binDir, "--base-url", baseUrl, "--json"])
   prove("The installed CLI can doctor itself and the Den API", {
     action: "uni-cli doctor --base-url <live-den-api> --json",
     assert: "exit 0, local install checks pass, and Den API health passes",
@@ -97,7 +97,7 @@ try {
   const inviteEmail = `teammate-${runId}@example.com`
   const orgName = `Bootstrap CLI Org ${runId}`
   const skillName = `Bootstrap Skill ${runId}`
-  const onboard = run(installeduni-cli, [
+  const onboard = run(installeduniCli, [
     "cloud",
     "onboard",
     "--base-url",

@@ -88,7 +88,7 @@ export async function permissionPressure(seed: Seed, context: { place: Place }) 
     } },
   });
   const server = await evaluate(app.client, async () => {
-    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
     if (!info.running || !info.baseUrl) throw new Error("Isolated fixture server unavailable");
     return { baseUrl: info.baseUrl, token: info.ownerToken ?? info.clientToken };
   }, { awaitPromise: true, timeoutMs: 5_000 });

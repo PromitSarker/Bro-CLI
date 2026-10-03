@@ -15,9 +15,9 @@ import { openDesktopUrl } from "@/app/lib/desktop"
 import { mcpAppDiscoverySignature } from "@/app/lib/mcp-app-discovery-scheduler"
 import { scheduleCachedMcpAppDiscovery } from "@/app/lib/mcp-app-presentation-cache"
 import {
-  uni-cliServerError,
-  type uni-cliMcpAppLaunchReference,
-  type uni-cliMcpAppResource,
+  uniCliServerError,
+  type uniCliMcpAppLaunchReference,
+  type uniCliMcpAppResource,
 } from "@/app/lib/uni-cli-server"
 import { useOptionalMessageList } from "./message-list-provider"
 import { createMcpAppActions, type McpAppOrigin } from "./mcp-app-origin"
@@ -148,7 +148,7 @@ export function builtMcpAppId(part: DynamicToolUIPart): string | null {
   return app && launch?.connectionId === app.appId && launch.toolName === "open_app" ? app.appId : null
 }
 
-export function gatewayMcpAppLaunch(meta: unknown): uni-cliMcpAppLaunchReference | null {
+export function gatewayMcpAppLaunch(meta: unknown): uniCliMcpAppLaunchReference | null {
   if (!isRecord(meta) || !isRecord(meta["uni-cli/mcpApp"])) return null
   const launch = meta["uni-cli/mcpApp"]
   if ((launch.connectionId !== undefined && typeof launch.connectionId !== "string")
@@ -163,7 +163,7 @@ export function gatewayMcpAppLaunch(meta: unknown): uni-cliMcpAppLaunchReference
   }
 }
 
-export function buildMcpAppCsp(app: uni-cliMcpAppResource): string {
+export function buildMcpAppCsp(app: uniCliMcpAppResource): string {
   const resources = app.csp.resourceDomains.join(" ")
   const withResources = (source: string) => resources ? `${source} ${resources}` : source
   const sourceList = (values: string[]) => values.length ? values.join(" ") : "'none'"
@@ -186,7 +186,7 @@ function escapeAttribute(value: string): string {
   return value.replaceAll("&", "&amp;").replaceAll('"', "&quot;")
 }
 
-export function secureMcpAppHtml(app: uni-cliMcpAppResource): string {
+export function secureMcpAppHtml(app: uniCliMcpAppResource): string {
   const meta = `<meta http-equiv="Content-Security-Policy" content="${escapeAttribute(buildMcpAppCsp(app))}">`
   const html = /<html(?:\s[^>]*)?>/i.exec(app.html)
   if (html?.index !== undefined) {
@@ -258,7 +258,7 @@ function hostStyleVariables(): McpUiStyles {
 }
 
 export function isActionableMcpAppResolutionError(cause: unknown): boolean {
-  return cause instanceof uni-cliServerError && ACTIONABLE_MCP_APP_RESOLUTION_CODES.has(cause.code)
+  return cause instanceof uniCliServerError && ACTIONABLE_MCP_APP_RESOLUTION_CODES.has(cause.code)
 }
 
 function isRetiredFirstPartyConfirmation(toolName: string, result: PreservedMcpAppResult | null): boolean {
@@ -308,9 +308,9 @@ export function McpAppDiagnosticNotice({ error, notice, onRetry }: { error: McpA
 
 export type McpAppSandboxViewProps = {
   origin: McpAppOrigin
-  app: uni-cliMcpAppResource
+  app: uniCliMcpAppResource
   /** A cached Dashboard may paint now, but its tools must await a fresh, access-checked lease. */
-  resolveLiveActions?: () => Promise<{ origin: McpAppOrigin; app: uni-cliMcpAppResource }>
+  resolveLiveActions?: () => Promise<{ origin: McpAppOrigin; app: uniCliMcpAppResource }>
   /** Tool name used for host diagnostics and the iframe title. */
   toolName: string
   /** Arguments the host reports to the app as its launch input. */
@@ -340,7 +340,7 @@ export type McpAppSandboxViewProps = {
  * share this exact pipeline so rendering and diagnostics stay identical.
  */
 export function McpAppSandboxView({ origin, app, resolveLiveActions, toolName, inputArguments, result, connectionController, updateMode = "replace", onReady, unavailableNotice, onRequestTeardown, initialHeight, onHeightChange, presentation = "inline", onError, onRetry }: McpAppSandboxViewProps) {
-  const uni-cliServerClient = origin.client
+  const uniCliServerClient = origin.client
   const workspaceId = origin.workspaceId
   const readOnly = origin.readOnly
   const iframeRef = useRef<HTMLIFrameElement>(null)
@@ -381,7 +381,7 @@ export function McpAppSandboxView({ origin, app, resolveLiveActions, toolName, i
 
   useLayoutEffect(() => {
     const iframe = iframeRef.current
-    if (!iframe || !iframe.contentWindow || !uni-cliServerClient || !workspaceId) return
+    if (!iframe || !iframe.contentWindow || !uniCliServerClient || !workspaceId) return
     let disposed = false
     let actions = createMcpAppActions(origin, app)
     let liveActions: Promise<void> | undefined
@@ -424,7 +424,7 @@ export function McpAppSandboxView({ origin, app, resolveLiveActions, toolName, i
         "This artifact has no live launch context. Update Uni-CLI and reopen the artifact before using its actions.")
       return
     }
-    const sandbox = uni-cliServerClient.mcpAppSandbox(app, window.location.origin)
+    const sandbox = uniCliServerClient.mcpAppSandbox(app, window.location.origin)
     if (sandbox.expectedOrigin === window.location.origin) {
       fail(
         "MCP_APP_SANDBOX_ORIGIN_INVALID",
@@ -529,7 +529,7 @@ export function McpAppSandboxView({ origin, app, resolveLiveActions, toolName, i
         if (connectionController) return await connectionController.callTool(actions, app, name, args, userInteraction)
         return standardMcpToolResult(await actions.callTool(name, args, userInteraction))
       } catch (cause) {
-        if (cause instanceof uni-cliServerError && ["missing_launch_context", "stale_launch_context", "inactive_session"].includes(cause.code)) {
+        if (cause instanceof uniCliServerError && ["missing_launch_context", "stale_launch_context", "inactive_session"].includes(cause.code)) {
           fail("MCP_APP_LAUNCH_CONTEXT_STALE", "resource-resolution", cause, "Reopen the artifact in its original conversation before trying again.")
         }
         throw cause
@@ -754,7 +754,7 @@ export function McpAppSandboxView({ origin, app, resolveLiveActions, toolName, i
       disposed = true
       stopSandbox?.()
     }
-  }, [app, replacementInput, uni-cliServerClient, replacementResult, toolName, workspaceId, readOnly, origin, origin.sessionId, origin.engine, presentation, updateMode, connectionController, retryAttempt, resolveLiveActions])
+  }, [app, replacementInput, uniCliServerClient, replacementResult, toolName, workspaceId, readOnly, origin, origin.sessionId, origin.engine, presentation, updateMode, connectionController, retryAttempt, resolveLiveActions])
 
   if (error) return <McpAppDiagnosticNotice error={error} notice={unavailableNotice} onRetry={onRetry ?? (() => {
     setError(null)
@@ -807,7 +807,7 @@ function EmbeddedMcpAppFrame({ part, origin: surfaceOrigin }: { part: DynamicToo
   const nextOrigin = surfaceOrigin ?? context?.mcpAppOrigin ?? null
   const { uiStateOwner, readOnly, getConnectionDecision, onMcpReconnect } = context ?? {}
   const origin = useMemo(() => nextOrigin, [nextOrigin?.client, nextOrigin?.workspaceId, nextOrigin?.sessionId, nextOrigin?.engine, nextOrigin?.readOnly])
-  const uni-cliServerClient = origin?.client
+  const uniCliServerClient = origin?.client
   const workspaceId = origin?.workspaceId
   const nextResult = preservedResult(part)
   const nextResultSignature = mcpAppDiscoverySignature(nextResult)
@@ -845,8 +845,8 @@ function EmbeddedMcpAppFrame({ part, origin: surfaceOrigin }: { part: DynamicToo
       connectionId: initialConnectionId, current: () => hostRef.current }) : null,
   [scope, source, part.toolCallId, initialConnectionId])
   connectionController?.observeBinding()
-  const [app, setApp] = useState<uni-cliMcpAppResource | null>(null)
-  const [previewActions, setPreviewActions] = useState<(() => Promise<{ origin: McpAppOrigin; app: uni-cliMcpAppResource }>) | undefined>()
+  const [app, setApp] = useState<uniCliMcpAppResource | null>(null)
+  const [previewActions, setPreviewActions] = useState<(() => Promise<{ origin: McpAppOrigin; app: uniCliMcpAppResource }>) | undefined>()
   // The sandbox rebuilds whenever its origin identity changes; keep the inert
   // preview origin stable across unrelated re-renders.
   const previewOrigin = useMemo(() => origin ? { ...origin, readOnly: true } : origin, [origin])
@@ -870,19 +870,19 @@ function EmbeddedMcpAppFrame({ part, origin: surfaceOrigin }: { part: DynamicToo
   useEffect(() => {
     let cancelled = false
     let previewActive = true
-    const live = Promise.withResolvers<{ origin: McpAppOrigin; app: uni-cliMcpAppResource }>()
+    const live = Promise.withResolvers<{ origin: McpAppOrigin; app: uniCliMcpAppResource }>()
     // Discovery failure retires the preview through the existing error state.
     void live.promise.catch(() => undefined)
     let launchId: string | undefined
     const release = () => {
-      if (launchId && uni-cliServerClient && workspaceId) {
-        void uni-cliServerClient.releaseMcpApp(workspaceId, launchId).catch(() => undefined)
+      if (launchId && uniCliServerClient && workspaceId) {
+        void uniCliServerClient.releaseMcpApp(workspaceId, launchId).catch(() => undefined)
       }
     }
     setApp(null)
     setPreviewActions(undefined)
     setError(null)
-    if (draft || !result || !uni-cliServerClient || !workspaceId || !origin) return () => { cancelled = true }
+    if (draft || !result || !uniCliServerClient || !workspaceId || !origin) return () => { cancelled = true }
     const startedAt = performance.now()
     const checkpoints = ["resolve-started"]
     const manual = consumedRetryToken.current !== resolveToken
@@ -910,7 +910,7 @@ function EmbeddedMcpAppFrame({ part, origin: surfaceOrigin }: { part: DynamicToo
           if (launch || isActionableMcpAppResolutionError(cause)) {
             const diagnostic: McpAppDiagnostic = {
               code: "MCP_APP_RESOURCE_RESOLUTION_FAILED",
-              ...(cause instanceof uni-cliServerError ? { causeCode: cause.code } : {}),
+              ...(cause instanceof uniCliServerError ? { causeCode: cause.code } : {}),
               stage: "resource-resolution",
               message: safeMcpAppDiagnosticMessage(cause, "The interactive view resource could not be resolved."),
               toolName: part.toolName,
@@ -937,7 +937,7 @@ function EmbeddedMcpAppFrame({ part, origin: surfaceOrigin }: { part: DynamicToo
       cancelDiscovery()
       release()
     }
-  }, [draft, launch, uni-cliServerClient, part.toolName, result, workspaceId, origin, resolution])
+  }, [draft, launch, uniCliServerClient, part.toolName, result, workspaceId, origin, resolution])
 
   if (draft) return <AppChatArtifact key={`${draft.appId}:${draft.revisionId}:${draft.receiptId}`} {...draft} />
   const viewId = result?._meta?.artifactViewId

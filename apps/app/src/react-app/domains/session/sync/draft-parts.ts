@@ -25,7 +25,7 @@ import { decodeComposerMentionValue } from "../surface/composer/mention-encoding
 
 /** Pasted text reaches the model as the user's words and stays collapsed in the transcript. */
 function pastedTextPart(text: string): TextPartInput {
-  return { type: "text", text, metadata: { uni-cliPastedText: true } };
+  return { type: "text", text, metadata: { uniCliPastedText: true } };
 }
 
 // All workspace-scoped server URLs/clients/tokens come from

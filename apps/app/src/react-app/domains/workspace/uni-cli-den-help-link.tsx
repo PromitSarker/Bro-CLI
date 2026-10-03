@@ -20,7 +20,7 @@ const SUPPORT_MAILTO = `mailto:${SUPPORT_EMAIL}?subject=Uni-CLI%20Den%20remote%2
  * it opens a dialog explaining the Uni-CLI Den upgrade situation and how to
  * reach support.
  */
-export function Uni-CLIDenHelpLink() {
+export function UniCliDenHelpLink() {
   const [open, setOpen] = useState(false);
 
   return (

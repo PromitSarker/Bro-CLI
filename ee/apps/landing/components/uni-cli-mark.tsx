@@ -4,7 +4,7 @@ type Props = {
   className?: string;
 };
 
-export function Uni-CLIMark(props: Props) {
+export function UniCliMark(props: Props) {
   return (
     <Image
       src="/uni-cli-mark.svg"

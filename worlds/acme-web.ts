@@ -77,7 +77,7 @@ export async function bootAcmeWeb(stack: AsyncDisposableStack, preview?: { app: 
     },
   });
   stack.adopt(web, (owned) => owned.stop());
-  const synced = await fetch(`${web.manifest.uni-cliUrl}/den-session`, {
+  const synced = await fetch(`${web.manifest.uniCliUrl}/den-session`, {
     method: "PUT", headers: { "x-uni-cli-host-token": web.manifest.hostToken, "content-type": "application/json" },
     body: JSON.stringify({ baseUrl: den.ref.apiUrl, token: den.admin.token, orgId: model.orgId }),
     signal: AbortSignal.timeout(30_000),
@@ -90,7 +90,7 @@ export function acmeWebOutputs(world: AcmeWebWorld) {
   const { den, web, model, gatewayUrl } = world;
   return {
       webUrl: output(web.manifest.webUrl, { group: "URLs" }),
-      uni-cliUrl: output(web.manifest.uni-cliUrl, { group: "URLs" }),
+      uniCliUrl: output(web.manifest.uniCliUrl, { group: "URLs" }),
       denWeb: output(den.ref.webUrl, { group: "URLs" }),
       denApi: output(den.ref.apiUrl, { group: "URLs" }),
       gatewayUrl: output(gatewayUrl, { group: "URLs" }),
@@ -101,8 +101,8 @@ export function acmeWebOutputs(world: AcmeWebWorld) {
       verified: output("OpenCode chat through AI Gateway", { group: "AI Gateway" }),
       alexEmail: output(den.admin.email, { group: "Accounts", note: "org owner (Acme)" }),
       denToken: secret(den.admin.token, { group: "Accounts", note: "Disposable demo bearer token" }),
-      uni-cliToken: secret(web.manifest.token, { group: "Uni-CLI" }),
-      uni-cliHostToken: secret(web.manifest.hostToken, { group: "Uni-CLI" }),
+      uniCliToken: secret(web.manifest.token, { group: "Uni-CLI" }),
+      uniCliHostToken: secret(web.manifest.hostToken, { group: "Uni-CLI" }),
       databaseUrl: secret(den.database?.url ?? "", { group: "Infrastructure", note: "Inside this VM; MySQL is not exposed publicly" }),
       redisUrl: output("redis://127.0.0.1:6379", { group: "Infrastructure", note: "Inside this VM" }),
       upstreamKey: secret(world.upstream.key, { group: "AI Gateway", note: "Synthetic upstream; no paid credentials" }),

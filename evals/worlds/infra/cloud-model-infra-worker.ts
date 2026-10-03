@@ -22,7 +22,7 @@ export interface CloudModelInfraWorkerOptions {
  * Cloud worker runs, in an isolated workspace.
  *
  * `cloud-model-infra.ts` seeds a Den `worker` whose Daytona signed preview
- * points at this server's `uni-cliUrl`, so Den's readiness probe, provider
+ * points at this server's `uniCliUrl`, so Den's readiness probe, provider
  * materialization, and remote-session capabilities exercise a real worker
  * runtime end to end without a Daytona sandbox.
  *
@@ -55,7 +55,7 @@ export async function main(): Promise<void> {
     name: CLOUD_MODEL_INFRA_WORKER_NAME,
     outputs: {
       webUrl: handle.manifest.webUrl,
-      uni-cliUrl: handle.manifest.uni-cliUrl,
+      uniCliUrl: handle.manifest.uniCliUrl,
       workspace: handle.manifest.workspace,
       runtimeManifest: handle.manifest.runtimeManifestPath,
     },

@@ -94,7 +94,7 @@ function parseSessionFacts(value: unknown): SessionFacts {
 
 async function configureWorkspace(appSurface: App, workspaceId: string, baseUrl: string): Promise<void> {
   const result = await evalIn(appSurface, browserScript(async (workspaceId, providerId, modelName, value, modelId, inputModelName, inputWorkspaceId, inputProviderId, inputModelId, inputValue) => {
-    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uniCliServerInfo");
     if (!info?.running || !info.baseUrl) return "local_server_unavailable";
     const root = String(info.baseUrl).replace(/\/+$/, "");
     const headers = {
@@ -168,7 +168,7 @@ async function createSession(appSurface: App): Promise<string> {
 
 async function approvePendingPermission(appSurface: App, workspaceId: string, sessionId: string): Promise<number> {
   const value = await evalIn(appSurface, browserScript(async (workspaceId, inputSessionId) => {
-    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uniCliServerInfo");
     if (!info?.running || !info.baseUrl) return [];
     const root = String(info.baseUrl).replace(/\/+$/, "")
       + "/workspace/" + encodeURIComponent(workspaceId) + "/opencode";
@@ -209,7 +209,7 @@ async function readSessionFacts(
 ): Promise<SessionFacts> {
   const value = await evalIn(appSurface, browserScript(async (workspaceId, inputSessionId, inputCommand, completionMarker, inputSessionId2, inputSessionId3) => {
     const empty = { sessionId: "", runningBash: false, todoCount: 0, finalReplyVisible: false, idle: false };
-    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uniCliServerInfo");
     if (!info?.running || !info.baseUrl) return empty;
     const root = String(info.baseUrl).replace(/\/+$/, "") + "/workspace/" + encodeURIComponent(workspaceId)
       + "/opencode/session";

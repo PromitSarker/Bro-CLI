@@ -57,7 +57,7 @@ describe("shouldMonitorWebErrors", () => {
 describe("sanitizePageUrl", () => {
   test("strips credential-bearing query strings and fragments", () => {
     expect(
-      sanitizePageUrl("https://app.uni-clilabs.com/signin?grant=secret-grant&uni-cliToken=tok#accessToken=at"),
+      sanitizePageUrl("https://app.uni-clilabs.com/signin?grant=secret-grant&uniCliToken=tok#accessToken=at"),
     ).toBe("https://app.uni-clilabs.com/signin");
     expect(sanitizePageUrl("https://app.uni-clilabs.com/chat/abc?accessToken=x")).toBe(
       "https://app.uni-clilabs.com/chat/abc",

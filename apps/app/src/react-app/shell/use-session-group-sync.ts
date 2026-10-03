@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from "react";
 
-import type { uni-cliSessionGroupState } from "@/app/lib/uni-cli-server";
+import type { uniCliSessionGroupState } from "@/app/lib/uni-cli-server";
 import type { ResolvedWorkspaceEndpoint } from "@/app/lib/workspace-endpoint";
 import {
   applySessionGroupServerState,
@@ -25,7 +25,7 @@ function hasGroupData(state: SessionGroupServerState | WorkspaceGroupState | und
   return Boolean(state && (state.groups.length > 0 || Object.keys(state.assignments).length > 0));
 }
 
-function serverStateFromWorkspaceState(state: WorkspaceGroupState): uni-cliSessionGroupState {
+function serverStateFromWorkspaceState(state: WorkspaceGroupState): uniCliSessionGroupState {
   return {
     groups: state.groups.map((group) => ({ id: group.id, label: group.label })),
     assignments: { ...state.assignments },

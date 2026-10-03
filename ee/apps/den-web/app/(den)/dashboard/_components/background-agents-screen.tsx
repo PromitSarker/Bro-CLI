@@ -18,8 +18,8 @@ import {
 import { DenInput } from "../../_components/ui/input";
 import { DashboardPageTemplate } from "../../_components/ui/dashboard-page-template";
 import {
-  builduni-cliAppConnectUrl,
-  builduni-cliDeepLink,
+  builduniCliAppConnectUrl,
+  builduniCliDeepLink,
   getErrorMessage,
   getWorkerStatusMeta,
   getWorkerTokens,
@@ -29,11 +29,11 @@ import {
 import { useDenFlow } from "../../_providers/den-flow-provider";
 
 type ConnectionDetails = {
-  uni-cliUrl: string | null;
+  uniCliUrl: string | null;
   ownerToken: string | null;
   clientToken: string | null;
-  uni-cliAppConnectUrl: string | null;
-  uni-cliDeepLink: string | null;
+  uniCliAppConnectUrl: string | null;
+  uniCliDeepLink: string | null;
 };
 
 function getStatusBadgeClass(bucket: ReturnType<typeof getWorkerStatusMeta>["bucket"]) {
@@ -108,11 +108,11 @@ function SandboxCard({
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const meta = getWorkerStatusMeta(sandbox.status);
   const canConnect = meta.bucket === "ready";
-  const connectionUrl = details?.uni-cliUrl ?? sandbox.instanceUrl ?? null;
+  const connectionUrl = details?.uniCliUrl ?? sandbox.instanceUrl ?? null;
   const ownerToken = details?.ownerToken ?? null;
   const clientToken = details?.clientToken ?? null;
-  const openWebUrl = details?.uni-cliAppConnectUrl ?? null;
-  const openDesktopUrl = details?.uni-cliDeepLink ?? null;
+  const openWebUrl = details?.uniCliAppConnectUrl ?? null;
+  const openDesktopUrl = details?.uniCliDeepLink ?? null;
 
   async function handleCopy(field: string, text: string) {
     await navigator.clipboard.writeText(text);
@@ -312,7 +312,7 @@ export function BackgroundAgentsScreen() {
         `/v1/workers/${encodeURIComponent(workerId)}/tokens`,
         {
           method: "POST",
-          body: JSON.stringify({ includeExpiringuni-cliUrl: true }),
+          body: JSON.stringify({ includeExpiringuniCliUrl: true }),
         },
         12000,
       );
@@ -329,19 +329,19 @@ export function BackgroundAgentsScreen() {
       }
 
       const nextDetails: ConnectionDetails = {
-        uni-cliUrl: tokens.uni-cliUrl,
+        uniCliUrl: tokens.uniCliUrl,
         ownerToken: tokens.ownerToken,
         clientToken: tokens.clientToken,
-        uni-cliAppConnectUrl: builduni-cliAppConnectUrl(
-          runtimeConfig.uni-cliAppConnectUrl,
-          tokens.previewuni-cliUrl,
+        uniCliAppConnectUrl: builduniCliAppConnectUrl(
+          runtimeConfig.uniCliAppConnectUrl,
+          tokens.previewuniCliUrl,
           tokens.clientToken,
           workerId,
           workerName,
           { autoConnect: true },
         ),
-        uni-cliDeepLink: builduni-cliDeepLink(
-          tokens.uni-cliUrl,
+        uniCliDeepLink: builduniCliDeepLink(
+          tokens.uniCliUrl,
           tokens.hostToken ?? tokens.ownerToken,
           workerId,
           workerName,

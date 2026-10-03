@@ -2,7 +2,7 @@ import { mkdir, readFile, realpath, rm, writeFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import { join } from "node:path";
 import { SkipError, type Seed } from "@uni-cli/env";
-import { bootManageduni-cliServer, close, engineBinary, isRecord, listen, readBody, sendJson, sendStream } from "./uni-cli-server-cli.ts";
+import { bootManageduniCliServer, close, engineBinary, isRecord, listen, readBody, sendJson, sendStream } from "./uni-cli-server-cli.ts";
 
 export const GENERATED_TITLE = "Kites in a sunny meadow";
 export const REPLY = "A kite catches the breeze.";
@@ -92,7 +92,7 @@ export async function titleRecovery(seed: Seed) {
   const token = "title-recovery-test-client";
   const updates: { id: string; title: string }[] = [];
   const abort = new AbortController();
-  let managed: Awaited<ReturnType<typeof bootManageduni-cliServer>> | undefined;
+  let managed: Awaited<ReturnType<typeof bootManageduniCliServer>> | undefined;
   let events: Promise<void> | undefined;
   const dispose = async () => {
     abort.abort();
@@ -102,7 +102,7 @@ export async function titleRecovery(seed: Seed) {
     await rm(scratch, { recursive: true, force: true });
   };
   try {
-    managed = await bootManageduni-cliServer({ scratch, workspace, token, binary, sink: () => undefined });
+    managed = await bootManageduniCliServer({ scratch, workspace, token, binary, sink: () => undefined });
     const stream = await fetch(`${managed.base}/workspace/${managed.workspaceId}/opencode/event`, {
       headers: { authorization: `Bearer ${token}` }, signal: abort.signal,
     });

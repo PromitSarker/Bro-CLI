@@ -734,7 +734,7 @@ export function ResourceSelectionPage({ autoContinue = false }: { autoContinue?:
     finishOnboarding();
   }, [brandingRestart, finishOnboarding]);
 
-  const uni-cliProviders = providers.filter((provider) => provider.source === "uni-cli");
+  const uniCliProviders = providers.filter((provider) => provider.source === "uni-cli");
   const legacyProviders = providers.filter((provider) => provider.source !== "uni-cli");
   const totalModels = legacyProviders.reduce((sum, provider) => sum + provider.models.length, 0);
   const hasResources = providers.length > 0 || gatewayProviders.length > 0 || marketplaces.length > 0;
@@ -901,13 +901,13 @@ export function ResourceSelectionPage({ autoContinue = false }: { autoContinue?:
                   multiple
                   className="rounded-2xl border border-border bg-transparent shadow-none before:hidden"
                 >
-                  {uni-cliProviders.length > 0 ? (
+                  {uniCliProviders.length > 0 ? (
                     <Section
                       icon={<CloudIcon className="size-5 text-foreground/60" />}
                       title="Uni-CLI Models"
                       description="Managed models available through your organization."
                     >
-                      {uni-cliProviders.map((provider) => (
+                      {uniCliProviders.map((provider) => (
                         <ProviderAccessCard key={provider.id} provider={provider} />
                       ))}
                     </Section>

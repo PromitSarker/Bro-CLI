@@ -9,23 +9,23 @@ import { denSessionUpdatedEvent, denSettingsChangedEvent } from "@/app/lib/den-s
 
 import {
   SUGGESTED_PLUGINS,
-  filterUni-CLIExtensionCatalogForPlatform,
-  resolveUni-CLIExtensionCatalogPlatform,
+  filterUniCliExtensionCatalogForPlatform,
+  resolveUniCliExtensionCatalogPlatform,
 } from "@/app/constants";
 import type { EnablementContext } from "@/app/enablement";
 import { createClient, unwrap } from "@/app/lib/opencode";
 import {
-  createuni-cliServerClient,
-  isLoopbackuni-cliServerUrl,
-  readuni-cliServerSettings,
-  type uni-cliCloudMcpHealth,
-  type uni-cliCloudMcpProviderModelContext,
-  type uni-cliServerCapabilities,
-  type uni-cliServerClient,
-  type uni-cliWorkspaceInfo,
+  createuniCliServerClient,
+  isLoopbackuniCliServerUrl,
+  readuniCliServerSettings,
+  type uniCliCloudMcpHealth,
+  type uniCliCloudMcpProviderModelContext,
+  type uniCliServerCapabilities,
+  type uniCliServerClient,
+  type uniCliWorkspaceInfo,
   type DesktopFreePreferences,
 } from "@/app/lib/uni-cli-server";
-import { builduni-cliEnvRuntimeKey } from "@/app/lib/uni-cli-env-runtime";
+import { builduniCliEnvRuntimeKey } from "@/app/lib/uni-cli-env-runtime";
 import {
   collectAgentContextDiagnosticObservations,
   isAgentContextDiagnosticsWorkspaceAllowed,
@@ -71,9 +71,9 @@ import {
   routeWorkspaceSelectionCommitter,
 } from "@/react-app/shell/route-refresh-control";
 import { createConnectionsStore, useConnectionsStoreSnapshot } from "@/react-app/domains/connections/store";
-import { cleanupuni-cliCloudMcpAfterSignOut } from "@/react-app/domains/connections/cloud-mcp-reconciler";
+import { cleanupuniCliCloudMcpAfterSignOut } from "@/react-app/domains/connections/cloud-mcp-reconciler";
 import { useOrgMcpConnections } from "@/react-app/domains/connections/use-org-mcp-connections";
-import { createuni-cliServerStore, useuni-cliServerStoreSnapshot } from "@/react-app/domains/connections/uni-cli-server-store";
+import { createuniCliServerStore, useuniCliServerStoreSnapshot } from "@/react-app/domains/connections/uni-cli-server-store";
 import {
   connectGatewayProvider,
   GATEWAY_CONNECT_TIMEOUT_MESSAGE,
@@ -93,7 +93,7 @@ import { OllamaConfig } from "@/react-app/domains/settings/ollama-config";
 import "@/react-app/domains/settings/browser-extension-config";
 import { useSettingsExtensionController } from "@/react-app/domains/settings/settings-extension-controller";
 import { buildExtensionItems } from "@/react-app/domains/settings/extension-items";
-import { isUni-CLIExtensionEnabled, UNICLI_EXTENSION_STATE_CHANGED } from "@/react-app/domains/settings/extension-state";
+import { isUniCliExtensionEnabled, UNICLI_EXTENSION_STATE_CHANGED } from "@/react-app/domains/settings/extension-state";
 import { PreferencesView } from "@/react-app/domains/settings/pages/preferences-view";
 import { GeneralSettingsView } from "@/react-app/domains/settings/pages/general-view";
 import { AuthorizedFoldersPanel } from "@/react-app/domains/settings/panels/authorized-folders-panel";
@@ -126,15 +126,15 @@ import { useDebugViewModel } from "@/react-app/domains/settings/state/debug-view
 import { useDesktopUpdater } from "@/react-app/domains/settings/state/desktop-updater-provider";
 import { CloudSessionProvider, useCloudSession } from "@/react-app/domains/settings/cloud/cloud-session-provider";
 import { useDenSession } from "@/react-app/domains/settings/cloud/use-den-session";
-import { useControlAction, type uni-cliControlAction } from "./control/control-provider";
+import { useControlAction, type uniCliControlAction } from "./control/control-provider";
 import { useBootState } from "./boot-state";
 import { SettingsShell } from "@/react-app/domains/settings/shell/settings-shell";
 import { createExtensionsStore, useExtensionsStoreSnapshot } from "@/react-app/domains/settings/state/extensions-store";
 import { usePlatform } from "@/react-app/kernel/platform";
 import { useLocal } from "@/react-app/kernel/local-provider";
 import {
-  uni-cliServerInfo,
-  uni-cliServerRestart,
+  uniCliServerInfo,
+  uniCliServerRestart,
   engineStart,
   resolveWorkspaceListSelectedId,
   workspaceBootstrap,
@@ -156,8 +156,8 @@ import { useCheckDesktopRestriction, useDesktopConfig } from "@/react-app/domain
 import { useRestrictionNotice } from "@/react-app/domains/cloud/restriction-notice-provider";
 import { useCloudProviderAutoSync } from "@/react-app/domains/cloud/use-cloud-provider-auto-sync";
 import {
-  hasUni-CLIModelsAvailable,
-  shouldShowUni-CLIModelsSyncing,
+  hasUniCliModelsAvailable,
+  shouldShowUniCliModelsSyncing,
 } from "@/react-app/domains/cloud/uni-cli-models-promo";
 import {
   isDesktopRuntime,
@@ -183,11 +183,11 @@ import type { ModelRef } from "@/app/types";
 import { workspaceSwatchColor } from "@/react-app/domains/session/sidebar/utils";
 import { recordInspectorEvent } from "../../app/lib/app-inspector";
 import {
-  ensureDesktopLocaluni-cliConnection,
+  ensureDesktopLocaluniCliConnection,
   shouldAttemptDesktopLocalReconnect,
 } from "./desktop-local-uni-cli";
 import { reloadEngineWithDesktopFallback } from "./engine-reload-escalation";
-import { resolveuni-cliConnection } from "./uni-cli-connection";
+import { resolveuniCliConnection } from "./uni-cli-connection";
 import { abortSessionSafe, listCommands } from "@/app/lib/opencode-session";
 import { notifyAlert } from "./notifications";
 import { useReloadCoordinator } from "./reload-coordinator";
@@ -227,7 +227,7 @@ import {
   type LibraryCommandItem,
 } from "@/react-app/domains/settings/library";
 
-const ROUTE_UNICLI_CAPABILITIES: uni-cliServerCapabilities = {
+const ROUTE_UNICLI_CAPABILITIES: uniCliServerCapabilities = {
   skills: { read: true, write: true, source: "uni-cli" },
   plugins: { read: true, write: true },
   mcp: { read: true, write: true },
@@ -236,7 +236,7 @@ const ROUTE_UNICLI_CAPABILITIES: uni-cliServerCapabilities = {
 };
 
 async function reloadEngineOrRestartDesktop(
-  client: Pick<uni-cliServerClient, "reloadEngine">,
+  client: Pick<uniCliServerClient, "reloadEngine">,
   workspaceId: string,
   afterRestart?: () => Promise<void>,
 ): Promise<void> {
@@ -246,7 +246,7 @@ async function reloadEngineOrRestartDesktop(
   }
 }
 
-function isUni-CLICloudProvider(provider: {
+function isUniCliCloudProvider(provider: {
   providerId?: string | null;
   source?: string | null;
   sourceProviderId?: string | null;
@@ -523,7 +523,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
   }, [location.state, navigate, props.embedded, props.standaloneExtensions, selectedWorkspaceId]);
   const [baseUrl, setBaseUrl] = useState("");
   const [token, setToken] = useState("");
-  const [uni-cliClient, setuni-cliClient] = useState<uni-cliServerClient | null>(null);
+  const [uniCliClient, setuniCliClient] = useState<uniCliServerClient | null>(null);
   const [activeClient, setActiveClient] = useState<Client | null>(null);
   const [busy, setBusy] = useState(false);
   const [busyLabel, setBusyLabel] = useState<string | null>(null);
@@ -579,7 +579,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
   const [userEnvKeys, setUserEnvKeys] = useState<string[]>([]);
   const [cloudMcpHealthResult, setCloudMcpHealthResult] = useState<{
     workspaceId: string;
-    health: uni-cliCloudMcpHealth;
+    health: uniCliCloudMcpHealth;
   } | null>(null);
   const emptyWorkspaceDisplay = useMemo<WorkspaceDisplay>(
     () => ({
@@ -600,10 +600,10 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     selectedWorkspaceRoot: "",
     selectedWorkspaceType: "local" as "local" | "remote",
     runtimeWorkspaceId: null as string | null,
-    uni-cliServerClient: null as uni-cliServerClient | null,
-    selectedWorkspaceuni-cliClient: null as uni-cliServerClient | null,
-    uni-cliServerStatus: "disconnected" as "connected" | "disconnected",
-    uni-cliServerCapabilities: null as uni-cliServerCapabilities | null,
+    uniCliServerClient: null as uniCliServerClient | null,
+    selectedWorkspaceuniCliClient: null as uniCliServerClient | null,
+    uniCliServerStatus: "disconnected" as "connected" | "disconnected",
+    uniCliServerCapabilities: null as uniCliServerCapabilities | null,
     selectedWorkspaceDisplay: emptyWorkspaceDisplay as WorkspaceDisplay,
     providerItems: [] as ProviderListItem[],
     providerDefaults: {} as Record<string, string>,
@@ -641,7 +641,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
             preset: "starter",
             workspaceType: selectedWorkspace.workspaceType ?? "local",
             displayName: selectedWorkspace.displayNameResolved,
-            uni-cliWorkspaceName: selectedWorkspace.uni-cliWorkspaceName,
+            uniCliWorkspaceName: selectedWorkspace.uniCliWorkspaceName,
           }
         : emptyWorkspaceDisplay,
     [emptyWorkspaceDisplay, selectedWorkspace],
@@ -686,10 +686,10 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     selectedWorkspaceRoot,
     selectedWorkspaceType: selectedWorkspace?.workspaceType ?? "local",
     runtimeWorkspaceId: selectedWorkspace?.id ?? null,
-    uni-cliServerClient: uni-cliClient,
-    selectedWorkspaceuni-cliClient: uni-cliClient,
-    uni-cliServerStatus: uni-cliClient ? "connected" : "disconnected",
-    uni-cliServerCapabilities: uni-cliClient ? ROUTE_UNICLI_CAPABILITIES : null,
+    uniCliServerClient: uniCliClient,
+    selectedWorkspaceuniCliClient: uniCliClient,
+    uniCliServerStatus: uniCliClient ? "connected" : "disconnected",
+    uniCliServerCapabilities: uniCliClient ? ROUTE_UNICLI_CAPABILITIES : null,
     selectedWorkspaceDisplay,
     providerItems: providers,
     providerDefaults,
@@ -716,17 +716,17 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     [sessionsByWorkspaceId],
   );
 
-  const uni-cliServerStore = useMemo(
+  const uniCliServerStore = useMemo(
     () =>
-      createuni-cliServerStore({
+      createuniCliServerStore({
         startupPreference: () => {
           // In desktop mode, loopback URLs are ephemeral local runtime details.
           // Only non-loopback stored URLs indicate an explicit remote/manual
           // server connection preference.
           if (!isDesktopRuntime()) return "server";
-          const stored = readuni-cliServerSettings();
+          const stored = readuniCliServerSettings();
           const storedUrl = stored.urlOverride?.trim() ?? "";
-          return storedUrl && !isLoopbackuni-cliServerUrl(storedUrl) ? "server" : "local";
+          return storedUrl && !isLoopbackuniCliServerUrl(storedUrl) ? "server" : "local";
         },
         documentVisible: () => typeof document === "undefined" || document.visibilityState === "visible",
         developerMode: () => routeStateRef.current.developerMode,
@@ -736,9 +736,9 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
         restartLocalServer: async () => {
           if (!isDesktopRuntime()) return false;
           try {
-            await uni-cliServerRestart({
+            await uniCliServerRestart({
               remoteAccessEnabled:
-                readuni-cliServerSettings().remoteAccessEnabled === true,
+                readuniCliServerSettings().remoteAccessEnabled === true,
             });
             return true;
           } catch {
@@ -759,7 +759,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
         selectedWorkspaceId: () => routeStateRef.current.selectedWorkspaceId,
         selectedWorkspaceRoot: () => routeStateRef.current.selectedWorkspaceRoot,
         workspaceType: () => routeStateRef.current.selectedWorkspaceType,
-        uni-cliServer: uni-cliServerStore,
+        uniCliServer: uniCliServerStore,
         runtimeWorkspaceId: () => routeStateRef.current.runtimeWorkspaceId,
         ensureRuntimeWorkspaceId: async () =>
           routeStateRef.current.runtimeWorkspaceId?.trim() ||
@@ -768,7 +768,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
         developerMode: () => routeStateRef.current.developerMode,
         markReloadRequired: reloadCoordinator.markReloadRequired,
       }),
-    [uni-cliServerStore, reloadCoordinator.markReloadRequired],
+    [uniCliServerStore, reloadCoordinator.markReloadRequired],
   );
   refreshMcpServersRef.current = connectionsStore.refreshMcpServers;
   notifyMcpReloadingRef.current = connectionsStore.notifyMcpReloading;
@@ -797,7 +797,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
           routeStateRef.current.runtimeWorkspaceId?.trim() ||
           routeStateRef.current.selectedWorkspaceId.trim() ||
           null,
-        uni-cliServer: uni-cliServerStore,
+        uniCliServer: uniCliServerStore,
         setProviders,
         setProviderDefaults,
         setProviderConnectedIds,
@@ -811,7 +811,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
           });
         },
       }),
-    [checkDesktopRestriction, uni-cliServerStore, reloadCoordinator.markReloadRequired],
+    [checkDesktopRestriction, uniCliServerStore, reloadCoordinator.markReloadRequired],
   );
   const extensionsStore = useMemo(
     () =>
@@ -822,11 +822,11 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
         selectedWorkspaceId: () => routeStateRef.current.selectedWorkspaceId,
         selectedWorkspaceRoot: () => routeStateRef.current.selectedWorkspaceRoot,
         workspaceType: () => routeStateRef.current.selectedWorkspaceType,
-        uni-cliServer: uni-cliServerStore,
-        uni-cliServerConnection: () => ({
-          uni-cliServerClient: routeStateRef.current.uni-cliServerClient,
-          uni-cliServerStatus: routeStateRef.current.uni-cliServerStatus,
-          uni-cliServerCapabilities: routeStateRef.current.uni-cliServerCapabilities,
+        uniCliServer: uniCliServerStore,
+        uniCliServerConnection: () => ({
+          uniCliServerClient: routeStateRef.current.uniCliServerClient,
+          uniCliServerStatus: routeStateRef.current.uniCliServerStatus,
+          uniCliServerCapabilities: routeStateRef.current.uniCliServerCapabilities,
         }),
         runtimeWorkspaceId: () => routeStateRef.current.runtimeWorkspaceId,
         ensureRuntimeWorkspaceId: async () =>
@@ -843,9 +843,9 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
         },
         markReloadRequired: reloadCoordinator.markReloadRequired,
       }),
-    [uni-cliServerStore, reloadCoordinator.markReloadRequired],
+    [uniCliServerStore, reloadCoordinator.markReloadRequired],
   );
-  const uni-cliServerSnapshot = useuni-cliServerStoreSnapshot(uni-cliServerStore);
+  const uniCliServerSnapshot = useuniCliServerStoreSnapshot(uniCliServerStore);
   const connectionsSnapshot = useConnectionsStoreSnapshot(connectionsStore);
   const providerAuthSnapshot = useProviderAuthStoreSnapshot(providerAuthStore);
   const cloudSession = useCloudSession();
@@ -910,9 +910,9 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
   const extensionsSnapshot = useExtensionsStoreSnapshot(extensionsStore);
   const orgMcpConnections = useOrgMcpConnections();
 
-  const uni-cliServerStatusForMcp = uni-cliServerSnapshot.uni-cliServerStatus;
+  const uniCliServerStatusForMcp = uniCliServerSnapshot.uniCliServerStatus;
   useEffect(() => {
-    if (uni-cliServerStatusForMcp !== "connected") return;
+    if (uniCliServerStatusForMcp !== "connected") return;
     // The first MCP read races the uni-cli-server store's initial health
     // check (a fresh store always starts "disconnected"), so it falls back
     // to config files where server-runtime (config.remote) entries — notably
@@ -920,34 +920,34 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     // cards show "Tap to connect" until the next full remount even though
     // the entries are configured and healthy.
     void connectionsStore.refreshMcpServers();
-  }, [connectionsStore, uni-cliServerStatusForMcp]);
+  }, [connectionsStore, uniCliServerStatusForMcp]);
 
   useEffect(() => {
-    if (uni-cliServerStatusForMcp !== "connected") return;
+    if (uniCliServerStatusForMcp !== "connected") return;
     // Same race for the Cloud Providers rows: the provider-auth store's
     // start() read fires while this store still reports "disconnected", so
     // it takes the legacy (empty) config read and the rows sit on "Syncing"
     // even though the server's /cloud-provider-sync/status already lists the
     // providers as synced. Re-derive from the server once it is reachable.
     void providerAuthStore.refreshImportedCloudProviders();
-  }, [uni-cliServerStatusForMcp, providerAuthStore]);
+  }, [uniCliServerStatusForMcp, providerAuthStore]);
 
   const cleanupCloudMcpForSignOut = useCallback(async (settings: DenSettings) => {
-    const client = routeStateRef.current.selectedWorkspaceuni-cliClient;
+    const client = routeStateRef.current.selectedWorkspaceuniCliClient;
     const workspaceId = routeStateRef.current.runtimeWorkspaceId?.trim() ?? "";
     const orgId = settings.activeOrgId?.trim() ?? "";
     if (!client || !workspaceId || !orgId) return;
     // Settings only has a safe, exact OpenCode client/directory for the active
     // workspace here, so sign-out cleanup is intentionally scoped to that
     // workspace instead of guessing across every configured worker.
-    await cleanupuni-cliCloudMcpAfterSignOut({
+    await cleanupuniCliCloudMcpAfterSignOut({
       context: {
         denBaseUrl: settings.baseUrl,
         serverBaseUrl: client.baseUrl,
         workspaceId,
         orgId,
       },
-      uni-cliClient: client,
+      uniCliClient: client,
       opencodeClient: routeStateRef.current.activeClient,
       directory: routeStateRef.current.selectedWorkspaceRoot,
     });
@@ -1022,34 +1022,34 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     return () => window.removeEventListener(CLOUD_INVENTORY_CHANGED_EVENT, refresh);
   }, [refreshConnectCapabilities, refreshOrgMcpConnections]);
 
-  const hasUni-CLICloudProvider = useMemo(
+  const hasUniCliCloudProvider = useMemo(
     () =>
-      providerAuthSnapshot.cloudOrgProviders.some(isUni-CLICloudProvider) ||
-      Object.values(providerAuthSnapshot.importedCloudProviders ?? {}).some(isUni-CLICloudProvider),
+      providerAuthSnapshot.cloudOrgProviders.some(isUniCliCloudProvider) ||
+      Object.values(providerAuthSnapshot.importedCloudProviders ?? {}).some(isUniCliCloudProvider),
     [providerAuthSnapshot.cloudOrgProviders, providerAuthSnapshot.importedCloudProviders],
   );
   // Entitled = Den/import says Uni-CLI Models is included. Available = local
   // engine actually exposes selectable uni-cli models.
-  const uni-cliModelsEntitled = cloudSession.isSignedIn && hasUni-CLICloudProvider;
-  const uni-cliModelsAvailable = hasUni-CLIModelsAvailable({
+  const uniCliModelsEntitled = cloudSession.isSignedIn && hasUniCliCloudProvider;
+  const uniCliModelsAvailable = hasUniCliModelsAvailable({
     providerConnectedIds,
     providers,
   });
-  const showUni-CLIModelsSyncing = shouldShowUni-CLIModelsSyncing({
-    entitled: uni-cliModelsEntitled,
-    available: uni-cliModelsAvailable,
+  const showUniCliModelsSyncing = shouldShowUniCliModelsSyncing({
+    entitled: uniCliModelsEntitled,
+    available: uniCliModelsAvailable,
     workspaceReady: Boolean(selectedWorkspaceId && activeClient),
     reloadPending: providerAuthSnapshot.cloudProviderServerSync?.reloadPending === true,
   });
   const openProvidersInDen = useCallback(() => {
     platform.openLink(new URL("/dashboard/gateway-providers", cloudSession.baseUrl).href);
   }, [cloudSession.baseUrl, platform]);
-  const autoClient = isDesktopRuntime() && uni-cliServerSnapshot.uni-cliServerClient && isLoopbackuni-cliServerUrl(uni-cliServerSnapshot.uni-cliServerClient.baseUrl) ? uni-cliServerSnapshot.uni-cliServerClient : null;
+  const autoClient = isDesktopRuntime() && uniCliServerSnapshot.uniCliServerClient && isLoopbackuniCliServerUrl(uniCliServerSnapshot.uniCliServerClient.baseUrl) ? uniCliServerSnapshot.uniCliServerClient : null;
   const [autoPreferences, setAutoPreferences] = useState<DesktopFreePreferences | null>(null);
   // Until an operator switches free Auto on, Settings shows no Uni-CLI Models row for it.
   // Settings has no workspace context: read status from the same local client as preferences.
   const { query: autoAccessQuery } = useAutoAccess(Boolean(autoPreferences), {
-    uni-cliServerClient: autoClient, workspaceId: selectedWorkspaceId ?? "",
+    uniCliServerClient: autoClient, workspaceId: selectedWorkspaceId ?? "",
   });
   const autoSwitchedOff = (autoAccessQuery.isPending && autoAccessQuery.fetchStatus !== "idle") || freeAutoSwitchedOff(autoAccessQuery.data);
   const visibleAutoPreferences = autoSwitchedOff ? null : autoPreferences;
@@ -1120,8 +1120,8 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
 
   const shareWorkspaceState = useShareWorkspaceState({
     workspaces,
-    uni-cliServerHostInfo: uni-cliServerSnapshot.uni-cliServerHostInfo,
-    uni-cliServerSettings: uni-cliServerSnapshot.uni-cliServerSettings,
+    uniCliServerHostInfo: uniCliServerSnapshot.uniCliServerHostInfo,
+    uniCliServerSettings: uniCliServerSnapshot.uniCliServerSettings,
     engineInfo: null,
     exportWorkspaceBusy,
     openLink: (url) => platform.openLink(url),
@@ -1130,8 +1130,8 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
 
   const debugViewProps = useDebugViewModel({
     developerMode,
-    uni-cliServerStore,
-    uni-cliServerSnapshot,
+    uniCliServerStore,
+    uniCliServerSnapshot,
     runtimeWorkspaceId: selectedWorkspace?.id ?? null,
     selectedWorkspaceRoot,
     setRouteError: (message) => {
@@ -1152,11 +1152,11 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
 
   const runtimeWorkspaceId = selectedWorkspaceEndpoint?.workspaceId ?? selectedWorkspace?.id ?? null;
   routeStateRef.current.runtimeWorkspaceId = runtimeWorkspaceId;
-  routeStateRef.current.selectedWorkspaceuni-cliClient = selectedWorkspaceEndpoint?.client ?? uni-cliClient;
+  routeStateRef.current.selectedWorkspaceuniCliClient = selectedWorkspaceEndpoint?.client ?? uniCliClient;
   const cloudMcpHealth = cloudMcpHealthResult?.workspaceId === runtimeWorkspaceId
     ? cloudMcpHealthResult.health
     : null;
-  const handleCloudMcpHealthChange = useCallback((health: uni-cliCloudMcpHealth | null) => {
+  const handleCloudMcpHealthChange = useCallback((health: uniCliCloudMcpHealth | null) => {
     const workspaceId = runtimeWorkspaceId?.trim() ?? "";
     if ((routeStateRef.current.runtimeWorkspaceId?.trim() ?? "") !== workspaceId) return;
     setCloudMcpHealthResult(health && workspaceId ? { workspaceId, health } : null);
@@ -1228,13 +1228,13 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     cloudProvidersEnabled: cloudSession.isSignedIn,
     importedProviders: providerAuthSnapshot.importedCloudProviders,
   });
-  const currentCloudMcpModel = useMemo<uni-cliCloudMcpProviderModelContext | null>(() => {
+  const currentCloudMcpModel = useMemo<uniCliCloudMcpProviderModelContext | null>(() => {
     const provider = local.prefs.defaultModel?.providerID.trim() ?? "";
     const model = local.prefs.defaultModel?.modelID.trim() ?? "";
     return provider && model ? { provider, model } : null;
   }, [local.prefs.defaultModel]);
   const refreshCloudMcpHealth = useCallback(async () => {
-    const client = selectedWorkspaceEndpoint?.client ?? uni-cliClient;
+    const client = selectedWorkspaceEndpoint?.client ?? uniCliClient;
     const workspaceId = runtimeWorkspaceId?.trim() ?? "";
     if (!client || !workspaceId) {
       setCloudMcpHealthResult(null);
@@ -1242,11 +1242,11 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     }
     // probe: the Advanced page refresh should verify the Cloud endpoint
     // directly (outside the engine), not just report the engine's cached state.
-    const health = await client.getuni-cliCloudMcpHealth(workspaceId, currentCloudMcpModel ?? undefined, { probe: true });
+    const health = await client.getuniCliCloudMcpHealth(workspaceId, currentCloudMcpModel ?? undefined, { probe: true });
     if (routeStateRef.current.runtimeWorkspaceId?.trim() !== workspaceId) return null;
     setCloudMcpHealthResult({ workspaceId, health });
     return health;
-  }, [currentCloudMcpModel, uni-cliClient, runtimeWorkspaceId, selectedWorkspaceEndpoint]);
+  }, [currentCloudMcpModel, uniCliClient, runtimeWorkspaceId, selectedWorkspaceEndpoint]);
   const { commandPaletteOpen, setCommandPaletteOpen } = useCommandPaletteShortcut(!props.embedded);
   const developerModePaletteItem = useMemo(
     () => settingsDeveloperModePaletteItem(developerMode, () => {
@@ -1282,20 +1282,20 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
   }, []);
 
   useEffect(() => {
-    if (!uni-cliClient) {
+    if (!uniCliClient) {
       setUserEnvKeys([]);
       return;
     }
     let cancelled = false;
-    void uni-cliClient.listUserEnvKeys()
+    void uniCliClient.listUserEnvKeys()
       .then((response) => { if (!cancelled) setUserEnvKeys(response.keys); })
       .catch(() => { if (!cancelled) setUserEnvKeys([]); });
     return () => { cancelled = true; };
-  }, [uni-cliClient]);
+  }, [uniCliClient]);
 
   const installOpenAiImageExtension = useCallback(async (apiKey: string) => {
     const resolvedApiKey = apiKey.trim();
-    if (!uni-cliClient) {
+    if (!uniCliClient) {
       setImageExtensionError("Uni-CLI server is not connected.");
       return;
     }
@@ -1308,7 +1308,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     setImageExtensionStatus(null);
     setImageExtensionError(null);
     try {
-      await uni-cliClient.upsertUserEnv([{ key: "OPENAI_API_KEY", value: resolvedApiKey }]);
+      await uniCliClient.upsertUserEnv([{ key: "OPENAI_API_KEY", value: resolvedApiKey }]);
       setUserEnvKeys((current) => Array.from(new Set([...current, "OPENAI_API_KEY"])));
       setImageExtensionStatus("Saved OPENAI_API_KEY. Agents can use Uni-CLI extension actions for image generation.");
     } catch (error) {
@@ -1316,10 +1316,10 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     } finally {
       setImageExtensionBusy(false);
     }
-  }, [uni-cliClient]);
+  }, [uniCliClient]);
 
   const generateOpenAiTestImage = useCallback(async (input: { apiKey: string; prompt: string }) => {
-    const client = selectedWorkspaceEndpoint?.client ?? uni-cliClient;
+    const client = selectedWorkspaceEndpoint?.client ?? uniCliClient;
     const workspaceId = runtimeWorkspaceId?.trim() ?? "";
     const apiKey = input.apiKey.trim();
     const prompt = input.prompt.trim();
@@ -1340,8 +1340,8 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     setImageGenerationStatus(null);
     setImageGenerationError(null);
     try {
-      if (uni-cliClient) {
-        await uni-cliClient.upsertUserEnv([{ key: "OPENAI_API_KEY", value: apiKey }]);
+      if (uniCliClient) {
+        await uniCliClient.upsertUserEnv([{ key: "OPENAI_API_KEY", value: apiKey }]);
         setUserEnvKeys((current) => Array.from(new Set([...current, "OPENAI_API_KEY"])));
       }
       const response = await client.callExtensionAction({
@@ -1364,10 +1364,10 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     } finally {
       setImageGenerationBusy(false);
     }
-  }, [uni-cliClient, runtimeWorkspaceId, selectedWorkspaceEndpoint, selectedWorkspaceRoot]);
+  }, [uniCliClient, runtimeWorkspaceId, selectedWorkspaceEndpoint, selectedWorkspaceRoot]);
 
   const installLocalProvider = useCallback(async (input: LocalProviderInstallInput) => {
-    const client = selectedWorkspaceEndpoint?.client ?? uni-cliClient;
+    const client = selectedWorkspaceEndpoint?.client ?? uniCliClient;
     const workspaceId = runtimeWorkspaceId?.trim() ?? "";
     const modelId = input.modelId.trim();
     if (!client || !workspaceId) {
@@ -1415,7 +1415,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     } finally {
       setLocalProviderBusy(false);
     }
-  }, [local, uni-cliClient, reloadCoordinator, runtimeWorkspaceId, selectedWorkspaceEndpoint]);
+  }, [local, uniCliClient, reloadCoordinator, runtimeWorkspaceId, selectedWorkspaceEndpoint]);
 
   useEffect(() => {
     local.setUi((previous) => ({ ...previous, view: "settings", tab: route.tab }));
@@ -1459,11 +1459,11 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
       }
       if (!attempt.isCurrent()) return;
 
-      const { normalizedBaseUrl, resolvedToken, resolvedHostToken } = await resolveuni-cliConnection();
+      const { normalizedBaseUrl, resolvedToken, resolvedHostToken } = await resolveuniCliConnection();
       if (!attempt.isCurrent()) return;
 
       if (!normalizedBaseUrl || !resolvedToken) {
-        setuni-cliClient(null);
+        setuniCliClient(null);
         setBaseUrl("");
         setToken("");
         setWorkspaces(desktopWorkspaces);
@@ -1477,7 +1477,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
         return;
       }
 
-      const client = createuni-cliServerClient({
+      const client = createuniCliServerClient({
         baseUrl: normalizedBaseUrl,
         token: resolvedToken,
         hostToken: resolvedHostToken || undefined,
@@ -1568,7 +1568,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
       );
       if (!attempt.isCurrent()) return;
 
-      setuni-cliClient(client);
+      setuniCliClient(client);
       setBaseUrl(normalizedBaseUrl);
       setToken(resolvedToken);
       setWorkspaces(nextWorkspaces);
@@ -1630,12 +1630,12 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
 
   const reloadWorkspaceEngineFromUi = useCallback(async () => {
     const workspaceId = routeStateRef.current.runtimeWorkspaceId?.trim() || selectedWorkspaceId.trim();
-    if (!uni-cliClient || !workspaceId) {
+    if (!uniCliClient || !workspaceId) {
       toast.error(t("app.error_connect_first"));
       return false;
     }
 
-    await reloadEngineOrRestartDesktop(uni-cliClient, workspaceId, refreshRouteState);
+    await reloadEngineOrRestartDesktop(uniCliClient, workspaceId, refreshRouteState);
     await refreshProviderListQueries(getReactQueryClient());
 
     try {
@@ -1649,19 +1649,19 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     void pollMcpServersAfterReloadRef.current?.();
 
     return true;
-  }, [uni-cliClient, refreshRouteState, selectedWorkspaceId]);
+  }, [uniCliClient, refreshRouteState, selectedWorkspaceId]);
 
   useEffect(() => {
     return reloadCoordinator.registerWorkspaceReloadControls({
       workspaceId: selectedWorkspace?.id || selectedWorkspaceId || "",
       applyLiveChanges: async () => {
         if (selectedWorkspace?.workspaceType === "remote") return false;
-        const status = await uni-cliClient?.getEngineV2PreviewStatus();
+        const status = await uniCliClient?.getEngineV2PreviewStatus();
         if (!status?.enabled || !status.chatRouting) return false;
         await refreshProviderListQueries(getReactQueryClient()).catch(() => undefined);
         return true;
       },
-      canReloadWorkspaceEngine: () => Boolean(uni-cliClient && (selectedWorkspace?.id || selectedWorkspaceId)),
+      canReloadWorkspaceEngine: () => Boolean(uniCliClient && (selectedWorkspace?.id || selectedWorkspaceId)),
       reloadWorkspaceEngine: reloadWorkspaceEngineFromUi,
       activeSessions: () => activeReloadBlockingSessions,
       stopSession: async (sessionId) => {
@@ -1676,7 +1676,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
   }, [
     activeClient,
     activeReloadBlockingSessions,
-    uni-cliClient,
+    uniCliClient,
     reloadCoordinator,
     reloadWorkspaceEngineFromUi,
     selectedWorkspace?.id,
@@ -1731,7 +1731,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
 
   const remoteWorkspaceConnectionEditor = useRemoteWorkspaceConnectionEditor({
     workspaces,
-    client: uni-cliClient,
+    client: uniCliClient,
     onSaved: handleRemoteWorkspaceConnectionSaved,
   });
 
@@ -1794,7 +1794,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
   );
 
   useEffect(() => {
-    if (uni-cliClient) {
+    if (uniCliClient) {
       reconnectAttemptedWorkspaceIdRef.current = "";
     }
     // Same gate as the session route: reconnect must not probe the local
@@ -1805,7 +1805,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
         bootPhase,
         bootRouteReady,
         routeLoading: loading,
-        hasClient: Boolean(uni-cliClient),
+        hasClient: Boolean(uniCliClient),
         connectionPending: false,
         workspaceType: selectedWorkspace?.workspaceType ?? null,
       })
@@ -1817,7 +1817,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     if (!workspaceId || reconnectAttemptedWorkspaceIdRef.current === workspaceId) return;
     reconnectAttemptedWorkspaceIdRef.current = workspaceId;
 
-    void ensureDesktopLocaluni-cliConnection({
+    void ensureDesktopLocaluniCliConnection({
       route: "settings",
       workspace: selectedWorkspace,
       allWorkspaces: workspaces,
@@ -1831,7 +1831,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
         dedupeKey: "server-reconnect",
       });
     });
-  }, [bootPhase, bootRouteReady, loading, uni-cliClient, selectedWorkspace, workspaces]);
+  }, [bootPhase, bootRouteReady, loading, uniCliClient, selectedWorkspace, workspaces]);
 
   useEffect(() => {
     // A workspace-route change must invalidate the previous refresh even if
@@ -1849,12 +1849,12 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
 
   // Load auto-compaction state from OpenCode config on workspace change.
   useEffect(() => {
-    if (!uni-cliClient || !selectedWorkspaceId) return;
+    if (!uniCliClient || !selectedWorkspaceId) return;
     const workspaceId = routeStateRef.current.runtimeWorkspaceId?.trim() || selectedWorkspaceId;
     let cancelled = false;
     (async () => {
       try {
-        const config = await uni-cliClient.getConfig(workspaceId);
+        const config = await uniCliClient.getConfig(workspaceId);
         if (cancelled) return;
         const compaction = config.opencode?.compaction;
         const auto = compaction && typeof compaction === "object" && "auto" in compaction
@@ -1867,17 +1867,17 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
       }
     })();
     return () => { cancelled = true; };
-  }, [uni-cliClient, selectedWorkspaceId]);
+  }, [uniCliClient, selectedWorkspaceId]);
 
   const toggleAutoCompactContext = useCallback(async () => {
     if (autoCompactContextBusy) return;
     const workspaceId = routeStateRef.current.runtimeWorkspaceId?.trim() || selectedWorkspaceId;
-    if (!uni-cliClient || !workspaceId) return;
+    if (!uniCliClient || !workspaceId) return;
     const next = !autoCompactContext;
     setAutoCompactContext(next);
     setAutoCompactContextBusy(true);
     try {
-      await uni-cliClient.patchConfig(workspaceId, {
+      await uniCliClient.patchConfig(workspaceId, {
         opencode: { compaction: { auto: next } },
       });
       reloadCoordinator.markReloadRequired("config", {
@@ -1890,10 +1890,10 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     } finally {
       setAutoCompactContextBusy(false);
     }
-  }, [autoCompactContext, autoCompactContextBusy, uni-cliClient, reloadCoordinator, selectedWorkspaceId]);
+  }, [autoCompactContext, autoCompactContextBusy, uniCliClient, reloadCoordinator, selectedWorkspaceId]);
 
   useEffect(() => {
-    uni-cliServerStore.start();
+    uniCliServerStore.start();
     connectionsStore.start();
     providerAuthStore.start();
     extensionsStore.start();
@@ -1902,11 +1902,11 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
       extensionsStore.dispose();
       providerAuthStore.dispose();
       connectionsStore.dispose();
-      uni-cliServerStore.dispose();
+      uniCliServerStore.dispose();
     };
-  }, [connectionsStore, extensionsStore, uni-cliServerStore, providerAuthStore]);
+  }, [connectionsStore, extensionsStore, uniCliServerStore, providerAuthStore]);
 
-  const refreshMarketplaceAction = useMemo<uni-cliControlAction>(() => ({
+  const refreshMarketplaceAction = useMemo<uniCliControlAction>(() => ({
     id: "extensions.refresh-marketplace",
     label: "Refresh marketplace extensions",
     description: "Force a fresh sync of organization marketplace plugins from the cloud.",
@@ -1936,14 +1936,14 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     providerAuthStore.syncFromOptions();
   }, [
     providerAuthStore,
-    uni-cliServerSnapshot.uni-cliServerStatus,
-    uni-cliServerSnapshot.uni-cliServerCapabilities?.providerSync,
-    uni-cliServerSnapshot.uni-cliServerClient,
-    uni-cliServerSnapshot.uni-cliServerHostInfo?.generation,
+    uniCliServerSnapshot.uniCliServerStatus,
+    uniCliServerSnapshot.uniCliServerCapabilities?.providerSync,
+    uniCliServerSnapshot.uniCliServerClient,
+    uniCliServerSnapshot.uniCliServerHostInfo?.generation,
   ]);
 
   useEffect(() => {
-    uni-cliServerStore.syncFromOptions();
+    uniCliServerStore.syncFromOptions();
     connectionsStore.syncFromOptions();
     providerAuthStore.syncFromOptions();
     extensionsStore.syncFromOptions();
@@ -1951,7 +1951,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     activeClient,
     connectionsStore,
     extensionsStore,
-    uni-cliServerStore,
+    uniCliServerStore,
     providerAuthStore,
     selectedWorkspace?.id,
     selectedWorkspace?.workspaceType,
@@ -1980,7 +1980,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
   const workspaceType = selectedWorkspace?.workspaceType ?? "local";
   const isRemoteWorkspace = workspaceType === "remote";
   const canWriteWorkspacePlugins =
-    !isRemoteWorkspace || uni-cliServerSnapshot.uni-cliServerCanWritePlugins;
+    !isRemoteWorkspace || uniCliServerSnapshot.uniCliServerCanWritePlugins;
   const pluginsAccessHint =
     isRemoteWorkspace && !canWriteWorkspacePlugins ? t("app.plugins_hint_readonly") : null;
   const defaultModelLabel = local.prefs.defaultModel
@@ -2024,7 +2024,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
       ? []
       : [{ id, name: providers.find((provider) => provider.id === id)?.name ?? PROVIDER_LABELS[id.toLowerCase()] ?? id }],
   );
-  const uni-cliCloudMcpUrl = connectionsSnapshot.mcpServers.find(
+  const uniCliCloudMcpUrl = connectionsSnapshot.mcpServers.find(
     (server) => server.name === "uni-cli-cloud",
   )?.config.url ?? null;
 
@@ -2052,7 +2052,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
       isToggleEnabled: (ref: string) => {
         const catalog = connectionsStore.quickConnect;
         const match = catalog.find((e: { id?: string; serverName?: string }) => (e.id ?? e.serverName) === ref);
-        return match ? isUni-CLIExtensionEnabled(match) : false;
+        return match ? isUniCliExtensionEnabled(match) : false;
       },
     };
   }, [connectionsSnapshot, extensionStateVersion, providerConnectedIds, userEnvKeys]);
@@ -2061,20 +2061,20 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
   const restartExtensionLocalServer = useCallback(async () => {
     if (!isDesktopRuntime()) return false;
     try {
-      await uni-cliServerRestart({
+      await uniCliServerRestart({
         remoteAccessEnabled:
-          readuni-cliServerSettings().remoteAccessEnabled === true,
+          readuniCliServerSettings().remoteAccessEnabled === true,
       });
-      await uni-cliServerStore.reconnectuni-cliServer();
+      await uniCliServerStore.reconnectuniCliServer();
       await refreshRouteState();
       return true;
     } catch {
       return false;
     }
-  }, [uni-cliServerStore, refreshRouteState]);
+  }, [uniCliServerStore, refreshRouteState]);
   const extensionController = useSettingsExtensionController({
-    uni-cliServerClient: selectedWorkspaceEndpoint?.client ?? uni-cliClient,
-    hostuni-cliServerClient: uni-cliClient,
+    uniCliServerClient: selectedWorkspaceEndpoint?.client ?? uniCliClient,
+    hostuniCliServerClient: uniCliClient,
     enablementContext,
     restartLocalServer: restartExtensionLocalServer,
     providers,
@@ -2094,9 +2094,9 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
       onInstall: installLocalProvider,
     },
   });
-  const extensionCatalogPlatform = resolveUni-CLIExtensionCatalogPlatform(platform.platform, platform.os);
+  const extensionCatalogPlatform = resolveUniCliExtensionCatalogPlatform(platform.platform, platform.os);
   const quickConnectCatalog = useMemo(
-    () => filterUni-CLIExtensionCatalogForPlatform(connectionsStore.quickConnect, extensionCatalogPlatform),
+    () => filterUniCliExtensionCatalogForPlatform(connectionsStore.quickConnect, extensionCatalogPlatform),
     [connectionsStore.quickConnect, extensionCatalogPlatform],
   );
   const extensionItems = useMemo(
@@ -2151,7 +2151,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     loaded: orgMcpConnections.loaded,
     error: orgMcpConnections.error,
   });
-  const diagnosticsClient = selectedWorkspaceEndpoint?.client ?? uni-cliClient;
+  const diagnosticsClient = selectedWorkspaceEndpoint?.client ?? uniCliClient;
   const diagnosticsWorkspaceAllowed = isAgentContextDiagnosticsWorkspaceAllowed(selectedWorkspace);
   const diagnosticsAvailable = Boolean(
     diagnosticsClient
@@ -2188,7 +2188,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     token,
   ]);
   const runAgentContextDiagnostics = useCallback(async () => {
-    const client = selectedWorkspaceEndpoint?.client ?? uni-cliClient;
+    const client = selectedWorkspaceEndpoint?.client ?? uniCliClient;
     const workspaceId = runtimeWorkspaceId?.trim() ?? "";
     if (
       !client
@@ -2205,14 +2205,14 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     });
     return client.runAgentContextDiagnostics(workspaceId, observations);
   }, [
-    uni-cliClient,
+    uniCliClient,
     organizationConnectionsProbe,
     orgMcpConnections.connections,
     runtimeWorkspaceId,
     selectedWorkspace,
     selectedWorkspaceEndpoint,
   ]);
-  const routeuni-cliStatus = uni-cliClient ? "connected" : "disconnected";
+  const routeuniCliStatus = uniCliClient ? "connected" : "disconnected";
   const notFoundRouteError = !loading && routeWorkspaceId && !selectedWorkspace
     ? "Workspace was not found. Select a new workspace from the sidebar."
     : null;
@@ -2225,13 +2225,13 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
       });
     }
   }, [notFoundRouteError]);
-  const routeuni-cliCapabilities: uni-cliServerCapabilities | null = uni-cliClient
+  const routeuniCliCapabilities: uniCliServerCapabilities | null = uniCliClient
     ? ROUTE_UNICLI_CAPABILITIES
     : null;
-  const environmentRuntimeKey = builduni-cliEnvRuntimeKey({
-    baseUrl: uni-cliServerSnapshot.uni-cliServerBaseUrl || uni-cliServerSnapshot.uni-cliServerUrl,
-    pid: uni-cliServerSnapshot.uni-cliServerHostInfo?.pid ?? null,
-    port: uni-cliServerSnapshot.uni-cliServerHostInfo?.port ?? null,
+  const environmentRuntimeKey = builduniCliEnvRuntimeKey({
+    baseUrl: uniCliServerSnapshot.uniCliServerBaseUrl || uniCliServerSnapshot.uniCliServerUrl,
+    pid: uniCliServerSnapshot.uniCliServerHostInfo?.pid ?? null,
+    port: uniCliServerSnapshot.uniCliServerHostInfo?.port ?? null,
   });
 
   const handleApplyEnvironmentChanges = async () => {
@@ -2260,12 +2260,12 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
       preferSidecar: true,
       runtime: "direct",
       workspacePaths,
-      uni-cliRemoteAccess: uni-cliServerSnapshot.uni-cliServerSettings.remoteAccessEnabled === true,
+      uniCliRemoteAccess: uniCliServerSnapshot.uniCliServerSettings.remoteAccessEnabled === true,
       // The user env file is read when the local server process spawns, so a
       // healthy engine must be replaced, not reused, for new values to apply.
       forceRestart: true,
     });
-    const reconnected = await uni-cliServerStore.reconnectuni-cliServer();
+    const reconnected = await uniCliServerStore.reconnectuniCliServer();
     if (!reconnected) {
       await refreshRouteState().catch(() => {});
       return { statusMessage: t("settings.environment.apply_refresh_failed") };
@@ -2303,11 +2303,11 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     if (!trimmed) return;
     setRenameWorkspaceBusy(true);
     try {
-      if (!uni-cliClient) {
+      if (!uniCliClient) {
         toast.error("Uni-CLI server is unavailable. Reconnect the server before renaming workspaces.");
         return;
       }
-      await uni-cliClient.updateWorkspaceDisplayName(renameWorkspaceId, trimmed);
+      await uniCliClient.updateWorkspaceDisplayName(renameWorkspaceId, trimmed);
       setRenameWorkspaceId(null);
       setRenameWorkspaceTitle("");
       await refreshRouteState();
@@ -2318,7 +2318,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     } finally {
       setRenameWorkspaceBusy(false);
     }
-  }, [uni-cliClient, refreshRouteState, renameWorkspaceId, renameWorkspaceTitle]);
+  }, [uniCliClient, refreshRouteState, renameWorkspaceId, renameWorkspaceTitle]);
 
   const handleRevealWorkspace = useCallback(async (workspaceId: string) => {
     const workspace = workspaces.find((item) => item.id === workspaceId);
@@ -2349,8 +2349,8 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
       const message = t("workspace_list.remove_confirm") || "Remove this workspace from the sidebar?";
       if (!window.confirm(message)) return;
     }
-    if (uni-cliClient) {
-      await uni-cliClient.deleteWorkspace(workspaceId).catch(() => undefined);
+    if (uniCliClient) {
+      await uniCliClient.deleteWorkspace(workspaceId).catch(() => undefined);
     }
     if (isDesktopRuntime()) {
       await workspaceForget(workspaceId).catch(() => undefined);
@@ -2364,7 +2364,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
       }
     }
     await refreshRouteState();
-  }, [uni-cliClient, refreshRouteState, selectedWorkspaceId, workspaces]);
+  }, [uniCliClient, refreshRouteState, selectedWorkspaceId, workspaces]);
 
   if (route.redirectPath && !props.embedded) {
     const target = props.standaloneExtensions
@@ -2418,9 +2418,9 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
         return (
           <SettingsStack>
             <AuthorizedFoldersPanel
-              uni-cliServerClient={uni-cliClient}
-              uni-cliServerStatus={routeuni-cliStatus}
-              uni-cliServerCapabilities={routeuni-cliCapabilities}
+              uniCliServerClient={uniCliClient}
+              uniCliServerStatus={routeuniCliStatus}
+              uniCliServerCapabilities={routeuniCliCapabilities}
               runtimeWorkspaceId={runtimeWorkspaceId}
               selectedWorkspaceRoot={selectedWorkspaceRoot}
               activeWorkspaceType={workspaceType}
@@ -2476,7 +2476,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
             organizationName={cloudSession.activeOrgName}
             cloudProviderIds={new Set([
               ...Object.values(providerAuthSnapshot.importedCloudProviders ?? {}).map((p) => p.providerId),
-              ...(uni-cliModelsEntitled || uni-cliModelsAvailable ? ["uni-cli"] : []),
+              ...(uniCliModelsEntitled || uniCliModelsAvailable ? ["uni-cli"] : []),
             ])}
             gatewayProviderIds={gatewayProviderIds}
             gatewayConnectProviders={gatewayConnectProviders}
@@ -2487,7 +2487,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
               toast.info("Stopped waiting. Browser sign-in was not revoked. Refresh AI Providers after finishing, or Connect again to retry.");
             }}
             onConnectGatewayProvider={(provider) => { void handleConnectGatewayProvider(provider); }}
-            showUni-CLIModelsSyncing={showUni-CLIModelsSyncing}
+            showUniCliModelsSyncing={showUniCliModelsSyncing}
             autoPreferences={visibleAutoPreferences}
             autoSwitchedOff={autoSwitchedOff}
             autoBusy={autoBusy}
@@ -2509,11 +2509,11 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
                 connectCloudProvider={providerAuthStore.connectCloudProvider}
                 importedCloudProviders={providerAuthSnapshot.importedCloudProviders}
                 importsUnavailable={
-                  uni-cliServerSnapshot.uni-cliServerCapabilities?.config?.read === false ||
-                  uni-cliServerSnapshot.uni-cliServerCapabilities?.config?.write === false
+                  uniCliServerSnapshot.uniCliServerCapabilities?.config?.read === false ||
+                  uniCliServerSnapshot.uniCliServerCapabilities?.config?.write === false
                 }
                 lastSyncError={providerAuthSnapshot.lastSyncError}
-                uni-cliServerAvailable={Boolean(uni-cliServerSnapshot.uni-cliServerClient)}
+                uniCliServerAvailable={Boolean(uniCliServerSnapshot.uniCliServerClient)}
                 onOpenAccount={openCloudAccountSettings}
                 refreshCloudOrgProviders={providerAuthStore.refreshCloudOrgProviders}
                 runCloudProviderSync={providerAuthStore.runCloudProviderSync}
@@ -2620,7 +2620,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
                   void connectionsStore.removeMcp(name);
                 }}
                 setMcpEnabled={
-                  routeuni-cliStatus === "connected" && routeuni-cliCapabilities?.mcp?.write
+                  routeuniCliStatus === "connected" && routeuniCliCapabilities?.mcp?.write
                     ? (name, enabled) => connectionsStore.setMcpEnabled(name, enabled)
                     : undefined
                 }
@@ -2676,11 +2676,11 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
             connectCloudProvider={providerAuthStore.connectCloudProvider}
             importedCloudProviders={providerAuthSnapshot.importedCloudProviders}
             importsUnavailable={
-              uni-cliServerSnapshot.uni-cliServerCapabilities?.config?.read === false ||
-              uni-cliServerSnapshot.uni-cliServerCapabilities?.config?.write === false
+              uniCliServerSnapshot.uniCliServerCapabilities?.config?.read === false ||
+              uniCliServerSnapshot.uniCliServerCapabilities?.config?.write === false
             }
             lastSyncError={providerAuthSnapshot.lastSyncError}
-            uni-cliServerAvailable={Boolean(uni-cliServerSnapshot.uni-cliServerClient)}
+            uniCliServerAvailable={Boolean(uniCliServerSnapshot.uniCliServerClient)}
             onOpenAccount={openCloudAccountSettings}
             refreshCloudOrgProviders={providerAuthStore.refreshCloudOrgProviders}
             runCloudProviderSync={providerAuthStore.runCloudProviderSync}
@@ -2696,23 +2696,23 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
               busy={busy}
               clientConnected={Boolean(opencodeClient)}
               opencodeConnectStatus={null}
-              uni-cliServerStatus={uni-cliServerSnapshot.uni-cliServerStatus}
+              uniCliServerStatus={uniCliServerSnapshot.uniCliServerStatus}
               developerMode={developerMode}
               toggleDeveloperMode={toggleDeveloperMode}
               opencodeDevModeEnabled={false}
               openDebugDeepLink={async () => ({ ok: false, message: "Debug deep links are not wired into the React settings route yet." })}
-              cloudMcpUrl={uni-cliCloudMcpUrl}
-              canInspectRuntimeConfig={Boolean(uni-cliClient && selectedWorkspaceId)}
+              cloudMcpUrl={uniCliCloudMcpUrl}
+              canInspectRuntimeConfig={Boolean(uniCliClient && selectedWorkspaceId)}
               getRuntimeConfigStatus={async () => {
-                if (!uni-cliClient || !selectedWorkspaceId) {
+                if (!uniCliClient || !selectedWorkspaceId) {
                   throw new Error("Select a workspace to inspect runtime config.");
                 }
-                return uni-cliClient.getRuntimeConfigStatus(selectedWorkspaceId);
+                return uniCliClient.getRuntimeConfigStatus(selectedWorkspaceId);
               }}
               cloudMcpHealth={cloudMcpHealth}
               refreshCloudMcpHealth={refreshCloudMcpHealth}
               organizationServer={denSession}
-              engineClient={uni-cliClient}
+              engineClient={uniCliClient}
             />
             {platform.capabilities.localRuntimeControl ? (
               <RecoveryView
@@ -2726,13 +2726,13 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
                 onRepairOpencodeCache={() => {}}
                 dockerCleanupBusy={false}
                 dockerCleanupResult={null}
-                onCleanupuni-cliDockerContainers={() => {}}
+                onCleanupuniCliDockerContainers={() => {}}
               />
             ) : null}
             <EffectivePermissionsPanel
-              uni-cliServerClient={uni-cliClient}
-              uni-cliServerStatus={routeuni-cliStatus}
-              uni-cliServerCapabilities={routeuni-cliCapabilities}
+              uniCliServerClient={uniCliClient}
+              uniCliServerStatus={routeuniCliStatus}
+              uniCliServerCapabilities={routeuniCliCapabilities}
               runtimeWorkspaceId={runtimeWorkspaceId}
               refreshToken={permissionsRefreshToken}
             />
@@ -2788,7 +2788,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
       case "environment":
         return (
           <EnvironmentView
-            client={uni-cliServerSnapshot.uni-cliServerClient}
+            client={uniCliServerSnapshot.uniCliServerClient}
             isRemoteWorkspace={isRemoteWorkspace}
             onApplyChanges={isDesktopRuntime() && !isRemoteWorkspace ? handleApplyEnvironmentChanges : undefined}
             applyBlocked={activeReloadBlockingSessions.length > 0}
@@ -2806,7 +2806,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
             key={runtimeWorkspaceId ?? selectedWorkspaceId}
             {...debugViewProps}
             agentAccess={{
-              client: selectedWorkspaceEndpoint?.client ?? uni-cliClient,
+              client: selectedWorkspaceEndpoint?.client ?? uniCliClient,
               workspaceId: runtimeWorkspaceId,
               currentModel: currentCloudMcpModel,
               onHealthChange: handleCloudMcpHealthChange,
@@ -2845,7 +2845,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
           selectedWorkspaceColor={selectedWorkspaceColor}
           workspaces={workspaceOptions}
           onSelectWorkspace={handleSelectSettingsWorkspace}
-          headerStatus={routeuni-cliStatus}
+          headerStatus={routeuniCliStatus}
           busyHint={loading ? t("session.loading_detail") : busyLabel}
           onClose={props.onClose ?? (() => navigate(settingsReturnRoute(
             selectedWorkspaceId,
@@ -2859,7 +2859,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
       )}
 
       <CommandPalette
-        engineClient={uni-cliClient}
+        engineClient={uniCliClient}
         open={commandPaletteOpen}
         onClose={() => setCommandPaletteOpen(false)}
         developerMode={developerMode}
@@ -2936,7 +2936,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
         onSubmitApiKey={providerAuthStore.submitProviderApiKey}
         onSubmitOAuth={providerAuthStore.completeProviderAuthOAuth}
         onRefreshProviders={providerAuthStore.refreshProviders}
-        uni-cliModelsState={visibleAutoPreferences ? !visibleAutoPreferences.enabled ? "off" : visibleAutoPreferences.available ? "included" : "unavailable" : undefined}
+        uniCliModelsState={visibleAutoPreferences ? !visibleAutoPreferences.enabled ? "off" : visibleAutoPreferences.available ? "included" : "unavailable" : undefined}
         organizationName={cloudSession.activeOrgName}
         organizationProviderIds={organizationProviderIds}
         organizationProviderCount={cloudSession.isSignedIn ? new Set([...providerAuthSnapshot.cloudOrgProviders.map((provider) => provider.id), ...Object.keys(providerAuthSnapshot.importedCloudProviders), ...gatewayConnectProviders.map((provider) => provider.cloudProviderId)]).size : undefined}

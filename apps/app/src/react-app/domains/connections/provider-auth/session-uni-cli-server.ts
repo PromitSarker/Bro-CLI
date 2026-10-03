@@ -1,4 +1,4 @@
-// Session-route adapter for the provider-auth store's `uni-cliServer` slice.
+// Session-route adapter for the provider-auth store's `uniCliServer` slice.
 //
 // The settings route feeds the store the full uni-cli-server store, whose
 // snapshot carries the server's real capabilities (including `providerSync`)
@@ -17,44 +17,44 @@
 // - remote workspaces and non-loopback local URL overrides stay config-only:
 //   a local workspace label does not authorize forwarding desktop credentials.
 import {
-  createuni-cliServerClient,
-  isLoopbackuni-cliServerUrl,
-  readuni-cliServerSettings,
-  type uni-cliServerClient,
+  createuniCliServerClient,
+  isLoopbackuniCliServerUrl,
+  readuniCliServerSettings,
+  type uniCliServerClient,
 } from "@/app/lib/uni-cli-server";
 import type { ResolvedWorkspaceEndpoint } from "@/app/lib/workspace-endpoint";
-import type { ProviderAuthuni-cliServer } from "./store";
+import type { ProviderAuthuniCliServer } from "./store";
 
-type Sessionuni-cliServerSnapshot = ReturnType<ProviderAuthuni-cliServer["getSnapshot"]>;
+type SessionuniCliServerSnapshot = ReturnType<ProviderAuthuniCliServer["getSnapshot"]>;
 
-export type CreateSessionuni-cliServerInput = {
+export type CreateSessionuniCliServerInput = {
   endpoint: () => ResolvedWorkspaceEndpoint | null;
-  /** Live host token from the desktop runtime (uni-cliServerInfo). */
+  /** Live host token from the desktop runtime (uniCliServerInfo). */
   hostToken?: () => string;
   generation?: () => number | null;
 };
 
 function resolveHostToken(endpoint: ResolvedWorkspaceEndpoint, live: string): string {
   // Fallback mirrors uni-cli-server-store's getAuth(): persisted settings may
-  // hold the host token (ensureDesktopLocaluni-cliConnection writes it), but
+  // hold the host token (ensureDesktopLocaluniCliConnection writes it), but
   // both live and stored host tokens must stay on loopback servers.
-  if (!isLoopbackuni-cliServerUrl(endpoint.baseUrl)) return "";
+  if (!isLoopbackuniCliServerUrl(endpoint.baseUrl)) return "";
   if (live) return live;
-  return readuni-cliServerSettings().hostToken?.trim() ?? "";
+  return readuniCliServerSettings().hostToken?.trim() ?? "";
 }
 
-export function createSessionuni-cliServer(
-  input: CreateSessionuni-cliServerInput,
-): ProviderAuthuni-cliServer {
+export function createSessionuniCliServer(
+  input: CreateSessionuniCliServerInput,
+): ProviderAuthuniCliServer {
   let clientCacheKey = "";
-  let clientCacheValue: uni-cliServerClient | null = null;
+  let clientCacheValue: uniCliServerClient | null = null;
 
-  const hostAwareClient = (endpoint: ResolvedWorkspaceEndpoint, hostToken: string): uni-cliServerClient => {
+  const hostAwareClient = (endpoint: ResolvedWorkspaceEndpoint, hostToken: string): uniCliServerClient => {
     if (!hostToken) return endpoint.client;
     const key = `${endpoint.baseUrl}\u001f${endpoint.token}\u001f${hostToken}`;
     if (key !== clientCacheKey || !clientCacheValue) {
       clientCacheKey = key;
-      clientCacheValue = createuni-cliServerClient({
+      clientCacheValue = createuniCliServerClient({
         baseUrl: endpoint.baseUrl,
         token: endpoint.token || undefined,
         hostToken,
@@ -64,32 +64,32 @@ export function createSessionuni-cliServer(
   };
 
   return {
-    getSnapshot: (): Sessionuni-cliServerSnapshot => {
+    getSnapshot: (): SessionuniCliServerSnapshot => {
       const endpoint = input.endpoint();
       if (!endpoint) {
         return {
-          uni-cliServerStatus: "disconnected",
-          uni-cliServerClient: null,
-          uni-cliServerCapabilities: null,
+          uniCliServerStatus: "disconnected",
+          uniCliServerClient: null,
+          uniCliServerCapabilities: null,
         };
       }
-      if (endpoint.isRemote || !isLoopbackuni-cliServerUrl(endpoint.baseUrl)) {
+      if (endpoint.isRemote || !isLoopbackuniCliServerUrl(endpoint.baseUrl)) {
         return {
-          uni-cliServerStatus: "connected",
-          uni-cliServerClient: endpoint.client,
-          uni-cliServerCapabilities: { config: { read: true, write: true } },
+          uniCliServerStatus: "connected",
+          uniCliServerClient: endpoint.client,
+          uniCliServerCapabilities: { config: { read: true, write: true } },
         };
       }
       const hostToken = resolveHostToken(endpoint, input.hostToken?.().trim() ?? "");
       return {
-        uni-cliServerStatus: "connected",
-        uni-cliServerClient: hostAwareClient(endpoint, hostToken),
-        uni-cliServerHostInfo: { generation: input.generation?.() ?? null },
-        uni-cliServerAuth: {
+        uniCliServerStatus: "connected",
+        uniCliServerClient: hostAwareClient(endpoint, hostToken),
+        uniCliServerHostInfo: { generation: input.generation?.() ?? null },
+        uniCliServerAuth: {
           token: endpoint.token || undefined,
           hostToken: hostToken || undefined,
         },
-        uni-cliServerCapabilities: {
+        uniCliServerCapabilities: {
           config: { read: true, write: true },
           providerSync: true,
         },

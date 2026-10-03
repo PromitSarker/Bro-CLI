@@ -39,7 +39,7 @@ async function request(admin: DenSession, path: string, init: RequestInit = {}):
   return { status: response.status, body, text };
 }
 
-export async function grantUni-CLIWebAccess(
+export async function grantUniCliWebAccess(
   admin: DenSession,
   organizationId: string,
   reason: string,

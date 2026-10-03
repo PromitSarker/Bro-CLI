@@ -15,7 +15,7 @@ import {
   requestAgentContextDiagnosticsPayload,
 } from "./agent-context-diagnostics-transport";
 import { desktopFetch, desktopFetchViaMain, desktopFetchAgentContextDiagnostics, desktopUploadMultipart, electronLocalPathForFile } from "./desktop";
-import { isuni-cliGatewayRuntime } from "./gateway-runtime";
+import { isuniCliGatewayRuntime } from "./gateway-runtime";
 import { isDesktopRuntime } from "./runtime-env";
 import type { ExecResult, OpencodeConfigFile, WorkspaceInfo, WorkspaceList } from "./desktop";
 import type { DenOrgMarketplace, DenOrgPluginResolved, DenResourceSnapshot } from "./den-types";
@@ -25,7 +25,7 @@ import { desktopFreeAccessStatusSchema } from "./inference-access";
 const desktopFreePreferencesSchema = z.object({ enabled: z.boolean(), available: z.boolean(), canEnable: z.boolean(), refresh: z.enum(["reloaded", "deferred"]).optional() });
 export type DesktopFreePreferences = z.infer<typeof desktopFreePreferencesSchema>;
 
-export type uni-cliServerCapabilities = {
+export type uniCliServerCapabilities = {
   skills: { read: boolean; write: boolean; source: "uni-cli" | "opencode" };
   plugins: { read: boolean; write: boolean };
   mcp: { read: boolean; write: boolean };
@@ -51,12 +51,12 @@ export type uni-cliServerCapabilities = {
   };
 };
 
-export type uni-cliCloudProviderSyncRun = {
+export type uniCliCloudProviderSyncRun = {
   status: "applied" | "noop" | "failed" | "no_session";
   message?: string;
 };
 
-export type uni-cliCloudProviderSyncSkippedProvider = {
+export type uniCliCloudProviderSyncSkippedProvider = {
   cloudProviderId: string;
   credentialSetId?: string;
   models?: GatewayUsableModel[];
@@ -68,14 +68,14 @@ export type uni-cliCloudProviderSyncSkippedProvider = {
   authUrl?: string | null;
 };
 
-export type uni-cliCloudProviderSyncStatus = {
+export type uniCliCloudProviderSyncStatus = {
   hasSession: boolean;
-  lastRun: { at: string | number; status: uni-cliCloudProviderSyncRun["status"]; message?: string } | null;
+  lastRun: { at: string | number; status: uniCliCloudProviderSyncRun["status"]; message?: string } | null;
   providers: CloudImportedProvider[];
   /** A managed engine reload is still owed: materialized providers are not served yet. */
   reloadPending: boolean;
   /** Den-granted providers the server sync skipped, each with a reason. */
-  skippedProviders: uni-cliCloudProviderSyncSkippedProvider[];
+  skippedProviders: uniCliCloudProviderSyncSkippedProvider[];
 };
 
 export interface EngineV2MigrationStatus {
@@ -168,7 +168,7 @@ export type WorkspaceDefaultModelState = z.infer<typeof workspaceDefaultModelSta
 
 function parseWorkspaceDefaultModelState(value: unknown): WorkspaceDefaultModelState {
   const parsed = workspaceDefaultModelStateSchema.safeParse(value);
-  if (!parsed.success) throw new uni-cliServerError(502, "invalid_response", "Invalid workspace default model response");
+  if (!parsed.success) throw new uniCliServerError(502, "invalid_response", "Invalid workspace default model response");
   return parsed.data;
 }
 
@@ -199,7 +199,7 @@ function parseEngineV2PreviewStatus(value: unknown): EngineV2PreviewStatus {
   };
 }
 
-function parseCloudProviderSyncRun(value: unknown): uni-cliCloudProviderSyncRun {
+function parseCloudProviderSyncRun(value: unknown): uniCliCloudProviderSyncRun {
   if (!value || typeof value !== "object" || !("status" in value)) throw new Error("Invalid cloud provider sync response.");
   const status = value.status;
   if (status !== "applied" && status !== "noop" && status !== "failed" && status !== "no_session") {
@@ -256,7 +256,7 @@ function parsePendingGatewayModel(value: unknown, credentialSetId: unknown): Gat
   };
 }
 
-function parseCloudProviderSyncStatus(value: unknown): uni-cliCloudProviderSyncStatus {
+function parseCloudProviderSyncStatus(value: unknown): uniCliCloudProviderSyncStatus {
   if (!value || typeof value !== "object" || !("hasSession" in value) || typeof value.hasSession !== "boolean" || !("providers" in value) || !Array.isArray(value.providers)) {
     throw new Error("Invalid cloud provider sync status response.");
   }
@@ -266,7 +266,7 @@ function parseCloudProviderSyncStatus(value: unknown): uni-cliCloudProviderSyncS
     if (!provider) throw new Error("Invalid cloud provider sync provider response.");
     providers.push(provider);
   }
-  let lastRun: uni-cliCloudProviderSyncStatus["lastRun"] = null;
+  let lastRun: uniCliCloudProviderSyncStatus["lastRun"] = null;
   if ("lastRun" in value && value.lastRun !== null) {
     if (!value.lastRun || typeof value.lastRun !== "object" || !("at" in value.lastRun) || (typeof value.lastRun.at !== "string" && typeof value.lastRun.at !== "number")) {
       throw new Error("Invalid cloud provider sync last-run response.");
@@ -277,7 +277,7 @@ function parseCloudProviderSyncStatus(value: unknown): uni-cliCloudProviderSyncS
   // Additive fields (older servers omit them): tolerate absence and malformed
   // entries instead of failing the whole status read.
   const reloadPending = "reloadPending" in value && value.reloadPending === true;
-  const skippedProviders: uni-cliCloudProviderSyncSkippedProvider[] = [];
+  const skippedProviders: uniCliCloudProviderSyncSkippedProvider[] = [];
   if ("skippedProviders" in value && Array.isArray(value.skippedProviders)) {
     for (const raw of value.skippedProviders) {
       if (!raw || typeof raw !== "object") continue;
@@ -305,9 +305,9 @@ function parseCloudProviderSyncStatus(value: unknown): uni-cliCloudProviderSyncS
   return { hasSession: value.hasSession, lastRun, providers, reloadPending, skippedProviders };
 }
 
-export type uni-cliServerStatus = "connected" | "disconnected" | "limited";
+export type uniCliServerStatus = "connected" | "disconnected" | "limited";
 
-export type uni-cliServerDiagnostics = {
+export type uniCliServerDiagnostics = {
   ok: boolean;
   version: string;
   uptimeMs: number;
@@ -317,16 +317,16 @@ export type uni-cliServerDiagnostics = {
   workspaceCount: number;
   activeWorkspaceId?: string | null;
   selectedWorkspaceId?: string | null;
-  workspace: uni-cliWorkspaceInfo | null;
+  workspace: uniCliWorkspaceInfo | null;
   authorizedRoots: string[];
   server: { host: string; port: number; configPath?: string | null };
   tokenSource: { client: string; host: string };
 };
 
-export type uni-cliRuntimeServiceName = "uni-cli-server" | "opencode";
+export type uniCliRuntimeServiceName = "uni-cli-server" | "opencode";
 
-export type uni-cliRuntimeServiceSnapshot = {
-  name: uni-cliRuntimeServiceName;
+export type uniCliRuntimeServiceSnapshot = {
+  name: uniCliRuntimeServiceName;
   enabled: boolean;
   running: boolean;
   targetVersion: string | null;
@@ -334,7 +334,7 @@ export type uni-cliRuntimeServiceSnapshot = {
   upgradeAvailable: boolean;
 };
 
-export type uni-cliRuntimeSnapshot = {
+export type uniCliRuntimeSnapshot = {
   ok: boolean;
   worker?: {
     workspace: string;
@@ -346,12 +346,12 @@ export type uni-cliRuntimeSnapshot = {
     finishedAt: number | null;
     error: string | null;
     operationId: string | null;
-    services: uni-cliRuntimeServiceName[];
+    services: uniCliRuntimeServiceName[];
   };
-  services: uni-cliRuntimeServiceSnapshot[];
+  services: uniCliRuntimeServiceSnapshot[];
 };
 
-export type uni-cliServerSettings = {
+export type uniCliServerSettings = {
   urlOverride?: string;
   portOverride?: number;
   token?: string;
@@ -361,22 +361,22 @@ export type uni-cliServerSettings = {
 
 // The shared WorkspaceWire contract now carries the opencode block; keep the
 // historical name as an alias for the many existing imports.
-export type uni-cliWorkspaceInfo = WorkspaceInfo;
+export type uniCliWorkspaceInfo = WorkspaceInfo;
 
-export type uni-cliWorkspaceList = {
-  items: uni-cliWorkspaceInfo[];
+export type uniCliWorkspaceList = {
+  items: uniCliWorkspaceInfo[];
   workspaces?: WorkspaceInfo[];
   activeId?: string | null;
 };
 
-export type uni-cliSessionMessage = {
+export type uniCliSessionMessage = {
   info: Message;
   parts: Part[];
 };
 
-export type uni-cliSessionSnapshot = {
+export type uniCliSessionSnapshot = {
   session: Session;
-  messages: uni-cliSessionMessage[];
+  messages: uniCliSessionMessage[];
   pagination?: { before?: string; nextCursor: string | null; limit: number };
   todos: Todo[];
   status:
@@ -387,17 +387,17 @@ export type uni-cliSessionSnapshot = {
 
 // Stored history is independently readable. Missing activity fields are not an
 // observed idle state or an empty todo list; live hydration owns those values.
-export type uni-cliSessionHistory = Pick<uni-cliSessionSnapshot, "session" | "messages" | "pagination">
-  & Partial<Pick<uni-cliSessionSnapshot, "status" | "todos">>;
+export type uniCliSessionHistory = Pick<uniCliSessionSnapshot, "session" | "messages" | "pagination">
+  & Partial<Pick<uniCliSessionSnapshot, "status" | "todos">>;
 
-export type uni-cliPluginItem = {
+export type uniCliPluginItem = {
   spec: string;
   source: "config" | "dir.project" | "dir.global";
   scope: "project" | "global";
   path?: string;
 };
 
-export type uni-cliSkillItem = {
+export type uniCliSkillItem = {
   name: string;
   path: string;
   description: string;
@@ -406,19 +406,19 @@ export type uni-cliSkillItem = {
   error?: string;
 };
 
-export type uni-cliSkillContent = {
-  item: uni-cliSkillItem;
+export type uniCliSkillContent = {
+  item: uniCliSkillItem;
   content: string;
 };
 
-export type uni-cliWorkspaceFileContent = {
+export type uniCliWorkspaceFileContent = {
   path: string;
   content: string;
   bytes: number;
   updatedAt: number;
 };
 
-export type uni-cliWorkspaceFileWriteResult = {
+export type uniCliWorkspaceFileWriteResult = {
   ok: boolean;
   path: string;
   bytes: number;
@@ -426,13 +426,13 @@ export type uni-cliWorkspaceFileWriteResult = {
   revision?: string;
 };
 
-export type uni-cliWorkspaceFileDeleteResult = {
+export type uniCliWorkspaceFileDeleteResult = {
   ok: boolean;
   path: string;
   code?: string;
 };
 
-export type uni-cliWorkspaceCatalogEntry = {
+export type uniCliWorkspaceCatalogEntry = {
   path: string;
   kind: "file" | "dir";
   size: number;
@@ -440,23 +440,23 @@ export type uni-cliWorkspaceCatalogEntry = {
   revision: string;
 };
 
-export type uni-cliWorkspaceCatalog = {
+export type uniCliWorkspaceCatalog = {
   incomplete?: boolean;
   skippedDirectories?: string[];
-  items: uni-cliWorkspaceCatalogEntry[];
+  items: uniCliWorkspaceCatalogEntry[];
   total: number;
   truncated: boolean;
 };
 
-export type uni-cliAuthorizedFoldersResponse = {
+export type uniCliAuthorizedFoldersResponse = {
   folders: string[];
   hiddenCount: number;
   workspaceRoot: string;
 };
 
-export type uni-cliPermissionAction = "allow" | "ask" | "deny";
-export type uni-cliPermissionSource = "engine" | "global" | "uni-cli" | "workspace";
-export type uni-cliEffectivePermissionKey =
+export type uniCliPermissionAction = "allow" | "ask" | "deny";
+export type uniCliPermissionSource = "engine" | "global" | "uni-cli" | "workspace";
+export type uniCliEffectivePermissionKey =
   | "shell"
   | "edit"
   | "web"
@@ -465,33 +465,33 @@ export type uni-cliEffectivePermissionKey =
   | "env_files"
   | "doom_loop";
 
-export type uni-cliEffectivePermissionRow = {
-  key: uni-cliEffectivePermissionKey;
+export type uniCliEffectivePermissionRow = {
+  key: uniCliEffectivePermissionKey;
   permission: string;
-  action: uni-cliPermissionAction;
-  rule: { permission: string; pattern: string; action: uni-cliPermissionAction } | null;
-  source: uni-cliPermissionSource | null;
+  action: uniCliPermissionAction;
+  rule: { permission: string; pattern: string; action: uniCliPermissionAction } | null;
+  source: uniCliPermissionSource | null;
   exceptions: number;
 };
 
-export type uni-cliEffectivePermissionsResponse = {
+export type uniCliEffectivePermissionsResponse = {
   agent: string;
-  rows: uni-cliEffectivePermissionRow[];
+  rows: uniCliEffectivePermissionRow[];
   files: { workspace: string; global: string };
 };
 
-export type uni-cliAuthorizedFoldersUpdateResponse = {
+export type uniCliAuthorizedFoldersUpdateResponse = {
   folders: string[];
   hiddenCount: number;
   updatedAt: number;
 };
 
-export type uni-cliRuntimeDisabledProvidersResult = {
+export type uniCliRuntimeDisabledProvidersResult = {
   ok: true;
   disabledProviders: string[];
 };
 
-export type uni-cliRuntimeConfigStatus = {
+export type uniCliRuntimeConfigStatus = {
   runtime: Record<string, unknown>;
   runtimeKeys: string[];
   effectiveRuntime: Record<string, unknown>;
@@ -511,7 +511,7 @@ export type uni-cliRuntimeConfigStatus = {
   };
 };
 
-export type uni-cliDesktopCloudSyncChange = {
+export type uniCliDesktopCloudSyncChange = {
   id: string;
   kind: "new" | "modified" | "removed";
   resourceKind: "llmProvider" | "marketplace" | "plugin" | "configItem";
@@ -522,40 +522,40 @@ export type uni-cliDesktopCloudSyncChange = {
   queuedAt: number;
 };
 
-export type uni-cliDesktopCloudSyncState = {
+export type uniCliDesktopCloudSyncState = {
   entries: Record<string, unknown>;
   updatedAt: number;
   version: 1;
 };
 
-export type uni-cliDesktopCloudSyncResult = {
-  changes: uni-cliDesktopCloudSyncChange[];
-  state: uni-cliDesktopCloudSyncState;
+export type uniCliDesktopCloudSyncResult = {
+  changes: uniCliDesktopCloudSyncChange[];
+  state: uniCliDesktopCloudSyncState;
 };
 
-export type uni-cliCloudPluginInstallResult = {
+export type uniCliCloudPluginInstallResult = {
   item: CloudImportedPlugin;
   warnings: string[];
 };
 
-export type uni-cliCloudPluginsResult = {
+export type uniCliCloudPluginsResult = {
   marketplaces: Record<string, CloudImportedMarketplace>;
   plugins: Record<string, CloudImportedPlugin>;
 };
 
-export type uni-cliClaudePluginComponent = {
+export type uniCliClaudePluginComponent = {
   type: "mcp" | "skill" | "command" | "agent";
   name: string;
   description: string | null;
 };
 
-export type uni-cliClaudePluginPreview = {
+export type uniCliClaudePluginPreview = {
   pluginId: string;
   name: string;
   description: string | null;
   version: string | null;
   source: { owner: string; repo: string; ref: string; dir: string | null };
-  components: uni-cliClaudePluginComponent[];
+  components: uniCliClaudePluginComponent[];
   warnings: string[];
 };
 
@@ -569,7 +569,7 @@ function arrayBufferToBase64(data: ArrayBuffer): string {
   return btoa(binary);
 }
 
-export type uni-cliCommandItem = {
+export type uniCliCommandItem = {
   name: string;
   description?: string;
   template: string;
@@ -579,15 +579,15 @@ export type uni-cliCommandItem = {
   scope: "workspace" | "global";
 };
 
-export type uni-cliMcpItem = {
+export type uniCliMcpItem = {
   name: string;
   config: Record<string, unknown>;
   source: "config.project" | "config.global" | "config.remote";
   disabledByTools?: boolean;
-  managedOAuth?: uni-cliManagedMcpConnection | null;
+  managedOAuth?: uniCliManagedMcpConnection | null;
 };
 
-export type uni-cliMcpAppResource = {
+export type uniCliMcpAppResource = {
   hostConnectionActions?: true;
   /** Opaque, short-lived host context. Absent on generated previews and older servers. */
   launchId?: string;
@@ -605,14 +605,14 @@ export type uni-cliMcpAppResource = {
   prefersBorder: boolean;
 };
 
-export type uni-cliMcpAppLaunchReference = {
+export type uniCliMcpAppLaunchReference = {
   connectionId?: string;
   toolName: string;
   resourceUri: string;
   arguments: Record<string, unknown>;
 };
 
-export type uni-cliMcpAppCatalogApp = {
+export type uniCliMcpAppCatalogApp = {
   serverName: string;
   /** Present for Connect app-host apps: launch them through this connection reference. */
   connectionId?: string;
@@ -627,17 +627,17 @@ export type uni-cliMcpAppCatalogApp = {
   requiresApproval: boolean;
 };
 
-export type uni-cliMcpAppCatalogServer = {
+export type uniCliMcpAppCatalogServer = {
   serverName: string;
   /** Human-readable provider name for Connect app-host servers. */
   displayName?: string;
   connectionId?: string;
   reachable: boolean;
   error?: string;
-  apps: uni-cliMcpAppCatalogApp[];
+  apps: uniCliMcpAppCatalogApp[];
 };
 
-export type uni-cliMcpAppToolResult = {
+export type uniCliMcpAppToolResult = {
   hostAction?: ConnectionActionIntent;
   content: Array<Record<string, unknown>>;
   structuredContent?: Record<string, unknown>;
@@ -645,7 +645,7 @@ export type uni-cliMcpAppToolResult = {
   _meta?: Record<string, unknown>;
 };
 
-export type uni-cliMcpAppSandbox = {
+export type uniCliMcpAppSandbox = {
   url: string;
   expectedOrigin: string;
   sandbox: "allow-scripts" | "allow-scripts allow-same-origin";
@@ -655,7 +655,7 @@ export function normalizeMcpAppHostOrigin(hostOrigin: string): string {
   return hostOrigin === "file://" ? "null" : hostOrigin;
 }
 
-export type uni-cliManagedMcpConnection = {
+export type uniCliManagedMcpConnection = {
   name: string;
   serverUrl: string;
   enabled: boolean;
@@ -665,27 +665,27 @@ export type uni-cliManagedMcpConnection = {
   updatedAt: number;
 };
 
-export type uni-cliManagedOAuthState = {
+export type uniCliManagedOAuthState = {
   available: boolean;
   recovery: { at: number; reason: string; quarantinedTo: string } | null;
 };
 
-export type uni-cliManagedMcpStartResult =
+export type uniCliManagedMcpStartResult =
   | { status: "connected" }
   | { status: "needs_auth"; authorizeUrl: string };
 
-export type uni-cliMcpEngineSync = {
+export type uniCliMcpEngineSync = {
   status: "ok" | "failed";
   at: number;
   failures: Array<{ name: string; status?: number; message?: string }>;
 };
 
-export type uni-cliCloudMcpProviderModelContext = {
+export type uniCliCloudMcpProviderModelContext = {
   provider: string;
   model: string;
 };
 
-export type uni-cliCloudMcpFailureStage =
+export type uniCliCloudMcpFailureStage =
   | "prerequisites"
   | "token_mint"
   | "desired_config"
@@ -703,7 +703,7 @@ export type uni-cliCloudMcpFailureStage =
   | "tool_ids"
   | "plugin_canary";
 
-export type uni-cliCloudMcpFailureCode =
+export type uniCliCloudMcpFailureCode =
   | "cloud_desired_missing"
   | "cloud_mcp_missing"
   | "cloud_mcp_disabled"
@@ -740,9 +740,9 @@ export type uni-cliCloudMcpFailureCode =
   | "extensions_plugin_missing"
   | string;
 
-export type uni-cliCloudMcpFailure = {
-  code: uni-cliCloudMcpFailureCode;
-  stage: uni-cliCloudMcpFailureStage | string;
+export type uniCliCloudMcpFailure = {
+  code: uniCliCloudMcpFailureCode;
+  stage: uniCliCloudMcpFailureStage | string;
   retryable: boolean;
   recommendedAction: string;
   message: string;
@@ -752,7 +752,7 @@ export type uni-cliCloudMcpFailure = {
   details?: unknown;
 };
 
-export type uni-cliCloudMcpCompatibility = {
+export type uniCliCloudMcpCompatibility = {
   uni-cli: {
     serverVersion: string | null;
     app: Record<string, string | number | boolean | null> | null;
@@ -797,7 +797,7 @@ export type uni-cliCloudMcpCompatibility = {
   };
 };
 
-export type uni-cliCloudMcpHealthPhase =
+export type uniCliCloudMcpHealthPhase =
   | "missing_desired"
   | "workspace_ambiguous"
   | "engine_unconfigured"
@@ -816,7 +816,7 @@ export type uni-cliCloudMcpHealthPhase =
   | "ready"
   | string;
 
-export type uni-cliCloudMcpDeliverySnapshot = {
+export type uniCliCloudMcpDeliverySnapshot = {
   state: "not_desired" | "pending" | "registering" | "ready" | "failed" | "stale" | string;
   desiredRevision: string | null;
   appliedRevision: string | null;
@@ -824,10 +824,10 @@ export type uni-cliCloudMcpDeliverySnapshot = {
   appliedAt: number | null;
   lastAttemptAt: number | null;
   trigger?: string;
-  failure?: uni-cliCloudMcpFailure;
+  failure?: uniCliCloudMcpFailure;
 };
 
-export type uni-cliCloudMcpProbeStep = {
+export type uniCliCloudMcpProbeStep = {
   step: "initialize" | "initialized_notice" | "tools_list" | string;
   ok: boolean;
   httpStatus?: number;
@@ -835,39 +835,39 @@ export type uni-cliCloudMcpProbeStep = {
   error?: unknown;
 };
 
-export type uni-cliCloudMcpProbeTrace = {
+export type uniCliCloudMcpProbeTrace = {
   endpoint: string | null;
   startedAt: string;
   latencyMs: number;
   protocolVersion: string | null;
   serverInfo: { name: string | null; version: string | null } | null;
-  steps: uni-cliCloudMcpProbeStep[];
+  steps: uniCliCloudMcpProbeStep[];
 };
 
-export type uni-cliCloudMcpEngineRefreshStep = {
+export type uniCliCloudMcpEngineRefreshStep = {
   step: "engine_disconnect" | "reapply" | string;
   ok: boolean;
   latencyMs: number;
   detail?: unknown;
 };
 
-export type uni-cliCloudMcpEngineRefresh = {
+export type uniCliCloudMcpEngineRefresh = {
   performed: boolean;
   reason?: "desired_missing" | string;
   trigger: string;
   startedAt: string;
   finishedAt: string;
-  steps: uni-cliCloudMcpEngineRefreshStep[];
+  steps: uniCliCloudMcpEngineRefreshStep[];
 };
 
-export type uni-cliCloudMcpEngineRefreshResult = {
-  refresh: uni-cliCloudMcpEngineRefresh;
-  health: uni-cliCloudMcpHealth;
+export type uniCliCloudMcpEngineRefreshResult = {
+  refresh: uniCliCloudMcpEngineRefresh;
+  health: uniCliCloudMcpHealth;
 };
 
-export type uni-cliCloudMcpHealth = {
+export type uniCliCloudMcpHealth = {
   schemaVersion: 1;
-  phase: uni-cliCloudMcpHealthPhase;
+  phase: uniCliCloudMcpHealthPhase;
   usable: boolean;
   usableByCurrentModel: boolean | null;
   connectCatalogEnabled: boolean;
@@ -894,7 +894,7 @@ export type uni-cliCloudMcpHealth = {
     app?: Record<string, string | number | boolean | null>;
     updatedAt?: number;
   };
-  delivery: uni-cliCloudMcpDeliverySnapshot;
+  delivery: uniCliCloudMcpDeliverySnapshot;
   engine: {
     status: "not_checked" | "missing" | "connected" | "disabled" | "failed" | "needs_auth" | "needs_client_registration" | "unreachable" | "unknown" | string;
     error?: unknown;
@@ -916,9 +916,9 @@ export type uni-cliCloudMcpHealth = {
       expected: string[];
       present: string[];
       missing: string[];
-      trace?: uni-cliCloudMcpProbeTrace;
+      trace?: uniCliCloudMcpProbeTrace;
       error?: unknown;
-      failure?: uni-cliCloudMcpFailure;
+      failure?: uniCliCloudMcpFailure;
     };
     providerProjection: {
       checked: boolean;
@@ -938,14 +938,14 @@ export type uni-cliCloudMcpHealth = {
     present: string[];
     missing: string[];
   };
-  compatibility: uni-cliCloudMcpCompatibility;
+  compatibility: uniCliCloudMcpCompatibility;
   toolDenies: unknown[];
-  firstFailure: uni-cliCloudMcpFailure | null;
+  firstFailure: uniCliCloudMcpFailure | null;
   checkedAt: string;
   durationMs?: number;
 };
 
-export type uni-cliCloudMcpReconcilePayload = {
+export type uniCliCloudMcpReconcilePayload = {
   workspaceId: string;
   name: "uni-cli-cloud";
   config: Record<string, unknown>;
@@ -962,7 +962,7 @@ export type uni-cliCloudMcpReconcilePayload = {
   model?: string;
 };
 
-export type uni-cliWorkspaceExport = {
+export type uniCliWorkspaceExport = {
   workspaceId: string;
   exportedAt: number;
   opencode?: Record<string, unknown>;
@@ -972,15 +972,15 @@ export type uni-cliWorkspaceExport = {
   files?: Array<{ path: string; content: string }>;
 };
 
-export type uni-cliWorkspaceExportSensitiveMode = "auto" | "include" | "exclude";
+export type uniCliWorkspaceExportSensitiveMode = "auto" | "include" | "exclude";
 
-export type uni-cliWorkspaceExportWarning = {
+export type uniCliWorkspaceExportWarning = {
   id: string;
   label: string;
   detail: string;
 };
 
-export type uni-cliArtifactItem = {
+export type uniCliArtifactItem = {
   id: string;
   name?: string;
   path?: string;
@@ -990,11 +990,11 @@ export type uni-cliArtifactItem = {
   mime?: string;
 };
 
-export type uni-cliArtifactList = {
-  items: uni-cliArtifactItem[];
+export type uniCliArtifactList = {
+  items: uniCliArtifactItem[];
 };
 
-export type uni-cliConnectState = {
+export type uniCliConnectState = {
   ok: true;
   schemaVersion: 1;
   status: "available" | "missing" | "invalid" | "unreadable";
@@ -1002,14 +1002,14 @@ export type uni-cliConnectState = {
   cloudMcpPresent: boolean;
 };
 
-export type uni-cliExtensionActionCall = {
+export type uniCliExtensionActionCall = {
   extensionId: string;
   action: string;
   args?: Record<string, unknown>;
   context?: Record<string, unknown>;
 };
 
-export type uni-cliExtensionActionResult =
+export type uniCliExtensionActionResult =
   | {
     ok: true;
     extensionId: string;
@@ -1023,7 +1023,7 @@ export type uni-cliExtensionActionResult =
     message: string;
   };
 
-export type uni-cliResolvedArtifactTarget = {
+export type uniCliResolvedArtifactTarget = {
   id: string;
   kind: "file" | "url";
   value: string;
@@ -1037,7 +1037,7 @@ export type uni-cliResolvedArtifactTarget = {
   contentType?: string;
 };
 
-export type uni-cliWorkspaceFileStat = {
+export type uniCliWorkspaceFileStat = {
   ok: boolean;
   path: string;
   exists: boolean;
@@ -1046,7 +1046,7 @@ export type uni-cliWorkspaceFileStat = {
   updatedAt?: number;
 };
 
-export type uni-cliInboxItem = {
+export type uniCliInboxItem = {
   id: string;
   name?: string;
   path?: string;
@@ -1054,73 +1054,73 @@ export type uni-cliInboxItem = {
   updatedAt?: number;
 };
 
-export type uni-cliInboxList = {
-  items: uni-cliInboxItem[];
+export type uniCliInboxList = {
+  items: uniCliInboxItem[];
 };
 
-export type uni-cliInboxUploadResult = {
+export type uniCliInboxUploadResult = {
   ok: boolean;
   path: string;
   bytes: number;
 };
 
-export type uni-cliUserEnvItem = {
+export type uniCliUserEnvItem = {
   key: string;
   updatedAt: number;
   hasValue: boolean;
   value?: string;
 };
 
-export type uni-cliActor = {
+export type uniCliActor = {
   type: "remote" | "host";
   clientId?: string;
   tokenHash?: string;
 };
 
-export type uni-cliAuditEntry = {
+export type uniCliAuditEntry = {
   id: string;
   workspaceId: string;
-  actor: uni-cliActor;
+  actor: uniCliActor;
   action: string;
   target: string;
   summary: string;
   timestamp: number;
 };
 
-export type uni-cliReloadTrigger = {
+export type uniCliReloadTrigger = {
   type: "skill" | "plugin" | "config" | "mcp" | "agent" | "command";
   name?: string;
   action?: "added" | "removed" | "updated";
   path?: string;
 };
 
-export type uni-cliReloadEvent = {
+export type uniCliReloadEvent = {
   id: string;
   seq: number;
   workspaceId: string;
   reason: "plugins" | "skills" | "mcp" | "config" | "agents" | "commands";
-  trigger?: uni-cliReloadTrigger;
+  trigger?: uniCliReloadTrigger;
   timestamp: number;
 };
 
-export type uni-cliUiControlRequest = {
+export type uniCliUiControlRequest = {
   id: string;
   kind: "context" | "query" | "command";
   input: unknown;
   createdAt: number;
 };
 
-export type uni-cliSessionGroupDefinition = {
+export type uniCliSessionGroupDefinition = {
   id: string;
   label: string;
 };
 
-export type uni-cliSessionGroupState = {
-  groups: uni-cliSessionGroupDefinition[];
+export type uniCliSessionGroupState = {
+  groups: uniCliSessionGroupDefinition[];
   assignments: Record<string, string>;
 };
 
-export type uni-cliSessionGroupEvent = {
+export type uniCliSessionGroupEvent = {
   id: string;
   seq: number;
   workspaceId: string;
@@ -1141,25 +1141,25 @@ const STORAGE_TOKEN = "uni-cli.server.token";
 const STORAGE_HOST_AUTH_KEY = "uni-cli.server.hostToken";
 const STORAGE_REMOTE_ACCESS = "uni-cli.server.remoteAccessEnabled";
 
-type uni-cliBootstrap = {
+type uniCliBootstrap = {
   token?: string;
 };
 
 declare global {
   interface Window {
-    __UNICLI_BOOTSTRAP__?: uni-cliBootstrap;
+    __UNICLI_BOOTSTRAP__?: uniCliBootstrap;
   }
 }
 
-export function normalizeuni-cliServerUrl(input: string) {
+export function normalizeuniCliServerUrl(input: string) {
   const trimmed = input.trim();
   if (!trimmed) return null;
   const withProtocol = /^https?:\/\//.test(trimmed) ? trimmed : `http://${trimmed}`;
   return normalizeBaseUrl(withProtocol);
 }
 
-export function isLoopbackuni-cliServerUrl(input: string) {
-  const normalized = normalizeuni-cliServerUrl(input) ?? "";
+export function isLoopbackuniCliServerUrl(input: string) {
+  const normalized = normalizeuniCliServerUrl(input) ?? "";
   if (!normalized) return false;
   try {
     const hostname = new URL(normalized).hostname.toLowerCase();
@@ -1169,8 +1169,8 @@ export function isLoopbackuni-cliServerUrl(input: string) {
   }
 }
 
-export function parseuni-cliWorkspaceIdFromUrl(input: string) {
-  const normalized = normalizeuni-cliServerUrl(input) ?? "";
+export function parseuniCliWorkspaceIdFromUrl(input: string) {
+  const normalized = normalizeuniCliServerUrl(input) ?? "";
   if (!normalized) return null;
 
   try {
@@ -1196,8 +1196,8 @@ export function parseuni-cliWorkspaceIdFromUrl(input: string) {
   }
 }
 
-export function builduni-cliWorkspaceBaseUrl(hostUrl: string, workspaceId?: string | null) {
-  const normalized = normalizeuni-cliServerUrl(hostUrl) ?? "";
+export function builduniCliWorkspaceBaseUrl(hostUrl: string, workspaceId?: string | null) {
+  const normalized = normalizeuniCliServerUrl(hostUrl) ?? "";
   if (!normalized) return null;
 
   try {
@@ -1232,21 +1232,21 @@ const UNICLI_INVITE_PARAM_TOKEN = "ow_token";
 const UNICLI_INVITE_PARAM_STARTUP = "ow_startup";
 const UNICLI_INVITE_PARAM_AUTO_CONNECT = "ow_auto_connect";
 
-export type uni-cliConnectInvite = {
+export type uniCliConnectInvite = {
   url: string;
   token?: string;
   startup?: "server";
   autoConnect?: boolean;
 };
 
-export function readuni-cliConnectInviteFromSearch(input: string | URLSearchParams) {
+export function readuniCliConnectInviteFromSearch(input: string | URLSearchParams) {
   const search =
     typeof input === "string"
       ? new URLSearchParams(input.startsWith("?") ? input.slice(1) : input)
       : input;
 
   const rawUrl = search.get(UNICLI_INVITE_PARAM_URL)?.trim() ?? "";
-  const url = normalizeuni-cliServerUrl(rawUrl);
+  const url = normalizeuniCliServerUrl(rawUrl);
   if (!url) return null;
 
   const token = search.get(UNICLI_INVITE_PARAM_TOKEN)?.trim() ?? "";
@@ -1259,10 +1259,10 @@ export function readuni-cliConnectInviteFromSearch(input: string | URLSearchPara
     token: token || undefined,
     startup,
     autoConnect: autoConnect || undefined,
-  } satisfies uni-cliConnectInvite;
+  } satisfies uniCliConnectInvite;
 }
 
-export function stripuni-cliConnectInviteFromUrl(input: string) {
+export function stripuniCliConnectInviteFromUrl(input: string) {
   try {
     const url = new URL(input);
     url.searchParams.delete(UNICLI_INVITE_PARAM_URL);
@@ -1275,10 +1275,10 @@ export function stripuni-cliConnectInviteFromUrl(input: string) {
   }
 }
 
-export function readuni-cliServerSettings(): uni-cliServerSettings {
+export function readuniCliServerSettings(): uniCliServerSettings {
   if (typeof window === "undefined") return {};
   try {
-    const urlOverride = normalizeuni-cliServerUrl(
+    const urlOverride = normalizeuniCliServerUrl(
       window.localStorage.getItem(STORAGE_URL_OVERRIDE) ?? "",
     );
     const portRaw = window.localStorage.getItem(STORAGE_PORT_OVERRIDE) ?? "";
@@ -1298,10 +1298,10 @@ export function readuni-cliServerSettings(): uni-cliServerSettings {
   }
 }
 
-export function writeuni-cliServerSettings(next: uni-cliServerSettings): uni-cliServerSettings {
+export function writeuniCliServerSettings(next: uniCliServerSettings): uniCliServerSettings {
   if (typeof window === "undefined") return next;
   try {
-    const urlOverride = normalizeuni-cliServerUrl(next.urlOverride ?? "");
+    const urlOverride = normalizeuniCliServerUrl(next.urlOverride ?? "");
     const portOverride = typeof next.portOverride === "number" ? next.portOverride : undefined;
     const token = next.token?.trim() || undefined;
     const hostToken = next.hostToken?.trim() || undefined;
@@ -1337,7 +1337,7 @@ export function writeuni-cliServerSettings(next: uni-cliServerSettings): uni-cli
       window.localStorage.removeItem(STORAGE_REMOTE_ACCESS);
     }
 
-    return readuni-cliServerSettings();
+    return readuniCliServerSettings();
   } catch {
     return next;
   }
@@ -1351,9 +1351,9 @@ function readForceEnvSettingsFlag(): boolean {
   return /^(1|true|yes|on)$/i.test(raw);
 }
 
-export function hydrateuni-cliServerSettingsFromEnv() {
+export function hydrateuniCliServerSettingsFromEnv() {
   if (typeof window === "undefined") return;
-  if (isuni-cliGatewayRuntime()) return;
+  if (isuniCliGatewayRuntime()) return;
 
   const envUrl = typeof import.meta.env?.VITE_UNICLI_URL === "string"
     ? import.meta.env.VITE_UNICLI_URL.trim()
@@ -1375,12 +1375,12 @@ export function hydrateuni-cliServerSettingsFromEnv() {
   if (!envUrl && !envPort && !envToken && !envHostToken && !bootstrapToken) return;
 
   try {
-    const current = readuni-cliServerSettings();
-    const next: uni-cliServerSettings = { ...current };
+    const current = readuniCliServerSettings();
+    const next: uniCliServerSettings = { ...current };
     let changed = false;
 
     if (envUrl && (forceEnvSettings || !current.urlOverride)) {
-      const normalized = normalizeuni-cliServerUrl(
+      const normalized = normalizeuniCliServerUrl(
         envUrl === "/api/uni-cli" ? new URL(envUrl, window.location.origin).href : envUrl,
       );
       if (normalized && normalized !== current.urlOverride) {
@@ -1417,14 +1417,14 @@ export function hydrateuni-cliServerSettingsFromEnv() {
     }
 
     if (changed) {
-      writeuni-cliServerSettings(next);
+      writeuniCliServerSettings(next);
     }
   } catch {
     // ignore
   }
 }
 
-export function clearuni-cliServerSettings() {
+export function clearuniCliServerSettings() {
   if (typeof window === "undefined") return;
   try {
     window.localStorage.removeItem(STORAGE_URL_OVERRIDE);
@@ -1437,7 +1437,7 @@ export function clearuni-cliServerSettings() {
   }
 }
 
-export class uni-cliServerError extends Error {
+export class uniCliServerError extends Error {
   status: number;
   code: string;
   details?: unknown;
@@ -1579,7 +1579,7 @@ async function requestJson<T>(
   if (!response.ok) {
     const code = typeof json?.code === "string" ? json.code : "request_failed";
     const message = typeof json?.message === "string" ? json.message : response.statusText;
-    throw new uni-cliServerError(response.status, code, message, json?.details);
+    throw new uniCliServerError(response.status, code, message, json?.details);
   }
 
   return json as T;
@@ -1620,7 +1620,7 @@ async function requestAgentContextDiagnosticsJson(
     const details = payload && typeof payload === "object" && "details" in payload
       ? payload.details
       : undefined;
-    throw new uni-cliServerError(result.response.status, code, message, details);
+    throw new uniCliServerError(result.response.status, code, message, details);
   }
 
   return result.payload;
@@ -1674,7 +1674,7 @@ async function requestBinary(
     }
     const code = typeof json?.code === "string" ? json.code : "request_failed";
     const message = typeof json?.message === "string" ? json.message : response.statusText;
-    throw new uni-cliServerError(response.status, code, message, json?.details);
+    throw new uniCliServerError(response.status, code, message, json?.details);
   }
 
   const contentType = response.headers.get("content-type");
@@ -1700,7 +1700,7 @@ export type WorkspaceRunModeUpdate = WorkspaceRunModeResponse & {
   refresh: "reloaded" | "deferred" | "skipped";
 };
 
-export function createuni-cliServerClient(options: { baseUrl: string; token?: string; hostToken?: string }) {
+export function createuniCliServerClient(options: { baseUrl: string; token?: string; hostToken?: string }) {
   const baseUrl = options.baseUrl.replace(/\/+$/, "");
   const token = options.token;
   const hostToken = options.hostToken;
@@ -1732,14 +1732,14 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
     health: () =>
       requestJson<{ ok: boolean; version: string; uptimeMs: number }>(baseUrl, "/health", { token, hostToken, timeoutMs: timeouts.health }),
     runtimeVersions: () =>
-      requestJson<uni-cliRuntimeSnapshot>(baseUrl, "/runtime/versions", { token, hostToken, timeoutMs: timeouts.status }),
-    status: () => requestJson<uni-cliServerDiagnostics>(baseUrl, "/status", { token, hostToken, timeoutMs: timeouts.status }),
-    capabilities: () => requestJson<uni-cliServerCapabilities>(baseUrl, "/capabilities", { token, hostToken, timeoutMs: timeouts.capabilities }),
+      requestJson<uniCliRuntimeSnapshot>(baseUrl, "/runtime/versions", { token, hostToken, timeoutMs: timeouts.status }),
+    status: () => requestJson<uniCliServerDiagnostics>(baseUrl, "/status", { token, hostToken, timeoutMs: timeouts.status }),
+    capabilities: () => requestJson<uniCliServerCapabilities>(baseUrl, "/capabilities", { token, hostToken, timeoutMs: timeouts.capabilities }),
     getConnectState: (workspaceId?: string | null) => {
       const query = new URLSearchParams();
       if (workspaceId?.trim()) query.set("workspaceId", workspaceId.trim());
       const suffix = query.size ? `?${query.toString()}` : "";
-      return requestJson<uni-cliConnectState>(baseUrl, `/experimental/connect/state${suffix}`, { token, hostToken, timeoutMs: timeouts.config });
+      return requestJson<uniCliConnectState>(baseUrl, `/experimental/connect/state${suffix}`, { token, hostToken, timeoutMs: timeouts.config });
     },
     putDenIdentity: async (body: { baseUrl: string; token: string; orgId: string }, signal?: AbortSignal) => {
       await requestJson<unknown>(baseUrl, "/den-session/identity", { hostToken, method: "PUT", body, signal, timeoutMs: timeouts.config });
@@ -1813,16 +1813,16 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
         body: { chatRouting },
         timeoutMs: timeouts.config,
       })),
-    setConnectState: (connectEnabled: boolean) => requestJson<uni-cliConnectState>(baseUrl, "/experimental/connect/state", { token, hostToken, method: "PUT", body: { connectEnabled }, timeoutMs: timeouts.config }),
-    callExtensionAction: (payload: uni-cliExtensionActionCall) =>
-      requestJson<uni-cliExtensionActionResult>(baseUrl, "/experimental/extensions/call", {
+    setConnectState: (connectEnabled: boolean) => requestJson<uniCliConnectState>(baseUrl, "/experimental/connect/state", { token, hostToken, method: "PUT", body: { connectEnabled }, timeoutMs: timeouts.config }),
+    callExtensionAction: (payload: uniCliExtensionActionCall) =>
+      requestJson<uniCliExtensionActionResult>(baseUrl, "/experimental/extensions/call", {
         token,
         hostToken,
         method: "POST",
         body: payload,
         timeoutMs: timeouts.binary,
       }),
-    listWorkspaces: () => requestJson<uni-cliWorkspaceList>(baseUrl, "/workspaces", { token, hostToken, timeoutMs: timeouts.listWorkspaces }),
+    listWorkspaces: () => requestJson<uniCliWorkspaceList>(baseUrl, "/workspaces", { token, hostToken, timeoutMs: timeouts.listWorkspaces }),
     createLocalWorkspace: (payload: { folderPath: string; name: string; preset: string }) =>
       requestJson<WorkspaceList>(baseUrl, "/workspaces/local", {
         token,
@@ -1833,10 +1833,10 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
       }),
     createRemoteWorkspace: (payload: {
       baseUrl: string;
-      uni-cliHostUrl?: string | null;
-      uni-cliToken?: string | null;
-      uni-cliWorkspaceId?: string | null;
-      uni-cliWorkspaceName?: string | null;
+      uniCliHostUrl?: string | null;
+      uniCliToken?: string | null;
+      uniCliWorkspaceId?: string | null;
+      uniCliWorkspaceName?: string | null;
       displayName?: string | null;
       directory?: string | null;
       remoteType?: "uni-cli" | "opencode";
@@ -1861,63 +1861,63 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
       }),
     activateWorkspace: (workspaceId: string, options?: { persist?: boolean }) => {
       const query = options?.persist ? "?persist=true" : "";
-      return requestJson<{ activeId: string; workspace: uni-cliWorkspaceInfo; persisted: boolean }>(
+      return requestJson<{ activeId: string; workspace: uniCliWorkspaceInfo; persisted: boolean }>(
         baseUrl,
         `/workspaces/${encodeURIComponent(workspaceId)}/activate${query}`,
         { token, hostToken, method: "POST", timeoutMs: timeouts.activateWorkspace },
       );
     },
     deleteWorkspace: (workspaceId: string) =>
-      requestJson<{ ok: boolean; deleted: boolean; persisted: boolean; activeId: string | null; items: uni-cliWorkspaceInfo[]; workspaces?: WorkspaceInfo[] }>(
+      requestJson<{ ok: boolean; deleted: boolean; persisted: boolean; activeId: string | null; items: uniCliWorkspaceInfo[]; workspaces?: WorkspaceInfo[] }>(
         baseUrl,
         `/workspaces/${encodeURIComponent(workspaceId)}`,
         { token, hostToken, method: "DELETE", timeoutMs: timeouts.deleteWorkspace },
       ),
     getSessionGroups: (workspaceId: string) =>
-      requestJson<{ state: uni-cliSessionGroupState; updatedAt: number | null }>(
+      requestJson<{ state: uniCliSessionGroupState; updatedAt: number | null }>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/session-groups`,
         { token, hostToken, timeoutMs: timeouts.sessionRead },
       ),
-    putSessionGroups: (workspaceId: string, state: uni-cliSessionGroupState) =>
-      requestJson<{ state: uni-cliSessionGroupState; updatedAt: number }>(
+    putSessionGroups: (workspaceId: string, state: uniCliSessionGroupState) =>
+      requestJson<{ state: uniCliSessionGroupState; updatedAt: number }>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/session-groups`,
         { token, hostToken, method: "PUT", body: { state }, timeoutMs: timeouts.config },
       ),
     createSessionGroup: (workspaceId: string, input: { id?: string; label: string }) =>
-      requestJson<{ state: uni-cliSessionGroupState; updatedAt: number }>(
+      requestJson<{ state: uniCliSessionGroupState; updatedAt: number }>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/session-groups`,
         { token, hostToken, method: "POST", body: input, timeoutMs: timeouts.config },
       ),
     reorderSessionGroups: (workspaceId: string, groupIds: string[]) =>
-      requestJson<{ state: uni-cliSessionGroupState; updatedAt: number }>(
+      requestJson<{ state: uniCliSessionGroupState; updatedAt: number }>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/session-groups/reorder`,
         { token, hostToken, method: "PATCH", body: { groupIds }, timeoutMs: timeouts.config },
       ),
     assignSessionGroup: (workspaceId: string, sessionId: string, groupId: string | null) =>
-      requestJson<{ state: uni-cliSessionGroupState; updatedAt: number }>(
+      requestJson<{ state: uniCliSessionGroupState; updatedAt: number }>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/session-groups/assignments/${encodeURIComponent(sessionId)}`,
         { token, hostToken, method: "PATCH", body: { groupId }, timeoutMs: timeouts.config },
       ),
     renameSessionGroup: (workspaceId: string, groupId: string, label: string) =>
-      requestJson<{ state: uni-cliSessionGroupState; updatedAt: number }>(
+      requestJson<{ state: uniCliSessionGroupState; updatedAt: number }>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/session-groups/${encodeURIComponent(groupId)}`,
         { token, hostToken, method: "PATCH", body: { label }, timeoutMs: timeouts.config },
       ),
     removeSessionGroup: (workspaceId: string, groupId: string, destinationGroupId: string | null = null) =>
-      requestJson<{ state: uni-cliSessionGroupState; updatedAt: number }>(
+      requestJson<{ state: uniCliSessionGroupState; updatedAt: number }>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/session-groups/${encodeURIComponent(groupId)}${destinationGroupId ? `?destinationGroupId=${encodeURIComponent(destinationGroupId)}` : ""}`,
         { token, hostToken, method: "DELETE", timeoutMs: timeouts.config },
       ),
     listSessionGroupEvents: (workspaceId: string, options?: { since?: number }) => {
       const query = typeof options?.since === "number" ? `?since=${options.since}` : "";
-      return requestJson<{ items: uni-cliSessionGroupEvent[]; cursor?: number }>(
+      return requestJson<{ items: uniCliSessionGroupEvent[]; cursor?: number }>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/session-groups/events${query}`,
         { token, hostToken },
@@ -1925,14 +1925,14 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
     },
     exportWorkspace: (
       workspaceId: string,
-      options?: { sensitiveMode?: uni-cliWorkspaceExportSensitiveMode },
+      options?: { sensitiveMode?: uniCliWorkspaceExportSensitiveMode },
     ) => {
       const query = new URLSearchParams();
       if (options?.sensitiveMode) {
         query.set("sensitive", options.sensitiveMode);
       }
       const suffix = query.size ? `?${query.toString()}` : "";
-      return requestJson<uni-cliWorkspaceExport>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/export${suffix}`, {
+      return requestJson<uniCliWorkspaceExport>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/export${suffix}`, {
         token,
         hostToken,
         timeoutMs: timeouts.workspaceExport,
@@ -1953,19 +1953,19 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
         token, hostToken, method: "PUT", body: { mode }, timeoutMs: 60_000,
       }),
     getEffectivePermissions: (workspaceId: string) =>
-      requestJson<uni-cliEffectivePermissionsResponse>(
+      requestJson<uniCliEffectivePermissionsResponse>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/permissions/effective`,
         { token, hostToken, timeoutMs: timeouts.config },
       ),
     listAuthorizedFolders: (workspaceId: string) =>
-      requestJson<uni-cliAuthorizedFoldersResponse>(
+      requestJson<uniCliAuthorizedFoldersResponse>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/authorized-folders`,
         { token, hostToken, timeoutMs: timeouts.config },
       ),
     setAuthorizedFolders: (workspaceId: string, folders: string[]) =>
-      requestJson<uni-cliAuthorizedFoldersUpdateResponse>(
+      requestJson<uniCliAuthorizedFoldersUpdateResponse>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/authorized-folders`,
         {
@@ -1977,13 +1977,13 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
         },
       ),
     getRuntimeDisabledProviders: (workspaceId: string) =>
-      requestJson<uni-cliRuntimeDisabledProvidersResult>(
+      requestJson<uniCliRuntimeDisabledProvidersResult>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/runtime-config/disabled-providers`,
         { token, hostToken, timeoutMs: timeouts.config },
       ),
     setRuntimeDisabledProviders: (workspaceId: string, providers: string[]) =>
-      requestJson<uni-cliRuntimeDisabledProvidersResult>(
+      requestJson<uniCliRuntimeDisabledProvidersResult>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/runtime-config/disabled-providers`,
         {
@@ -1995,7 +1995,7 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
         },
       ),
     getRuntimeConfigStatus: (workspaceId: string) =>
-      requestJson<uni-cliRuntimeConfigStatus>(
+      requestJson<uniCliRuntimeConfigStatus>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/runtime-config`,
         { token, hostToken, timeoutMs: timeouts.config },
@@ -2008,13 +2008,13 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
         body: payload,
       }),
     getDesktopCloudSync: (workspaceId: string) =>
-      requestJson<uni-cliDesktopCloudSyncState>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/desktop-cloud-sync`, {
+      requestJson<uniCliDesktopCloudSyncState>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/desktop-cloud-sync`, {
         token,
         hostToken,
         timeoutMs: timeouts.config,
       }),
     syncDesktopCloud: (workspaceId: string, snapshot: DenResourceSnapshot) =>
-      requestJson<uni-cliDesktopCloudSyncResult>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/desktop-cloud-sync`, {
+      requestJson<uniCliDesktopCloudSyncResult>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/desktop-cloud-sync`, {
         token,
         hostToken,
         method: "POST",
@@ -2022,13 +2022,13 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
         timeoutMs: timeouts.config,
       }),
     listCloudPlugins: (workspaceId: string) =>
-      requestJson<uni-cliCloudPluginsResult>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/cloud-plugins`, {
+      requestJson<uniCliCloudPluginsResult>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/cloud-plugins`, {
         token,
         hostToken,
         timeoutMs: timeouts.config,
       }),
     installCloudPlugin: (workspaceId: string, payload: { marketplaceId: string | null; marketplace?: DenOrgMarketplace | null; resolved: DenOrgPluginResolved }) =>
-      requestJson<uni-cliCloudPluginInstallResult>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/cloud-plugins`, {
+      requestJson<uniCliCloudPluginInstallResult>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/cloud-plugins`, {
         token,
         hostToken,
         method: "POST",
@@ -2036,14 +2036,14 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
         timeoutMs: timeouts.config,
       }),
     removeCloudPlugin: (workspaceId: string, pluginId: string) =>
-      requestJson<uni-cliCloudPluginInstallResult>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/cloud-plugins/${encodeURIComponent(pluginId)}`, {
+      requestJson<uniCliCloudPluginInstallResult>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/cloud-plugins/${encodeURIComponent(pluginId)}`, {
         token,
         hostToken,
         method: "DELETE",
         timeoutMs: timeouts.config,
       }),
     previewClaudePlugin: (workspaceId: string, payload: { url: string; ref?: string }) =>
-      requestJson<{ preview: uni-cliClaudePluginPreview }>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/claude-plugins`, {
+      requestJson<{ preview: uniCliClaudePluginPreview }>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/claude-plugins`, {
         token,
         hostToken,
         method: "POST",
@@ -2051,7 +2051,7 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
         timeoutMs: timeouts.config,
       }),
     installClaudePlugin: (workspaceId: string, payload: { url: string; ref?: string }) =>
-      requestJson<uni-cliCloudPluginInstallResult & { preview: uni-cliClaudePluginPreview }>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/claude-plugins`, {
+      requestJson<uniCliCloudPluginInstallResult & { preview: uniCliClaudePluginPreview }>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/claude-plugins`, {
         token,
         hostToken,
         method: "POST",
@@ -2074,14 +2074,14 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
       }),
     listReloadEvents: (workspaceId: string, options?: { since?: number }) => {
       const query = typeof options?.since === "number" ? `?since=${options.since}` : "";
-      return requestJson<{ items: uni-cliReloadEvent[]; cursor?: number }>(
+      return requestJson<{ items: uniCliReloadEvent[]; cursor?: number }>(
         baseUrl,
         `/workspace/${workspaceId}/events${query}`,
         { token, hostToken },
       );
     },
     listUiControlPending: (options?: { wait?: boolean; signal?: AbortSignal }) =>
-      requestJson<{ items: uni-cliUiControlRequest[] }>(
+      requestJson<{ items: uniCliUiControlRequest[] }>(
         baseUrl,
         `/experimental/ui-control/pending${options?.wait ? "?wait=1" : ""}`,
         { token, hostToken, timeoutMs: 15_000, signal: options?.signal },
@@ -2102,27 +2102,27 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
       }),
     listPlugins: (workspaceId: string, options?: { includeGlobal?: boolean }) => {
       const query = options?.includeGlobal ? "?includeGlobal=true" : "";
-      return requestJson<{ items: uni-cliPluginItem[]; loadOrder: string[] }>(
+      return requestJson<{ items: uniCliPluginItem[]; loadOrder: string[] }>(
         baseUrl,
         `/workspace/${workspaceId}/plugins${query}`,
         { token, hostToken },
       );
     },
     addPlugin: (workspaceId: string, spec: string) =>
-      requestJson<{ items: uni-cliPluginItem[]; loadOrder: string[] }>(
+      requestJson<{ items: uniCliPluginItem[]; loadOrder: string[] }>(
         baseUrl,
         `/workspace/${workspaceId}/plugins`,
         { token, hostToken, method: "POST", body: { spec } },
       ),
     removePlugin: (workspaceId: string, name: string) =>
-      requestJson<{ items: uni-cliPluginItem[]; loadOrder: string[] }>(
+      requestJson<{ items: uniCliPluginItem[]; loadOrder: string[] }>(
         baseUrl,
         `/workspace/${workspaceId}/plugins/${encodeURIComponent(name)}`,
         { token, hostToken, method: "DELETE" },
       ),
     listSkills: (workspaceId: string, options?: { includeGlobal?: boolean }) => {
       const query = options?.includeGlobal ? "?includeGlobal=true" : "";
-      return requestJson<{ items: uni-cliSkillItem[] }>(
+      return requestJson<{ items: uniCliSkillItem[] }>(
         baseUrl,
         `/workspace/${workspaceId}/skills${query}`,
         { token, hostToken },
@@ -2130,14 +2130,14 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
     },
     getSkill: (workspaceId: string, name: string, options?: { includeGlobal?: boolean }) => {
       const query = options?.includeGlobal ? "?includeGlobal=true" : "";
-      return requestJson<uni-cliSkillContent>(
+      return requestJson<uniCliSkillContent>(
         baseUrl,
         `/workspace/${workspaceId}/skills/${encodeURIComponent(name)}${query}`,
         { token, hostToken },
       );
     },
     upsertSkill: (workspaceId: string, payload: { name: string; content: string; description?: string }) =>
-      requestJson<uni-cliSkillItem>(baseUrl, `/workspace/${workspaceId}/skills`, {
+      requestJson<uniCliSkillItem>(baseUrl, `/workspace/${workspaceId}/skills`, {
         token,
         hostToken,
         method: "POST",
@@ -2155,9 +2155,9 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
       ),
     listMcp: (workspaceId: string) =>
       requestJson<{
-        items: uni-cliMcpItem[];
-        engineSync?: uni-cliMcpEngineSync | null;
-        managedOAuthState?: uni-cliManagedOAuthState | null;
+        items: uniCliMcpItem[];
+        engineSync?: uniCliMcpEngineSync | null;
+        managedOAuthState?: uniCliManagedOAuthState | null;
       }>(
         baseUrl,
         `/workspace/${workspaceId}/mcp`,
@@ -2166,7 +2166,7 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
     getMcpStatus: (workspaceId: string) =>
       requestJson<McpStatusMap>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/opencode/mcp`, { token, hostToken }),
     listMcpApps: (workspaceId: string) =>
-      requestJson<{ servers: uni-cliMcpAppCatalogServer[] }>(
+      requestJson<{ servers: uniCliMcpAppCatalogServer[] }>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/mcp-apps/list`,
         { token, hostToken, timeoutMs: timeouts.binary },
@@ -2174,10 +2174,10 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
     resolveMcpApp: (
       workspaceId: string,
       projectedToolName: string,
-      launch?: uni-cliMcpAppLaunchReference,
+      launch?: uniCliMcpAppLaunchReference,
       context?: { sessionId: string | null; readOnly: boolean; engine?: "v1" | "v2" },
     ) =>
-      requestJson<{ app: uni-cliMcpAppResource | null }>(
+      requestJson<{ app: uniCliMcpAppResource | null }>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/mcp-apps/resolve`,
         {
@@ -2188,7 +2188,7 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
           timeoutMs: timeouts.binary,
         },
       ),
-    mcpAppSandbox: (app: uni-cliMcpAppResource, hostOrigin: string): uni-cliMcpAppSandbox => {
+    mcpAppSandbox: (app: uniCliMcpAppResource, hostOrigin: string): uniCliMcpAppSandbox => {
       const messageOrigin = normalizeMcpAppHostOrigin(hostOrigin);
       const url = new URL(`${baseUrl}/mcp-apps/sandbox.html`);
       if (url.origin === hostOrigin && url.hostname === "localhost") url.hostname = "127.0.0.1";
@@ -2217,7 +2217,7 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
         arguments?: Record<string, unknown>;
         approved?: boolean;
       },
-    ) => requestJson<uni-cliMcpAppToolResult>(
+    ) => requestJson<uniCliMcpAppToolResult>(
       baseUrl,
       `/workspace/${encodeURIComponent(workspaceId)}/mcp-apps/call`,
       {
@@ -2232,9 +2232,9 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
       baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/mcp-apps/release`,
       { token, hostToken, method: "POST", body: { launchId } },
     ),
-    getuni-cliCloudMcpHealth: (
+    getuniCliCloudMcpHealth: (
       workspaceId: string,
-      providerModel?: uni-cliCloudMcpProviderModelContext,
+      providerModel?: uniCliCloudMcpProviderModelContext,
       options?: { probe?: boolean },
     ) => {
       const query = new URLSearchParams();
@@ -2246,14 +2246,14 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
       // (initialize + tools/list), independent of the engine's own connection.
       if (options?.probe) query.set("probe", "1");
       const suffix = query.size ? `?${query.toString()}` : "";
-      return requestJson<uni-cliCloudMcpHealth>(
+      return requestJson<uniCliCloudMcpHealth>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/mcp/uni-cli-cloud/health${suffix}`,
         { token, hostToken, timeoutMs: options?.probe ? timeouts.cloudMcpProbeHealth : timeouts.cloudMcpHealth },
       );
     },
-    reconcileuni-cliCloudMcp: (workspaceId: string, payload: uni-cliCloudMcpReconcilePayload) =>
-      requestJson<uni-cliCloudMcpHealth>(
+    reconcileuniCliCloudMcp: (workspaceId: string, payload: uniCliCloudMcpReconcilePayload) =>
+      requestJson<uniCliCloudMcpHealth>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/mcp/uni-cli-cloud/reconcile`,
         {
@@ -2264,17 +2264,17 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
           timeoutMs: timeouts.cloudMcpReconcile,
         },
       ),
-    refreshuni-cliCloudMcpCatalog: (workspaceId: string, providerModel?: uni-cliCloudMcpProviderModelContext) =>
-      requestJson<uni-cliCloudMcpHealth>(
+    refreshuniCliCloudMcpCatalog: (workspaceId: string, providerModel?: uniCliCloudMcpProviderModelContext) =>
+      requestJson<uniCliCloudMcpHealth>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/mcp/uni-cli-cloud/reconcile`,
         { token, hostToken, method: "POST", body: { mode: "refresh_catalog", ...providerModel }, timeoutMs: timeouts.cloudMcpReconcile },
       ),
-    refreshuni-cliCloudMcpEngine: (
+    refreshuniCliCloudMcpEngine: (
       workspaceId: string,
       payload?: { provider?: string; model?: string; trigger?: string },
     ) =>
-      requestJson<uni-cliCloudMcpEngineRefreshResult>(
+      requestJson<uniCliCloudMcpEngineRefreshResult>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/mcp/uni-cli-cloud/engine-refresh`,
         {
@@ -2303,7 +2303,7 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
       return agentContextDiagnosticsReportSchema.parse(payload);
     },
     addMcp: (workspaceId: string, payload: { name: string; config: Record<string, unknown> }) =>
-      requestJson<{ items: uni-cliMcpItem[] }>(baseUrl, `/workspace/${workspaceId}/mcp`, {
+      requestJson<{ items: uniCliMcpItem[] }>(baseUrl, `/workspace/${workspaceId}/mcp`, {
         token,
         hostToken,
         method: "POST",
@@ -2323,32 +2323,32 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
         };
       },
     ) =>
-      requestJson<uni-cliManagedMcpStartResult>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/mcp/managed`, {
+      requestJson<uniCliManagedMcpStartResult>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/mcp/managed`, {
         token,
         hostToken,
         method: "POST",
         body: payload,
       }),
     getManagedMcp: (workspaceId: string, name: string) =>
-      requestJson<uni-cliManagedMcpConnection>(
+      requestJson<uniCliManagedMcpConnection>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/mcp/${encodeURIComponent(name)}/managed`,
         { token, hostToken },
       ),
     connectManagedMcp: (workspaceId: string, name: string) =>
-      requestJson<uni-cliManagedMcpStartResult>(
+      requestJson<uniCliManagedMcpStartResult>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/mcp/${encodeURIComponent(name)}/managed/connect`,
         { token, hostToken, method: "POST" },
       ),
     removeMcp: (workspaceId: string, name: string) =>
-      requestJson<{ items: uni-cliMcpItem[] }>(baseUrl, `/workspace/${workspaceId}/mcp/${encodeURIComponent(name)}`, {
+      requestJson<{ items: uniCliMcpItem[] }>(baseUrl, `/workspace/${workspaceId}/mcp/${encodeURIComponent(name)}`, {
         token,
         hostToken,
         method: "DELETE",
       }),
     setMcpEnabled: (workspaceId: string, name: string, enabled: boolean) =>
-      requestJson<{ items: uni-cliMcpItem[] }>(
+      requestJson<{ items: uniCliMcpItem[] }>(
         baseUrl,
         `/workspace/${workspaceId}/mcp/${encodeURIComponent(name)}/enabled`,
         {
@@ -2367,13 +2367,13 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
       }),
 
     listCommands: (workspaceId: string, scope: "workspace" | "global" = "workspace") =>
-      requestJson<{ items: uni-cliCommandItem[] }>(
+      requestJson<{ items: uniCliCommandItem[] }>(
         baseUrl,
         `/workspace/${workspaceId}/commands?scope=${scope}`,
         { token, hostToken },
       ),
     listAudit: (workspaceId: string, limit = 50) =>
-      requestJson<{ items: uni-cliAuditEntry[] }>(
+      requestJson<{ items: uniCliAuditEntry[] }>(
         baseUrl,
         `/workspace/${workspaceId}/audit?limit=${limit}`,
         { token, hostToken },
@@ -2382,7 +2382,7 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
       workspaceId: string,
       payload: { name: string; description?: string; template: string; agent?: string; model?: string | null; subtask?: boolean },
     ) =>
-      requestJson<{ items: uni-cliCommandItem[] }>(baseUrl, `/workspace/${workspaceId}/commands`, {
+      requestJson<{ items: uniCliCommandItem[] }>(baseUrl, `/workspace/${workspaceId}/commands`, {
         token,
         hostToken,
         method: "POST",
@@ -2438,7 +2438,7 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
         } catch {
           // ignore
         }
-        throw new uni-cliServerError(
+        throw new uniCliServerError(
           result.status,
           "request_failed",
           message || "Shared folder upload failed",
@@ -2448,13 +2448,13 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
       const body = result.text.trim();
       if (body) {
         try {
-          const parsed = JSON.parse(body) as Partial<uni-cliInboxUploadResult>;
+          const parsed = JSON.parse(body) as Partial<uniCliInboxUploadResult>;
           if (typeof parsed.path === "string" && parsed.path.trim()) {
             return {
               ok: parsed.ok ?? true,
               path: parsed.path.trim(),
               bytes: typeof parsed.bytes === "number" ? parsed.bytes : file.size,
-            } satisfies uni-cliInboxUploadResult;
+            } satisfies uniCliInboxUploadResult;
           }
         } catch {
           // ignore invalid JSON and fall back
@@ -2465,11 +2465,11 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
         ok: true,
         path: options?.path?.trim() || file.name,
         bytes: file.size,
-      } satisfies uni-cliInboxUploadResult;
+      } satisfies uniCliInboxUploadResult;
     },
 
     listInbox: (workspaceId: string) =>
-      requestJson<uni-cliInboxList>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/inbox`, {
+      requestJson<uniCliInboxList>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/inbox`, {
         token,
         hostToken,
       }),
@@ -2482,14 +2482,14 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
       ),
 
     readWorkspaceFile: (workspaceId: string, path: string) =>
-      requestJson<uni-cliWorkspaceFileContent>(
+      requestJson<uniCliWorkspaceFileContent>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/files/content?path=${encodeURIComponent(path)}`,
         { token, hostToken },
       ),
 
     statWorkspaceFile: (workspaceId: string, path: string) =>
-      requestJson<uni-cliWorkspaceFileStat>(
+      requestJson<uniCliWorkspaceFileStat>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/files/stat?path=${encodeURIComponent(path)}`,
         { token, hostToken },
@@ -2503,7 +2503,7 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
       );
       const sessionId = created.session.id;
       try {
-        return await requestJson<uni-cliWorkspaceCatalog>(
+        return await requestJson<uniCliWorkspaceCatalog>(
           baseUrl,
           `/files/sessions/${encodeURIComponent(sessionId)}/catalog/snapshot?includeDirs=true&limit=10000&excludeHeavyDirectories=true`,
           { token, hostToken },
@@ -2521,7 +2521,7 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
       workspaceId: string,
       payload: { path: string; content: string; baseUpdatedAt?: number | null; force?: boolean },
     ) =>
-      requestJson<uni-cliWorkspaceFileWriteResult>(
+      requestJson<uniCliWorkspaceFileWriteResult>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/files/content`,
         {
@@ -2535,7 +2535,7 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
     deleteWorkspaceFiles: async (
       workspaceId: string,
       files: Array<{ path: string; recursive?: boolean }>,
-    ): Promise<uni-cliWorkspaceFileDeleteResult[]> => {
+    ): Promise<uniCliWorkspaceFileDeleteResult[]> => {
       if (files.length === 0) return [];
       const created = await requestJson<{ session: { id: string } }>(
         baseUrl,
@@ -2578,7 +2578,7 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
       workspaceId: string,
       payload: { path: string; data: ArrayBuffer; baseUpdatedAt?: number | null; force?: boolean },
     ) =>
-      requestJson<uni-cliWorkspaceFileWriteResult>(
+      requestJson<uniCliWorkspaceFileWriteResult>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/files/raw`,
         {
@@ -2602,7 +2602,7 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
       ),
 
     listArtifacts: (workspaceId: string) =>
-      requestJson<uni-cliArtifactList>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/artifacts`, {
+      requestJson<uniCliArtifactList>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/artifacts`, {
         token,
         hostToken,
       }),
@@ -2618,7 +2618,7 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
         reason?: string;
       }>,
     ) =>
-      requestJson<{ items: uni-cliResolvedArtifactTarget[] }>(
+      requestJson<{ items: uniCliResolvedArtifactTarget[] }>(
         baseUrl,
         `/workspace/${encodeURIComponent(workspaceId)}/artifacts/resolve`,
         { token, hostToken, method: "POST", body: { targets } },
@@ -2661,14 +2661,14 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
       }),
 
     listUserEnv: () =>
-      requestJson<{ items: uni-cliUserEnvItem[] }>(
+      requestJson<{ items: uniCliUserEnvItem[] }>(
         baseUrl,
         "/env?includeValues=false",
         { token, hostToken, timeoutMs: timeouts.config },
       ),
 
     getUserEnv: (key: string) =>
-      requestJson<{ item: uni-cliUserEnvItem & { value: string } }>(
+      requestJson<{ item: uniCliUserEnvItem & { value: string } }>(
         baseUrl,
         `/env/${encodeURIComponent(key)}`,
         { token, hostToken, timeoutMs: timeouts.config },
@@ -2694,4 +2694,4 @@ export function createuni-cliServerClient(options: { baseUrl: string; token?: st
   };
 }
 
-export type uni-cliServerClient = ReturnType<typeof createuni-cliServerClient>;
+export type uniCliServerClient = ReturnType<typeof createuniCliServerClient>;

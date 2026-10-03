@@ -22,21 +22,21 @@ export function getDesktopGrant(url: string | null): string | null {
   }
 }
 
-export function getDesktopHandoffuni-cliUrl(payload: unknown): string | null {
+export function getDesktopHandoffuniCliUrl(payload: unknown): string | null {
   if (!isRecord(payload)) {
     return null;
   }
 
-  const uni-cliUrl = payload.uni-cliUrl;
-  return typeof uni-cliUrl === "string" && uni-cliUrl.trim() ? uni-cliUrl.trim() : null;
+  const uniCliUrl = payload.uniCliUrl;
+  return typeof uniCliUrl === "string" && uniCliUrl.trim() ? uniCliUrl.trim() : null;
 }
 
-export function getDesktopHandoffGrant(payload: unknown, uni-cliUrl: string | null): string | null {
+export function getDesktopHandoffGrant(payload: unknown, uniCliUrl: string | null): string | null {
   if (isRecord(payload) && typeof payload.grant === "string" && payload.grant.trim()) {
     return payload.grant.trim();
   }
 
-  return getDesktopGrant(uni-cliUrl);
+  return getDesktopGrant(uniCliUrl);
 }
 
 export function rememberDesktopHandoffGrant(grant: string | null) {

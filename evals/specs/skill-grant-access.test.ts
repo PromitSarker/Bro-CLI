@@ -144,13 +144,13 @@ test.skipIf(!apiUrl)(title, async () => {
   };
   const admin = await signIn(den, {
     email: process.env.UNICLI_EVAL_DEMO_EMAIL?.trim() || "alex@acme.test",
-    password: process.env.UNICLI_EVAL_DEMO_PASSWORD?.trim() || "Uni-CLIDemo123!",
+    password: process.env.UNICLI_EVAL_DEMO_PASSWORD?.trim() || "UniCliDemo123!",
   });
   const orgId = await organizationId(admin);
   await selectOrganization(admin, orgId);
   const creator = await ensureMemberSession(den, admin, {
     email: process.env.UNICLI_EVAL_CREATOR_EMAIL?.trim() || "casey.spec@acme.test",
-    password: process.env.UNICLI_EVAL_MEMBER_PASSWORD?.trim() || "Uni-CLIDemo123!",
+    password: process.env.UNICLI_EVAL_MEMBER_PASSWORD?.trim() || "UniCliDemo123!",
     name: "Casey Spec",
     markVerifiedCmd: process.env.UNICLI_EVAL_MARK_VERIFIED_CMD?.trim(),
   });
@@ -158,7 +158,7 @@ test.skipIf(!apiUrl)(title, async () => {
   const deniedEmail = process.env.UNICLI_EVAL_MEMBER_EMAIL?.trim() || "nova.spec@acme.test";
   const denied = await ensureMemberSession(den, admin, {
     email: deniedEmail,
-    password: process.env.UNICLI_EVAL_MEMBER_PASSWORD?.trim() || "Uni-CLIDemo123!",
+    password: process.env.UNICLI_EVAL_MEMBER_PASSWORD?.trim() || "UniCliDemo123!",
     name: "Nova Spec",
     markVerifiedCmd: process.env.UNICLI_EVAL_MARK_VERIFIED_CMD?.trim(),
   });
@@ -166,7 +166,7 @@ test.skipIf(!apiUrl)(title, async () => {
   const thirdEmail = process.env.UNICLI_EVAL_THIRD_MEMBER_EMAIL?.trim() || "riley.spec@acme.test";
   const third = await ensureMemberSession(den, admin, {
     email: thirdEmail,
-    password: process.env.UNICLI_EVAL_MEMBER_PASSWORD?.trim() || "Uni-CLIDemo123!",
+    password: process.env.UNICLI_EVAL_MEMBER_PASSWORD?.trim() || "UniCliDemo123!",
     name: "Riley Spec",
     markVerifiedCmd: process.env.UNICLI_EVAL_MARK_VERIFIED_CMD?.trim(),
   });

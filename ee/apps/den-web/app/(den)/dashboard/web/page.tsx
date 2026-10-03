@@ -13,7 +13,7 @@ import { formatMoneyMinor, formatSubscriptionStatus, getErrorMessage, getRequest
 import { getBillingRoute, getOrgAccessFlags } from "../../_lib/den-org";
 import { ORG_SCOPE_HEADER } from "../../_lib/org-scope";
 import {
-  getUni-CLIWebQuantityDescription,
+  getUniCliWebQuantityDescription,
   UNICLI_WEB_CHECKOUT_TYPE,
   UNICLI_WEB_QUANTITY_EXPLANATION,
   parseStripeWebBilling,
@@ -89,9 +89,9 @@ function CheckingWorkspaceAccess({ message = "Checking workspace access" }: { me
   );
 }
 
-export function WebOpenButton({ uni-cliWebUrl }: { uni-cliWebUrl: string }) {
+export function WebOpenButton({ uniCliWebUrl }: { uniCliWebUrl: string }) {
   return (
-    <DenButton href={uni-cliWebUrl} target="_blank" rel="noopener noreferrer" icon={ExternalLink}>
+    <DenButton href={uniCliWebUrl} target="_blank" rel="noopener noreferrer" icon={ExternalLink}>
       Open Uni-CLI Web
     </DenButton>
   );
@@ -121,7 +121,7 @@ export default function WebPage() {
   const { runtimeConfig, runtimeConfigLoaded } = useDenFlow();
   const orgId = orgContext?.organization.id ?? null;
   const webAvailable = runtimeConfigLoaded
-    && orgContext?.capabilities.uni-cliWeb === true;
+    && orgContext?.capabilities.uniCliWeb === true;
   const [billingRecord, setBillingRecord] = useState<{ orgId: string; billing: StripeWebBilling } | null>(null);
   const [errorRecord, setErrorRecord] = useState<{ orgId: string; message: string } | null>(null);
   const [checkoutBusy, setCheckoutBusy] = useState(false);
@@ -390,7 +390,7 @@ export default function WebPage() {
             <p className="mt-3 text-[14px] leading-6 text-gray-600">{UNICLI_WEB_QUANTITY_EXPLANATION}</p>
             <div className="mt-5 rounded-2xl border border-gray-200 bg-gray-50 p-4" data-testid="uni-cli-web-price-breakdown">
               <p className="text-[22px] font-semibold tracking-[-0.03em] text-gray-950">
-                {getUni-CLIWebQuantityDescription(billing.quantity)} × {unitPrice}
+                {getUniCliWebQuantityDescription(billing.quantity)} × {unitPrice}
               </p>
               <p className="mt-1 text-[14px] text-gray-600">
                 {expectedTotal} per {billing.interval}
@@ -433,11 +433,11 @@ export default function WebPage() {
             <h2 className="mt-2 text-[22px] font-semibold tracking-[-0.03em] text-gray-950">Uni-CLI Web is ready</h2>
             <p className="mt-3 text-[14px] leading-6 text-gray-600">
               {billing.accessSource === "complimentary"
-                ? `Uni-CLI Web is included for all ${getUni-CLIWebQuantityDescription(billing.quantity)} in this organization, with no Stripe subscription or per-member charge.`
-                : `Uni-CLI Web is active for ${getUni-CLIWebQuantityDescription(billing.quantity)} in this organization.`}
+                ? `Uni-CLI Web is included for all ${getUniCliWebQuantityDescription(billing.quantity)} in this organization, with no Stripe subscription or per-member charge.`
+                : `Uni-CLI Web is active for ${getUniCliWebQuantityDescription(billing.quantity)} in this organization.`}
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
-              <WebOpenButton uni-cliWebUrl={runtimeConfig.uni-cliWebUrl} />
+              <WebOpenButton uniCliWebUrl={runtimeConfig.uniCliWebUrl} />
               <DenButton variant="secondary" href={getBillingRoute(activeOrg?.slug)}>View billing</DenButton>
             </div>
           </DenCard>

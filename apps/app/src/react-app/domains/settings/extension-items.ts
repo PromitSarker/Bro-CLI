@@ -1,4 +1,4 @@
-import { getMcpServerName, isBuiltInUni-CLIExtension, type McpDirectoryInfo } from "../../../app/constants";
+import { getMcpServerName, isBuiltInUniCliExtension, type McpDirectoryInfo } from "../../../app/constants";
 import type { CloudImportedPlugin, CloudImportedPluginFile } from "../../../app/cloud/import-state";
 import type { PendingCloudPluginChange } from "../../../app/cloud/desktop-cloud-sync";
 import { evaluateEnablement, type EnablementContext } from "../../../app/enablement";
@@ -105,7 +105,7 @@ const UNICLI_PROVIDED_SKILL_NAMES = new Set([
   "skill-creator",
 ]);
 
-export function isuni-cliProvidedSkill(skill: Pick<SkillCard, "name" | "path">) {
+export function isuniCliProvidedSkill(skill: Pick<SkillCard, "name" | "path">) {
   const normalizedName = skill.name.trim().toLowerCase();
   const normalizedPath = skill.path.replace(/\\/g, "/").toLowerCase();
   return normalizedPath.includes("/.opencode/skills/") &&
@@ -206,7 +206,7 @@ function childKeysForPlugin(plugin: CloudImportedPlugin) {
 }
 
 export function buildExtensionItems(input: ExtensionItemBuildInput) {
-  const builtInItems = input.quickConnect.filter(isBuiltInUni-CLIExtension).map((entry): ExtensionItem => {
+  const builtInItems = input.quickConnect.filter(isBuiltInUniCliExtension).map((entry): ExtensionItem => {
     const enablement = entry.extensionManifest?.enablement
       ? evaluateEnablement(entry.extensionManifest.enablement, input.enablementContext)
       : null;
@@ -315,7 +315,7 @@ export function buildExtensionItems(input: ExtensionItemBuildInput) {
   }
 
   const standaloneMcpEntries = input.quickConnect.filter((entry) => {
-    if (isBuiltInUni-CLIExtension(entry)) return false;
+    if (isBuiltInUniCliExtension(entry)) return false;
     const serverName = getMcpServerName(entry);
     if (groupedMcpServerNames.has(serverName)) return false;
     return input.mcpServers.some((server) => server.name === serverName);

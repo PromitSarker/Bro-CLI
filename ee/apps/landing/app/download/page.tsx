@@ -1,4 +1,4 @@
-import { DownloadUni-CLICard } from "@uni-cli/ui/react";
+import { DownloadUniCliCard } from "@uni-cli/ui/react";
 import { SiteFooter } from "../../components/site-footer";
 import { SiteNav } from "../../components/site-nav";
 import { StructuredData } from "../../components/structured-data";
@@ -65,7 +65,7 @@ export default async function Download() {
           </div>
 
           <section className="my-8">
-            <DownloadUni-CLICard installers={github.installers} releaseTag={releaseTag} />
+            <DownloadUniCliCard installers={github.installers} releaseTag={releaseTag} />
           </section>
 
           <p className="max-w-md text-[13px] text-gray-500">

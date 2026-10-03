@@ -215,7 +215,7 @@ export async function sessionArchivePressure(seed: Seed, context: { place: Place
   const mount = (workspaceId: string) => `/workspace/${encodeURIComponent(workspaceId)}/opencode`;
   const targetPath = `${mount(a2.workspaceId)}/session/${encodeURIComponent(a2.sessionId)}`;
   const server = await evaluate(app.client, async () => {
-    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
     if (!info.running || !info.baseUrl) throw new Error("Pressure fixture server unavailable");
     return { baseUrl: info.baseUrl, token: info.ownerToken ?? info.clientToken };
   }, { awaitPromise: true, timeoutMs: 5_000 });
@@ -277,7 +277,7 @@ export async function sessionArchivePressure(seed: Seed, context: { place: Place
     holdRun: fixture.holdRun,
     mainRequests: fixture.mainRequests,
     mainFetchControl: () => evaluate(app.client, browserScript(async path => {
-      const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+      const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
       const started = performance.now();
       try {
         const response = await window.__UNICLI_ELECTRON__.invokeDesktop("__fetch", `${info.baseUrl}${path}`, {
@@ -299,7 +299,7 @@ export async function installSsePressure(app: Surface, workspaceIds: string[], u
   await using resources = new AsyncDisposableStack();
   const mounts = workspaceIds.map(id => `/workspace/${encodeURIComponent(id)}/opencode`);
   const origin = await evaluate(app.client, async () => {
-    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
     if (!info.running || !info.baseUrl) throw new Error("Pressure fixture server unavailable");
     const url = new URL(info.baseUrl);
     if (url.protocol !== "http:" || !["127.0.0.1", "localhost", "[::1]"].includes(url.hostname)
@@ -317,7 +317,7 @@ export async function installSsePressure(app: Surface, workspaceIds: string[], u
     if (window.__archiveNetwork && (window.__archiveNetwork.mode !== "none" || window.__archiveNetwork.release)) {
       throw new Error("Pressure witness refuses synthetic archive faults");
     }
-    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
     if (!info.running || !info.baseUrl || new URL(info.baseUrl).origin !== origin) {
       throw new Error("Pressure witness server identity changed");
     }

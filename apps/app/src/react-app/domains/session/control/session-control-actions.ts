@@ -3,11 +3,11 @@ import { useCallback, useMemo } from "react";
 
 import { createClient, unwrap } from "../../../../app/lib/opencode";
 import { createClientV2, isOpencodeV2BaseUrl } from "../../../../app/lib/opencode-v2-adapter";
-import { uni-cliCatalogModels, uni-cliModelsListArgsSchema, type uni-cliCatalogModel } from "@uni-cli/types/uni-cli-affordance";
-import type { uni-cliServerClient, uni-cliWorkspaceInfo } from "../../../../app/lib/uni-cli-server";
+import { uniCliCatalogModels, uniCliModelsListArgsSchema, type uniCliCatalogModel } from "@uni-cli/types/uni-cli-affordance";
+import type { uniCliServerClient, uniCliWorkspaceInfo } from "../../../../app/lib/uni-cli-server";
 import { deleteRouteSession, routeSessionEndpoint } from "../../../shell/route-workspaces";
 import type { ResolvedWorkspaceEndpoint } from "../../../../app/lib/workspace-endpoint";
-import { useControlAction, type uni-cliControlAction } from "../../../shell/control/control-provider";
+import { useControlAction, type uniCliControlAction } from "../../../shell/control/control-provider";
 import { useCheckDesktopRestriction } from "../../cloud/desktop-config-provider";
 import { useDenAuth } from "../../cloud/den-auth-provider";
 import { filterEntitledModelOptions } from "../../connections/provider-auth/provider-policy";
@@ -19,7 +19,7 @@ import { selectSessionAttention } from "../status/session-attention";
 import { isSameWorkbenchSession, useWorkbenchStore } from "../chat/workbench-store";
 import { controlWorkspaceLabel as workspaceLabel, listControlSessions, type ControlSessionLike as SessionLike } from "./list-control-sessions";
 
-type SessionControlWorkspace = uni-cliWorkspaceInfo & {
+type SessionControlWorkspace = uniCliWorkspaceInfo & {
   displayNameResolved: string;
 };
 
@@ -30,7 +30,7 @@ type UseSessionControlActionsInput = {
   selectedWorkspaceRoot: string;
   selectedSessionId: string | null;
   canCreateTask: boolean;
-  uni-cliClient: uni-cliServerClient | null;
+  uniCliClient: uniCliServerClient | null;
   opencodeClient: ReturnType<typeof createClient> | null;
   archiveDisabledReason?: string;
   endpointForWorkspace: (workspace: SessionControlWorkspace | null | undefined) => ResolvedWorkspaceEndpoint | null;
@@ -76,7 +76,7 @@ export function useSessionControlActions(input: UseSessionControlActionsInput) {
     navigateToSession,
     navigateToSessionRoot,
     openModelPicker,
-    uni-cliClient,
+    uniCliClient,
     opencodeClient,
     archiveDisabledReason,
     refreshRouteState,
@@ -91,7 +91,7 @@ export function useSessionControlActions(input: UseSessionControlActionsInput) {
   const checkDesktopRestriction = useCheckDesktopRestriction();
   const { isSignedIn } = useDenAuth();
 
-  const createTaskControlAction = useMemo<uni-cliControlAction>(() => ({
+  const createTaskControlAction = useMemo<uniCliControlAction>(() => ({
     id: "session.create_task",
     label: "Create a new task",
     description: "Create a new session in the selected workspace and open it in the person's focused pane. Use session.create to start sessions without changing what is on screen.",
@@ -116,9 +116,9 @@ export function useSessionControlActions(input: UseSessionControlActionsInput) {
     const catalog = isOpencodeV2BaseUrl(engine.opencodeBaseUrl)
       ? await createClientV2(engine.opencodeBaseUrl, workspace.path, { token: engine.token }).provider.list({ directory: workspace.path })
       : await createClient(engine.opencodeBaseUrl, workspace.path, { mode: "uni-cli", token: engine.token }).provider.list({ directory: workspace.path });
-    return uni-cliCatalogModels(unwrap(catalog));
+    return uniCliCatalogModels(unwrap(catalog));
   }, [endpointForWorkspace]);
-  useControlAction(useMemo<uni-cliControlAction>(() => ({
+  useControlAction(useMemo<uniCliControlAction>(() => ({
     id: "models.list",
     label: "List workspace models",
     description: "Effective available connected picker models with providerId/modelId, displayName, providerName and available:true. Requires an existing renderer host; reads any workspace without focus or navigation. Assigned models not yet engine-connected are omitted.",
@@ -127,7 +127,7 @@ export function useSessionControlActions(input: UseSessionControlActionsInput) {
     sideEffect: "none",
     args: [{ name: "workspaceId", type: "string", required: true, description: "Workspace id or display name." }],
     execute: async (rawArgs) => {
-      const { workspaceId } = uni-cliModelsListArgsSchema.parse(rawArgs);
+      const { workspaceId } = uniCliModelsListArgsSchema.parse(rawArgs);
       const matches = workspaces.filter((workspace) => workspace.id === workspaceId || workspaceLabel(workspace).toLowerCase() === workspaceId.toLowerCase());
       const workspace = matches[0];
       if (matches.length !== 1 || !workspace) throw new Error("Workspace is missing or ambiguous; pass its exact id.");
@@ -140,7 +140,7 @@ export function useSessionControlActions(input: UseSessionControlActionsInput) {
     },
   }), [checkDesktopRestriction, isSignedIn, workspaceModels, workspaces]));
 
-  const listSessionsControlAction = useMemo<uni-cliControlAction>(() => ({
+  const listSessionsControlAction = useMemo<uniCliControlAction>(() => ({
     id: "session.list_sessions",
     label: "List available sessions",
     description: "Return every loaded session across workspaces (pinned first, then newest). Entries include `pinned`, `status` (idle, thinking, responding, waiting, compacting, error), `working` (own work or known busy/waiting descendants), `descendantActivity` ({ busy, waiting, unknown } counts), `inventoryComplete` (false when referenced descendant activity is unreadable; unknown alone does not imply working) and `model` ({ providerId, modelId, variant, displayName?, providerName? }: the model and reasoning effort the session is bound to, null before any model is bound). Check `working` before session.archive. Pass `limit` to cap the count or `workspaceId` to narrow to one workspace.",
@@ -154,7 +154,7 @@ export function useSessionControlActions(input: UseSessionControlActionsInput) {
     execute: async (args) => {
       const query = stringArg(args, "workspaceId").toLowerCase();
       const targets = workspaces.filter((workspace) => !query || workspace.id.toLowerCase() === query || workspaceLabel(workspace).toLowerCase() === query);
-      const modelCatalogByWorkspaceId: Record<string, uni-cliCatalogModel[]> = {};
+      const modelCatalogByWorkspaceId: Record<string, uniCliCatalogModel[]> = {};
       await Promise.all(targets.map(async (workspace) => {
         modelCatalogByWorkspaceId[workspace.id] = await workspaceModels(workspace).catch(() => []);
       }));
@@ -186,7 +186,7 @@ export function useSessionControlActions(input: UseSessionControlActionsInput) {
   }), [endpointForWorkspace, pinnedIds, sessionsByWorkspaceId, workspaceModels, workspaces]);
   useControlAction(listSessionsControlAction);
 
-  const openSessionControlAction = useMemo<uni-cliControlAction>(() => ({
+  const openSessionControlAction = useMemo<uniCliControlAction>(() => ({
     id: "session.open",
     label: "Open a session by ID",
     description: "Show a session to the person: focus it if visible, else open it in the focused pane. Only for when they should see it; use session.read to inspect and session.send to message a session without opening it.",
@@ -223,7 +223,7 @@ export function useSessionControlActions(input: UseSessionControlActionsInput) {
   }), [navigateToSession, sessionsByWorkspaceId, workspaces]);
   useControlAction(openSessionControlAction);
 
-  const renameSessionControlAction = useMemo<uni-cliControlAction>(() => ({
+  const renameSessionControlAction = useMemo<uniCliControlAction>(() => ({
     id: "session.rename",
     label: "Rename a session",
     description: "Rename a session by ID. Use list_sessions first to match the title the user said.",
@@ -253,7 +253,7 @@ export function useSessionControlActions(input: UseSessionControlActionsInput) {
   }), [opencodeClient, refreshRouteState, selectedWorkspaceRoot, sessionsByWorkspaceId, workspaces]);
   useControlAction(renameSessionControlAction);
 
-  const deleteSessionControlAction = useMemo<uni-cliControlAction>(() => ({
+  const deleteSessionControlAction = useMemo<uniCliControlAction>(() => ({
     id: "session.delete",
     label: "Delete a session",
     description: "Delete a session by ID. Destructive: only run after explicit user confirmation.",
@@ -264,13 +264,13 @@ export function useSessionControlActions(input: UseSessionControlActionsInput) {
       { name: "sessionId", type: "string", required: true, description: "Session ID from session.list_sessions." },
       { name: "confirmed", type: "boolean", required: true, description: "Must be true after explicit user confirmation." },
     ],
-    disabled: !uni-cliClient,
+    disabled: !uniCliClient,
     execute: async (args) => {
       const sessionId = stringArg(args, "sessionId");
       const confirmed = booleanArg(args, "confirmed");
       if (!sessionId) return { ok: false, error: "sessionId is required" };
       if (!confirmed) return { ok: false, error: "Deletion requires confirmed: true after explicit user confirmation" };
-      if (!uni-cliClient) return { ok: false, error: "Uni-CLI server is not connected" };
+      if (!uniCliClient) return { ok: false, error: "Uni-CLI server is not connected" };
 
       const targetWorkspace = findSessionWorkspace(workspaces, sessionsByWorkspaceId, sessionId);
       if (!targetWorkspace) return { ok: false, error: "Session was not found in the current session list" };
@@ -283,10 +283,10 @@ export function useSessionControlActions(input: UseSessionControlActionsInput) {
       await refreshRouteState();
       return { ok: true, sessionId, deleted: true };
     },
-  }), [endpointForWorkspace, navigateToSessionRoot, uni-cliClient, refreshRouteState, selectedSessionId, sessionsByWorkspaceId, workspaces]);
+  }), [endpointForWorkspace, navigateToSessionRoot, uniCliClient, refreshRouteState, selectedSessionId, sessionsByWorkspaceId, workspaces]);
   useControlAction(deleteSessionControlAction);
 
-  const modelPickerControlAction = useMemo<uni-cliControlAction>(() => ({
+  const modelPickerControlAction = useMemo<uniCliControlAction>(() => ({
     id: "session.model_picker.open",
     label: "Open the model picker",
     description: "Open the current session model picker.",
@@ -320,7 +320,7 @@ export function useSessionControlActions(input: UseSessionControlActionsInput) {
     return selectedWorkspaceId || undefined;
   }, [selectedWorkspaceId, workspaces]);
 
-  const pinControlAction = useMemo<uni-cliControlAction>(() => ({
+  const pinControlAction = useMemo<uniCliControlAction>(() => ({
     id: "session.pin",
     label: "Pin or unpin a session",
     description: "Toggle pin on a session. Pinned sessions appear in a global section at the top of the sidebar.",
@@ -337,7 +337,7 @@ export function useSessionControlActions(input: UseSessionControlActionsInput) {
   }), []);
   useControlAction(pinControlAction);
 
-  const archiveControlAction = useMemo<uni-cliControlAction>(() => ({
+  const archiveControlAction = useMemo<uniCliControlAction>(() => ({
     id: "session.archive",
     label: "Archive or unarchive a session",
     description: archiveDisabledReason ?? "Archive an idle session, preserving context. Check `working` in session.list_sessions first. A working session is not archived: the result is code target_working (if the user wants it closed, ask them to stop it in the app, then archive once working is false; otherwise leave it running). A session cannot archive itself or its parent during its own turn (code self_archive_while_working): finish the turn; the reviewer archives. Pass archived=false to restore without restarting work.",
@@ -373,7 +373,7 @@ export function useSessionControlActions(input: UseSessionControlActionsInput) {
   }), [archiveDisabledReason, archiveSession, opencodeClient]);
   useControlAction(archiveControlAction);
 
-  const groupCreateControlAction = useMemo<uni-cliControlAction>(() => ({
+  const groupCreateControlAction = useMemo<uniCliControlAction>(() => ({
     id: "session.group.create",
     label: "Create a session group",
     description: "Create a new group (folder/separator) in the current workspace sidebar. Sessions can then be moved into it.",
@@ -397,7 +397,7 @@ export function useSessionControlActions(input: UseSessionControlActionsInput) {
   }), [resolveWorkspaceId]);
   useControlAction(groupCreateControlAction);
 
-  const groupMoveControlAction = useMemo<uni-cliControlAction>(() => ({
+  const groupMoveControlAction = useMemo<uniCliControlAction>(() => ({
     id: "session.group.move",
     label: "Move a session to a group",
     description: "Assign a session to a group (folder). Pass groupId=null or omit to remove from current group. Use session.group.list to see available groups.",
@@ -421,7 +421,7 @@ export function useSessionControlActions(input: UseSessionControlActionsInput) {
   }), [resolveWorkspaceId, sessionsByWorkspaceId, workspaces]);
   useControlAction(groupMoveControlAction);
 
-  const groupRemoveControlAction = useMemo<uni-cliControlAction>(() => ({
+  const groupRemoveControlAction = useMemo<uniCliControlAction>(() => ({
     id: "session.group.remove",
     label: "Remove a session group",
     description: "Remove a group from the workspace. Sessions in the group become ungrouped (not deleted).",
@@ -447,7 +447,7 @@ export function useSessionControlActions(input: UseSessionControlActionsInput) {
   }), [resolveWorkspaceId]);
   useControlAction(groupRemoveControlAction);
 
-  const groupListControlAction = useMemo<uni-cliControlAction>(() => ({
+  const groupListControlAction = useMemo<uniCliControlAction>(() => ({
     id: "session.group.list",
     label: "List session groups",
     description: "List all groups in a workspace with their IDs and labels.",

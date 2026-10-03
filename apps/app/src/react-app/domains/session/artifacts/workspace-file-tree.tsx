@@ -4,7 +4,7 @@ import { FileTree, useFileTree, useFileTreeSearch } from "@pierre/trees/react";
 import { useQuery } from "@tanstack/react-query";
 import { RefreshCw, Search } from "lucide-react";
 
-import type { uni-cliServerClient, uni-cliWorkspaceCatalogEntry } from "@/app/lib/uni-cli-server";
+import type { uniCliServerClient, uniCliWorkspaceCatalogEntry } from "@/app/lib/uni-cli-server";
 import { Button } from "@/components/ui/button";
 import { useNativeContextMenu } from "@/components/ui/action-context-menu";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
@@ -25,15 +25,15 @@ const TREE_CSS = `
 export type WorkspaceFileAction = {
   id: string;
   label: string;
-  run: (entry: uni-cliWorkspaceCatalogEntry) => void;
+  run: (entry: uniCliWorkspaceCatalogEntry) => void;
 };
 
 type WorkspaceFileTreeProps = {
-  client: uni-cliServerClient;
+  client: uniCliServerClient;
   workspaceId: string;
   workspaceName: string;
   selectedPath: string;
-  onOpenFile: (entry: uni-cliWorkspaceCatalogEntry) => void;
+  onOpenFile: (entry: uniCliWorkspaceCatalogEntry) => void;
   fileActions?: readonly WorkspaceFileAction[];
 };
 
@@ -43,7 +43,7 @@ type WorkspaceFileTreeProps = {
  * composition API expects a plain HTMLElement.
  */
 function buildFileContextMenu(
-  entry: uni-cliWorkspaceCatalogEntry,
+  entry: uniCliWorkspaceCatalogEntry,
   actions: readonly WorkspaceFileAction[],
   close: () => void,
 ) {
@@ -65,7 +65,7 @@ function buildFileContextMenu(
   return menu;
 }
 
-function treePath(entry: uni-cliWorkspaceCatalogEntry) {
+function treePath(entry: uniCliWorkspaceCatalogEntry) {
   return entry.kind === "dir" ? `${entry.path}/` : entry.path;
 }
 

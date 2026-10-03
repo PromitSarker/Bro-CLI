@@ -6,10 +6,10 @@ import { eventually, mcpMock, needs, test } from "@uni-cli/testkit";
 import { expect } from "vitest";
 
 import { resetManagedProviderAuthCache } from "../../apps/server/src/managed-provider-auth.js";
-import { uni-cliRuntimeConfigFilePath } from "../../apps/server/src/uni-cli-runtime-config.js";
+import { uniCliRuntimeConfigFilePath } from "../../apps/server/src/uni-cli-runtime-config.js";
 import { startServer } from "../../apps/server/src/server.js";
 import type { ServerConfig } from "../../apps/server/src/types.js";
-import { bootManageduni-cliServer, close, isRecord, listen } from "../worlds/uni-cli-server-cli.ts";
+import { bootManageduniCliServer, close, isRecord, listen } from "../worlds/uni-cli-server-cli.ts";
 
 const CLIENT_TOKEN = "owt_managed_provider_env_client";
 const HOST_TOKEN = "owt_managed_provider_env_host";
@@ -42,7 +42,7 @@ async function handleEngineRequest(
     return;
   }
   if (method === "GET" && path === "/config") {
-    const content = await readFile(uni-cliRuntimeConfigFilePath(config), "utf8");
+    const content = await readFile(uniCliRuntimeConfigFilePath(config), "utf8");
     response.writeHead(200, { "content-type": "application/json" });
     response.end(content);
     return;
@@ -234,7 +234,7 @@ test("stored managed provider credentials reload only after full session or auth
     const identity = JSON.stringify({ baseUrl: `http://127.0.0.1:${address.port}`, token: "test-den-token", orgId: "org_ready" });
     const providersBefore = await (await fetch(`${base}/runtime-config/providers`, { headers: hostHeaders() })).json();
     const envBefore = await readFile(process.env.UNICLI_ENV_STORE, "utf8");
-    const configBefore = await readFile(uni-cliRuntimeConfigFilePath(config), "utf8");
+    const configBefore = await readFile(uniCliRuntimeConfigFilePath(config), "utf8");
     const early = await fetch(`${base}/den-session/identity`, { method: "PUT", headers: hostHeaders(), body: identity });
     expect(early.status).toBe(204);
     expect(await (await fetch(`${base}/managed-policy`, { headers: { authorization: `Bearer ${CLIENT_TOKEN}` } })).json())
@@ -244,7 +244,7 @@ test("stored managed provider credentials reload only after full session or auth
     expect(denRequests.every((path) => path === "/v1/me/desktop-config")).toBe(true);
     expect(await (await fetch(`${base}/runtime-config/providers`, { headers: hostHeaders() })).json()).toEqual(providersBefore);
     expect(await readFile(process.env.UNICLI_ENV_STORE, "utf8")).toBe(envBefore);
-    expect(await readFile(uni-cliRuntimeConfigFilePath(config), "utf8")).toBe(configBefore);
+    expect(await readFile(uniCliRuntimeConfigFilePath(config), "utf8")).toBe(configBefore);
     expect(engineRequests).toEqual([]);
 
     const ready = await fetch(`${base}/den-session`, { method: "PUT", headers: hostHeaders(), body: identity });
@@ -260,7 +260,7 @@ test("stored managed provider credentials reload only after full session or auth
     expect(engineRequests.indexOf("PUT /auth/lpr_ready")).toBeLessThan(engineRequests.indexOf("POST /instance/dispose"));
 
     const materializedEnv = await readFile(process.env.UNICLI_ENV_STORE, "utf8");
-    const materializedConfig = await readFile(uni-cliRuntimeConfigFilePath(config), "utf8");
+    const materializedConfig = await readFile(uniCliRuntimeConfigFilePath(config), "utf8");
     engine.setBusy(true);
     engineRequests.length = 0;
     for (let attempt = 0; attempt < 2; attempt += 1) {
@@ -270,7 +270,7 @@ test("stored managed provider credentials reload only after full session or auth
     const resumed = await fetch(`${base}/cloud-provider-sync/run`, { method: "POST", headers: hostHeaders(), body: "{}" });
     expect(await resumed.json()).toEqual({ status: "noop" });
     expect(await readFile(process.env.UNICLI_ENV_STORE, "utf8")).toBe(materializedEnv);
-    expect(await readFile(uni-cliRuntimeConfigFilePath(config), "utf8")).toBe(materializedConfig);
+    expect(await readFile(uniCliRuntimeConfigFilePath(config), "utf8")).toBe(materializedConfig);
     expect(engineRequests.filter((entry) => !entry.startsWith("GET "))).toEqual([]);
   } finally {
     await server?.stop();
@@ -351,9 +351,9 @@ test("a Den key-only rotation reaches the real managed engine through an applied
     else sendJson(response, 404, { error: "not_found" });
   });
   const denUrl = await listen(den);
-  let managed: Awaited<ReturnType<typeof bootManageduni-cliServer>> | undefined;
+  let managed: Awaited<ReturnType<typeof bootManageduniCliServer>> | undefined;
   try {
-    managed = await bootManageduni-cliServer({
+    managed = await bootManageduniCliServer({
       scratch, workspace, token, sink: (chunk) => { output += chunk; },
       env: { UNICLI_ENGINE_RELOAD_RETRY_MS: "1000" },
     });

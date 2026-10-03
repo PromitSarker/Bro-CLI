@@ -4,7 +4,7 @@ import type {
   WorkspaceBlueprintSessionMessage,
   WorkspaceBlueprintSessionTemplate,
   WorkspaceBlueprintStarter,
-  Workspaceuni-cliConfig,
+  WorkspaceuniCliConfig,
 } from "../types";
 import { parseTemplateFrontmatter } from "../utils";
 import { t } from "../../i18n";
@@ -211,25 +211,25 @@ export function buildDefaultWorkspaceBlueprint(preset: string): WorkspaceBluepri
   };
 }
 
-export function blueprintSessions(config: Workspaceuni-cliConfig | null | undefined): WorkspaceBlueprintSessionTemplate[] {
+export function blueprintSessions(config: WorkspaceuniCliConfig | null | undefined): WorkspaceBlueprintSessionTemplate[] {
   return Array.isArray(config?.blueprint?.sessions)
     ? config!.blueprint!.sessions!.filter((item): item is WorkspaceBlueprintSessionTemplate => Boolean(item))
     : [];
 }
 
-export function blueprintMaterializedSessions(config: Workspaceuni-cliConfig | null | undefined): WorkspaceBlueprintMaterializedSession[] {
+export function blueprintMaterializedSessions(config: WorkspaceuniCliConfig | null | undefined): WorkspaceBlueprintMaterializedSession[] {
   return Array.isArray(config?.blueprint?.materialized?.sessions?.items)
     ? config!.blueprint!.materialized!.sessions!.items!.filter((item): item is WorkspaceBlueprintMaterializedSession => Boolean(item))
     : [];
 }
 
-export function normalizeWorkspaceuni-cliConfig(
+export function normalizeWorkspaceuniCliConfig(
   value: unknown,
   preset?: string | null,
-): Workspaceuni-cliConfig {
+): WorkspaceuniCliConfig {
   const candidate =
     value && typeof value === "object"
-      ? (value as Partial<Workspaceuni-cliConfig>)
+      ? (value as Partial<WorkspaceuniCliConfig>)
       : {};
 
   const normalizedPreset =

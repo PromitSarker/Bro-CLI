@@ -18,7 +18,7 @@ import type {
 } from "@opencode-ai/sdk/v2/client";
 
 import { createClient, createDesktopFetch, type FieldsResult } from "./opencode";
-import type { uni-cliSessionHistory } from "./uni-cli-server";
+import type { uniCliSessionHistory } from "./uni-cli-server";
 import { isDesktopRuntime } from "./runtime-env";
 import type { McpStatusMap, OpencodeEvent } from "../types";
 import { normalizeDirectoryPath } from "../utils";
@@ -54,7 +54,7 @@ type PromptPart = {
 };
 
 function selectedSkill(part: PromptPart): Record<string, unknown> | null {
-  const selection = part.type === "text" && part.synthetic === true ? readRecord(part.metadata, "uni-cliSelectedSkill") : null;
+  const selection = part.type === "text" && part.synthetic === true ? readRecord(part.metadata, "uniCliSelectedSkill") : null;
   // Older drafts marked remote capabilities as native attachments. Preserve
   // their Connect instruction instead of resolving them in the local registry.
   const id = readString(selection, "id");
@@ -62,7 +62,7 @@ function selectedSkill(part: PromptPart): Record<string, unknown> | null {
 }
 
 function isPastedText(part: PromptPart): boolean {
-  return isRecord(part.metadata) && part.metadata.uni-cliPastedText === true;
+  return isRecord(part.metadata) && part.metadata.uniCliPastedText === true;
 }
 
 function partText(part: PromptPart): string | null {
@@ -88,7 +88,7 @@ export function v2PromptText(parts: readonly PromptPart[]): string {
 }
 
 function attachmentNames(metadata: unknown): string[] {
-  const attachments = isRecord(metadata) ? metadata.uni-cliAttachments : undefined;
+  const attachments = isRecord(metadata) ? metadata.uniCliAttachments : undefined;
   if (!Array.isArray(attachments)) return [];
   return attachments.flatMap((item) => {
     const filename = readString(item, "filename");
@@ -436,7 +436,7 @@ function mapV2Session(value: unknown, directory: string | undefined, eventCreate
     id,
     slug: readString(source, "slug") ?? id,
     projectID: readString(source, "projectID") ?? "v2",
-    directory: readString(source, "uni-cliHomeDirectory") ?? readString(source, "directory") ?? readString(location, "directory") ?? directory ?? "",
+    directory: readString(source, "uniCliHomeDirectory") ?? readString(source, "directory") ?? readString(location, "directory") ?? directory ?? "",
     // Keep native untitled sessions eligible for compatibility title recovery.
     title: readString(source, "title") || `New session - ${new Date(created).toISOString()}`,
     version: readString(source, "version") ?? "v2",
@@ -522,7 +522,7 @@ function toolAttachments(
 
 function toolPartMetadata(tool: string): Pick<ToolPart, "metadata"> {
   // Adapter provenance stays separate from metadata returned by the tool.
-  return tool === "execute" ? { metadata: { uni-cliV2CodeMode: true } } : {};
+  return tool === "execute" ? { metadata: { uniCliV2CodeMode: true } } : {};
 }
 
 function toolOutput(value: unknown, result?: unknown): string {
@@ -591,11 +591,11 @@ function appEntriesFromScript(calls: unknown, output: unknown): Record<string, u
  * Code Mode runs Uni-CLI Cloud calls inside one `execute`, whose part keeps
  * only `{ tool, status, input }` per call. The server's v2 plugin
  * (uni-cli-mcp-results-v2) saves the calls that report a connection in
- * `uni-cliMcpResults`; surface each as the ordinary tool part v1 produces for
+ * `uniCliMcpResults`; surface each as the ordinary tool part v1 produces for
  * a direct call, so the chat's existing connection card finds it.
  */
 export function codeModeConnectionParts(part: ToolPart): ToolPart[] {
-  if (part.metadata?.uni-cliV2CodeMode !== true || !("metadata" in part.state) || !("time" in part.state)) return [];
+  if (part.metadata?.uniCliV2CodeMode !== true || !("metadata" in part.state) || !("time" in part.state)) return [];
   const { metadata } = part.state;
   const appTool = (tool: string) => /_(?:search_capabilities|prepare_app|create_app|update_app)$/.test(tool);
   const appCallId = (tool: string, index: number) => `${part.callID}:app:${tool}:${index}`;
@@ -621,7 +621,7 @@ export function codeModeConnectionParts(part: ToolPart): ToolPart[] {
   }
   if (part.state.status !== "completed") return [];
   const time = part.state.time;
-  const recorded = metadata?.uni-cliMcpResults;
+  const recorded = metadata?.uniCliMcpResults;
   // When the results plugin recorded nothing (an engine whose inner call
   // names it did not recognise), rebuild the App steps from the script's own
   // call list so a rejected build ends as failed instead of "checking"
@@ -644,7 +644,7 @@ export function codeModeConnectionParts(part: ToolPart): ToolPart[] {
     if (status === "completed") {
       const output = toolOutput(undefined, entry.output);
       return [{ ...base, state: { status, input, output, title: tool, time,
-        metadata: { uni-cliMcpResult: isRecord(entry.output) && Array.isArray(entry.output.content) ? entry.output : { content: [{ type: "text", text: output }], structuredContent: entry.output, ...(isRecord(entry.output) && isRecord(entry.output.launch) ? { _meta: { "uni-cli/mcpApp": entry.output.launch } } : {}) } } } }];
+        metadata: { uniCliMcpResult: isRecord(entry.output) && Array.isArray(entry.output.content) ? entry.output : { content: [{ type: "text", text: output }], structuredContent: entry.output, ...(isRecord(entry.output) && isRecord(entry.output.launch) ? { _meta: { "uni-cli/mcpApp": entry.output.launch } } : {}) } } } }];
     }
     const error = readString(entry, "error");
     return status === "error" && error ? [{ ...base, state: { status, input, error, metadata: {}, time } }] : [];
@@ -795,14 +795,14 @@ function mapV2UserPart(part: Part): Part[] {
     ...part,
     id: index === 0 ? part.id : `${part.id}:${index}`,
     text: segment.text,
-    ...(segment.kind === "pasted" ? { metadata: { uni-cliPastedText: true } } : {}),
+    ...(segment.kind === "pasted" ? { metadata: { uniCliPastedText: true } } : {}),
   }));
   return context === null ? words : [...words, {
     ...part,
     id: `${part.id}:context`,
     text: context,
     synthetic: true,
-    ...(attachments.length ? { metadata: { uni-cliAttachments: attachments } } : {}),
+    ...(attachments.length ? { metadata: { uniCliAttachments: attachments } } : {}),
   }];
 }
 
@@ -2155,7 +2155,7 @@ export function createClientV2(
     messages: async (
       parameters: SessionParameters & { limit?: number; before?: string },
       options?: RequestOptions,
-    ): Promise<FieldsResult<V2MappedMessage[]> & Pick<uni-cliSessionHistory, "pagination">> => {
+    ): Promise<FieldsResult<V2MappedMessage[]> & Pick<uniCliSessionHistory, "pagination">> => {
       const limit = parameters.limit === undefined ? undefined : Math.min(parameters.limit, 200);
       if ((parameters.limit !== undefined && (!Number.isInteger(parameters.limit) || parameters.limit <= 0))
         || (parameters.before !== undefined && limit === undefined)) {

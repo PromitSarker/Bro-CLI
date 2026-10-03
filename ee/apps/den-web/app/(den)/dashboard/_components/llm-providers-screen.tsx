@@ -154,11 +154,11 @@ export function LlmProvidersScreen() {
 
   const modelCount = customProviders.reduce((total, provider) => total + provider.models.length, 0);
   const providerCount = customProviders.length;
-  const hasUni-CLIModels = llmProviders.some((provider) => provider.source === "uni-cli");
+  const hasUniCliModels = llmProviders.some((provider) => provider.source === "uni-cli");
 
   const accessOutcome = accessMode === "managed"
     ? modelCount > 0
-      ? `Members see exactly the ${plural(modelCount, "model")} from the ${plural(providerCount, "provider")} below${hasUni-CLIModels ? ", plus Uni-CLI Models" : ""}.`
+      ? `Members see exactly the ${plural(modelCount, "model")} from the ${plural(providerCount, "provider")} below${hasUniCliModels ? ", plus Uni-CLI Models" : ""}.`
       : "Members see no models yet — add a provider below."
     : modelCount > 0
       ? `Members may add their own providers alongside the ${plural(modelCount, "model")} below.`

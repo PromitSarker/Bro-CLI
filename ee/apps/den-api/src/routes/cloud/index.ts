@@ -12,9 +12,9 @@ import { orgMemberRoute } from "../../middleware/index.js"
 import { jsonResponse, notFoundSchema, unauthorizedSchema } from "../../openapi.js"
 import { materializeCloudWorkerProviders } from "../../llm/cloud-provider-materialization.js"
 import {
-  getUni-CLIWebRuntimeAccess,
-  uni-cliWebAccessRequiredPayload,
-  type Uni-CLIWebRuntimeAccessResolver,
+  getUniCliWebRuntimeAccess,
+  uniCliWebAccessRequiredPayload,
+  type UniCliWebRuntimeAccessResolver,
 } from "../../uni-cli-web-runtime-access.js"
 import { CLOUD_INSTANCE_BACKEND, CLOUD_INSTANCE_NAME } from "../../workers/cloud-constants.js"
 import { currentInstanceName } from "@uni-cli-ee/cloud-runtime/orchestrator"
@@ -72,7 +72,7 @@ type CloudRouteOptions = CloudRuntimeAvailabilityOptions & {
   unreachableGraceMs?: number
   unreachableMisses?: number
   materializeProviders?: typeof materializeCloudWorkerProviders
-  getUni-CLIWebAccess?: Uni-CLIWebRuntimeAccessResolver
+  getUniCliWebAccess?: UniCliWebRuntimeAccessResolver
   now?: () => number
 }
 
@@ -190,10 +190,10 @@ const cloudGatewayInstanceResponseSchema = z.object({
   }).optional(),
 }).meta({ ref: "CloudGatewayInstanceResponse" })
 
-const uni-cliWebAccessRequiredSchema = z.object({
+const uniCliWebAccessRequiredSchema = z.object({
   error: z.literal("uni-cli_web_access_required"),
   message: z.string(),
-}).meta({ ref: "Uni-CLIWebAccessRequiredError" })
+}).meta({ ref: "UniCliWebAccessRequiredError" })
 
 function cloudNotFound() {
   return { error: "cloud_not_found" }
@@ -759,7 +759,7 @@ export function registerCloudRoutes<T extends { Variables: OrgRouteVariables }>(
 ) {
   const orgMemberRouteMiddleware = options.memberRoute ?? orgMemberRoute()
   const materializeProviders = options.materializeProviders ?? materializeCloudWorkerProviders
-  const getUni-CLIWebAccess = options.getUni-CLIWebAccess ?? getUni-CLIWebRuntimeAccess
+  const getUniCliWebAccess = options.getUniCliWebAccess ?? getUniCliWebRuntimeAccess
   const continueProvisioning: typeof continueCloudProvisioning = options.continueProvisioning
     ?? ((input, continueOptions = {}) => continueCloudProvisioning(input, { ...continueOptions, materializeProviders }))
   const refreshSignedPreview = options.refreshSignedPreview ?? ((workerId) => getCloudRuntime().refreshEndpoint(workerId))
@@ -809,7 +809,7 @@ export function registerCloudRoutes<T extends { Variables: OrgRouteVariables }>(
       responses: {
         200: jsonResponse("Cloud instance status returned successfully.", cloudInstanceResponseSchema),
         401: jsonResponse("The caller must be signed in to open Cloud.", unauthorizedSchema),
-        403: jsonResponse("Uni-CLI Web access is not active for the organization.", uni-cliWebAccessRequiredSchema),
+        403: jsonResponse("Uni-CLI Web access is not active for the organization.", uniCliWebAccessRequiredSchema),
         404: jsonResponse("Cloud is not available for this organization.", notFoundSchema),
       },
     }),
@@ -822,11 +822,11 @@ export function registerCloudRoutes<T extends { Variables: OrgRouteVariables }>(
       }
 
       // Published desktops reach this route only from inside the gateway
-      // runtime, after Uni-CLIWebAccessGate (v0.18.42+) has already resolved
+      // runtime, after UniCliWebAccessGate (v0.18.42+) has already resolved
       // Web access for the organization; see uni-cli-web-runtime-access.ts.
-      const webAccess = await getUni-CLIWebAccess(payload.organization.id)
+      const webAccess = await getUniCliWebAccess(payload.organization.id)
       if (!webAccess.hasAccess) {
-        return c.json(uni-cliWebAccessRequiredPayload(), 403)
+        return c.json(uniCliWebAccessRequiredPayload(), 403)
       }
 
       if (!cloudAvailable(payload, options)) {
@@ -866,7 +866,7 @@ export function registerCloudRoutes<T extends { Variables: OrgRouteVariables }>(
       responses: {
         200: jsonResponse("Cloud instance recovery was requested.", cloudInstanceResponseSchema),
         401: jsonResponse("The caller must be signed in to retry Cloud.", unauthorizedSchema),
-        403: jsonResponse("Uni-CLI Web access is not active for the organization.", uni-cliWebAccessRequiredSchema),
+        403: jsonResponse("Uni-CLI Web access is not active for the organization.", uniCliWebAccessRequiredSchema),
         404: jsonResponse("Cloud is not available for this organization.", notFoundSchema),
       },
     }),
@@ -878,9 +878,9 @@ export function registerCloudRoutes<T extends { Variables: OrgRouteVariables }>(
         return c.json({ error: "unauthorized" }, 401)
       }
 
-      const webAccess = await getUni-CLIWebAccess(payload.organization.id)
+      const webAccess = await getUniCliWebAccess(payload.organization.id)
       if (!webAccess.hasAccess) {
-        return c.json(uni-cliWebAccessRequiredPayload(), 403)
+        return c.json(uniCliWebAccessRequiredPayload(), 403)
       }
 
       if (!cloudAvailable(payload, options)) {
@@ -921,7 +921,7 @@ export function registerCloudRoutes<T extends { Variables: OrgRouteVariables }>(
       responses: {
         200: jsonResponse("Cloud instance update request handled.", cloudInstanceUpdateResponseSchema),
         401: jsonResponse("The caller must be signed in to update Cloud.", unauthorizedSchema),
-        403: jsonResponse("Uni-CLI Web access is not active for the organization.", uni-cliWebAccessRequiredSchema),
+        403: jsonResponse("Uni-CLI Web access is not active for the organization.", uniCliWebAccessRequiredSchema),
         404: jsonResponse("Cloud is not available for this organization.", notFoundSchema),
       },
     }),
@@ -933,9 +933,9 @@ export function registerCloudRoutes<T extends { Variables: OrgRouteVariables }>(
         return c.json({ error: "unauthorized" }, 401)
       }
 
-      const webAccess = await getUni-CLIWebAccess(payload.organization.id)
+      const webAccess = await getUniCliWebAccess(payload.organization.id)
       if (!webAccess.hasAccess) {
-        return c.json(uni-cliWebAccessRequiredPayload(), 403)
+        return c.json(uniCliWebAccessRequiredPayload(), 403)
       }
 
       if (!cloudAvailable(payload, options)) {
@@ -972,7 +972,7 @@ export function registerCloudRoutes<T extends { Variables: OrgRouteVariables }>(
       responses: {
         200: jsonResponse("Cloud instance status returned successfully for the gateway.", cloudGatewayInstanceResponseSchema),
         401: jsonResponse("The caller must be signed in to open Cloud.", unauthorizedSchema),
-        403: jsonResponse("Uni-CLI Web access is not active for the organization.", uni-cliWebAccessRequiredSchema),
+        403: jsonResponse("Uni-CLI Web access is not active for the organization.", uniCliWebAccessRequiredSchema),
         404: jsonResponse("Cloud is not available for this organization or gateway.", notFoundSchema),
       },
     }),
@@ -995,9 +995,9 @@ export function registerCloudRoutes<T extends { Variables: OrgRouteVariables }>(
         return c.json({ error: "unauthorized" }, 401)
       }
 
-      const webAccess = await getUni-CLIWebAccess(payload.organization.id)
+      const webAccess = await getUniCliWebAccess(payload.organization.id)
       if (!webAccess.hasAccess) {
-        return c.json(uni-cliWebAccessRequiredPayload(), 403)
+        return c.json(uniCliWebAccessRequiredPayload(), 403)
       }
 
       const instance = await resolveCloudInstanceForGateway({

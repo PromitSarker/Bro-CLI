@@ -1,7 +1,7 @@
 import type { UIMessage } from "ai";
 import type { ComposerDraft } from "@/app/types";
 import type { AutoAccessWall } from "@/app/lib/inference-access";
-import type { uni-cliServerClient } from "@/app/lib/uni-cli-server";
+import type { uniCliServerClient } from "@/app/lib/uni-cli-server";
 import { toast } from "@/components/ui/sonner";
 import { getComposerSessionDraftScope, releaseComposerSessionDraftScope, useComposerStateStore } from "../surface/composer-state-store";
 import { clearQueuedSendContext, getQueuedSendContext } from "./queued-send-context";
@@ -34,7 +34,7 @@ export function rejectedTurnFromDraft(draft: ComposerDraft & { messageId: string
 export async function retainRejectedTurn(input: {
   owner: RejectedTurnOwner; opencodeBaseUrl: string; draft: ComposerDraft & { messageId: string };
   wall: AutoAccessWall; afterMessageId?: string | null; remainingQueued?: string[]; queuedItemId?: string;
-  client: uni-cliServerClient; workspaceRoot: string; localRuntime: boolean;
+  client: uniCliServerClient; workspaceRoot: string; localRuntime: boolean;
 }) {
   const { owner, draft, wall } = input;
   const turn = rejectedTurnFromDraft(draft, wall, input.afterMessageId ?? null);

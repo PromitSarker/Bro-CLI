@@ -8,7 +8,7 @@ import { MemoryRouter } from "react-router";
 import type { ResolvedWorkspaceEndpoint } from "../src/app/lib/workspace-endpoint";
 import type { ArchiveSessionOptions, ArchiveSessionOutcome } from "../src/react-app/domains/session/sidebar/use-session-archive";
 import type { RouteSession, RouteWorkspace } from "../src/react-app/shell/route-workspaces";
-import type { uni-cliControlAPI, uni-cliControlAction } from "../src/react-app/shell/control/control-provider";
+import type { uniCliControlAPI, uniCliControlAction } from "../src/react-app/shell/control/control-provider";
 
 // The archive hook talks to a real (fake) engine over HTTP; happy-dom's fetch
 // polyfill cannot parse Bun.serve responses, so keep the runtime's fetch.
@@ -27,11 +27,11 @@ Object.defineProperty(globalThis, "AbortSignal", { configurable: true, value: Na
 // Base UI picks its layout-effect shim at module load, so the app must be
 // imported after the DOM exists or the dialog portal never mounts.
 const [
-  { createuni-cliServerClient },
+  { createuniCliServerClient },
   { toast },
   { isWorkingStatus, listControlSessions },
   { useSessionArchive },
-  { uni-cliControlProvider, useControlAction },
+  { uniCliControlProvider, useControlAction },
 ] = await Promise.all([
   import("../src/app/lib/uni-cli-server"),
   import("../src/components/ui/sonner"),
@@ -120,7 +120,7 @@ describe("session.list_sessions exposes live activity", () => {
 });
 
 describe("control bridge contract: channel and structured codes", () => {
-  async function mountAction(action: uni-cliControlAction): Promise<uni-cliControlAPI> {
+  async function mountAction(action: uniCliControlAction): Promise<uniCliControlAPI> {
     const host = document.createElement("div");
     document.body.append(host);
     const root = createRoot(host);
@@ -129,7 +129,7 @@ describe("control bridge contract: channel and structured codes", () => {
       return null;
     }
     await act(async () => root.render(
-      <MemoryRouter><uni-cliControlProvider><Register /></uni-cliControlProvider></MemoryRouter>,
+      <MemoryRouter><uniCliControlProvider><Register /></uniCliControlProvider></MemoryRouter>,
     ));
     cleanups.push(async () => { await act(async () => root.unmount()); host.remove(); });
     const api = window.__uni-cliControl;
@@ -236,7 +236,7 @@ describe("archiving a working session: the warning goes back through the request
       token: "",
       workspaceId: "ws",
       isRemote: false,
-      client: createuni-cliServerClient({ baseUrl: engine.baseUrl }),
+      client: createuniCliServerClient({ baseUrl: engine.baseUrl }),
       mountedBaseUrl: engine.baseUrl,
       opencodeBaseUrl: engine.baseUrl,
     };
@@ -259,7 +259,7 @@ describe("archiving a working session: the warning goes back through the request
       useSessionControlActions({
         workspaces: [workspace], sessionsByWorkspaceId: { ws: sessions }, selectedWorkspaceId: "ws",
         selectedWorkspaceRoot: directory, selectedSessionId: null, canCreateTask: false,
-        uni-cliClient: endpoint.client, opencodeClient: createClient(engine.baseUrl),
+        uniCliClient: endpoint.client, opencodeClient: createClient(engine.baseUrl),
         endpointForWorkspace: () => endpoint, navigateToSession: () => {}, navigateToSessionRoot: () => {},
         createTaskInWorkspace: () => null, openModelPicker: () => {}, refreshRouteState: () => {},
         archiveSession: archive.archiveSession,
@@ -267,7 +267,7 @@ describe("archiving a working session: the warning goes back through the request
       useEffect(() => { archiveSession = archive.archiveSession; });
       return archive.archiveDialog;
     }
-    await act(async () => root.render(<MemoryRouter><uni-cliControlProvider><Harness /></uni-cliControlProvider></MemoryRouter>));
+    await act(async () => root.render(<MemoryRouter><uniCliControlProvider><Harness /></uniCliControlProvider></MemoryRouter>));
     const unmount = async () => { await act(async () => root.unmount()); host.remove(); };
     cleanups.push(unmount);
     if (!archiveSession) throw new Error("archive hook did not mount");

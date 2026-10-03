@@ -569,7 +569,7 @@ const dashboardsEnabled = parseBooleanFlag(parsed.DEN_DASHBOARDS_ENABLED ?? "fal
 // of den-api makes den-api's own headers duplicates, which browsers reject.
 // The allowlist still feeds proxy-trust decisions; only header emission stops.
 const corsHandledByEdge = parseBooleanFlag(parsed.DEN_CORS_HANDLED_BY_EDGE ?? "false")
-const uni-cliWebEnabled = parseBooleanFlag(parsed.DEN_UNICLI_WEB_ENABLED ?? "false")
+const uniCliWebEnabled = parseBooleanFlag(parsed.DEN_UNICLI_WEB_ENABLED ?? "false")
 
 const devMode = (parsed.UNICLI_DEV_MODE ?? "0").trim() === "1"
 const port = Number(parsed.PORT ?? "8790")
@@ -851,7 +851,7 @@ export const env = {
   auditVisibilityEnabled: parsed.DEN_AUDIT_VISIBILITY_ENABLED === "true",
   auditSelfHostedEnabled: parsed.DEN_AUDIT_SELF_HOSTED_ENABLED === "true",
   corsHandledByEdge,
-  uni-cliWebEnabled,
+  uniCliWebEnabled,
   inferenceFree: readFreeInferenceConfig(process.env),
   inferenceProxyBaseUrl: optionalString(parsed.GATEWAY_PROXY_BASE_URL) ?? "http://127.0.0.1:8791",
   // Keep known public Models destinations even when Gateway management is off.
@@ -867,7 +867,7 @@ export const env = {
     webhookSecret: optionalString(parsed.STRIPE_WEBHOOK_SECRET),
     inferencePriceId: optionalString(parsed.STRIPE_INFERENCE_PRICE_ID),
     seatPriceId: optionalString(parsed.STRIPE_SEAT_PRICE_ID),
-    uni-cliWebPriceId: optionalString(parsed.STRIPE_UNICLI_WEB_PRICE_ID),
+    uniCliWebPriceId: optionalString(parsed.STRIPE_UNICLI_WEB_PRICE_ID),
     billingSuccessUrl: optionalString(parsed.STRIPE_BILLING_SUCCESS_URL),
     billingCancelUrl: optionalString(parsed.STRIPE_BILLING_CANCEL_URL),
   },
@@ -883,7 +883,7 @@ export const env = {
       parsed.RENDER_WORKER_ROOT_DIR ?? "ee/apps/den-worker-runtime",
     workerPlan: parsed.RENDER_WORKER_PLAN ?? "standard",
     workerRegion: parsed.RENDER_WORKER_REGION ?? "oregon",
-    workeruni-cliVersion: parsed.RENDER_WORKER_UNICLI_VERSION,
+    workeruniCliVersion: parsed.RENDER_WORKER_UNICLI_VERSION,
     workerNamePrefix: parsed.RENDER_WORKER_NAME_PREFIX ?? "den-worker",
     workerPublicDomainSuffix: parsed.RENDER_WORKER_PUBLIC_DOMAIN_SUFFIX,
     customDomainReadyTimeoutMs: Number(
@@ -951,7 +951,7 @@ export const env = {
       optionalString(parsed.DAYTONA_RUNTIME_DATA_PATH) ?? "/tmp/uni-cli-data",
     sidecarDir:
       optionalString(parsed.DAYTONA_SIDECAR_DIR) ?? "/tmp/uni-cli-sidecars",
-    uni-cliPort: Number(parsed.DAYTONA_UNICLI_PORT ?? "8787"),
+    uniCliPort: Number(parsed.DAYTONA_UNICLI_PORT ?? "8787"),
     opencodePort: Number(parsed.DAYTONA_OPENCODE_PORT ?? "4096"),
     createTimeoutSeconds: Number(parsed.DAYTONA_CREATE_TIMEOUT_SECONDS ?? "300"),
     deleteTimeoutSeconds: Number(parsed.DAYTONA_DELETE_TIMEOUT_SECONDS ?? "120"),

@@ -1,20 +1,20 @@
 import type {
-  uni-cliAffordanceDescriptor,
-  uni-cliProviderRef,
+  uniCliAffordanceDescriptor,
+  uniCliProviderRef,
 } from "@uni-cli/types/uni-cli-affordance";
 import type {
-  uni-cliConversationLayout,
-  uni-cliContextSnapshot,
-  uni-cliPanelTab,
-  uni-cliResourceDescriptor,
-  uni-cliScreen,
+  uniCliConversationLayout,
+  uniCliContextSnapshot,
+  uniCliPanelTab,
+  uniCliResourceDescriptor,
+  uniCliScreen,
 } from "@uni-cli/types/uni-cli-context";
 
 import type { PanelTabStore } from "../domains/session/panel/panel-tab-store";
 import type { WorkbenchSnapshot } from "../domains/session/chat/workbench-store";
 import type { UiState } from "./ui-state-store";
 
-type uni-cliContextProjectorInput = {
+type uniCliContextProjectorInput = {
   route: string;
   revision: number;
   capturedAt: string;
@@ -25,7 +25,7 @@ type uni-cliContextProjectorInput = {
   >;
   panelSessions: PanelTabStore["sessions"];
   pinnedSessionIds: string[];
-  availableAffordances: uni-cliAffordanceDescriptor[];
+  availableAffordances: uniCliAffordanceDescriptor[];
 };
 
 function decoded(value: string | undefined) {
@@ -37,7 +37,7 @@ function decoded(value: string | undefined) {
   }
 }
 
-export function screenFromRoute(route: string): uni-cliScreen {
+export function screenFromRoute(route: string): uniCliScreen {
   const workspaceSettings = route.match(/^\/workspace\/([^/]+)\/settings(?:\/([^/?#]+))?/);
   if (workspaceSettings) {
     return {
@@ -79,7 +79,7 @@ export function screenFromRoute(route: string): uni-cliScreen {
   return { kind: "other", route };
 }
 
-function panelTab(tab: PanelTabStore["sessions"][string]["tabs"][number]): uni-cliPanelTab {
+function panelTab(tab: PanelTabStore["sessions"][string]["tabs"][number]): uniCliPanelTab {
   if (tab.type === "browser") {
     return {
       id: tab.id,
@@ -96,12 +96,12 @@ function panelTab(tab: PanelTabStore["sessions"][string]["tabs"][number]): uni-c
   };
 }
 
-export function builduni-cliContext(
-  input: uni-cliContextProjectorInput,
-): uni-cliContextSnapshot {
+export function builduniCliContext(
+  input: uniCliContextProjectorInput,
+): uniCliContextSnapshot {
   const primary = input.workbench.primary;
   const secondary = input.workbench.secondary;
-  const layout: uni-cliConversationLayout = primary && secondary
+  const layout: uniCliConversationLayout = primary && secondary
     ? {
         kind: "split",
         primarySessionId: primary.sessionId,
@@ -127,8 +127,8 @@ export function builduni-cliContext(
   const ownerSessionId = panelOwnerSessionId;
   const sessionPanel = ownerSessionId ? input.panelSessions[ownerSessionId] : undefined;
   const screen = screenFromRoute(input.route);
-  const provider: uni-cliProviderRef = { id: "uni-cli-ui", kind: "builtin" };
-  const resources: uni-cliResourceDescriptor[] = [{
+  const provider: uniCliProviderRef = { id: "uni-cli-ui", kind: "builtin" };
+  const resources: uniCliResourceDescriptor[] = [{
     ref: `screen:${input.route}`,
     kind: "screen",
     title: screen.kind === "settings" ? `${screen.panel} settings` : "Uni-CLI",

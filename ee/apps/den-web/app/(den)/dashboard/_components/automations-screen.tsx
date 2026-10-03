@@ -40,9 +40,9 @@ function PlacementIcon({ executionTarget }: { executionTarget: "desktop" | "clou
 }
 
 /** The surface that owns an Automation's lifecycle: Web for Cloud placement, Desktop for Desktop placement. */
-function ManageLink({ item, uni-cliWebUrl }: { item: { automation: { id: string }; revision: { executionTarget?: "desktop" | "cloud" } }; uni-cliWebUrl: string }) {
+function ManageLink({ item, uniCliWebUrl }: { item: { automation: { id: string }; revision: { executionTarget?: "desktop" | "cloud" } }; uniCliWebUrl: string }) {
   if (item.revision.executionTarget === "cloud") {
-    const href = `${uni-cliWebUrl.replace(/\/$/, "")}/automations?automation=${encodeURIComponent(item.automation.id)}`;
+    const href = `${uniCliWebUrl.replace(/\/$/, "")}/automations?automation=${encodeURIComponent(item.automation.id)}`;
     return <DenButton variant="secondary" size="sm" href={href} target="_blank" rel="noopener noreferrer" icon={ExternalLink}>Manage in Uni-CLI Web</DenButton>;
   }
   return <span className="inline-flex items-center gap-1.5 text-[12px] text-gray-400"><Monitor className="h-3.5 w-3.5" />Manage in Uni-CLI Desktop</span>;
@@ -105,7 +105,7 @@ export function AutomationsScreen() {
             <h1 className="text-[20px] font-semibold tracking-[-0.02em] text-gray-950">My Automations</h1>
             <p className="mt-1 text-[13px] text-gray-400">What Den is running and has scheduled for you. Create and edit Cloud Automations in Uni-CLI Web; Desktop Automations are managed in the desktop app.</p>
           </div>
-          <DenButton href={`${runtimeConfig.uni-cliWebUrl.replace(/\/$/, "")}/automations`} target="_blank" rel="noopener noreferrer" icon={ExternalLink}>Open in Uni-CLI Web</DenButton>
+          <DenButton href={`${runtimeConfig.uniCliWebUrl.replace(/\/$/, "")}/automations`} target="_blank" rel="noopener noreferrer" icon={ExternalLink}>Open in Uni-CLI Web</DenButton>
         </div>
         {items.length === 0 ? (
           <div className="mt-6 rounded-2xl border border-gray-100 bg-white p-8 text-center text-[13px] text-gray-400">No Automations yet. Create one in Uni-CLI Web or in the desktop app; it will show up here once Den is scheduling it.</div>
@@ -153,7 +153,7 @@ export function AutomationsScreen() {
             <p className="mt-1 text-[12px] text-gray-400">Revision {detail.revision.version} · {placementLabel(detail.revision.executionTarget)} · {scheduleLabel(detail.revision.schedule)}</p>
           </div>
         </div>
-        <ManageLink item={detail} uni-cliWebUrl={runtimeConfig.uni-cliWebUrl} />
+        <ManageLink item={detail} uniCliWebUrl={runtimeConfig.uniCliWebUrl} />
       </div>
 
       {detail.automation.needsAttentionReason ? <div className="mt-5 rounded-xl border border-[var(--dls-border)] bg-[var(--dls-hover)] px-4 py-3 text-[13px] text-[var(--dls-text-primary)]">{detail.automation.needsAttentionReason.message}</div> : null}

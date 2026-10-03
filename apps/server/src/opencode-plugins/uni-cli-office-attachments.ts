@@ -306,7 +306,7 @@ async function transformMessage(value: unknown, root: string | null): Promise<un
 
 // Single export: the OpenCode plugin loader treats every export of a plugin
 // module as a plugin factory, so helpers must stay module-private.
-export const Uni-CLIOfficeAttachments = async (factoryInput?: unknown) => {
+export const UniCliOfficeAttachments = async (factoryInput?: unknown) => {
   const factoryContext = normalizeOpenCodeContext(factoryInput);
   return {
     "experimental.chat.messages.transform": async (input: unknown, output: { messages: unknown[] }) => {

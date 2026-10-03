@@ -121,7 +121,7 @@ export function bootServer(env: NodeJS.ProcessEnv, token: string, workspace: str
   return { child, listening };
 }
 
-export interface Manageduni-cliServer {
+export interface ManageduniCliServer {
   child: ChildProcess;
   base: string;
   binary: string;
@@ -136,7 +136,7 @@ function firstWorkspaceId(value: unknown): string | null {
   return isRecord(first) && typeof first.id === "string" ? first.id : null;
 }
 
-export async function bootManageduni-cliServer(options: {
+export async function bootManageduniCliServer(options: {
   scratch: string;
   workspace: string;
   token: string;
@@ -145,7 +145,7 @@ export async function bootManageduni-cliServer(options: {
   env?: Record<string, string>;
   configPath?: string;
   preload?: string;
-}): Promise<Manageduni-cliServer> {
+}): Promise<ManageduniCliServer> {
   const binary = options.binary ?? engineBinary();
   if (!binary) throw new SkipError("set UNICLI_OPENCODE_BIN or install opencode");
 

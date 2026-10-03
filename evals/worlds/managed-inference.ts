@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { managedInference } from "@uni-cli/env";
 import type { Place } from "@uni-cli/env";
 import baselineModels from "../../ee/apps/gateway/src/models/uni-cli-models.json";
-import { bootManageduni-cliServer } from "./uni-cli-server-cli.ts";
+import { bootManageduniCliServer } from "./uni-cli-server-cli.ts";
 
 export async function bootManagedInference(place: Place) {
   const service = await managedInference(place);
@@ -35,7 +35,7 @@ export async function bootManagedInference(place: Place) {
         } },
       }));
       let output = "";
-      const engine = await bootManageduni-cliServer({ scratch, workspace, token: "managed-inference-fixture-client", sink: (chunk) => { output += chunk; } });
+      const engine = await bootManageduniCliServer({ scratch, workspace, token: "managed-inference-fixture-client", sink: (chunk) => { output += chunk; } });
       resources.defer(() => engine.stop());
       return { ...engine, output: () => output };
     },

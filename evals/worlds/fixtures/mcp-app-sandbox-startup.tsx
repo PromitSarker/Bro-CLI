@@ -1,7 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { McpAppSandboxView } from "../../../apps/app/src/components/chat/mcp-app-frame";
-import { createuni-cliServerClient, type uni-cliMcpAppResource } from "../../../apps/app/src/app/lib/uni-cli-server";
+import { createuniCliServerClient, type uniCliMcpAppResource } from "../../../apps/app/src/app/lib/uni-cli-server";
 import type { HostedSandboxResource } from "./mcp-app-sandbox-hosted";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -69,7 +69,7 @@ console.error = (...args: unknown[]) => {
 };
 window.addEventListener("error", (event) => record("host", "runtime-error", event.message));
 window.addEventListener("unhandledrejection", (event) => record("host", "unhandled-rejection", String(event.reason)));
-const client = createuni-cliServerClient({ baseUrl: proxyOrigin });
+const client = createuniCliServerClient({ baseUrl: proxyOrigin });
 const origin = { client, workspaceId: "sandbox-startup-fixture", sessionId: null, readOnly: true };
 document.addEventListener("click", (event) => {
   const button = event.target instanceof Element ? event.target.closest("button") : null;
@@ -79,7 +79,7 @@ const tiles = Array.from({ length: count }, (_, index) => {
   const tile = String(index);
   const args = { tile, request: "fixture-launch" };
   const result = { content: [{ type: "text", text: `fixture-result-${tile}` }] };
-  const app: uni-cliMcpAppResource = {
+  const app: uniCliMcpAppResource = {
     serverName: "sandbox-startup-fixture",
     toolName: `fixture-${tile}`,
     resourceUri: `ui://sandbox-startup/${tile}`,

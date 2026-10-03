@@ -1,5 +1,5 @@
 import { expect, onTestFinished } from "vitest";
-import { denFetch, grantUni-CLIWebAccess } from "@uni-cli/behaviors";
+import { denFetch, grantUniCliWebAccess } from "@uni-cli/behaviors";
 import type { DenSession } from "@uni-cli/behaviors";
 import { eventually, needs, server, SkipError, test } from "@uni-cli/testkit";
 
@@ -158,7 +158,7 @@ test("GATEWAY-WEB-01 a hosted-web worker receives only the member's usable Gatew
   if (!member) throw new Error("The isolated Den did not provision its member.");
 
   const orgId = await organizationId(den.admin);
-  await grantUni-CLIWebAccess(den.admin, orgId, "Synthetic hosted-web Gateway worker coverage");
+  await grantUniCliWebAccess(den.admin, orgId, "Synthetic hosted-web Gateway worker coverage");
   const modelId = await firstCatalogModelId(den.admin, orgId);
   const usableProviderId = await createProvider(den.admin, orgId, modelId, { name: PROVIDER_NAME, allMembers: true });
   const unassignedProviderId = await createProvider(den.admin, orgId, modelId, { name: "Unassigned Gateway Provider", allMembers: false });

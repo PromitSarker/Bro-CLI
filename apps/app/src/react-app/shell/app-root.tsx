@@ -28,7 +28,7 @@ import {
 } from "../domains/connections/cloud-inventory-cache";
 import { ForcedSigninPage } from "../domains/cloud/forced-signin-page";
 import { EnterpriseActivationGate } from "../domains/cloud/enterprise-activation-gate";
-import { Uni-CLIWebAccessGate } from "../domains/cloud/uni-cli-web-access-gate";
+import { UniCliWebAccessGate } from "../domains/cloud/uni-cli-web-access-gate";
 import { OrgOnboardingPage } from "../domains/cloud/org-onboarding-page";
 import { ChatDeepLinkListener } from "./chat-deep-link-listener";
 import { NewProvidersListener } from "./new-providers-listener";
@@ -41,12 +41,12 @@ import { CloudWorkspaceOverlay, CloudWorkspaceStatusProvider } from "./cloud-wor
 import { EngineMigrationOverlay } from "./engine-migration";
 import { AppMenuProvider } from "./app-menu";
 import {
-  uni-cliControlProvider,
-  uni-cliRouteControlActions,
+  uniCliControlProvider,
+  uniCliRouteControlActions,
   useControlAction,
-  type uni-cliControlAction,
+  type uniCliControlAction,
 } from "./control/control-provider";
-import { uni-cliContextPublisher } from "./uni-cli-context-publisher";
+import { uniCliContextPublisher } from "./uni-cli-context-publisher";
 import { SessionRoute } from "./session-route";
 import { DesktopUpdaterProvider } from "../domains/settings/state/desktop-updater-provider";
 import { SettingsRoute } from "./settings-route";
@@ -56,7 +56,7 @@ import { readOrgSelectionPending } from "../../app/lib/den-sign-in-intent";
 import { signedInRoute } from "./den-signin-routing";
 import { StartupScreen } from "./startup-screen";
 import { WebStartupScreen } from "./workspace-startup-status";
-import { isuni-cliGatewayRuntime } from "../../app/lib/gateway-runtime";
+import { isuniCliGatewayRuntime } from "../../app/lib/gateway-runtime";
 
 
 type DenSigninGateProps = {
@@ -197,7 +197,7 @@ function DenSigninGate({ children }: DenSigninGateProps) {
   }, [navigate]);
 
   if (requireSignin && denAuth.status === "checking") {
-    if (isuni-cliGatewayRuntime()) return <WebStartupScreen message="Checking sign-in…" />;
+    if (isuniCliGatewayRuntime()) return <WebStartupScreen message="Checking sign-in…" />;
     return <StartupScreen message="Checking your sign-in" />;
   }
 
@@ -233,13 +233,13 @@ function DenSigninGate({ children }: DenSigninGateProps) {
 }
 
 /**
- * Control actions for cloud auth. Placed inside uni-cliControlProvider so
+ * Control actions for cloud auth. Placed inside uniCliControlProvider so
  * the actions are available on every route (including /welcome and /signin).
  */
 function DenAuthControlActions() {
   const denAuth = useDenAuth();
 
-  const exchangeGrantAction = useMemo<uni-cliControlAction>(() => ({
+  const exchangeGrantAction = useMemo<uniCliControlAction>(() => ({
     id: "auth.exchange-grant",
     label: "Sign in with a handoff grant",
     description: "Exchange a desktop handoff grant string to sign in without the browser flow.",
@@ -272,7 +272,7 @@ function DenAuthControlActions() {
   }), []);
   useControlAction(exchangeGrantAction);
 
-  const authStatusAction = useMemo<uni-cliControlAction>(() => ({
+  const authStatusAction = useMemo<uniCliControlAction>(() => ({
     id: "auth.status",
     label: "Get auth status",
     description: "Return the current cloud sign-in status and user.",
@@ -286,7 +286,7 @@ function DenAuthControlActions() {
   }), [denAuth.status, denAuth.user]);
   useControlAction(authStatusAction);
 
-  const setEvalBaseUrlAction = useMemo<uni-cliControlAction | null>(() => {
+  const setEvalBaseUrlAction = useMemo<uniCliControlAction | null>(() => {
     if (!import.meta.env.DEV) return null;
     return {
       id: "eval.auth.set-base-url",
@@ -325,10 +325,10 @@ function DenAuthControlActions() {
 
 /**
  * Control action for eval automation: inject brand theme (logo, icon, accent color)
- * via the dev-only desktop config bridge. Placed inside uni-cliControlProvider.
+ * via the dev-only desktop config bridge. Placed inside uniCliControlProvider.
  */
 function BrandThemeControlActions() {
-  const applyAction = useMemo<uni-cliControlAction | null>(() => {
+  const applyAction = useMemo<uniCliControlAction | null>(() => {
     if (!import.meta.env.DEV) return null;
     return {
       id: "eval.brand_theme.apply",
@@ -352,7 +352,7 @@ function BrandThemeControlActions() {
   }, []);
   useControlAction(applyAction);
 
-  const relaunchAction = useMemo<uni-cliControlAction | null>(() => {
+  const relaunchAction = useMemo<uniCliControlAction | null>(() => {
     if (!import.meta.env.DEV) return null;
     return {
       id: "eval.app.relaunch",
@@ -365,7 +365,7 @@ function BrandThemeControlActions() {
   useControlAction(relaunchAction);
 
   const [renderThrow, setRenderThrow] = useState<string | null>(null);
-  const renderThrowAction = useMemo<uni-cliControlAction | null>(() => {
+  const renderThrowAction = useMemo<uniCliControlAction | null>(() => {
     if (!import.meta.env.DEV) return null;
     return {
       id: "eval.app.render_throw",
@@ -442,15 +442,15 @@ export function AppRoot() {
         <DesktopUpdaterProvider>
         <ShellConfigProvider>
         <AppMenuProvider>
-        <uni-cliControlProvider>
-          <uni-cliRouteControlActions />
+        <uniCliControlProvider>
+          <uniCliRouteControlActions />
           <ChatDeepLinkListener />
-          <uni-cliContextPublisher />
+          <uniCliContextPublisher />
           <DenAuthControlActions />
           <BrandThemeControlActions />
           <EnterpriseActivationGate>
             <DenSigninGate>
-              <Uni-CLIWebAccessGate>
+              <UniCliWebAccessGate>
                 <CloudWorkspaceStatusProvider>
                   <Routes>
               <Route
@@ -571,10 +571,10 @@ export function AppRoot() {
                   <CloudWorkspaceOverlay />
                   <EngineMigrationOverlay />
                 </CloudWorkspaceStatusProvider>
-              </Uni-CLIWebAccessGate>
+              </UniCliWebAccessGate>
             </DenSigninGate>
           </EnterpriseActivationGate>
-        </uni-cliControlProvider>
+        </uniCliControlProvider>
         </AppMenuProvider>
         </ShellConfigProvider>
         </DesktopUpdaterProvider>

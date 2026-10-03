@@ -108,7 +108,7 @@ async function withWitness(
     const local = resolveWorkspaceEndpoint({ id: "local workspace", workspaceType: "local" }, handle);
     const remote = resolveWorkspaceEndpoint({
       id: "rem_synthetic", workspaceType: "remote", baseUrl: `${baseUrl}/remote`,
-      uni-cliWorkspaceId: "remote/id", uni-cliToken: "synthetic-remote",
+      uniCliWorkspaceId: "remote/id", uniCliToken: "synthetic-remote",
     }, handle);
     if (!local || !remote) throw new Error("Missing witness endpoints");
     await run({ local, remote, requests });

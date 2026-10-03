@@ -22,14 +22,14 @@ export function getExtensionId(entry: McpDirectoryInfo): string {
   return entry.id ?? entry.serverName ?? getMcpServerName(entry);
 }
 
-export function isUni-CLIExtensionEnabled(entry: McpDirectoryInfo): boolean {
+export function isUniCliExtensionEnabled(entry: McpDirectoryInfo): boolean {
   if (typeof window === "undefined") return Boolean(entry.defaultEnabled);
   const id = getExtensionId(entry);
   if (!entry.defaultEnabled) return window.localStorage.getItem(`${EXTENSION_ENABLED_KEY_PREFIX}${id}`) === "1";
   return window.localStorage.getItem(`${EXTENSION_DISABLED_KEY_PREFIX}${id}`) !== "1";
 }
 
-export function setUni-CLIExtensionEnabled(entry: McpDirectoryInfo, enabled: boolean) {
+export function setUniCliExtensionEnabled(entry: McpDirectoryInfo, enabled: boolean) {
   if (typeof window === "undefined") return;
   const id = getExtensionId(entry);
   if (entry.defaultEnabled) {
@@ -52,7 +52,7 @@ export function setUni-CLIExtensionEnabled(entry: McpDirectoryInfo, enabled: boo
   }));
 }
 
-export function isUni-CLIExtensionHidden(entryOrId: McpDirectoryInfo | string): boolean {
+export function isUniCliExtensionHidden(entryOrId: McpDirectoryInfo | string): boolean {
   const id = typeof entryOrId === "string" ? entryOrId : getExtensionId(entryOrId);
   if (typeof window === "undefined") return false;
   const stored = window.localStorage.getItem(`${EXTENSION_HIDDEN_KEY_PREFIX}${id}`);
@@ -61,7 +61,7 @@ export function isUni-CLIExtensionHidden(entryOrId: McpDirectoryInfo | string): 
   return typeof entryOrId !== "string" && entryOrId.defaultHidden === true;
 }
 
-export function setUni-CLIExtensionHidden(entryOrId: McpDirectoryInfo | string, hidden: boolean) {
+export function setUniCliExtensionHidden(entryOrId: McpDirectoryInfo | string, hidden: boolean) {
   const id = typeof entryOrId === "string" ? entryOrId : getExtensionId(entryOrId);
   if (typeof window === "undefined") return;
   const key = `${EXTENSION_HIDDEN_KEY_PREFIX}${id}`;

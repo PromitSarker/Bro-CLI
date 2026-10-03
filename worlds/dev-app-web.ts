@@ -33,7 +33,7 @@ function parseArgs(argv: readonly string[]): DevHeadlessOptions {
 function outputs(handle: HeadlessWebHandle): Record<string, string> {
   return {
     webUrl: handle.manifest.webUrl,
-    uni-cliUrl: handle.manifest.uni-cliUrl,
+    uniCliUrl: handle.manifest.uniCliUrl,
     workspace: handle.manifest.workspace,
     runtimeManifest: handle.manifest.runtimeManifestPath,
   };

@@ -1,5 +1,5 @@
 import type { Shot } from "./shot.ts";
-import { denuni-cliWeb, denPluginDetail, denSkillEditor } from "./den-web.ts";
+import { denuniCliWeb, denPluginDetail, denSkillEditor } from "./den-web.ts";
 import {
   desktopTeamPromptCards,
   libraryAddMcpModal,
@@ -14,7 +14,7 @@ import {
   denLegacyProviders,
   desktopCloudProviders,
 } from "./providers.ts";
-import { uni-cliWebTab } from "./web-tab.ts";
+import { uniCliWebTab } from "./web-tab.ts";
 
 export const shots: Shot[] = [
   desktopTeamPromptCards,
@@ -24,8 +24,8 @@ export const shots: Shot[] = [
   libraryAddMcpModal,
   denPluginDetail,
   denSkillEditor,
-  denuni-cliWeb,
-  uni-cliWebTab,
+  denuniCliWeb,
+  uniCliWebTab,
   denLegacyProviders,
   denLegacyProviderCatalogForm,
   denLegacyProviderCustomForm,

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Hand, LoaderCircle, ShieldAlert, ShieldCheck } from "lucide-react";
-import type { uni-cliServerClient, WorkspaceRunMode } from "@/app/lib/uni-cli-server";
+import type { uniCliServerClient, WorkspaceRunMode } from "@/app/lib/uni-cli-server";
 import { isDesktopRuntime } from "@/app/lib/runtime-env";
 import { toast } from "@/components/ui/sonner";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -9,7 +9,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuLabel
 import { useDesktopRestriction } from "@/react-app/domains/cloud/desktop-config-provider";
 import { useFeatureFlagsPreferences } from "@/react-app/domains/settings/state/feature-flags-preferences";
 
-type Props = { client: uni-cliServerClient | null; workspaceId: string | null; busy: boolean };
+type Props = { client: uniCliServerClient | null; workspaceId: string | null; busy: boolean };
 
 const modes = [
   { value: "approve", label: "Ask before actions", description: "Pause for tool approval unless a workspace rule allows it.", icon: Hand },
@@ -26,7 +26,7 @@ export function WorkspaceRunModeMenu(props: Props) {
   return <WorkspaceRunModePicker key={`${props.client.baseUrl}:${props.workspaceId}`} client={props.client} workspaceId={props.workspaceId} busy={props.busy} />;
 }
 
-function WorkspaceRunModePicker({ client, workspaceId, busy }: { client: uni-cliServerClient; workspaceId: string; busy: boolean }) {
+function WorkspaceRunModePicker({ client, workspaceId, busy }: { client: uniCliServerClient; workspaceId: string; busy: boolean }) {
   const [open, setOpen] = useState(false);
   const [confirm, setConfirm] = useState(false);
   const queryClient = useQueryClient();

@@ -52,7 +52,7 @@ import { GrepTool } from "@/components/tools/grep"
 import { LspTool } from "@/components/tools/lsp"
 import {
   isAutomationProposalToolPart,
-  Uni-CLIAutomationProposalTool,
+  UniCliAutomationProposalTool,
 } from "@/components/tools/uni-cli-automation-proposal"
 import { QuestionTool } from "@/components/tools/question"
 import { SkillTool } from "@/components/tools/skill"
@@ -333,7 +333,7 @@ const ToolMessageInner = ({ part }: ToolMessageProps) => {
   }
 
   if (part.type === "dynamic-tool" && isAutomationProposalToolPart(part)) {
-    return <Uni-CLIAutomationProposalTool part={part} />
+    return <UniCliAutomationProposalTool part={part} />
   }
 
   // Uni-CLI's own connection reports render as the native card: the host is

@@ -3,7 +3,7 @@ import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Download, Ellipsis, ExternalLink, FolderOpen, PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
 
-import type { uni-cliServerClient, uni-cliWorkspaceCatalogEntry } from "@/app/lib/uni-cli-server";
+import type { uniCliServerClient, uniCliWorkspaceCatalogEntry } from "@/app/lib/uni-cli-server";
 import { openDesktopPath, revealDesktopItemInDir } from "@/app/lib/desktop";
 import { Button } from "@/components/ui/button";
 import {
@@ -36,7 +36,7 @@ const EMPTY_TRANSCRIPT_TARGETS: OpenTarget[] = [];
 type ArtifactPanelProps = {
   sessionId: string;
   tab: ArtifactPanelTab;
-  client: uni-cliServerClient | null;
+  client: uniCliServerClient | null;
   workspaceId: string | null;
   workspaceRoot: string;
   isRemoteWorkspace?: boolean;
@@ -45,7 +45,7 @@ type ArtifactPanelProps = {
 
 type ArtifactPanelViewProps = {
   sessionId: string;
-  client: uni-cliServerClient;
+  client: uniCliServerClient;
   workspaceId: string;
   workspaceRoot: string;
   isRemoteWorkspace?: boolean;
@@ -400,8 +400,8 @@ function ArtifactPanelView({ sessionId, client, workspaceId, workspaceRoot, isRe
                 { id: "download", label: "Download", run: (entry) => void downloadFile(entry.path, entry.path.split(/[/\\]/).pop() ?? entry.path) },
                 ...(canUseDesktopWorkspaceActions
                   ? [
-                    { id: "reveal", label: "Show in folder", run: (entry: uni-cliWorkspaceCatalogEntry) => void revealFile(entry.path) },
-                    { id: "open-external", label: "Open externally", run: (entry: uni-cliWorkspaceCatalogEntry) => void openFileExternally(entry.path) },
+                    { id: "reveal", label: "Show in folder", run: (entry: uniCliWorkspaceCatalogEntry) => void revealFile(entry.path) },
+                    { id: "open-external", label: "Open externally", run: (entry: uniCliWorkspaceCatalogEntry) => void openFileExternally(entry.path) },
                   ]
                   : []),
               ]}

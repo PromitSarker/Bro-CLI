@@ -4,7 +4,7 @@ import { AlertTriangle, ArrowUpRight } from "lucide-react";
 import { LazyMotion, domMax, m } from "motion/react";
 
 import { clearDenSession, createDenClient, DenApiError, readDenSettings, type DenCloudInstanceUpdateDeferral } from "@/app/lib/den";
-import { isuni-cliGatewayRuntime } from "@/app/lib/gateway-runtime";
+import { isuniCliGatewayRuntime } from "@/app/lib/gateway-runtime";
 import { denSettingsChangedEvent } from "@/app/lib/den-session-events";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -164,7 +164,7 @@ export function CloudWorkspaceStatusProvider(props: { children: ReactNode }) {
   const lastLoggedFailureReference = useRef<string | null>(null);
   const lastLoggedRequestFailure = useRef<string | null>(null);
   const retryInFlight = useRef<Promise<void> | null>(null);
-  const gatewayMode = isuni-cliGatewayRuntime();
+  const gatewayMode = isuniCliGatewayRuntime();
   const settingsSnapshot = useSyncExternalStore(
     subscribeToDenSettings,
     readDenSettingsSnapshot,

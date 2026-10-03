@@ -33,7 +33,7 @@ export type OpenRouterUnknownModelUsageReport = {
   organizationId: string
   orgMembershipId: string
   inferenceKeyId: string
-  uni-cliRequestId: string
+  uniCliRequestId: string
   externalEventId: string | null
   generationId: string | null
   usage: OpenRouterUsageMetadata
@@ -46,7 +46,7 @@ type OpenRouterUsageWebhookReporter = {
 type ParsedSpan = {
   orgMembershipId: string
   inferenceKeyId: string
-  uni-cliRequestId: string
+  uniCliRequestId: string
   externalEventId: string | null
   generationId: string | null
   occurredAt: Date
@@ -183,21 +183,21 @@ function usageMetadataFromSpan(input: {
 function parseSpan(span: JsonRecord, attrs: JsonRecord): ParsedSpan | null {
   const orgMembershipId = stringAttr(attrs, ["trace.metadata.org_membership_id", "trace.org_membership_id", "metadata.org_membership_id", "org_membership_id"])
   const inferenceKeyId = stringAttr(attrs, ["trace.metadata.inference_key_id", "trace.inference_key_id", "metadata.inference_key_id", "inference_key_id"])
-  const uni-cliRequestId = stringAttr(attrs, ["trace.metadata.uni-cli_request_id", "trace.uni-cli_request_id", "metadata.uni-cli_request_id", "uni-cli_request_id", "trace_id"])
+  const uniCliRequestId = stringAttr(attrs, ["trace.metadata.uni-cli_request_id", "trace.uni-cli_request_id", "metadata.uni-cli_request_id", "uni-cli_request_id", "trace_id"])
     ?? (typeof span.traceId === "string" ? span.traceId : null)
   const requestModel = stringAttr(attrs, ["gen_ai.request.model"])
   const responseModel = stringAttr(attrs, ["gen_ai.response.model"])
   const reportedModel = responseModel ?? requestModel
   const inputCost = numberAttr(attrs, ["gen_ai.usage.input_cost"])
   const outputCost = numberAttr(attrs, ["gen_ai.usage.output_cost"])
-  if (!orgMembershipId || !inferenceKeyId || !uni-cliRequestId || !reportedModel) {
+  if (!orgMembershipId || !inferenceKeyId || !uniCliRequestId || !reportedModel) {
     return null
   }
   const generationId = stringAttr(attrs, ["gen_ai.response.id", "gen_ai.generation.id", "generation_id", "response_id"])
   const externalEventId = stringAttr(attrs, ["event_id", "id", "span_id"]) ?? generationId ?? spanString(span, "spanId")
   const occurredAt = timeFromSpan(span, attrs)
   const usageMetadata = usageMetadataFromSpan({ span, attrs, requestModel, responseModel, inputCost, outputCost, generationId })
-  if (!occurredAt || [uni-cliRequestId, reportedModel, externalEventId].some((value) => value !== null && value.length > 255)) return null
+  if (!occurredAt || [uniCliRequestId, reportedModel, externalEventId].some((value) => value !== null && value.length > 255)) return null
   if (usageMetadata.currency !== null && usageMetadata.currency !== "USD") return null
   for (const name of ["gen_ai.usage.input_cost", "gen_ai.usage.output_cost"]) {
     const value = attrs[name]
@@ -217,7 +217,7 @@ function parseSpan(span: JsonRecord, attrs: JsonRecord): ParsedSpan | null {
   return {
     orgMembershipId,
     inferenceKeyId,
-    uni-cliRequestId,
+    uniCliRequestId,
     externalEventId,
     generationId,
     occurredAt,
@@ -267,7 +267,7 @@ const sentryWebhookReporter: OpenRouterUsageWebhookReporter = {
       level: "fatal",
       tags: {
         organization_id: report.organizationId,
-        uni-cli_request_id: report.uni-cliRequestId,
+        uni-cli_request_id: report.uniCliRequestId,
         external_event_id: report.externalEventId ?? "none",
         reported_model: report.reportedModel,
       },
@@ -294,12 +294,12 @@ const defaultWebhookDependencies: WebhookDependencies = {
         .where(eq(InferenceOrgLimitPolicyTable.organization_id, inferenceKey.organization_id))
         .orderBy(asc(InferenceOrgLimitPolicyTable.window_type)).for("update")
       const identity = or(
-        and(eq(InferenceUsageLedgerEntryTable.external_job_id, span.uni-cliRequestId), eq(InferenceUsageLedgerEntryTable.event_type, "openrouter_usage")),
+        and(eq(InferenceUsageLedgerEntryTable.external_job_id, span.uniCliRequestId), eq(InferenceUsageLedgerEntryTable.event_type, "openrouter_usage")),
         span.externalEventId ? eq(InferenceUsageLedgerEntryTable.external_event_id, span.externalEventId) : undefined,
       )
       const matchesIdentity = (entry: typeof InferenceUsageLedgerEntryTable.$inferSelect) =>
         entry.organization_id === inferenceKey.organization_id && entry.org_membership_id === inferenceKey.org_membership_id &&
-        entry.inference_key_id === inferenceKey.id && entry.external_job_id === span.uni-cliRequestId && entry.event_type === "openrouter_usage"
+        entry.inference_key_id === inferenceKey.id && entry.external_job_id === span.uniCliRequestId && entry.event_type === "openrouter_usage"
       const existing = await tx.select().from(InferenceUsageLedgerEntryTable).where(identity).for("update")
       if (existing.some((entry) => !matchesIdentity(entry))) return "skipped"
       const occurredAt = existing[0]?.occurred_at ?? span.occurredAt
@@ -314,7 +314,7 @@ const defaultWebhookDependencies: WebhookDependencies = {
         await tx.insert(InferenceUsageLedgerEntryTable).values({
           id: createDenTypeId("inferenceUsageLedgerEntry"),
           organization_id: inferenceKey.organization_id, org_membership_id: inferenceKey.org_membership_id,
-          inference_key_id: inferenceKey.id, external_job_id: span.uni-cliRequestId, external_event_id: span.externalEventId,
+          inference_key_id: inferenceKey.id, external_job_id: span.uniCliRequestId, external_event_id: span.externalEventId,
           cost_amount: costAmount ?? 0, model_id: span.reportedModel, provider_id: "openrouter",
           input_tokens: span.usageMetadata.inputTokens, output_tokens: span.usageMetadata.outputTokens, total_tokens: span.usageMetadata.totalTokens,
           event_type: "openrouter_usage", occurred_at: occurredAt, provider_usage: providerUsage,
@@ -371,7 +371,7 @@ function reportUnknownPricedModel(input: { span: ParsedSpan; inferenceKey: Webho
   logWebhookError("retained unpriced provider usage", {
     reportedModel: input.span.reportedModel,
     organizationId: input.inferenceKey.organization_id,
-    uni-cliRequestId: input.span.uni-cliRequestId,
+    uniCliRequestId: input.span.uniCliRequestId,
     externalEventId: input.span.externalEventId,
   })
   input.reporter.unknownModel({
@@ -379,7 +379,7 @@ function reportUnknownPricedModel(input: { span: ParsedSpan; inferenceKey: Webho
     organizationId: input.inferenceKey.organization_id,
     orgMembershipId: input.inferenceKey.org_membership_id,
     inferenceKeyId: input.inferenceKey.id,
-    uni-cliRequestId: input.span.uni-cliRequestId,
+    uniCliRequestId: input.span.uniCliRequestId,
     externalEventId: input.span.externalEventId,
     generationId: input.span.generationId,
     usage: input.span.usageMetadata,
@@ -448,7 +448,7 @@ export function registerWebhookRoutes(app: Hono, dependencies: WebhookDependenci
         }
       } catch {
         failed += 1
-        logWebhookError("Usage persistence failed; provider must retry", { requestId: span.uni-cliRequestId })
+        logWebhookError("Usage persistence failed; provider must retry", { requestId: span.uniCliRequestId })
       }
     }
     return c.json({ ok: failed === 0 && invalid === 0, ingested, skipped, deferred, invalid, failed }, failed ? 503 : invalid ? 400 : 200)

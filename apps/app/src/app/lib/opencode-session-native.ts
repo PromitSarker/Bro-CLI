@@ -3,14 +3,14 @@ import type { Message, Part, Session, SessionStatus, Todo } from "@opencode-ai/s
 import { closeSessionBrowserTabs } from "./desktop";
 import { createClient, unwrap, type FieldsResult } from "./opencode";
 import { createClientV2, isOpencodeV2BaseUrl } from "./opencode-v2-adapter";
-import type { uni-cliSessionHistory, uni-cliSessionSnapshot } from "./uni-cli-server";
+import type { uniCliSessionHistory, uniCliSessionSnapshot } from "./uni-cli-server";
 import type { ResolvedWorkspaceEndpoint } from "./workspace-endpoint";
 
 type NativeSessionEndpoint = Pick<ResolvedWorkspaceEndpoint, "opencodeBaseUrl" | "token"> & { desktopTransport?: "main" };
 type RequestOptions = { signal?: AbortSignal };
 type MessageReadOptions = RequestOptions & { limit?: number; before?: string };
 type HistoryReadOptions = MessageReadOptions & { messageIds?: readonly string[] };
-type MessageReadResult = FieldsResult<Array<{ info: Message; parts: Part[] }>> & Pick<uni-cliSessionHistory, "pagination">;
+type MessageReadResult = FieldsResult<Array<{ info: Message; parts: Part[] }>> & Pick<uniCliSessionHistory, "pagination">;
 
 export type NativeSessionSnapshotTarget = {
   owner: string;
@@ -152,13 +152,13 @@ async function readNativeSessionHistory(
   operations: NativeSessionOperations,
   sessionId: string,
   options?: HistoryReadOptions,
-): Promise<uni-cliSessionHistory> {
+): Promise<uniCliSessionHistory> {
   options?.signal?.throwIfAborted();
   if (options?.messageIds === undefined) validateMessageRead(options);
   const controller = new AbortController();
   const signal = options?.signal ? AbortSignal.any([options.signal, controller.signal]) : controller.signal;
   const readOptions = { ...options, signal };
-  let pagination: uni-cliSessionHistory["pagination"];
+  let pagination: uniCliSessionHistory["pagination"];
   const readSession = async () => {
     const result = await operations.get(sessionId, readOptions);
     signal.throwIfAborted();
@@ -211,7 +211,7 @@ export async function composeNativeSessionHistory(
   sessionId: string,
   options?: HistoryReadOptions,
   dependencies?: NativeSessionDependencies,
-): Promise<uni-cliSessionHistory> {
+): Promise<uniCliSessionHistory> {
   return readNativeSessionHistory(sessionOperations(endpoint, dependencies), sessionId, options);
 }
 
@@ -220,7 +220,7 @@ export async function composeNativeSessionSnapshot(
   sessionId: string,
   options?: HistoryReadOptions,
   dependencies?: NativeSessionDependencies,
-): Promise<uni-cliSessionSnapshot> {
+): Promise<uniCliSessionSnapshot> {
   const operations = sessionOperations(endpoint, dependencies);
   const [history, todoResult, statusResult] = await Promise.all([
     readNativeSessionHistory(operations, sessionId, options),

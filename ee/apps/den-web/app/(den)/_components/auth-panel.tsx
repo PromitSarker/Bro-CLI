@@ -105,16 +105,16 @@ function PasswordFeedbackList({ messages }: { messages: string[] }) {
 }
 
 function DesktopHandoffCopyLink({
-  uni-cliUrl,
+  uniCliUrl,
   label,
 }: {
-  uni-cliUrl: string;
+  uniCliUrl: string;
   label: string;
 }) {
   const [copied, setCopied] = useState(false);
 
-  async function copyuni-cliUrl() {
-    await navigator.clipboard.writeText(uni-cliUrl);
+  async function copyuniCliUrl() {
+    await navigator.clipboard.writeText(uniCliUrl);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1800);
   }
@@ -125,12 +125,12 @@ function DesktopHandoffCopyLink({
       <div className="flex flex-col gap-2 sm:flex-row">
         <input
           className="den-input min-w-0 flex-1 text-xs"
-          value={uni-cliUrl}
+          value={uniCliUrl}
           readOnly
           onFocus={(event) => event.currentTarget.select()}
           aria-label="Uni-CLI sign-in link"
         />
-        <button type="button" className="den-button-secondary sm:w-auto" onClick={() => void copyuni-cliUrl()}>
+        <button type="button" className="den-button-secondary sm:w-auto" onClick={() => void copyuniCliUrl()}>
           {copied ? "Copied" : "Copy"}
         </button>
       </div>
@@ -139,14 +139,14 @@ function DesktopHandoffCopyLink({
 }
 
 export function DesktopHandoffAction({
-  uni-cliUrl,
+  uniCliUrl,
   grant,
   organizationName,
   helperText,
   buttonClassName = "den-button-primary w-full",
   showCopyLinkByDefault = false,
 }: {
-  uni-cliUrl: string;
+  uniCliUrl: string;
   grant: string | null;
   organizationName: string | null;
   helperText?: string;
@@ -172,12 +172,12 @@ export function DesktopHandoffAction({
       <div className="den-frame-inset grid gap-3 rounded-[1.5rem] px-4 py-3 text-sm text-[var(--dls-text-secondary)]" data-testid="desktop-handoff-troubleshoot" aria-live="polite">
         <p className="m-0">
           Nothing opened?{" "}
-          <button type="button" className="font-medium text-[var(--dls-text-primary)] underline-offset-4 hover:underline" onClick={() => window.location.assign(uni-cliUrl)}>
+          <button type="button" className="font-medium text-[var(--dls-text-primary)] underline-offset-4 hover:underline" onClick={() => window.location.assign(uniCliUrl)}>
             Open Uni-CLI again
           </button>
         </p>
         <DesktopHandoffCopyLink
-          uni-cliUrl={uni-cliUrl}
+          uniCliUrl={uniCliUrl}
           label="Still stuck? Paste this sign-in code in Uni-CLI:"
         />
       </div>
@@ -189,7 +189,7 @@ export function DesktopHandoffAction({
       <button
         type="button"
         className={buttonClassName}
-        onClick={() => window.location.assign(uni-cliUrl)}
+        onClick={() => window.location.assign(uniCliUrl)}
       >
         Open Uni-CLI
         <ArrowRight className="h-4 w-4" />
@@ -201,7 +201,7 @@ export function DesktopHandoffAction({
       ) : null}
       {showCopyLink ? (
         <DesktopHandoffCopyLink
-          uni-cliUrl={uni-cliUrl}
+          uniCliUrl={uniCliUrl}
           label={showTroubleshoot ? "Nothing opened? Paste this sign-in code in Uni-CLI:" : "Or paste this sign-in code in Uni-CLI:"}
         />
       ) : null}
@@ -524,7 +524,7 @@ export function AuthPanel({
   const startSingleOrgSso = () => {
     if (!singleOrgSlug) return;
     const nextUrl = new URL(`/sso/${encodeURIComponent(singleOrgSlug)}`, window.location.origin);
-    nextUrl.searchParams.set("callbackURL", getSocialCallbackUrl(runtimeConfig.uni-cliAuthCallbackUrl));
+    nextUrl.searchParams.set("callbackURL", getSocialCallbackUrl(runtimeConfig.uniCliAuthCallbackUrl));
     const trimmedEmail = email.trim();
     if (trimmedEmail) {
       nextUrl.searchParams.set("loginHint", trimmedEmail);
@@ -540,7 +540,7 @@ export function AuthPanel({
     }
 
     const nextUrl = new URL(target, window.location.origin);
-    nextUrl.searchParams.set("callbackURL", getSocialCallbackUrl(runtimeConfig.uni-cliAuthCallbackUrl));
+    nextUrl.searchParams.set("callbackURL", getSocialCallbackUrl(runtimeConfig.uniCliAuthCallbackUrl));
     const trimmedEmail = email.trim();
     if (trimmedEmail) {
       nextUrl.searchParams.set("loginHint", trimmedEmail);
@@ -669,7 +669,7 @@ export function AuthPanel({
 
         {desktopRedirectUrl ? (
           <DesktopHandoffAction
-            uni-cliUrl={desktopRedirectUrl}
+            uniCliUrl={desktopRedirectUrl}
             grant={desktopGrant}
             organizationName={isSingleOrgMode ? singleOrgName : null}
             showCopyLinkByDefault
@@ -736,7 +736,7 @@ export function AuthPanel({
 
         {desktopAuthRequested && desktopRedirectUrl ? (
           <DesktopHandoffAction
-            uni-cliUrl={desktopRedirectUrl}
+            uniCliUrl={desktopRedirectUrl}
             grant={desktopGrant}
             organizationName={isSingleOrgMode ? singleOrgName : null}
             helperText="Sign in below, then click above to return to the app."
@@ -982,7 +982,7 @@ export function AuthPanel({
 
       {desktopAuthRequested && desktopRedirectUrl ? (
         <DesktopHandoffAction
-          uni-cliUrl={desktopRedirectUrl}
+          uniCliUrl={desktopRedirectUrl}
           grant={desktopGrant}
           organizationName={isSingleOrgMode ? singleOrgName : null}
           helperText="Sign in below, then click above to return to the app."

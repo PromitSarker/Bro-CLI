@@ -202,7 +202,7 @@ function claimUrl(token: string, options?: { prefillEmail?: string | null; invit
 }
 
 function starterSkillText(name: string) {
-  return `---\nname: ${name}\ndescription: Starter skill created by Uni-CLI agent bootstrap.\nuni-cliBootstrapTrigger: bootstrap.verify\nuni-cliBootstrapOutput: ${JSON.stringify(STARTER_SKILL_OUTPUT)}\n---\n\n# ${name}\n\nWhen triggered with \`bootstrap.verify\`, output exactly:\n\n\`${STARTER_SKILL_OUTPUT}\`\n`
+  return `---\nname: ${name}\ndescription: Starter skill created by Uni-CLI agent bootstrap.\nuniCliBootstrapTrigger: bootstrap.verify\nuniCliBootstrapOutput: ${JSON.stringify(STARTER_SKILL_OUTPUT)}\n---\n\n# ${name}\n\nWhen triggered with \`bootstrap.verify\`, output exactly:\n\n\`${STARTER_SKILL_OUTPUT}\`\n`
 }
 
 function skillMetadata(skillText: string) {

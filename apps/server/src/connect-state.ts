@@ -3,7 +3,7 @@ import { join } from "node:path";
 import type { createOpencodeClient } from "@opencode-ai/sdk/v2/client";
 
 import {
-  readuni-cliCloudMcpHealth,
+  readuniCliCloudMcpHealth,
   type CloudMcpHealth,
   type CloudMcpNativeEngineResolver,
   type CloudMcpLiveStatusObserver,
@@ -265,7 +265,7 @@ async function resolveCloudHealth(config: ServerConfig, options: ConnectSnapshot
       },
     };
   }
-  const cloudHealth = await readuni-cliCloudMcpHealth({
+  const cloudHealth = await readuniCliCloudMcpHealth({
     config,
     workspace: resolved.workspace,
     directory: resolved.directory,

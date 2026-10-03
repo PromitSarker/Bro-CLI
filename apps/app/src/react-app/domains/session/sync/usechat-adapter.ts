@@ -3,7 +3,7 @@ import type { UIMessage } from "ai";
 import { replyModelFromInfo } from "./reply-model";
 import type { FilePart, Part, TextPart, ToolPart } from "@opencode-ai/sdk/v2/client";
 
-import type { uni-cliSessionSnapshot } from "../../../../app/lib/uni-cli-server";
+import type { uniCliSessionSnapshot } from "../../../../app/lib/uni-cli-server";
 import { SYNTHETIC_SESSION_ERROR_MESSAGE_PREFIX } from "../../../../app/types";
 import {
   parseDynamicToolUIPart,
@@ -125,7 +125,7 @@ function mapSnapshotToolParts(part: ToolPart): UIMessage["parts"] {
 /** Recover display-only attachments without sending unsupported binary parts to the model. */
 export function attachmentNoteToUIParts(part: TextPart): UIMessage["parts"] {
   if (!part.synthetic || part.ignored) return [];
-  const attachments = part.metadata?.uni-cliAttachments;
+  const attachments = part.metadata?.uniCliAttachments;
   if (!Array.isArray(attachments)) return [];
   return attachments.flatMap<UIMessage["parts"][number]>((attachment: unknown, index) => {
     if (!attachment || typeof attachment !== "object"
@@ -146,8 +146,8 @@ export function attachmentNoteToUIParts(part: TextPart): UIMessage["parts"] {
 
 export function textPartToUIPart(part: TextPart): UIMessage["parts"][number] | null {
   if (part.synthetic || part.ignored) return null;
-  const composerToken = part.metadata?.uni-cliComposerToken;
-  const composerPill = readComposerPill(part.metadata?.uni-cliComposerPill);
+  const composerToken = part.metadata?.uniCliComposerToken;
+  const composerPill = readComposerPill(part.metadata?.uniCliComposerPill);
   return {
     type: "text",
     text: part.text,
@@ -156,19 +156,19 @@ export function textPartToUIPart(part: TextPart): UIMessage["parts"][number] | n
       partId: part.id,
       ...(typeof composerToken === "string" ? { composerToken } : {}),
       ...(composerPill ? { composerPill } : {}),
-      ...(part.metadata?.uni-cliPastedText === true ? { pastedText: true } : {}),
+      ...(part.metadata?.uniCliPastedText === true ? { pastedText: true } : {}),
     } },
   };
 }
 
-type SnapshotMessages = uni-cliSessionSnapshot["messages"];
+type SnapshotMessages = uniCliSessionSnapshot["messages"];
 const snapshotMessagesCache = new WeakMap<SnapshotMessages, UIMessage[]>();
 const snapshotMessageCache = new WeakMap<SnapshotMessages[number], UIMessage[]>();
 
 // Query snapshots are immutable. Share the projection between rendering and
 // hydration; a refreshed tail can also reuse unchanged historical messages.
 // Callers must copy before applying live updates to these cached messages.
-export function snapshotToUIMessages(snapshot: Pick<uni-cliSessionSnapshot, "messages">): UIMessage[] {
+export function snapshotToUIMessages(snapshot: Pick<uniCliSessionSnapshot, "messages">): UIMessage[] {
   const cached = snapshotMessagesCache.get(snapshot.messages);
   if (cached) return cached;
   const messages = snapshot.messages.flatMap((message) => {

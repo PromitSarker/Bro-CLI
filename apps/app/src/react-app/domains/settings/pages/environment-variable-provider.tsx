@@ -2,9 +2,9 @@ import { createContext, use, useCallback, useMemo } from "react";
 import { useMutation, useQuery, useQueryClient, type UseMutateFunction } from "@tanstack/react-query";
 import { toast } from "@/components/ui/sonner";
 
-import type { uni-cliServerClient } from "@/app/lib/uni-cli-server";
+import type { uniCliServerClient } from "@/app/lib/uni-cli-server";
 import { t } from "@/i18n";
-import { clearuni-cliEnvSystemContextCache } from "@/react-app/domains/session/sync/env-context";
+import { clearuniCliEnvSystemContextCache } from "@/react-app/domains/session/sync/env-context";
 import type { EnvironmentVariableItem } from "./environment-variable-table";
 
 const KEY_PATTERN = /^[A-Za-z_][A-Za-z0-9_]*$/;
@@ -39,7 +39,7 @@ function validateKey(key: string): string | null {
 }
 
 type UseEnvironmentVariableListOptions = {
-  client: uni-cliServerClient | null;
+  client: uniCliServerClient | null;
   isRemoteWorkspace: boolean;
   runtimeKey?: string | null;
 };
@@ -94,7 +94,7 @@ const EnvironmentVariableContext = createContext<EnvironmentVariableContextValue
 
 interface EnvironmentVariableProviderProps {
   children: React.ReactNode;
-  client: uni-cliServerClient | null;
+  client: uniCliServerClient | null;
   runtimeKey?: string | null;
   onApplyChanges?: () => Promise<ApplyEnvironmentChangesResult>;
 }
@@ -115,7 +115,7 @@ export function EnvironmentVariableProvider({ children, client, runtimeKey, onAp
   const { mutate: applyAsync, isPending: isApplying, reset: resetApply, error: applyError } = useMutation({
     mutationFn: async () => onApplyChanges?.(),
     onSuccess: (result) => {
-      clearuni-cliEnvSystemContextCache();
+      clearuniCliEnvSystemContextCache();
       queryClient.setQueryData(["settings", "environment", "pending-changes", runtimeKey], false);
       client?.setUserEnvPendingChanges(false, runtimeKey).catch(() => undefined);
       toast.success(result?.statusMessage ?? t("settings.environment.apply_success"));
@@ -126,7 +126,7 @@ export function EnvironmentVariableProvider({ children, client, runtimeKey, onAp
   });
 
   const markChangesPending = useCallback(() => {
-    clearuni-cliEnvSystemContextCache();
+    clearuniCliEnvSystemContextCache();
     queryClient.setQueryData(["settings", "environment", "pending-changes", runtimeKey], true);
     resetApply();
     client?.setUserEnvPendingChanges(true, runtimeKey).catch(() => undefined);

@@ -442,21 +442,21 @@ function rewriteSelectedModel(prepared: PreparedRequest, upstream: ResolvedUpstr
   if (modified) prepared.body = JSON.stringify(json)
 }
 
-function buildUpstreamHeaders(request: Request, family: ProtocolFamily, uni-cliRequestId: string) {
+function buildUpstreamHeaders(request: Request, family: ProtocolFamily, uniCliRequestId: string) {
   const headers = new Headers()
   request.headers.forEach((value, name) => {
     if (name.toLowerCase() !== GATEWAY_GRANT_HEADER && name.toLowerCase() !== GATEWAY_REQUEST_MODEL_HEADER && isAllowedRequestHeader(family, name)) headers.set(name, value)
   })
-  headers.set("x-uni-cli-request-id", uni-cliRequestId)
+  headers.set("x-uni-cli-request-id", uniCliRequestId)
   return headers
 }
 
-function relayHeaders(upstream: Response, uni-cliRequestId: string) {
+function relayHeaders(upstream: Response, uniCliRequestId: string) {
   const headers = new Headers()
   upstream.headers.forEach((value, name) => {
     if (!droppedResponseHeaders.has(name.toLowerCase()) && !name.toLowerCase().startsWith("x-uni-cli-")) headers.append(name, value)
   })
-  headers.set("x-uni-cli-request-id", uni-cliRequestId)
+  headers.set("x-uni-cli-request-id", uniCliRequestId)
   return headers
 }
 
@@ -702,7 +702,7 @@ export function registerGatewayRoutes(api: Hono<GatewayEnv>, input: GatewayRoute
       return gatewayError(404, "provider_not_found", "Missing inference provider id.")
     }
     const requestUrl = new URL(c.req.url)
-    const uni-cliRequestId = c.get("uni-cliRequestId")
+    const uniCliRequestId = c.get("uniCliRequestId")
     const startedAt = dependencies.now()
     const method = c.req.method
     const request = target?.request ?? c.req.raw
@@ -747,7 +747,7 @@ export function registerGatewayRoutes(api: Hono<GatewayEnv>, input: GatewayRoute
       const loggedSelection = selection ?? (requestedSelection?.kind === "selected" ? requestedSelection.selection : null)
       recorder.start({
         identity,
-        uni-cliRequestId,
+        uniCliRequestId,
         route: "org_provider",
         protocol: state.protocol,
         upstreamProviderId: provider.provider_id,
@@ -771,7 +771,7 @@ export function registerGatewayRoutes(api: Hono<GatewayEnv>, input: GatewayRoute
     }
     const reject = (response: Response, errorCode: string, reason: string) => {
       console.error(`[gateway] ${reason}`, {
-        uni-cliRequestId,
+        uniCliRequestId,
         organizationId: identity.organizationId,
         orgMembershipId: identity.orgMembershipId,
         inferenceProviderId: provider.id,
@@ -783,14 +783,14 @@ export function registerGatewayRoutes(api: Hono<GatewayEnv>, input: GatewayRoute
         organizationId: identity.organizationId,
         orgMembershipId: identity.orgMembershipId,
         gatewayKeyId: identity.gatewayKeyId,
-        uni-cliRequestId,
+        uniCliRequestId,
         route: c.req.path,
         method,
         headers: incomingHeaders,
         status: response.status,
       })
       void recorder.finish({ status: response.status, outcome: "rejected", errorCode })
-      response.headers.set("x-uni-cli-request-id", uni-cliRequestId)
+      response.headers.set("x-uni-cli-request-id", uniCliRequestId)
       return response
     }
 
@@ -914,7 +914,7 @@ export function registerGatewayRoutes(api: Hono<GatewayEnv>, input: GatewayRoute
     const usageRejection = await dependencies.checkUsage({
       organizationId: identity.organizationId,
       memberId: identity.orgMembershipId,
-      requestId: uni-cliRequestId,
+      requestId: uniCliRequestId,
       startedAt,
       onAdmission: (snapshot) => { gatewayUsage = snapshot },
       protocol: resolved.protocol,
@@ -933,7 +933,7 @@ export function registerGatewayRoutes(api: Hono<GatewayEnv>, input: GatewayRoute
       requestBytes: prepared.body === null ? null : Buffer.byteLength(prepared.body),
     })
 
-    const headers = buildUpstreamHeaders(request, resolved.family, uni-cliRequestId)
+    const headers = buildUpstreamHeaders(request, resolved.family, uniCliRequestId)
     if (auth.kind === "header") headers.set(auth.header.name, auth.header.value)
     else auth.sign({ method, url: prepared.url, headers, body: prepared.body })
 
@@ -961,7 +961,7 @@ export function registerGatewayRoutes(api: Hono<GatewayEnv>, input: GatewayRoute
     } catch {
       lifetime.dispose()
       console.error("[gateway] Failed to reach provider upstream", {
-        uni-cliRequestId,
+        uniCliRequestId,
         organizationId: identity.organizationId,
         inferenceProviderId: provider.id,
         upstreamUrl: `${prepared.url.origin}${prepared.url.pathname}`,
@@ -971,7 +971,7 @@ export function registerGatewayRoutes(api: Hono<GatewayEnv>, input: GatewayRoute
         organizationId: identity.organizationId,
         orgMembershipId: identity.orgMembershipId,
         gatewayKeyId: identity.gatewayKeyId,
-        uni-cliRequestId,
+        uniCliRequestId,
         route: c.req.path,
         method,
         headers: incomingHeaders,
@@ -981,13 +981,13 @@ export function registerGatewayRoutes(api: Hono<GatewayEnv>, input: GatewayRoute
       })
       void recorder.finish({ status: 502, outcome: lifetime.signal.aborted && !lifetime.timedOut ? "client_aborted" : "upstream_unreachable", errorCode: lifetime.timedOut ? "upstream_timeout" : "upstream_unreachable" })
       const response = gatewayError(502, "upstream_unreachable", "Failed to reach the inference provider upstream.", { provider_id: provider.id })
-      response.headers.set("x-uni-cli-request-id", uni-cliRequestId)
+      response.headers.set("x-uni-cli-request-id", uniCliRequestId)
       return response
     }
 
     if (!upstream.ok) {
       console.error("[gateway] Upstream provider request failed", {
-        uni-cliRequestId,
+        uniCliRequestId,
         organizationId: identity.organizationId,
         inferenceProviderId: provider.id,
         upstreamProviderId: provider.provider_id,
@@ -1004,7 +1004,7 @@ export function registerGatewayRoutes(api: Hono<GatewayEnv>, input: GatewayRoute
           : "Google rejected the provider credential. Ask your organization administrator to check provider authentication."
         : "Google Cloud denied access. Ask your administrator to check project IAM and model access."
       const response = gatewayError(upstream.status, errorCode, message, { provider_id: provider.id })
-      response.headers.set("x-uni-cli-request-id", uni-cliRequestId)
+      response.headers.set("x-uni-cli-request-id", uniCliRequestId)
       void recorder.finish({ status: upstream.status, outcome: "upstream_error", errorCode })
       lifetime.dispose()
       await upstream.body?.cancel().catch(() => {})
@@ -1021,14 +1021,14 @@ export function registerGatewayRoutes(api: Hono<GatewayEnv>, input: GatewayRoute
         ? "AWS denied access to this Bedrock model. Ask your organization administrator to check the IAM policy and Bedrock model access in this region."
         : "AWS rejected the Bedrock provider credential. Ask your organization administrator to check or replace the access keys."
       const response = Response.json({ message, error: { message, type: "invalid_request_error", code: errorCode, provider_id: provider.id } }, { status: upstream.status })
-      response.headers.set("x-uni-cli-request-id", uni-cliRequestId)
+      response.headers.set("x-uni-cli-request-id", uniCliRequestId)
       void recorder.finish({ status: upstream.status, outcome: "upstream_error", errorCode, upstreamRequestId: upstreamRequestId(upstream.headers) })
       lifetime.dispose()
       await upstream.body?.cancel().catch(() => {})
       return response
     }
 
-    const responseHeaders = relayHeaders(upstream, uni-cliRequestId)
+    const responseHeaders = relayHeaders(upstream, uniCliRequestId)
     if (!upstream.ok) return relayErrorResponse(upstream, resolved.protocol, responseHeaders, recorder, lifetime)
     return relayStreamResponse(upstream, resolved.protocol, responseHeaders, recorder, lifetime)
   }
@@ -1047,7 +1047,7 @@ export function registerGatewayRoutes(api: Hono<GatewayEnv>, input: GatewayRoute
       if (identity.kind !== "gateway") return next()
       const routed = await routeByModel(c.req.raw, identity.organizationId, dependencies.resolveGatewayModelProvider)
       if ("error" in routed) {
-        routed.error.headers.set("x-uni-cli-request-id", c.get("uni-cliRequestId"))
+        routed.error.headers.set("x-uni-cli-request-id", c.get("uniCliRequestId"))
         return routed.error
       }
       return handleGatewayRequest(c, { ...routed, rest: endpoint.rest, protocol: endpoint.protocol })

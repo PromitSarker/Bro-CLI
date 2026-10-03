@@ -7,7 +7,7 @@ import { applyEdits, modify, parse, printParseErrorCode } from "jsonc-parser";
 import { t } from "../../../i18n";
 import {
   getMcpServerName,
-  isBuiltInUni-CLIExtension,
+  isBuiltInUniCliExtension,
   MCP_QUICK_CONNECT,
   type McpDirectoryInfo,
 } from "../../../app/constants";
@@ -34,8 +34,8 @@ import {
   validateMcpServerName,
 } from "../../../app/mcp";
 import {
-  builduni-cliWorkspaceBaseUrl,
-  type uni-cliServerClient,
+  builduniCliWorkspaceBaseUrl,
+  type uniCliServerClient,
 } from "../../../app/lib/uni-cli-server";
 import type {
   Client,
@@ -45,9 +45,9 @@ import type {
   ReloadTrigger,
 } from "../../../app/types";
 import { isDesktopRuntime, normalizeDirectoryPath, safeStringify } from "../../../app/utils";
-import { conflictsWithuni-cliConnect } from "./mcp-connection-boundary";
+import { conflictsWithuniCliConnect } from "./mcp-connection-boundary";
 
-import type { uni-cliServerStore } from "./uni-cli-server-store";
+import type { uniCliServerStore } from "./uni-cli-server-store";
 import { attemptSilentMcpReauth } from "./mcp-silent-reauth";
 import {
   createMcpStatusSynchronizer,
@@ -62,7 +62,7 @@ import {
   clearCloudMcpDisabledIntent,
   cloudMcpDisplaySummary,
   recordCloudMcpDisabledIntent,
-  rununi-cliCloudMcpReconciler,
+  rununiCliCloudMcpReconciler,
   type CloudMcpOperationContext,
 } from "./cloud-mcp-reconciler";
 
@@ -75,7 +75,7 @@ type SetStateAction<T> = T | ((current: T) => T);
 const CLOUD_MCP_REFRESH_MARGIN_MS = 24 * 60 * 60 * 1000;
 const LOCAL_UNICLI_SERVER_RECOVERY_TIMEOUT_MS = 30_000;
 
-async function withLocaluni-cliServerRecoveryTimeout<T>(
+async function withLocaluniCliServerRecoveryTimeout<T>(
   task: Promise<T>,
   timeoutMs: number,
 ): Promise<T> {
@@ -120,10 +120,10 @@ export function createConnectionsStore(options: {
   selectedWorkspaceId: () => string;
   selectedWorkspaceRoot: () => string;
   workspaceType: () => "local" | "remote";
-  uni-cliServer: uni-cliServerStore;
+  uniCliServer: uniCliServerStore;
   runtimeWorkspaceId: () => string | null;
   ensureRuntimeWorkspaceId?: () => Promise<string | null | undefined>;
-  localuni-cliServerRecoveryTimeoutMs?: number;
+  localuniCliServerRecoveryTimeoutMs?: number;
   setProjectDir?: (value: string) => void;
   developerMode: () => boolean;
   markReloadRequired?: (reason: ReloadReason, trigger?: ReloadTrigger) => void;
@@ -192,13 +192,13 @@ export function createConnectionsStore(options: {
     return `${workspaceType}:${workspaceId}:${root}:${runtimeWorkspaceId}`;
   };
 
-  const getuni-cliSnapshot = () => options.uni-cliServer.getSnapshot();
+  const getuniCliSnapshot = () => options.uniCliServer.getSnapshot();
 
-  const resolveuni-cliWorkspaceId = async () => {
+  const resolveuniCliWorkspaceId = async () => {
     const current = options.runtimeWorkspaceId()?.trim();
     if (current) return current;
-    const uni-cliSnapshot = getuni-cliSnapshot();
-    if (uni-cliSnapshot.uni-cliServerStatus !== "connected" || !uni-cliSnapshot.uni-cliServerClient) {
+    const uniCliSnapshot = getuniCliSnapshot();
+    if (uniCliSnapshot.uniCliServerStatus !== "connected" || !uniCliSnapshot.uniCliServerClient) {
       return null;
     }
     const ensured = (await options.ensureRuntimeWorkspaceId?.())?.trim();
@@ -206,51 +206,51 @@ export function createConnectionsStore(options: {
     return options.workspaceType() === "local" ? options.selectedWorkspaceId().trim() || null : null;
   };
 
-  const resolveConfiguni-cliTarget = async (mode: "read" | "write") => {
-    const uni-cliSnapshot = getuni-cliSnapshot();
-    const uni-cliClient = uni-cliSnapshot.uni-cliServerClient;
-    const uni-cliWorkspaceId = await resolveuni-cliWorkspaceId();
-    const hasuni-cliTarget =
-      uni-cliSnapshot.uni-cliServerStatus === "connected" &&
-      Boolean(uni-cliClient && uni-cliWorkspaceId);
-    const canUseuni-cliServer =
-      hasuni-cliTarget &&
-      uni-cliSnapshot.uni-cliServerCapabilities?.config?.[mode] !== false;
+  const resolveConfiguniCliTarget = async (mode: "read" | "write") => {
+    const uniCliSnapshot = getuniCliSnapshot();
+    const uniCliClient = uniCliSnapshot.uniCliServerClient;
+    const uniCliWorkspaceId = await resolveuniCliWorkspaceId();
+    const hasuniCliTarget =
+      uniCliSnapshot.uniCliServerStatus === "connected" &&
+      Boolean(uniCliClient && uniCliWorkspaceId);
+    const canUseuniCliServer =
+      hasuniCliTarget &&
+      uniCliSnapshot.uniCliServerCapabilities?.config?.[mode] !== false;
     return {
-      uni-cliClient,
-      uni-cliWorkspaceId,
-      hasuni-cliTarget,
-      canUseuni-cliServer,
+      uniCliClient,
+      uniCliWorkspaceId,
+      hasuniCliTarget,
+      canUseuniCliServer,
     };
   };
 
-  const resolveMcpuni-cliTarget = async (mode: "read" | "write") => {
-    let uni-cliSnapshot = getuni-cliSnapshot();
-    let uni-cliClient = uni-cliSnapshot.uni-cliServerClient;
-    let uni-cliWorkspaceId = await resolveuni-cliWorkspaceId();
-    if ((!uni-cliClient || !uni-cliWorkspaceId || uni-cliSnapshot.uni-cliServerStatus !== "connected")
+  const resolveMcpuniCliTarget = async (mode: "read" | "write") => {
+    let uniCliSnapshot = getuniCliSnapshot();
+    let uniCliClient = uniCliSnapshot.uniCliServerClient;
+    let uniCliWorkspaceId = await resolveuniCliWorkspaceId();
+    if ((!uniCliClient || !uniCliWorkspaceId || uniCliSnapshot.uniCliServerStatus !== "connected")
       && isDesktopRuntime()
       && options.workspaceType() === "local") {
-      uni-cliClient = await withLocaluni-cliServerRecoveryTimeout(
-        options.uni-cliServer.ensureLocaluni-cliServerClient(),
-        options.localuni-cliServerRecoveryTimeoutMs ?? LOCAL_UNICLI_SERVER_RECOVERY_TIMEOUT_MS,
+      uniCliClient = await withLocaluniCliServerRecoveryTimeout(
+        options.uniCliServer.ensureLocaluniCliServerClient(),
+        options.localuniCliServerRecoveryTimeoutMs ?? LOCAL_UNICLI_SERVER_RECOVERY_TIMEOUT_MS,
       );
-      uni-cliSnapshot = getuni-cliSnapshot();
-      uni-cliWorkspaceId = options.runtimeWorkspaceId()?.trim()
+      uniCliSnapshot = getuniCliSnapshot();
+      uniCliWorkspaceId = options.runtimeWorkspaceId()?.trim()
         || (await options.ensureRuntimeWorkspaceId?.())?.trim()
         || options.selectedWorkspaceId().trim()
         || null;
     }
-    const hasuni-cliTarget =
-      Boolean(uni-cliClient && uni-cliWorkspaceId);
-    const canUseuni-cliServer =
-      hasuni-cliTarget &&
-      uni-cliSnapshot.uni-cliServerCapabilities?.mcp?.[mode] !== false;
+    const hasuniCliTarget =
+      Boolean(uniCliClient && uniCliWorkspaceId);
+    const canUseuniCliServer =
+      hasuniCliTarget &&
+      uniCliSnapshot.uniCliServerCapabilities?.mcp?.[mode] !== false;
     return {
-      uni-cliClient,
-      uni-cliWorkspaceId,
-      hasuni-cliTarget,
-      canUseuni-cliServer,
+      uniCliClient,
+      uniCliWorkspaceId,
+      hasuniCliTarget,
+      canUseuniCliServer,
     };
   };
 
@@ -265,14 +265,14 @@ export function createConnectionsStore(options: {
 
   const readMcpConfigFile = async (scope: "project" | "global"): Promise<OpencodeConfigFile | null> => {
     const projectDir = options.projectDir().trim();
-    const { uni-cliClient, uni-cliWorkspaceId, hasuni-cliTarget, canUseuni-cliServer } =
-      await resolveConfiguni-cliTarget("read");
+    const { uniCliClient, uniCliWorkspaceId, hasuniCliTarget, canUseuniCliServer } =
+      await resolveConfiguniCliTarget("read");
 
-    if (canUseuni-cliServer && uni-cliClient && uni-cliWorkspaceId) {
-      return uni-cliClient.readOpencodeConfigFile(uni-cliWorkspaceId, scope);
+    if (canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
+      return uniCliClient.readOpencodeConfigFile(uniCliWorkspaceId, scope);
     }
 
-    if (hasuni-cliTarget) {
+    if (hasuniCliTarget) {
       return null;
     }
 
@@ -289,15 +289,15 @@ export function createConnectionsStore(options: {
       return activeClient;
     }
 
-    const uni-cliSnapshot = getuni-cliSnapshot();
-    const uni-cliBaseUrl = uni-cliSnapshot.uni-cliServerBaseUrl.trim();
-    const token = uni-cliSnapshot.uni-cliServerAuth.token?.trim();
-    if (!uni-cliBaseUrl || !token) {
+    const uniCliSnapshot = getuniCliSnapshot();
+    const uniCliBaseUrl = uniCliSnapshot.uniCliServerBaseUrl.trim();
+    const token = uniCliSnapshot.uniCliServerAuth.token?.trim();
+    if (!uniCliBaseUrl || !token) {
       return null;
     }
 
     const mountedBaseUrl =
-      builduni-cliWorkspaceBaseUrl(uni-cliBaseUrl, await resolveuni-cliWorkspaceId()) ?? uni-cliBaseUrl;
+      builduniCliWorkspaceBaseUrl(uniCliBaseUrl, await resolveuniCliWorkspaceId()) ?? uniCliBaseUrl;
     activeClient = createClient(`${mountedBaseUrl.replace(/\/+$/, "")}/opencode`, undefined, {
       token,
       mode: "uni-cli",
@@ -306,14 +306,14 @@ export function createConnectionsStore(options: {
     return activeClient;
   };
 
-  const resolveWritableuni-cliTarget = async () => {
-    return resolveMcpuni-cliTarget("write");
+  const resolveWritableuniCliTarget = async () => {
+    return resolveMcpuniCliTarget("write");
   };
 
   const resolveCloudMcpOperationContext = async (fallbackUrl?: string | null): Promise<CloudMcpOperationContext | null> => {
     const settings = readDenSettings();
-    const workspaceId = await resolveuni-cliWorkspaceId();
-    const serverBaseUrl = getuni-cliSnapshot().uni-cliServerClient?.baseUrl.trim() ?? "";
+    const workspaceId = await resolveuniCliWorkspaceId();
+    const serverBaseUrl = getuniCliSnapshot().uniCliServerClient?.baseUrl.trim() ?? "";
     const orgId = settings.activeOrgId?.trim() ?? "";
     if (!workspaceId || !serverBaseUrl || !orgId) return null;
     return {
@@ -347,29 +347,29 @@ export function createConnectionsStore(options: {
     return resolvedProjectDir;
   };
 
-  const listMcpFromuni-cliServer = async (projectDir: string) => {
-    const uni-cliSnapshot = getuni-cliSnapshot();
-    const { uni-cliClient, uni-cliWorkspaceId, hasuni-cliTarget, canUseuni-cliServer } =
-      await resolveMcpuni-cliTarget("read");
-    const canTryuni-cliServer = canUseuni-cliServer;
+  const listMcpFromuniCliServer = async (projectDir: string) => {
+    const uniCliSnapshot = getuniCliSnapshot();
+    const { uniCliClient, uniCliWorkspaceId, hasuniCliTarget, canUseuniCliServer } =
+      await resolveMcpuniCliTarget("read");
+    const canTryuniCliServer = canUseuniCliServer;
 
     recordPerfLog(options.developerMode(), "mcp.refresh", "server-path-check", {
       workspaceType: options.workspaceType(),
       projectDir: projectDir || null,
-      uni-cliStatus: uni-cliSnapshot.uni-cliServerStatus,
-      hasuni-cliClient: Boolean(uni-cliClient),
-      uni-cliWorkspaceId: uni-cliWorkspaceId ?? null,
-      canReadMcp: uni-cliSnapshot.uni-cliServerCapabilities?.mcp?.read ?? null,
-      canTryuni-cliServer,
+      uniCliStatus: uniCliSnapshot.uniCliServerStatus,
+      hasuniCliClient: Boolean(uniCliClient),
+      uniCliWorkspaceId: uniCliWorkspaceId ?? null,
+      canReadMcp: uniCliSnapshot.uniCliServerCapabilities?.mcp?.read ?? null,
+      canTryuniCliServer,
     });
 
-    if (hasuni-cliTarget && !canTryuni-cliServer) {
+    if (hasuniCliTarget && !canTryuniCliServer) {
       throw new Error("Uni-CLI server cannot read MCP config for this workspace.");
     }
 
-    if (!canTryuni-cliServer || !uni-cliClient || !uni-cliWorkspaceId) return null;
+    if (!canTryuniCliServer || !uniCliClient || !uniCliWorkspaceId) return null;
 
-    const response = await uni-cliClient.listMcp(uni-cliWorkspaceId);
+    const response = await uniCliClient.listMcp(uniCliWorkspaceId);
     const next = response.items.map((entry) => ({
       name: entry.name,
       // The server relays opencode.json entries verbatim; fold a Claude-style
@@ -384,7 +384,7 @@ export function createConnectionsStore(options: {
     // Read through the same workspace mount as configuration. The chat client
     // can still point at the previous/default workspace during restoration.
     try {
-      nextStatuses = filterConfiguredStatuses(await uni-cliClient.getMcpStatus(uni-cliWorkspaceId), next);
+      nextStatuses = filterConfiguredStatuses(await uniCliClient.getMcpStatus(uniCliWorkspaceId), next);
     } catch {
       nextStatuses = {};
     }
@@ -418,7 +418,7 @@ export function createConnectionsStore(options: {
     };
   };
 
-  const resolveDesktopCommand = async (commandName: "getuni-cliUiMcpCommand") => {
+  const resolveDesktopCommand = async (commandName: "getuniCliUiMcpCommand") => {
     try {
       const command = await window.__UNICLI_ELECTRON__?.invokeDesktop?.(commandName);
       if (Array.isArray(command) && command.every((part) => typeof part === "string") && command.length > 0) {
@@ -433,7 +433,7 @@ export function createConnectionsStore(options: {
   const resolveLocalMcpCommand = async (entry: McpDirectoryInfo) => {
     const mcpResource = extensionResource(entry.extensionManifest, "mcp");
     if (mcpResource?.localCommandRef === "uni-cli.uiMcp" || entry.serverName === "uni-cli-ui") {
-      const command = await resolveDesktopCommand("getuni-cliUiMcpCommand");
+      const command = await resolveDesktopCommand("getuniCliUiMcpCommand");
       return command ?? entry.command;
     }
     return entry.command;
@@ -442,7 +442,7 @@ export function createConnectionsStore(options: {
   const resolveLocalMcpEnvironment = async (entry: McpDirectoryInfo) => {
     if (entry.serverName !== "uni-cli-ui") return undefined;
     try {
-      const environment = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("getuni-cliUiMcpEnvironment");
+      const environment = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("getuniCliUiMcpEnvironment");
       if (environment && typeof environment === "object" && !Array.isArray(environment)) {
         return Object.fromEntries(
           Object.entries(environment).filter((entry): entry is [string, string] =>
@@ -495,7 +495,7 @@ export function createConnectionsStore(options: {
 
     try {
       if (isCurrentRefresh()) setStateField("mcpStatus", null);
-      const serverResult = await listMcpFromuni-cliServer(projectDir);
+      const serverResult = await listMcpFromuniCliServer(projectDir);
       if (serverResult) {
         // Surface engine registration failures instead of leaving users
         // staring at an MCP that silently shows as disconnected.
@@ -526,9 +526,9 @@ export function createConnectionsStore(options: {
       recordPerfLog(options.developerMode(), "mcp.refresh", "server-path-error", {
         message: error instanceof Error ? error.message : String(error),
       });
-      const serverTarget = await resolveMcpuni-cliTarget("read").catch(() => null);
+      const serverTarget = await resolveMcpuniCliTarget("read").catch(() => null);
       if (!isCurrentRefresh()) return;
-      if (isRemoteWorkspace || serverTarget?.hasuni-cliTarget) {
+      if (isRemoteWorkspace || serverTarget?.hasuniCliTarget) {
         mutateState((current) => ({
           ...current,
           mcpServers: [],
@@ -666,7 +666,7 @@ export function createConnectionsStore(options: {
 
   function builtInMcp(name: string) {
     return MCP_QUICK_CONNECT.find((entry) =>
-      isBuiltInUni-CLIExtension(entry) && getMcpServerName(entry) === name,
+      isBuiltInUniCliExtension(entry) && getMcpServerName(entry) === name,
     );
   }
 
@@ -682,10 +682,10 @@ export function createConnectionsStore(options: {
       if (error) return { ok: false, error };
     }
     const startedAt = perfNow();
-    const uni-cliSnapshot = getuni-cliSnapshot();
+    const uniCliSnapshot = getuniCliSnapshot();
     const isRemoteWorkspace =
       options.workspaceType() === "remote" ||
-      (!isDesktopRuntime() && uni-cliSnapshot.uni-cliServerStatus === "connected");
+      (!isDesktopRuntime() && uniCliSnapshot.uniCliServerStatus === "connected");
     const projectDir = options.projectDir().trim();
     const entryType = entry.type ?? "remote";
 
@@ -696,10 +696,10 @@ export function createConnectionsStore(options: {
       projectDir: projectDir || null,
     });
 
-    const { uni-cliClient, uni-cliWorkspaceId, hasuni-cliTarget, canUseuni-cliServer } =
-      await resolveWritableuni-cliTarget();
+    const { uniCliClient, uniCliWorkspaceId, hasuniCliTarget, canUseuniCliServer } =
+      await resolveWritableuniCliTarget();
 
-    if (isRemoteWorkspace && !canUseuni-cliServer) {
+    if (isRemoteWorkspace && !canUseuniCliServer) {
       const error = "Uni-CLI server unavailable. MCP config is read-only.";
       setStateField("mcpStatus", error);
       finishPerf(options.developerMode(), "mcp.connect", "blocked", startedAt, {
@@ -708,7 +708,7 @@ export function createConnectionsStore(options: {
       return { ok: false, error };
     }
 
-    if (hasuni-cliTarget && !canUseuni-cliServer) {
+    if (hasuniCliTarget && !canUseuniCliServer) {
       const error = "Uni-CLI server MCP config is read-only.";
       setStateField("mcpStatus", error);
       finishPerf(options.developerMode(), "mcp.connect", "blocked", startedAt, {
@@ -717,7 +717,7 @@ export function createConnectionsStore(options: {
       return { ok: false, error };
     }
 
-    if (!canUseuni-cliServer && !isDesktopRuntime()) {
+    if (!canUseuniCliServer && !isDesktopRuntime()) {
       const error = t("mcp.desktop_required");
       setStateField("mcpStatus", error);
       finishPerf(options.developerMode(), "mcp.connect", "blocked", startedAt, {
@@ -726,7 +726,7 @@ export function createConnectionsStore(options: {
       return { ok: false, error };
     }
 
-    if (!isRemoteWorkspace && !projectDir && !canUseuni-cliServer) {
+    if (!isRemoteWorkspace && !projectDir && !canUseuniCliServer) {
       const error = t("mcp.pick_workspace_first");
       setStateField("mcpStatus", error);
       finishPerf(options.developerMode(), "mcp.connect", "blocked", startedAt, {
@@ -735,8 +735,8 @@ export function createConnectionsStore(options: {
       return { ok: false, error };
     }
 
-    const activeClient = canUseuni-cliServer ? options.client() ?? await ensureActiveClient().catch(() => null) : await ensureActiveClient();
-    if (!activeClient && !canUseuni-cliServer) {
+    const activeClient = canUseuniCliServer ? options.client() ?? await ensureActiveClient().catch(() => null) : await ensureActiveClient();
+    if (!activeClient && !canUseuniCliServer) {
       const error = t("mcp.connect_server_first");
       setStateField("mcpStatus", error);
       finishPerf(options.developerMode(), "mcp.connect", "blocked", startedAt, {
@@ -746,7 +746,7 @@ export function createConnectionsStore(options: {
     }
 
     const resolvedProjectDir = activeClient ? await resolveProjectDir(activeClient, projectDir) : projectDir;
-    if (!resolvedProjectDir && !canUseuni-cliServer) {
+    if (!resolvedProjectDir && !canUseuniCliServer) {
       const error = t("mcp.pick_workspace_first");
       setStateField("mcpStatus", error);
       finishPerf(options.developerMode(), "mcp.connect", "blocked", startedAt, {
@@ -758,7 +758,7 @@ export function createConnectionsStore(options: {
     const slug = entry.id ?? getMcpServerName(entry);
     const action = snapshot.mcpServers.some((server) => server.name === slug) ? "updated" : "added";
 
-    if (conflictsWithuni-cliConnect(entry)) {
+    if (conflictsWithuniCliConnect(entry)) {
       const error = t("mcp.name_reserved_uni-cli_connect");
       setStateField("mcpStatus", error);
       finishPerf(options.developerMode(), "mcp.connect", "blocked", startedAt, {
@@ -774,7 +774,7 @@ export function createConnectionsStore(options: {
         if (slug !== CLOUD_MCP_SERVER_NAME) {
           throw new Error("Uni-CLI Connect MCP metadata is invalid.");
         }
-        if (!canUseuni-cliServer || !uni-cliClient || !uni-cliWorkspaceId) {
+        if (!canUseuniCliServer || !uniCliClient || !uniCliWorkspaceId) {
           throw new Error("Uni-CLI server is required to repair agent access to connected services.");
         }
         const context = await resolveCloudMcpOperationContext(null);
@@ -782,9 +782,9 @@ export function createConnectionsStore(options: {
           throw new Error("Sign in to Uni-CLI Cloud and choose an organization first.");
         }
         clearCloudMcpDisabledIntent(context);
-        const result = await rununi-cliCloudMcpReconciler({
+        const result = await rununiCliCloudMcpReconciler({
           mode: "repair",
-          client: uni-cliClient,
+          client: uniCliClient,
           context: { ...context, trigger: "desktop-explicit-connect" },
           mintToken: mintCloudControlMcpToken,
           force: true,
@@ -822,10 +822,10 @@ export function createConnectionsStore(options: {
         if (entryType !== "remote" || !entry.url) {
           throw new Error("Uni-CLI-managed OAuth requires a remote MCP URL.");
         }
-        if (!canUseuni-cliServer || !uni-cliClient || !uni-cliWorkspaceId) {
+        if (!canUseuniCliServer || !uniCliClient || !uniCliWorkspaceId) {
           throw new Error("The local Uni-CLI server is required for managed MCP sign-in.");
         }
-        const result = await uni-cliClient.addManagedMcp(uni-cliWorkspaceId, {
+        const result = await uniCliClient.addManagedMcp(uniCliWorkspaceId, {
           name: slug,
           url: entry.url,
           oauth: {
@@ -836,8 +836,8 @@ export function createConnectionsStore(options: {
           },
         });
         const connected = await waitForManagedMcpAuthorization(
-          uni-cliClient,
-          uni-cliWorkspaceId,
+          uniCliClient,
+          uniCliWorkspaceId,
           slug,
           result,
         );
@@ -911,8 +911,8 @@ export function createConnectionsStore(options: {
         }
       }
 
-      if (canUseuni-cliServer && uni-cliClient && uni-cliWorkspaceId) {
-        await uni-cliClient.addMcp(uni-cliWorkspaceId, {
+      if (canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
+        await uniCliClient.addMcp(uniCliWorkspaceId, {
           name: slug,
           config: mcpEntryConfig,
         });
@@ -956,7 +956,7 @@ export function createConnectionsStore(options: {
         }
       }
 
-      if (canUseuni-cliServer && uni-cliClient && uni-cliWorkspaceId) {
+      if (canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
         // The Uni-CLI server is the source of truth for workspace-scoped MCP
         // config in the React port. Avoid also calling the OpenCode SDK's MCP
         // hot-add endpoint here: when the SDK client is rooted at the aggregate
@@ -1065,11 +1065,11 @@ export function createConnectionsStore(options: {
     const settings = readDenSettings();
     const orgId = settings.activeOrgId?.trim() ?? "";
     if (!orgId || !settings.authToken?.trim()) return "skipped";
-    const workspaceId = await resolveuni-cliWorkspaceId();
+    const workspaceId = await resolveuniCliWorkspaceId();
     if (!workspaceId) return "skipped";
-    const uni-cliClient = getuni-cliSnapshot().uni-cliServerClient;
-    const serverBaseUrl = uni-cliClient?.baseUrl.trim() ?? "";
-    if (!uni-cliClient || !serverBaseUrl) return "skipped";
+    const uniCliClient = getuniCliSnapshot().uniCliServerClient;
+    const serverBaseUrl = uniCliClient?.baseUrl.trim() ?? "";
+    if (!uniCliClient || !serverBaseUrl) return "skipped";
 
     const entry = MCP_QUICK_CONNECT.find((candidate) => candidate.serverName === CLOUD_MCP_SERVER_NAME);
     if (!entry) return "skipped";
@@ -1080,9 +1080,9 @@ export function createConnectionsStore(options: {
     const configuredEntry = snapshot.mcpServers.find((server) => server.name === CLOUD_MCP_SERVER_NAME);
     if (configuredEntry?.config.enabled === false) return "skipped";
 
-    const result = await rununi-cliCloudMcpReconciler({
+    const result = await rununiCliCloudMcpReconciler({
       mode: "repair",
-      client: uni-cliClient,
+      client: uniCliClient,
       context: {
         ...scope,
         denAuthToken: settings.authToken,
@@ -1104,7 +1104,7 @@ export function createConnectionsStore(options: {
   }
 
   async function waitForManagedMcpAuthorization(
-    uni-cliClient: uni-cliServerClient,
+    uniCliClient: uniCliServerClient,
     workspaceId: string,
     name: string,
     result: { status: "connected" } | { status: "needs_auth"; authorizeUrl: string },
@@ -1113,7 +1113,7 @@ export function createConnectionsStore(options: {
     await openDesktopUrl(assertDesktopWebUrl(result.authorizeUrl));
     for (let attempt = 0; attempt < 120; attempt += 1) {
       await new Promise((resolve) => setTimeout(resolve, 1_000));
-      const connection = await uni-cliClient.getManagedMcp(workspaceId, name);
+      const connection = await uniCliClient.getManagedMcp(workspaceId, name);
       if (connection.status === "connected") return true;
       if (connection.status === "reconnect_required") {
         throw new Error(connection.lastError || "MCP sign-in needs to be restarted.");
@@ -1126,13 +1126,13 @@ export function createConnectionsStore(options: {
   async function authorizeMcp(entry: McpServerEntry) {
     if (entry.managedOAuth) {
       try {
-        const { uni-cliClient, uni-cliWorkspaceId, canUseuni-cliServer } = await resolveWritableuni-cliTarget();
-        if (!canUseuni-cliServer || !uni-cliClient || !uni-cliWorkspaceId) {
+        const { uniCliClient, uniCliWorkspaceId, canUseuniCliServer } = await resolveWritableuniCliTarget();
+        if (!canUseuniCliServer || !uniCliClient || !uniCliWorkspaceId) {
           throw new Error("The local Uni-CLI server is required for managed MCP sign-in.");
         }
         mutateState((current) => ({ ...current, mcpStatus: null, mcpConnectingName: entry.name }));
-        const result = await uni-cliClient.connectManagedMcp(uni-cliWorkspaceId, entry.name);
-        const connected = await waitForManagedMcpAuthorization(uni-cliClient, uni-cliWorkspaceId, entry.name, result);
+        const result = await uniCliClient.connectManagedMcp(uniCliWorkspaceId, entry.name);
+        const connected = await waitForManagedMcpAuthorization(uniCliClient, uniCliWorkspaceId, entry.name, result);
         await refreshMcpServers();
         if (connected) setStateField("mcpStatus", t("mcp.connected"));
       } catch (error) {
@@ -1168,38 +1168,38 @@ export function createConnectionsStore(options: {
   }
 
   async function logoutMcpAuth(name: string) {
-    const uni-cliSnapshot = getuni-cliSnapshot();
+    const uniCliSnapshot = getuniCliSnapshot();
     const isRemoteWorkspace =
       options.workspaceType() === "remote" ||
-      (!isDesktopRuntime() && uni-cliSnapshot.uni-cliServerStatus === "connected");
+      (!isDesktopRuntime() && uniCliSnapshot.uniCliServerStatus === "connected");
     const projectDir = options.projectDir().trim();
 
-    const { uni-cliClient, uni-cliWorkspaceId, hasuni-cliTarget, canUseuni-cliServer } =
-      await resolveWritableuni-cliTarget();
+    const { uniCliClient, uniCliWorkspaceId, hasuniCliTarget, canUseuniCliServer } =
+      await resolveWritableuniCliTarget();
 
-    if (isRemoteWorkspace && !canUseuni-cliServer) {
+    if (isRemoteWorkspace && !canUseuniCliServer) {
       setStateField("mcpStatus", "Uni-CLI server unavailable. MCP auth is read-only.");
       return;
     }
 
-    if (hasuni-cliTarget && !canUseuni-cliServer) {
+    if (hasuniCliTarget && !canUseuniCliServer) {
       setStateField("mcpStatus", "Uni-CLI server MCP auth is read-only.");
       return;
     }
 
-    if (!canUseuni-cliServer && !isDesktopRuntime()) {
+    if (!canUseuniCliServer && !isDesktopRuntime()) {
       setStateField("mcpStatus", t("mcp.desktop_required"));
       return;
     }
 
-    const activeClient = canUseuni-cliServer ? options.client() : await ensureActiveClient();
-    if (!activeClient && !canUseuni-cliServer) {
+    const activeClient = canUseuniCliServer ? options.client() : await ensureActiveClient();
+    if (!activeClient && !canUseuniCliServer) {
       setStateField("mcpStatus", t("mcp.connect_server_first"));
       return;
     }
 
     const resolvedProjectDir = activeClient ? await resolveProjectDir(activeClient, projectDir) : projectDir;
-    if (!resolvedProjectDir && !canUseuni-cliServer) {
+    if (!resolvedProjectDir && !canUseuniCliServer) {
       setStateField("mcpStatus", t("mcp.pick_workspace_first"));
       return;
     }
@@ -1208,8 +1208,8 @@ export function createConnectionsStore(options: {
     setStateField("mcpStatus", null);
 
     try {
-      if (canUseuni-cliServer && uni-cliClient && uni-cliWorkspaceId) {
-        await uni-cliClient.logoutMcpAuth(uni-cliWorkspaceId, safeName);
+      if (canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
+        await uniCliClient.logoutMcpAuth(uniCliWorkspaceId, safeName);
       } else {
         if (!activeClient || !resolvedProjectDir) {
           throw new Error(t("mcp.connect_server_first"));
@@ -1237,13 +1237,13 @@ export function createConnectionsStore(options: {
     try {
       setStateField("mcpStatus", null);
 
-      const { uni-cliClient, uni-cliWorkspaceId, hasuni-cliTarget, canUseuni-cliServer } =
-        await resolveWritableuni-cliTarget();
+      const { uniCliClient, uniCliWorkspaceId, hasuniCliTarget, canUseuniCliServer } =
+        await resolveWritableuniCliTarget();
 
-      if (canUseuni-cliServer && uni-cliClient && uni-cliWorkspaceId) {
-        await uni-cliClient.removeMcp(uni-cliWorkspaceId, name);
+      if (canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
+        await uniCliClient.removeMcp(uniCliWorkspaceId, name);
       } else {
-        if (hasuni-cliTarget) {
+        if (hasuniCliTarget) {
           setStateField("mcpStatus", "Uni-CLI server MCP config is read-only.");
           return;
         }
@@ -1318,15 +1318,15 @@ export function createConnectionsStore(options: {
   async function setMcpEnabled(name: string, enabled: boolean) {
     if (mcpMutationDenied(Boolean(builtInMcp(name)))) return;
     try {
-      const { uni-cliClient, uni-cliWorkspaceId, canUseuni-cliServer } =
-        await resolveWritableuni-cliTarget();
+      const { uniCliClient, uniCliWorkspaceId, canUseuniCliServer } =
+        await resolveWritableuniCliTarget();
 
-      if (!canUseuni-cliServer || !uni-cliClient || !uni-cliWorkspaceId) {
+      if (!canUseuniCliServer || !uniCliClient || !uniCliWorkspaceId) {
         setStateField("mcpStatus", t("mcp.toggle_requires_server"));
         return;
       }
 
-      await uni-cliClient.setMcpEnabled(uni-cliWorkspaceId, name, enabled);
+      await uniCliClient.setMcpEnabled(uniCliWorkspaceId, name, enabled);
       if (name === CLOUD_MCP_SERVER_NAME) {
         const context = await resolveCloudMcpOperationContext(null);
         if (enabled) {
@@ -1406,7 +1406,7 @@ export function createConnectionsStore(options: {
       return;
     }
 
-    if (!isDesktopRuntime() && getuni-cliSnapshot().uni-cliServerStatus !== "connected") {
+    if (!isDesktopRuntime() && getuniCliSnapshot().uniCliServerStatus !== "connected") {
       return;
     }
 

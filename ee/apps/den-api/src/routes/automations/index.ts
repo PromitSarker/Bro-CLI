@@ -52,7 +52,7 @@ import { automationService, type AutomationService } from "../../automations/ser
 import { automationRunnerComputerIds } from "../../automations/repository.js"
 import { automationRunnerAudienceFromRequest, automationRunnerAuth } from "../../automations/runner-auth.js"
 import { env } from "../../env.js"
-import { Uni-CLIWebAccessRequiredError } from "../../uni-cli-web-runtime-access.js"
+import { UniCliWebAccessRequiredError } from "../../uni-cli-web-runtime-access.js"
 import { databaseRemoteSessionCommandStore, type RemoteSessionCommandStore } from "../../remote-sessions/commands.js"
 import { databaseRemoteSessionRequestStore, type RemoteSessionRequestStore } from "../../remote-sessions/requests.js"
 import {
@@ -71,10 +71,10 @@ const paginationSchema = z.object({
 const runListSchema = z.object({ items: z.array(automationRunSchema), nextCursor: z.string().nullable() }).meta({ ref: "AutomationRunList" })
 const runResponseSchema = z.object({ run: automationRunSchema }).meta({ ref: "AutomationRunResponse" })
 const runnerClaimResponseSchema = z.object({ assignment: automationDesktopRunnerAssignmentSchema.nullable() })
-const uni-cliWebAccessRequiredSchema = z.object({
+const uniCliWebAccessRequiredSchema = z.object({
   error: z.literal("uni-cli_web_access_required"),
   message: z.string(),
-}).meta({ ref: "AutomationUni-CLIWebAccessRequiredError" })
+}).meta({ ref: "AutomationUniCliWebAccessRequiredError" })
 type McpDescribeRouteOptions = DescribeRouteOptions & { "x-mcp": true }
 const describeMcpRoute = (options: McpDescribeRouteOptions) => describeRoute(options)
 // Runner-credential routes must never surface as MCP tools; an MCP caller with
@@ -119,7 +119,7 @@ async function runNowBody(c: { req: { text(): Promise<string> } }) {
 }
 
 function failure(error: unknown): { status: 400 | 403 | 404 | 409; body: { error: string; message?: string } } | null {
-  if (error instanceof Uni-CLIWebAccessRequiredError) {
+  if (error instanceof UniCliWebAccessRequiredError) {
     return { status: 403, body: { error: error.code, message: error.message } }
   }
   if (!(error instanceof Error)) return null
@@ -732,7 +732,7 @@ export function registerAutomationRoutes<T extends { Variables: RouteVariables }
         201: jsonResponse("Active Automation created.", automationDetailSchema),
         400: jsonResponse("Invalid request.", invalidRequestSchema),
         401: jsonResponse("Sign-in required.", unauthorizedSchema),
-        403: jsonResponse("Uni-CLI Web access is required.", uni-cliWebAccessRequiredSchema),
+        403: jsonResponse("Uni-CLI Web access is required.", uniCliWebAccessRequiredSchema),
         409: jsonResponse("Cloud runtime or model access is unavailable.", invalidRequestSchema),
       },
     }),
@@ -758,7 +758,7 @@ export function registerAutomationRoutes<T extends { Variables: RouteVariables }
         201: jsonResponse("Active Cloud Automation created.", automationDetailSchema),
         400: jsonResponse("Invalid request.", invalidRequestSchema),
         401: jsonResponse("Sign-in required.", unauthorizedSchema),
-        403: jsonResponse("Uni-CLI Web access is required.", uni-cliWebAccessRequiredSchema),
+        403: jsonResponse("Uni-CLI Web access is required.", uniCliWebAccessRequiredSchema),
         409: jsonResponse("Cloud runtime or model access is unavailable.", invalidRequestSchema),
       },
     }),
@@ -798,7 +798,7 @@ export function registerAutomationRoutes<T extends { Variables: RouteVariables }
       responses: {
         200: jsonResponse("Automation updated.", automationDetailSchema),
         400: jsonResponse("Invalid request.", invalidRequestSchema),
-        403: jsonResponse("Uni-CLI Web access is required for Cloud Automations.", uni-cliWebAccessRequiredSchema),
+        403: jsonResponse("Uni-CLI Web access is required for Cloud Automations.", uniCliWebAccessRequiredSchema),
         409: jsonResponse("Cloud runtime or model access is unavailable.", invalidRequestSchema),
       },
     }),
@@ -828,7 +828,7 @@ export function registerAutomationRoutes<T extends { Variables: RouteVariables }
       responses: {
         200: jsonResponse("Automation state returned.", automationDetailSchema),
         ...(action === "activate" ? {
-          403: jsonResponse("Uni-CLI Web access is required to activate a Cloud Automation.", uni-cliWebAccessRequiredSchema),
+          403: jsonResponse("Uni-CLI Web access is required to activate a Cloud Automation.", uniCliWebAccessRequiredSchema),
         } : {}),
         404: jsonResponse("Not found.", notFoundSchema),
       },
@@ -877,7 +877,7 @@ export function registerAutomationRoutes<T extends { Variables: RouteVariables }
       responses: {
         202: jsonResponse("Run queued.", runResponseSchema),
         400: jsonResponse("Invalid request.", invalidRequestSchema),
-        403: jsonResponse("Uni-CLI Web access is required to run a Cloud Automation.", uni-cliWebAccessRequiredSchema),
+        403: jsonResponse("Uni-CLI Web access is required to run a Cloud Automation.", uniCliWebAccessRequiredSchema),
         404: jsonResponse("Not found.", notFoundSchema),
         409: jsonResponse("Cloud runtime or model access is unavailable.", invalidRequestSchema),
       },

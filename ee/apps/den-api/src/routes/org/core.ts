@@ -23,8 +23,8 @@ import { validateInvitationAcceptVerification } from "../../organization-join-ve
 import { normalizeOrganizationMetadata } from "../../organization-limits.js"
 import { organizationHasCapability, organizationManagedDashboardsEnabled } from "../../organization-capabilities.js"
 import { appMcpServersEnabled } from "../../mcp-app-rollout.js"
-import { isUni-CLIWebAvailableForOrganization } from "../../uni-cli-web-availability.js"
-import { getUni-CLIWebAccess } from "../../stripe-billing.js"
+import { isUniCliWebAvailableForOrganization } from "../../uni-cli-web-availability.js"
+import { getUniCliWebAccess } from "../../stripe-billing.js"
 import {
   acceptInvitationForUser,
   createOrganizationForUser,
@@ -686,7 +686,7 @@ export function registerOrgCoreRoutes<T extends { Variables: OrgRouteVariables }
       // platform-admin complimentary grant) on hosted deployments; there is no
       // separate per-organization Cloud rollout flag.
       const cloudEnabled = cloudHostingAvailable({ orgMode: env.orgMode })
-        && (await getUni-CLIWebAccess(payload.organization.id)).hasAccess
+        && (await getUniCliWebAccess(payload.organization.id)).hasAccess
       const [ssoRows, scimRows] = await Promise.all([
         db
           .select({ id: SsoConnectionTable.id })
@@ -746,7 +746,7 @@ export function registerOrgCoreRoutes<T extends { Variables: OrgRouteVariables }
           // Effective offer: the deployment switch enables Web generally,
           // while the platform-admin complimentary grant enables only this
           // organization when the deployment switch is off.
-          uni-cliWeb: isUni-CLIWebAvailableForOrganization(payload.organization.metadata),
+          uniCliWeb: isUniCliWebAvailableForOrganization(payload.organization.metadata),
           ...(cloudEnabled ? { cloud: true } : {}),
         },
         authMethods: {

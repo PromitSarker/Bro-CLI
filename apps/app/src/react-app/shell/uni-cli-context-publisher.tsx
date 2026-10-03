@@ -5,11 +5,11 @@ import { useLocation } from "react-router";
 import { usePanelTabStore } from "../domains/session/panel/panel-tab-store";
 import { useWorkbenchStore } from "../domains/session/chat/workbench-store";
 import { useSessionManagementStore } from "../domains/session/sidebar/session-management-store";
-import { usePublishuni-cliContext } from "./control/control-provider";
-import { builduni-cliContext } from "./uni-cli-context-projector";
+import { usePublishuniCliContext } from "./control/control-provider";
+import { builduniCliContext } from "./uni-cli-context-projector";
 import { useUiStateStore } from "./ui-state-store";
 
-export function uni-cliContextPublisher() {
+export function uniCliContextPublisher() {
   const location = useLocation();
   const revision = useWorkbenchStore((state) => state.revision);
   const primary = useWorkbenchStore((state) => state.primary);
@@ -24,7 +24,7 @@ export function uni-cliContextPublisher() {
   const pinnedSessionIds = useSessionManagementStore((state) => state.pinnedIds);
   const route = `${location.pathname}${location.search}${location.hash}`;
 
-  const context = useMemo(() => builduni-cliContext({
+  const context = useMemo(() => builduniCliContext({
     route,
     revision,
     capturedAt: new Date().toISOString(),
@@ -60,6 +60,6 @@ export function uni-cliContextPublisher() {
     workspaceRightSidebarExpanded,
   ]);
 
-  usePublishuni-cliContext(context);
+  usePublishuniCliContext(context);
   return null;
 }

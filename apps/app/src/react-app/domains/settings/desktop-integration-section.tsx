@@ -79,7 +79,7 @@ export function DesktopIntegrationSection() {
   if (!status?.supported) return null;
 
   const externallyManaged = status.ownership === "external";
-  const uni-cliManaged = status.ownership === "uni-cli";
+  const uniCliManaged = status.ownership === "uni-cli";
 
   return (
     <LayoutSection>
@@ -104,7 +104,7 @@ export function DesktopIntegrationSection() {
                 Integrate
               </Button>
             ) : null}
-            {uni-cliManaged ? (
+            {uniCliManaged ? (
               <>
                 <Button
                   size="sm"

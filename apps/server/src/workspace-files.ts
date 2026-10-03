@@ -5,7 +5,7 @@ export function opencodeConfigPath(workspaceRoot: string): string {
   return resolveWorkspaceOpencodeConfigPath(workspaceRoot);
 }
 
-export function uni-cliConfigPath(workspaceRoot: string): string {
+export function uniCliConfigPath(workspaceRoot: string): string {
   return join(workspaceRoot, ".opencode", "uni-cli.json");
 }
 

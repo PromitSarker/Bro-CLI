@@ -1,5 +1,5 @@
 import { dirname, join, resolve } from "node:path";
-import { uni-cliConfigDir } from "@uni-cli/paths";
+import { uniCliConfigDir } from "@uni-cli/paths";
 import type { Database as BunDatabase } from "bun:sqlite";
 import type { BunSQLiteDatabase } from "drizzle-orm/bun-sqlite";
 import type { DatabaseSync } from "node:sqlite";
@@ -36,7 +36,7 @@ export function runtimeDbPath(config: ServerConfig): string {
   const override = process.env.UNICLI_RUNTIME_DB?.trim();
   if (override) return resolve(override);
   const configPath = config.configPath?.trim();
-  const configDir = configPath ? dirname(configPath) : uni-cliConfigDir();
+  const configDir = configPath ? dirname(configPath) : uniCliConfigDir();
   return join(configDir, "runtime.sqlite");
 }
 

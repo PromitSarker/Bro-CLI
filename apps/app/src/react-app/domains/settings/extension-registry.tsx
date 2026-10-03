@@ -2,7 +2,7 @@
 import type { ReactNode } from "react";
 import type { McpDirectoryInfo } from "../../../app/constants";
 import { extensionContribution } from "../../../app/extensions";
-import type { uni-cliServerClient } from "../../../app/lib/uni-cli-server";
+import type { uniCliServerClient } from "../../../app/lib/uni-cli-server";
 import type { LocalProviderInstallInput } from "./openai-image-extension";
 
 /**
@@ -10,8 +10,8 @@ import type { LocalProviderInstallInput } from "./openai-image-extension";
  * Each extension picks what it needs; unused fields are ignored.
  */
 export type ExtensionConfigContext = {
-  uni-cliServerClient?: uni-cliServerClient | null;
-  hostuni-cliServerClient?: uni-cliServerClient | null;
+  uniCliServerClient?: uniCliServerClient | null;
+  hostuniCliServerClient?: uniCliServerClient | null;
   restartLocalServer?: () => Promise<boolean>;
   imageExtension: {
     busy: boolean;

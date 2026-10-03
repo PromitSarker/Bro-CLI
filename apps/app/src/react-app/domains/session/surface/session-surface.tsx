@@ -26,10 +26,10 @@ import { denSettingsChangedEvent } from "@/app/lib/den-session-events";
 import { hasMovedRejectedTurn, rejectedTurnOwner, useRejectedTurns, useSessionDraftState } from "@/react-app/domains/session/sync/draft-store";
 import { mergeRejectedTurns, retainRejectedTurn } from "@/react-app/domains/session/sync/rejected-turn";
 import type {
-  uni-cliServerClient,
-  uni-cliSessionHistory,
+  uniCliServerClient,
+  uniCliSessionHistory,
 } from "@/app/lib/uni-cli-server";
-import { isLoopbackuni-cliServerUrl } from "@/app/lib/uni-cli-server";
+import { isLoopbackuniCliServerUrl } from "@/app/lib/uni-cli-server";
 import type {
   ComposerAttachment,
   ComposerDraft,
@@ -47,7 +47,7 @@ import {
   publishInspectorSlice,
   recordInspectorEvent,
 } from "@/app/lib/app-inspector";
-import { useControlAction, type uni-cliControlAction } from "@/react-app/shell/control/control-provider";
+import { useControlAction, type uniCliControlAction } from "@/react-app/shell/control/control-provider";
 import { isConnectDirectMcpServerName } from "@/react-app/domains/connections/cloud-mcp-user-state";
 import { attemptSilentMcpReauth } from "@/react-app/domains/connections/mcp-silent-reauth";
 import type {
@@ -192,7 +192,7 @@ function sanitizedInspectorDiagnosticText(value: string) {
   return value
     .replace(/https?:\/\/[^\s"'<>]+/gi, "[url]")
     .replace(/\b(Bearer|Basic)\s+[^\s"'<>]+/gi, "$1 [redacted]")
-    .replace(/\b(authorization|ownerToken|clientToken|uni-cliToken|accessToken|apiKey|token)\b\s*[=:]\s*[^\s,;]+/gi, "$1=[redacted]")
+    .replace(/\b(authorization|ownerToken|clientToken|uniCliToken|accessToken|apiKey|token)\b\s*[=:]\s*[^\s,;]+/gi, "$1=[redacted]")
     .replace(/[\r\n\t]+/g, " ")
     .slice(0, 240);
 }
@@ -591,8 +591,8 @@ function createImageLightboxEvalMessages(sessionId: string): UIMessage[] {
 }
 
 export type SessionSurfaceProps = {
-  client: uni-cliServerClient;
-  environmentClient?: uni-cliServerClient | null;
+  client: uniCliServerClient;
+  environmentClient?: uniCliServerClient | null;
   workspaceId: string;
   workspaceRoot: string;
   sessionId: string;
@@ -600,7 +600,7 @@ export type SessionSurfaceProps = {
   isControlTarget: boolean;
   chatPane?: "primary" | "secondary";
   opencodeBaseUrl: string;
-  uni-cliToken: string;
+  uniCliToken: string;
   developerMode: boolean;
   modelLabel: string;
   onModelClick: (sessionId?: string) => void;
@@ -621,9 +621,9 @@ export type SessionSurfaceProps = {
   gatewayProviderIds?: ReadonlySet<string>;
   gatewayUsageProviderScope?: number | null;
   /** Den/import includes Uni-CLI Models for this org member (not just local sync). */
-  uni-cliModelsEntitled?: boolean;
+  uniCliModelsEntitled?: boolean;
   /** The server is waiting to reload this workspace with Uni-CLI Models. */
-  uni-cliModelsSyncing?: boolean;
+  uniCliModelsSyncing?: boolean;
   onRefreshOrganizationModels?: () => void | Promise<void>;
   modelOptions?: readonly ModelOption[];
   onModelPickerOpenChange: (open: boolean) => void;
@@ -965,7 +965,7 @@ function composerSessionHasContent(state: ComposerSessionState | undefined) {
   ));
 }
 
-function hiddenMessageCount(snapshot: uni-cliSessionHistory, revertMessageId: string): number {
+function hiddenMessageCount(snapshot: uniCliSessionHistory, revertMessageId: string): number {
   const index = snapshot.messages.findIndex((message) => message.info.id === revertMessageId);
   return index < 0 ? snapshot.messages.length : snapshot.messages.length - index;
 }
@@ -1088,7 +1088,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
   // session.
   const queryClient = useQueryClient();
   const rejectedDenBaseUrl = readDenSettings().baseUrl;
-  const localRejectedRuntime = isDesktopRuntime() && !props.isRemoteWorkspace && !props.isSandboxWorkspace && isLoopbackuni-cliServerUrl(props.client.baseUrl);
+  const localRejectedRuntime = isDesktopRuntime() && !props.isRemoteWorkspace && !props.isSandboxWorkspace && isLoopbackuniCliServerUrl(props.client.baseUrl);
   const rejectedOwner = useMemo(() => rejectedTurnOwner({ draftScope: props.draftScope, denBaseUrl: rejectedDenBaseUrl,
     opencodeBaseUrl: props.opencodeBaseUrl, workspaceId: props.workspaceId, sessionId: props.sessionId, localRuntime: localRejectedRuntime,
   }), [props.draftScope, rejectedDenBaseUrl, props.opencodeBaseUrl, props.workspaceId, props.sessionId, localRejectedRuntime]);
@@ -1111,7 +1111,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
       workspaceId: props.workspaceId,
       workspaceRoot: props.workspaceRoot,
       opencodeBaseUrl: props.opencodeBaseUrl,
-      uni-cliToken: props.uni-cliToken,
+      uniCliToken: props.uniCliToken,
       client: props.client,
       agent: sessionAgent.selectedAgent,
       variant: props.modelVariant,
@@ -1123,7 +1123,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
     props.environmentRuntimeKey,
     props.modelVariant,
     props.opencodeBaseUrl,
-    props.uni-cliToken,
+    props.uniCliToken,
     sessionAgent.selectedAgent,
     props.selectedModel,
     props.sessionId,
@@ -1197,12 +1197,12 @@ export function SessionSurface(props: SessionSurfaceProps) {
   }, []);
   const snapshotTargetRef = useRef<NativeSessionSnapshotTarget>({
     owner: sessionOwner,
-    endpoint: { opencodeBaseUrl: props.opencodeBaseUrl, token: props.uni-cliToken },
+    endpoint: { opencodeBaseUrl: props.opencodeBaseUrl, token: props.uniCliToken },
     sessionId: props.sessionId,
   });
   snapshotTargetRef.current = {
     owner: sessionOwner,
-    endpoint: { opencodeBaseUrl: props.opencodeBaseUrl, token: props.uni-cliToken },
+    endpoint: { opencodeBaseUrl: props.opencodeBaseUrl, token: props.uniCliToken },
     sessionId: props.sessionId,
   };
   const [ownedError, setOwnedError] = useState<{ owner: string; error: SessionError } | null>(null);
@@ -1216,7 +1216,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
   // Terminal invariant: an accepted admission that reached idle with no
   // assistant result surfaces a bounded recovery card instead of plain idle.
   const [admissionOutcomeUnresolved, setAdmissionOutcomeUnresolved] = useState(false);
-  const [rendered, setRendered] = useState<{ owner: string; sessionId: string; snapshot: uni-cliSessionHistory } | null>(null);
+  const [rendered, setRendered] = useState<{ owner: string; sessionId: string; snapshot: uniCliSessionHistory } | null>(null);
   const [toolSkills, setToolSkills] = useState<SkillCard[]>([]);
   const [toolMcpServers, setToolMcpServers] = useState<McpServerEntry[]>([]);
   const [toolMcpStatus, setToolMcpStatus] = useState<string | null>(null);
@@ -1262,9 +1262,9 @@ export function SessionSurface(props: SessionSurfaceProps) {
   const initializedAutoOpenSessionRef = useRef<string | null>(null);
   const opencodeClient = useMemo(
     () => isOpencodeV2BaseUrl(props.opencodeBaseUrl)
-      ? createClientV2(props.opencodeBaseUrl, props.workspaceRoot || undefined, { token: props.uni-cliToken })
-      : createClient(props.opencodeBaseUrl, props.workspaceRoot.trim() || undefined, { token: props.uni-cliToken, mode: "uni-cli" }),
-    [props.opencodeBaseUrl, props.uni-cliToken, props.workspaceRoot],
+      ? createClientV2(props.opencodeBaseUrl, props.workspaceRoot || undefined, { token: props.uniCliToken })
+      : createClient(props.opencodeBaseUrl, props.workspaceRoot.trim() || undefined, { token: props.uniCliToken, mode: "uni-cli" }),
+    [props.opencodeBaseUrl, props.uniCliToken, props.workspaceRoot],
   );
 
   const transcriptQueryKey = useMemo(
@@ -1276,7 +1276,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
     [props.workspaceId, props.sessionId],
   );
   const useDesktopLoopbackSnapshotRetry = isDesktopRuntime()
-    && isLoopbackuni-cliServerUrl(props.opencodeBaseUrl);
+    && isLoopbackuniCliServerUrl(props.opencodeBaseUrl);
   const readSnapshot = useCallback(async (signal: AbortSignal, window?: OpeningHistoryWindow, options?: { desktopTransport: "main" }) => {
       if (evalSnapshotFailureRef.current) {
         throw new Error("eval: forced session snapshot failure");
@@ -1292,13 +1292,13 @@ export function SessionSurface(props: SessionSurfaceProps) {
           { ...window, signal },
         )
         : await opencodeSessionNative.composeNativeSessionHistory(
-          { opencodeBaseUrl: props.opencodeBaseUrl, token: props.uni-cliToken, desktopTransport: options?.desktopTransport },
+          { opencodeBaseUrl: props.opencodeBaseUrl, token: props.uniCliToken, desktopTransport: options?.desktopTransport },
           props.sessionId,
           { ...window, signal },
         );
       markSessionSnapshotFetchStart(item, startedAt);
       return item;
-  }, [props.opencodeBaseUrl, props.uni-cliToken, props.sessionId, sessionOwner, useDesktopLoopbackSnapshotRetry]);
+  }, [props.opencodeBaseUrl, props.uniCliToken, props.sessionId, sessionOwner, useDesktopLoopbackSnapshotRetry]);
   const readOpening = useCallback(async (signal: AbortSignal, window: OpeningHistoryWindow) => {
     if (evalSnapshotFailureRef.current) throw new Error("eval: forced session snapshot failure");
     const startedAt = Date.now();
@@ -1306,28 +1306,28 @@ export function SessionSurface(props: SessionSurfaceProps) {
     // retained read never follows a later owner. Its bounded retry only covers
     // transient failures; permanent ones settle immediately into Retry.
     const target = { owner: sessionOwner, sessionId: props.sessionId,
-      endpoint: { opencodeBaseUrl: props.opencodeBaseUrl, token: props.uni-cliToken } };
+      endpoint: { opencodeBaseUrl: props.opencodeBaseUrl, token: props.uniCliToken } };
     const item = await opencodeSessionNative.composeNativeSessionHistoryWithRetry(sessionOwner, () => target, { ...window, signal });
     markSessionSnapshotFetchStart(item, startedAt);
     return item;
-  }, [props.opencodeBaseUrl, props.uni-cliToken, props.sessionId, sessionOwner]);
+  }, [props.opencodeBaseUrl, props.uniCliToken, props.sessionId, sessionOwner]);
   const readLatest = useCallback(async (signal: AbortSignal, options?: { desktopTransport: "main" }) => {
-    const endpoint = { opencodeBaseUrl: props.opencodeBaseUrl, token: props.uni-cliToken, ...options };
+    const endpoint = { opencodeBaseUrl: props.opencodeBaseUrl, token: props.uniCliToken, ...options };
     const [session, messages] = await Promise.all([
       opencodeSessionNative.getNativeSession(endpoint, props.sessionId, { signal }),
       opencodeSessionNative.getNativeSessionMessages(endpoint, props.sessionId, { signal, limit: LATEST_HISTORY_WINDOW }),
     ]);
     return { session, messages };
-  }, [props.opencodeBaseUrl, props.uni-cliToken, props.sessionId]);
-  const snapshotOwnerRef = useRef({ queryKey: snapshotQueryKey, owner: sessionOwner, authToken: props.uni-cliToken });
+  }, [props.opencodeBaseUrl, props.uniCliToken, props.sessionId]);
+  const snapshotOwnerRef = useRef({ queryKey: snapshotQueryKey, owner: sessionOwner, authToken: props.uniCliToken });
   const snapshotOwnerMatches = hashKey(snapshotOwnerRef.current.queryKey) !== hashKey(snapshotQueryKey)
-    || snapshotOwnerRef.current.owner === sessionOwner && snapshotOwnerRef.current.authToken === props.uni-cliToken;
+    || snapshotOwnerRef.current.owner === sessionOwner && snapshotOwnerRef.current.authToken === props.uniCliToken;
   const metadataQueryKey = useMemo(() => sessionMetadataKey({ workspaceId: props.workspaceId,
-    baseUrl: props.opencodeBaseUrl, uni-cliToken: props.uni-cliToken }, props.sessionId),
-  [props.workspaceId, props.opencodeBaseUrl, props.uni-cliToken, props.sessionId]);
-  const openingHistory = useOpeningSessionHistory({ owner: sessionOwner, runtimeOwner, sessionId: props.sessionId, authToken: props.uni-cliToken,
+    baseUrl: props.opencodeBaseUrl, uniCliToken: props.uniCliToken }, props.sessionId),
+  [props.workspaceId, props.opencodeBaseUrl, props.uniCliToken, props.sessionId]);
+  const openingHistory = useOpeningSessionHistory({ owner: sessionOwner, runtimeOwner, sessionId: props.sessionId, authToken: props.uniCliToken,
     ignoreCached: !snapshotOwnerMatches, metadataQueryKey, snapshotQueryKey, transcriptQueryKey, readSnapshot, readOpening, readLatest });
-  const snapshotQuery = useQuery<uni-cliSessionHistory>({
+  const snapshotQuery = useQuery<uniCliSessionHistory>({
     queryKey: snapshotQueryKey,
     queryFn: ({ signal }) => openingHistory.readFullSnapshot(signal),
     enabled: openingHistory.backgroundReady || findOwned,
@@ -1340,12 +1340,12 @@ export function SessionSurface(props: SessionSurfaceProps) {
   const historyViewOwner = JSON.stringify([sessionOwner, openingHistory.options.queryKey[2]]);
   useEffect(() => {
     const previous = snapshotOwnerRef.current;
-    snapshotOwnerRef.current = { queryKey: snapshotQueryKey, owner: sessionOwner, authToken: props.uni-cliToken };
+    snapshotOwnerRef.current = { queryKey: snapshotQueryKey, owner: sessionOwner, authToken: props.uniCliToken };
     if (hashKey(previous.queryKey) !== hashKey(snapshotQueryKey)
-      || previous.owner === sessionOwner && previous.authToken === props.uni-cliToken) return;
+      || previous.owner === sessionOwner && previous.authToken === props.uniCliToken) return;
     void queryClient.resetQueries({ queryKey: snapshotQueryKey, exact: true });
     void queryClient.resetQueries({ queryKey: transcriptQueryKey, exact: true });
-  }, [queryClient, sessionOwner, props.uni-cliToken, snapshotQueryKey, transcriptQueryKey]);
+  }, [queryClient, sessionOwner, props.uniCliToken, snapshotQueryKey, transcriptQueryKey]);
 
   const fullSnapshot = snapshotOwnerMatches && snapshotQuery.data?.session.id === props.sessionId ? snapshotQuery.data : null;
   const hasFullHistory = snapshotOwnerMatches && openingHistory.complete;
@@ -1439,7 +1439,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
         currentSnapshotId: currentSnapshot?.session.id ?? null,
         intendedSessionId: props.sessionId,
         opencodeBaseUrl: inspectorOpencodeBaseUrl,
-        tokenPresent: props.uni-cliToken.length > 0,
+        tokenPresent: props.uniCliToken.length > 0,
       },
       error,
     }));
@@ -1452,7 +1452,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
     pasteParts,
     currentSnapshot,
     inspectorOpencodeBaseUrl,
-    props.uni-cliToken,
+    props.uniCliToken,
     props.sessionId,
     props.workspaceId,
     props.cloudMcpSubmissionState,
@@ -1651,7 +1651,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
   useEffect(() => {
     renderedMessagesRef.current = renderedMessages;
   }, [renderedMessages]);
-  const seedMarkdownPrimitiveControlAction = useMemo<uni-cliControlAction | null>(() => {
+  const seedMarkdownPrimitiveControlAction = useMemo<uniCliControlAction | null>(() => {
     if (!import.meta.env.DEV) return null;
 
     return {
@@ -1673,7 +1673,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
     };
   }, [props.sessionId]);
   useControlAction(props.isControlTarget ? seedMarkdownPrimitiveControlAction : null);
-  const setMermaidEvalThemeControlAction = useMemo<uni-cliControlAction | null>(() => {
+  const setMermaidEvalThemeControlAction = useMemo<uniCliControlAction | null>(() => {
     if (!import.meta.env.DEV) return null;
 
     return {
@@ -1691,7 +1691,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
     };
   }, [props.sessionId]);
   useControlAction(props.isControlTarget ? setMermaidEvalThemeControlAction : null);
-  const seedMarkdownMathControlAction = useMemo<uni-cliControlAction | null>(() => {
+  const seedMarkdownMathControlAction = useMemo<uniCliControlAction | null>(() => {
     if (!import.meta.env.DEV) return null;
 
     return {
@@ -1715,7 +1715,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
     };
   }, [props.sessionId]);
   useControlAction(props.isControlTarget ? seedMarkdownMathControlAction : null);
-  const seedChatTranscriptControlAction = useMemo<uni-cliControlAction | null>(() => {
+  const seedChatTranscriptControlAction = useMemo<uniCliControlAction | null>(() => {
     if (!import.meta.env.DEV) return null;
 
     return {
@@ -1732,7 +1732,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
     };
   }, [props.sessionId]);
   useControlAction(props.isControlTarget ? seedChatTranscriptControlAction : null);
-  const seedConnectorToolCallControlAction = useMemo<uni-cliControlAction | null>(() => {
+  const seedConnectorToolCallControlAction = useMemo<uniCliControlAction | null>(() => {
     if (!import.meta.env.DEV) return null;
 
     return {
@@ -1748,7 +1748,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
     };
   }, [props.sessionId]);
   useControlAction(props.isControlTarget ? seedConnectorToolCallControlAction : null);
-  const seedSessionErrorControlAction = useMemo<uni-cliControlAction | null>(() => {
+  const seedSessionErrorControlAction = useMemo<uniCliControlAction | null>(() => {
     if (!import.meta.env.DEV) return null;
 
     return {
@@ -1778,7 +1778,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
     };
   }, [props.sessionId, setError]);
   useControlAction(props.isControlTarget ? seedSessionErrorControlAction : null);
-  const seedSessionLifecycleControlAction = useMemo<uni-cliControlAction | null>(() => {
+  const seedSessionLifecycleControlAction = useMemo<uniCliControlAction | null>(() => {
     if (!import.meta.env.DEV) return null;
 
     return {
@@ -1820,7 +1820,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
     };
   }, [props.sessionId, props.workspaceId]);
   useControlAction(props.isControlTarget ? seedSessionLifecycleControlAction : null);
-  const seedSubagentActivityControlAction = useMemo<uni-cliControlAction | null>(() => {
+  const seedSubagentActivityControlAction = useMemo<uniCliControlAction | null>(() => {
     if (!import.meta.env.DEV) return null;
 
     return {
@@ -1854,7 +1854,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
     };
   }, [props.sessionId, props.workspaceId]);
   useControlAction(props.isControlTarget ? seedSubagentActivityControlAction : null);
-  const seedChatLoadingControlAction = useMemo<uni-cliControlAction | null>(() => {
+  const seedChatLoadingControlAction = useMemo<uniCliControlAction | null>(() => {
     if (!import.meta.env.DEV) return null;
 
     return {
@@ -1876,7 +1876,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
     };
   }, [props.sessionId, props.workspaceId]);
   useControlAction(props.isControlTarget ? seedChatLoadingControlAction : null);
-  const seedImageLightboxControlAction = useMemo<uni-cliControlAction | null>(() => {
+  const seedImageLightboxControlAction = useMemo<uniCliControlAction | null>(() => {
     if (!import.meta.env.DEV) return null;
 
     return {
@@ -2036,7 +2036,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
     // A failed send stays visible for composer recovery; only snapshot failure invalidates the session transition.
     isError: snapshotQuery.isError || Boolean(openingHistory.openingError),
   });
-  const failSessionSnapshotControlAction = useMemo<uni-cliControlAction | null>(() => {
+  const failSessionSnapshotControlAction = useMemo<uniCliControlAction | null>(() => {
     if (!import.meta.env.DEV) return null;
 
     return {
@@ -2179,7 +2179,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
     try {
       if (archived || !archiveStateKnown) throw new Error("This session is read-only. Restore it before sending.");
       const identity = readDenSettings();
-      const freeBlock = nextDraft.mode === "shell" ? null : isAutoModel(sessionModel.selectedModel) && props.uni-cliModelsSyncing
+      const freeBlock = nextDraft.mode === "shell" ? null : isAutoModel(sessionModel.selectedModel) && props.uniCliModelsSyncing
         ? { outcome: "blocked", reason: "auto-access", wall: { state: "sync" } } satisfies AutoAccessBlock
         : await preflightAutoSubmission({ model: sessionModel.selectedModel, client: props.client,
         isCurrent: () => autoSubmissionRef.current.mounted && activeSessionOwnerRef.current === sessionOwner
@@ -2265,7 +2265,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
       pendingSendsRef.current.delete(submissionId);
       setPendingSendSessions([...pendingSendsRef.current.values()]);
     }
-  }, [archived, archiveStateKnown, opencodeClient, openingHistory.readSendHistory, props.onSendDraft, props.opencodeBaseUrl, props.selectedAgent, props.sessionId, props.workspaceId, props.workspaceRoot, removeQueuedDraftFromStore, renderedMessages.length, sessionOwner, setError, props.client, props.uni-cliModelsSyncing, sessionModel.selectedModel, rejectedOwner, localRejectedRuntime, baseRenderedMessages]);
+  }, [archived, archiveStateKnown, opencodeClient, openingHistory.readSendHistory, props.onSendDraft, props.opencodeBaseUrl, props.selectedAgent, props.sessionId, props.workspaceId, props.workspaceRoot, removeQueuedDraftFromStore, renderedMessages.length, sessionOwner, setError, props.client, props.uniCliModelsSyncing, sessionModel.selectedModel, rejectedOwner, localRejectedRuntime, baseRenderedMessages]);
 
   const clearComposer = useCallback(() => {
     clearPersistedDraft();
@@ -2497,9 +2497,9 @@ export function SessionSurface(props: SessionSurfaceProps) {
   const handleStopSubagentSession = useCallback(async (childSessionId: string) => {
     const stopClient = isOpencodeV2BaseUrl(props.opencodeBaseUrl) ? opencodeClient
       : createClient(props.opencodeBaseUrl, props.workspaceRoot.trim() || undefined,
-        { token: props.uni-cliToken, mode: "uni-cli" }, { desktopTransport: "main" });
+        { token: props.uniCliToken, mode: "uni-cli" }, { desktopTransport: "main" });
     await abortSession(stopClient, childSessionId, props.workspaceRoot.trim() || undefined);
-  }, [opencodeClient, props.opencodeBaseUrl, props.uni-cliToken, props.workspaceRoot]);
+  }, [opencodeClient, props.opencodeBaseUrl, props.uniCliToken, props.workspaceRoot]);
 
   const handleAbort = useCallback(async () => {
     if (pendingStopsRef.current.has(sessionOwner)) return;
@@ -2540,7 +2540,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
       // and answers `200: false` while the stream keeps going (#2014).
       const stopClient = isOpencodeV2BaseUrl(props.opencodeBaseUrl) ? opencodeClient
         : createClient(props.opencodeBaseUrl, props.workspaceRoot.trim() || undefined,
-          { token: props.uni-cliToken, mode: "uni-cli" }, { desktopTransport: "main" });
+          { token: props.uniCliToken, mode: "uni-cli" }, { desktopTransport: "main" });
       await interruptSessionTurn(props.opencodeBaseUrl, stopClient, props.sessionId,
         props.workspaceRoot.trim() || undefined, {
           admissionUnknown: phase.kind === "admission_unknown",
@@ -2563,7 +2563,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
       pendingStopsRef.current.delete(sessionOwner);
       setPendingStopSessions([...pendingStopsRef.current]);
     }
-  }, [chatStreaming, clearQueuedDrafts, opencodeClient, openingHistory.refreshFullSnapshot, props.opencodeBaseUrl, props.uni-cliToken, props.sessionId, props.workspaceRoot, queryClient, sessionOwner, snapshotQueryKey, setError]);
+  }, [chatStreaming, clearQueuedDrafts, opencodeClient, openingHistory.refreshFullSnapshot, props.opencodeBaseUrl, props.uniCliToken, props.sessionId, props.workspaceRoot, queryClient, sessionOwner, snapshotQueryKey, setError]);
 
   const checkUnknownAdmission = useCallback(async (notify = false) => {
     const phase = getQueuedDrainState(props.sessionId).phase;
@@ -2847,7 +2847,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
     await waitForControl(40);
   }, [archived, archiveStateKnown, props.opencodeBaseUrl, props.sessionId, replaceComposerDraft]);
 
-  const composerSetTextControlAction = useMemo<uni-cliControlAction>(() => ({
+  const composerSetTextControlAction = useMemo<uniCliControlAction>(() => ({
     id: "composer.set_text",
     label: "Type into the composer",
     description: "Replace the draft of the composer the person currently has focused and type the supplied text visibly. Focus-bound: it targets whichever pane is focused when it runs, never a session by id. To message another session use session.send.",
@@ -2868,7 +2868,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
   }), [archived, archiveStateKnown, archiveHeld, attachments, buildDraft, props.onDraftChange, typeComposerText]);
   useControlAction(props.isControlTarget ? composerSetTextControlAction : null);
 
-  const composerSendControlAction = useMemo<uni-cliControlAction>(() => ({
+  const composerSendControlAction = useMemo<uniCliControlAction>(() => ({
     id: "composer.send",
     label: "Send the composer prompt",
     description: "Send the draft of the composer the person currently has focused to that session. Focus-bound: if focus moved since composer.set_text, the draft goes to the newly focused session. Disabled while that session is mid-turn. To message another session use session.send.",
@@ -2882,7 +2882,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
   }), [archived, archiveStateKnown, archiveHeld, attachments.length, draft, handleSend, model.transitionState, queuedDrainState.phase.kind, sessionModelUnavailable]);
   useControlAction(props.isControlTarget ? composerSendControlAction : null);
 
-  const composerStopControlAction = useMemo<uni-cliControlAction>(() => ({
+  const composerStopControlAction = useMemo<uniCliControlAction>(() => ({
     id: "composer.stop",
     label: "Stop the current run",
     description: "Stop the run of the session the person currently has focused. Focus-bound: it never targets a session by id.",
@@ -3320,7 +3320,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
       });
   }, [archived, archiveStateKnown, openingHistory.runWithFullSnapshot, props.onRestoreRevertedSession, props.opencodeBaseUrl, props.sessionId, queryClient, snapshotQueryKey, restoringRevertedMessages, sessionOwner, setError]);
 
-  const sessionScrollTopControlAction = useMemo<uni-cliControlAction>(() => ({
+  const sessionScrollTopControlAction = useMemo<uniCliControlAction>(() => ({
     id: "session.scroll_top",
     label: "Go to the top of the session",
     description: "Scroll the visible session transcript to the first messages.",
@@ -3333,7 +3333,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
   }), [sessionScroll.scrollToTop]);
   useControlAction(props.isControlTarget ? sessionScrollTopControlAction : null);
 
-  const sessionScrollBottomControlAction = useMemo<uni-cliControlAction>(() => ({
+  const sessionScrollBottomControlAction = useMemo<uniCliControlAction>(() => ({
     id: "session.scroll_bottom",
     label: "Go to the bottom of the session",
     description: "Scroll the visible session transcript to the newest messages and composer area.",
@@ -3346,7 +3346,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
   }), [sessionScroll.jumpToLatest]);
   useControlAction(props.isControlTarget ? sessionScrollBottomControlAction : null);
 
-  const sessionLatestMessageControlAction = useMemo<uni-cliControlAction>(() => ({
+  const sessionLatestMessageControlAction = useMemo<uniCliControlAction>(() => ({
     id: "session.latest_message",
     label: "Read the latest session message",
     description: "Return the latest visible message in the current session transcript.",
@@ -3367,7 +3367,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
   }), [props.sessionId, renderedMessages]);
   useControlAction(props.isControlTarget ? sessionLatestMessageControlAction : null);
 
-  const sessionReadTranscriptControlAction = useMemo<uni-cliControlAction>(() => ({
+  const sessionReadTranscriptControlAction = useMemo<uniCliControlAction>(() => ({
     id: "session.read_transcript",
     label: "Read the current session transcript",
     description: "Return the last messages from the current session transcript as readable text, including the session ID, title, and message count.",
@@ -3653,8 +3653,8 @@ export function SessionSurface(props: SessionSurfaceProps) {
         statusLabel={statusLabel(liveStatus, chatStreaming)}
         modelPickerOpen={modelPickerOpen}
         selectedModel={sessionModel.selectedModel}
-        uni-cliModelsEntitled={props.uni-cliModelsEntitled}
-        uni-cliModelsSyncing={props.uni-cliModelsSyncing}
+        uniCliModelsEntitled={props.uniCliModelsEntitled}
+        uniCliModelsSyncing={props.uniCliModelsSyncing}
         onRefreshOrganizationModels={props.onRefreshOrganizationModels}
         modelOptions={props.modelOptions}
         onModelPickerOpenChange={handleModelPickerOpenChange}

@@ -15,7 +15,7 @@ function session(value: unknown) {
   const row = data(value);
   if (!isRecord(row)) throw new Error("Invalid engine session response");
   const info = isRecord(row.info) ? row.info : row;
-  const home = info.uni-cliHomeDirectory;
+  const home = info.uniCliHomeDirectory;
   return { ...info, directory: home ?? (isRecord(info.location) ? info.location.directory : undefined) };
 }
 async function pages(read: Read, path: string, limit?: number): Promise<Record<string, unknown>[]> {

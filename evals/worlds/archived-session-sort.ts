@@ -19,10 +19,10 @@ export async function archivedSessionSort(seed: Seed) {
   // second workspace with this test-owned runtime's host API, not a browser grant.
   const paths = resolveHeadlessWorldRuntimePaths(fileURLToPath(new URL("../../", import.meta.url)), app.handle.name);
   const runtime = await readHeadlessRuntimeManifest(paths.runtimeManifestPath);
-  if (!runtime || runtime.uni-cliUrl !== app.uni-cliUrl || runtime.workspace !== workspacePath) {
+  if (!runtime || runtime.uniCliUrl !== app.uniCliUrl || runtime.workspace !== workspacePath) {
     throw new Error("Archive fixture could not identify its owned headless runtime");
   }
-  const response = await fetch(`${runtime.uni-cliUrl}/workspaces/local`, {
+  const response = await fetch(`${runtime.uniCliUrl}/workspaces/local`, {
     method: "POST",
     headers: { "X-Uni-CLI-Host-Token": runtime.hostToken, "Content-Type": "application/json" },
     body: JSON.stringify({ folderPath: `${workspacePath}/second`, name: "Second archive workspace", preset: "starter" }),

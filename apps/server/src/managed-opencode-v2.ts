@@ -1,7 +1,7 @@
 import type { EnginePermissionRule } from "./managed-policy-rules.js";
 import { nativeModelVariants } from "@uni-cli/types/cloud-model-fast";
 import { gatewayBase } from "./gateway-quota.js";
-import { uni-cliContextV2PluginPath, uni-cliGatewayQuotaV2PluginPath, uni-cliMcpResultsV2PluginPath, uni-cliProviderFiltersV2PluginPath } from "./uni-cli-extensions-plugin-path.js";
+import { uniCliContextV2PluginPath, uniCliGatewayQuotaV2PluginPath, uniCliMcpResultsV2PluginPath, uniCliProviderFiltersV2PluginPath } from "./uni-cli-extensions-plugin-path.js";
 import { pathToFileURL } from "node:url";
 // Parallel v2 lane prototype: provider injection is a watched-config write. This module
 // deliberately has no reload/dispose call, unlike managed-opencode.ts and server.ts reloadOpencodeEngine.
@@ -231,20 +231,20 @@ export async function createManagedOpencodeV2Server(
   await mkdir(gatewayQuotaPluginDirectory, { recursive: true, mode: 0o700 });
   await writeFile(join(gatewayQuotaPluginDirectory, "package.json"), JSON.stringify({ type: "module" }), { mode: 0o600 });
   await writeFile(join(gatewayQuotaPluginDirectory, "server.js"),
-    `export { default } from ${JSON.stringify(pathToFileURL(uni-cliGatewayQuotaV2PluginPath()).href)};\n`, { mode: 0o600 });
+    `export { default } from ${JSON.stringify(pathToFileURL(uniCliGatewayQuotaV2PluginPath()).href)};\n`, { mode: 0o600 });
   await mkdir(providerFiltersPluginDirectory, { recursive: true, mode: 0o700 });
   await writeFile(join(providerFiltersPluginDirectory, "package.json"), JSON.stringify({ type: "module" }), { mode: 0o600 });
   await writeFile(join(providerFiltersPluginDirectory, "server.js"),
-    `export { default } from ${JSON.stringify(pathToFileURL(uni-cliProviderFiltersV2PluginPath()).href)};\n`, { mode: 0o600 });
+    `export { default } from ${JSON.stringify(pathToFileURL(uniCliProviderFiltersV2PluginPath()).href)};\n`, { mode: 0o600 });
   await mkdir(mcpResultsPluginDirectory, { recursive: true, mode: 0o700 });
   await writeFile(join(mcpResultsPluginDirectory, "package.json"), JSON.stringify({ type: "module" }), { mode: 0o600 });
   await writeFile(join(mcpResultsPluginDirectory, "server.js"),
-    `export { default } from ${JSON.stringify(pathToFileURL(uni-cliMcpResultsV2PluginPath()).href)};\n`, { mode: 0o600 });
+    `export { default } from ${JSON.stringify(pathToFileURL(uniCliMcpResultsV2PluginPath()).href)};\n`, { mode: 0o600 });
   if (options.contextTools) {
     await mkdir(contextPluginDirectory, { recursive: true, mode: 0o700 });
     await writeFile(join(contextPluginDirectory, "package.json"), JSON.stringify({ type: "module" }), { mode: 0o600 });
     await writeFile(join(contextPluginDirectory, "server.js"),
-      `export { default } from ${JSON.stringify(pathToFileURL(uni-cliContextV2PluginPath()).href)};\n`, { mode: 0o600 });
+      `export { default } from ${JSON.stringify(pathToFileURL(uniCliContextV2PluginPath()).href)};\n`, { mode: 0o600 });
   }
   // Replace the generated config before boot, removing stale managed-policy
   // registrations while retaining independent engine permissions. Leave the

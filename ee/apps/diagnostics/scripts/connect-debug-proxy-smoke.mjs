@@ -55,10 +55,10 @@ const upstream = createServer(async (request, response) => {
   }
   if (url.pathname === "/api/den/v1/auth/desktop-handoff" && request.method === "POST") {
     observedBrowserCookie = request.headers.cookie ?? ""
-    const uni-cliUrl = new URL("uni-cli://den-auth")
-    uni-cliUrl.searchParams.set("grant", "one-time-smoke-grant")
-    uni-cliUrl.searchParams.set("denBaseUrl", `${upstreamOrigin}/api/den`)
-    return json(response, 200, { uni-cliUrl: uni-cliUrl.toString() })
+    const uniCliUrl = new URL("uni-cli://den-auth")
+    uniCliUrl.searchParams.set("grant", "one-time-smoke-grant")
+    uniCliUrl.searchParams.set("denBaseUrl", `${upstreamOrigin}/api/den`)
+    return json(response, 200, { uniCliUrl: uniCliUrl.toString() })
   }
   if (url.pathname !== "/api/den/mcp/agent" || request.method !== "POST") return json(response, 404, { error: "not_found" })
   if (request.headers.authorization !== "Bearer fake-smoke-token") return json(response, 401, { error: "invalid_token" })
@@ -163,7 +163,7 @@ try {
     method: "POST",
   })
   const handoffPayload = await handoff.json()
-  const handoffDenBaseUrl = new URL(handoffPayload.uni-cliUrl).searchParams.get("denBaseUrl")
+  const handoffDenBaseUrl = new URL(handoffPayload.uniCliUrl).searchParams.get("denBaseUrl")
   const handoffDenUrl = new URL(handoffDenBaseUrl)
   assert(
     handoff.ok

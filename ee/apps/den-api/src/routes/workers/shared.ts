@@ -35,10 +35,10 @@ import { CLOUD_INSTANCE_BACKEND } from "../../workers/cloud-constants.js"
 import { cloudRuntimeConfigured, endpointKindForProvider, isCloudRuntimeProviderId } from "../../workers/cloud-runtime.js"
 import { fetchPreviewNoRedirect } from "../../workers/preview-fetch.js"
 import {
-  getUni-CLIWebRuntimeAccess,
-  uni-cliWebAccessRequiredPayload,
-  requireUni-CLIWebRuntimeAccess,
-  type Uni-CLIWebRuntimeAccessResolver,
+  getUniCliWebRuntimeAccess,
+  uniCliWebAccessRequiredPayload,
+  requireUniCliWebRuntimeAccess,
+  type UniCliWebRuntimeAccessResolver,
 } from "../../uni-cli-web-runtime-access.js"
 
 const logger = appLogger.child({ component: "worker_routes" })
@@ -100,7 +100,7 @@ type CloudProvisioningStore = {
   touchProvisioningWorker: (workerId: WorkerId) => Promise<void>
 }
 type ContinueCloudProvisioningOptions = {
-  getUni-CLIWebAccess?: Uni-CLIWebRuntimeAccessResolver
+  getUniCliWebAccess?: UniCliWebRuntimeAccessResolver
   provisionWorker?: ProvisionWorker
   store?: CloudProvisioningStore
   materializeProviders?: typeof materializeCloudWorkerProviders
@@ -176,7 +176,7 @@ function normalizeUrl(value: string): string {
   return value.trim().replace(/\/+$/, "")
 }
 
-function parseWorkspaceSelection(payload: unknown): { workspaceId: string; uni-cliUrl: string } | null {
+function parseWorkspaceSelection(payload: unknown): { workspaceId: string; uniCliUrl: string } | null {
   if (!isRecord(payload) || !Array.isArray(payload.items)) {
     return null
   }
@@ -200,7 +200,7 @@ function parseWorkspaceSelection(payload: unknown): { workspaceId: string; uni-c
 
   return {
     workspaceId,
-    uni-cliUrl: `${baseUrl}/w/${encodeURIComponent(workspaceId)}`,
+    uniCliUrl: `${baseUrl}/w/${encodeURIComponent(workspaceId)}`,
   }
 }
 
@@ -332,20 +332,20 @@ export async function fetchWorkerRuntimeJson(input: {
   method?: "GET" | "POST"
   body?: unknown
 }, options: {
-  getUni-CLIWebAccess?: Uni-CLIWebRuntimeAccessResolver
+  getUniCliWebAccess?: UniCliWebRuntimeAccessResolver
   resolveCloudAccess?: ResolveCloudRuntimeAccess
   fetchImpl?: typeof fetch
 } = {}) {
-  // Published desktops hold cloud worker tokens only after Uni-CLIWebAccessGate
+  // Published desktops hold cloud worker tokens only after UniCliWebAccessGate
   // (v0.18.42+) granted Web access; this recheck covers lapsed entitlement and
   // callers that bypass the gate. See uni-cli-web-runtime-access.ts.
   if (input.worker.destination === "cloud") {
-    const webAccess = await (options.getUni-CLIWebAccess ?? getUni-CLIWebRuntimeAccess)(input.worker.org_id)
+    const webAccess = await (options.getUniCliWebAccess ?? getUniCliWebRuntimeAccess)(input.worker.org_id)
     if (!webAccess.hasAccess) {
       return {
         ok: false as const,
         status: 403,
-        payload: uni-cliWebAccessRequiredPayload(),
+        payload: uniCliWebAccessRequiredPayload(),
       }
     }
   }
@@ -487,9 +487,9 @@ async function runCloudProvisioning(input: {
     // Entitlement can lapse between claim and provisioning; a lapse is recorded
     // as the dedicated web_access_required failure (cloud-failure.ts), which the
     // published desktop renders through its existing failed-instance state.
-    await requireUni-CLIWebRuntimeAccess(
+    await requireUniCliWebRuntimeAccess(
       input.orgId,
-      options.getUni-CLIWebAccess ?? getUni-CLIWebRuntimeAccess,
+      options.getUniCliWebAccess ?? getUniCliWebRuntimeAccess,
     )
     await withProvisioningHeartbeat({
       workerId: input.workerId,
@@ -591,22 +591,22 @@ export async function requireCloudAccessOrPayment(input: {
 }
 
 export async function getWorkerTokensAndConnect(worker: WorkerRow, options: {
-  getUni-CLIWebAccess?: Uni-CLIWebRuntimeAccessResolver
+  getUniCliWebAccess?: UniCliWebRuntimeAccessResolver
   resolveCloudAccess?: ResolveCloudRuntimeAccess
   loadActiveTokens?: LoadActiveWorkerTokens
   fetchImpl?: typeof fetch
-  includeExpiringuni-cliUrl?: boolean
+  includeExpiringuniCliUrl?: boolean
   apiPublicUrl?: string
 } = {}) {
   // Same rollout note as fetchWorkerRuntimeJson: the desktop gate already ran
   // before a published client asks for cloud worker tokens.
   if (worker.destination === "cloud") {
-    const webAccess = await (options.getUni-CLIWebAccess ?? getUni-CLIWebRuntimeAccess)(worker.org_id)
+    const webAccess = await (options.getUniCliWebAccess ?? getUniCliWebRuntimeAccess)(worker.org_id)
     if (!webAccess.hasAccess) {
       return {
         error: {
           status: 403,
-          body: uni-cliWebAccessRequiredPayload(),
+          body: uniCliWebAccessRequiredPayload(),
         },
       }
     }
@@ -628,10 +628,10 @@ export async function getWorkerTokensAndConnect(worker: WorkerRow, options: {
     }
 
     const stableRootUrl = cloudWorkerCompatibilityUrl(worker.id, options.apiPublicUrl ?? env.apiPublicUrl)
-    if (!options.includeExpiringuni-cliUrl) {
+    if (!options.includeExpiringuniCliUrl) {
       return {
         tokens: { owner: hostToken, host: hostToken, client: clientToken },
-        connect: stableRootUrl ? { uni-cliUrl: stableRootUrl, workspaceId: null } : null,
+        connect: stableRootUrl ? { uniCliUrl: stableRootUrl, workspaceId: null } : null,
       }
     }
 
@@ -640,20 +640,20 @@ export async function getWorkerTokensAndConnect(worker: WorkerRow, options: {
     const previewConnect = resolved?.status === "ready"
       ? await resolveConnectUrlFromWorker(resolved.url, clientToken, options.fetchImpl)
       : null
-    const stableuni-cliUrl = cloudWorkerCompatibilityUrl(
+    const stableuniCliUrl = cloudWorkerCompatibilityUrl(
       worker.id,
       options.apiPublicUrl ?? env.apiPublicUrl,
       previewConnect?.workspaceId,
     )
     return {
       tokens: { owner: hostToken, host: hostToken, client: clientToken },
-      connect: stableuni-cliUrl
-        ? { uni-cliUrl: stableuni-cliUrl, workspaceId: previewConnect?.workspaceId ?? null }
+      connect: stableuniCliUrl
+        ? { uniCliUrl: stableuniCliUrl, workspaceId: previewConnect?.workspaceId ?? null }
         : null,
       directPreview: resolved?.status === "ready" && previewConnect
         ? {
             version: 1 as const,
-            uni-cliUrl: previewConnect.uni-cliUrl,
+            uniCliUrl: previewConnect.uniCliUrl,
             workspaceId: previewConnect.workspaceId,
             expiresAt: resolved.expiresAt.toISOString(),
           }
@@ -691,7 +691,7 @@ export async function getWorkerTokensAndConnect(worker: WorkerRow, options: {
       host: hostToken,
       client: clientToken,
     },
-    connect: connect ?? (instance?.url ? { uni-cliUrl: instance.url, workspaceId: null } : null),
+    connect: connect ?? (instance?.url ? { uniCliUrl: instance.url, workspaceId: null } : null),
   }
 }
 

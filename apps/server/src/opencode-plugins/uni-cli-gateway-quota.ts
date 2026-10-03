@@ -2,7 +2,7 @@ import { APICallError } from "@ai-sdk/provider";
 import { GATEWAY_USAGE_LIMIT_ERROR_CODE } from "@uni-cli/types/den/gateway-usage-limits";
 import { gatewayBase, GATEWAY_QUOTA_MESSAGE, isGatewayQuotaResponse, record } from "../gateway-quota.js";
 
-export const Uni-CLIGatewayQuota = async () => ({
+export const UniCliGatewayQuota = async () => ({
   config: async (config: { provider?: Record<string, unknown> }) => {
     for (const [id, provider] of Object.entries(config.provider ?? {})) {
       if (!record(provider) || !record(provider.options)) continue;

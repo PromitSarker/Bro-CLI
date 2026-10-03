@@ -4,7 +4,7 @@ export {
   buildHeadlessCorsOrigins,
   buildHeadlessRuntimeManifest,
   buildHeadlessServerLaunch,
-  builduni-cliServerArgs,
+  builduniCliServerArgs,
   isHeadlessStackCommand,
   mergeHeadlessServerConfig,
   normalizeDenTarget,

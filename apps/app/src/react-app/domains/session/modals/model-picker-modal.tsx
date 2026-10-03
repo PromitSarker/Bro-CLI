@@ -42,8 +42,8 @@ export type ModelPickerModalProps = {
   onToggleProvider?: (providerId: string, enabled: boolean) => void;
   onOpenSettings: () => void;
   onClose: (options?: { restorePromptFocus?: boolean }) => void;
-  uni-cliModelsEntitled?: boolean;
-  uni-cliModelsSyncing?: boolean;
+  uniCliModelsEntitled?: boolean;
+  uniCliModelsSyncing?: boolean;
   onRefreshOrganizationModels?: () => void | Promise<void>;
   restrictToCloud?: boolean;
   gatewayProviderIds?: ReadonlySet<string>;
@@ -97,7 +97,7 @@ export function ModelPickerModal(props: ModelPickerModalProps) {
       <ModelPickerList searchInputRef={searchInputRef} autoFocusSearch={false} options={options} current={props.current} query={props.query} onQueryChange={props.setQuery}
         catalogState={catalogState} retainedSelection={retained} onSetWorkspaceDefault={props.onSetWorkspaceDefault ?? setWorkspaceDefault} currentBehaviorValue={behavior.value}
         onConnectProvider={!restrictToCloud ? props.onOpenSettings : undefined} onOpenProviderSettings={!checkRestriction({ restriction: "allowControlSettings" }) ? openSettings : undefined}
-        uni-cliModelsSyncing={autoVisible && props.uni-cliModelsSyncing} onReloadWorkspace={props.onReloadWorkspace} onRetryAuto={catalogState.onRetry}
+        uniCliModelsSyncing={autoVisible && props.uniCliModelsSyncing} onReloadWorkspace={props.onReloadWorkspace} onRetryAuto={catalogState.onRetry}
         onSelect={(option) => choice.choose(option, () => props.onSelect({ providerID: option.providerID, modelID: option.modelID }))} />
       <details open={advanced} className="group/advanced border-t border-border" data-testid="current-model-settings">
         <summary onClick={(event) => { event.preventDefault(); setAdvanced((value) => !value); }} className="flex h-11 cursor-pointer list-none items-center gap-2 text-sm"><ChevronRight className="size-4 transition-transform group-open/advanced:rotate-90" />Advanced options</summary>
@@ -115,7 +115,7 @@ export function ModelPickerModal(props: ModelPickerModalProps) {
         <Button size="sm" variant="ghost" disabled={!props.onConnectGatewayProvider || props.disabledProviders?.includes(provider.providerId)} onClick={() => void props.onConnectGatewayProvider?.(provider)}>Login</Button>
       </div>)}
       {!restrictToCloud ? <Button variant="ghost" size="sm" className="self-start" onClick={props.onOpenSettings}>Connect more providers</Button> : null}
-      <AutoAccessFooter available={autoVisible} syncing={autoVisible && props.uni-cliModelsSyncing} />
+      <AutoAccessFooter available={autoVisible} syncing={autoVisible && props.uniCliModelsSyncing} />
       <div className="flex items-center justify-end gap-2">
         {auth.isSignedIn ? <Button variant="ghost" size="sm" onClick={() => platform.openLink(new URL("/dashboard/model-connections", readDenSettings().baseUrl).toString())}>My Model Connections</Button> : null}
         <Button variant="ghost" size="sm" onClick={() => props.onClose()}>Done</Button>

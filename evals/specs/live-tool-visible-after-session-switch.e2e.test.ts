@@ -82,7 +82,7 @@ function parseVisibleToolFact(value: unknown): VisibleToolFact {
 
 async function configureWorkspaces(appSurface: App, workspaceIds: string[], baseUrl: string): Promise<void> {
   const result = await evalIn(appSurface, browserScript(async (workspaceIds, providerId, modelName, value, modelId, inputModelName, inputProviderId, inputModelId, inputValue) => {
-    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uniCliServerInfo");
     if (!info?.running || !info.baseUrl) return "local_server_unavailable";
     const root = String(info.baseUrl).replace(/\/+$/, "");
     const headers = {

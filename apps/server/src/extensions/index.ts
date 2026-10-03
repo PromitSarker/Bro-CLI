@@ -11,7 +11,7 @@ import {
   OPENAI_IMAGE_GENERATION_EXTENSION_ID,
 } from "./openai-image-generation.js";
 import {
-  callUni-CLICloudUploadAction,
+  callUniCliCloudUploadAction,
   UNICLI_CLOUD_UPLOAD_ACTIONS,
   UNICLI_CLOUD_UPLOADS_EXTENSION_ID,
 } from "./cloud-uploads.js";
@@ -63,7 +63,7 @@ export async function callExperimentalExtensionAction(config: ServerConfig, env:
   }
 
   if (extensionId === UNICLI_CLOUD_UPLOADS_EXTENSION_ID) {
-    const result = await callUni-CLICloudUploadAction(config, action, args, context, { signal });
+    const result = await callUniCliCloudUploadAction(config, action, args, context, { signal });
     if (result) return result;
   }
 

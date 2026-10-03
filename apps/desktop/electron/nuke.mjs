@@ -9,8 +9,8 @@ import {
   desktopBootstrapPath as resolveDesktopBootstrapPath,
   globalOpencodeConfigDir,
   legacyDesktopBootstrapPath as resolveLegacyDesktopBootstrapPath,
-  uni-cliEnvStorePath,
-  uni-cliServerConfigPath as resolveuni-cliServerConfigPath,
+  uniCliEnvStorePath,
+  uniCliServerConfigPath as resolveuniCliServerConfigPath,
   opencodeCacheDirs as resolveOpencodeCacheDirs,
   opencodeDataDirs as resolveOpencodeDataDirs,
 } from "@uni-cli/paths";
@@ -151,12 +151,12 @@ function desktopConfigHome(env, homedir, platform, paths) {
   return paths.join(homedir, ".config");
 }
 
-function uni-cliServerConfigPath(env, homedir, platform, paths) {
-  return resolveuni-cliServerConfigPath({ env, homeDir: homedir, platform });
+function uniCliServerConfigPath(env, homedir, platform, paths) {
+  return resolveuniCliServerConfigPath({ env, homeDir: homedir, platform });
 }
 
 function envStorePath(env, homedir, platform, paths) {
-  return uni-cliEnvStorePath({ env, homeDir: homedir, platform });
+  return uniCliEnvStorePath({ env, homeDir: homedir, platform });
 }
 
 function tokenStorePath(env, serverConfigPath, homedir, paths) {
@@ -218,7 +218,7 @@ function serverDataDir(env, homedir, paths) {
 }
 
 /** Workspace-local state Uni-CLI owns; the rest of the workspace folder is the user's. */
-function workspaceuni-cliStatePaths(workspacePaths, paths) {
+function workspaceuniCliStatePaths(workspacePaths, paths) {
   const output = [];
   for (const workspacePath of workspacePaths) {
     const value = String(workspacePath ?? "").trim();
@@ -288,7 +288,7 @@ function profileScopedDeletePaths(deletePaths, sharedPaths, profileRoot, paths, 
   });
 }
 
-function adduni-cliConfigFiles(deletePaths, roots, paths) {
+function adduniCliConfigFiles(deletePaths, roots, paths) {
   for (const root of roots) {
     if (!root) continue;
     for (const filename of UNICLI_CONFIG_FILENAMES) {
@@ -303,7 +303,7 @@ function resolveNukePlan(input) {
   const bootstrapPath = desktopBootstrapPath(env, homedir, platform, paths, userDataPath);
   const preserveBootstrapPath = input.preserveBootstrap === false ? null : bootstrapPath;
   const legacyBootstrapPath = legacyDesktopBootstrapPath(homedir, platform);
-  const serverConfig = uni-cliServerConfigPath(env, homedir, platform, paths);
+  const serverConfig = uniCliServerConfigPath(env, homedir, platform, paths);
   const runtimeDb = runtimeDbPath(env, serverConfig, homedir, paths);
   const envStore = envStorePath(env, homedir, platform, paths);
   const tokens = tokenStorePath(env, serverConfig, homedir, paths);
@@ -328,21 +328,21 @@ function resolveNukePlan(input) {
     orchestratorDataDir(env, homedir, paths),
     serverDataDir(env, homedir, paths),
     ...USERDATA_WORKSPACE_FILENAMES.map((filename) => paths.join(userDataPath, filename)),
-    ...workspaceuni-cliStatePaths(
+    ...workspaceuniCliStatePaths(
       Array.isArray(input.workspacePaths) ? input.workspacePaths : [],
       paths,
     ),
   ];
 
-  const uni-cliConfigRoots = [
+  const uniCliConfigRoots = [
     paths.join(desktopConfigHome(env, homedir, platform, paths), "uni-cli"),
     paths.dirname(serverConfig),
     paths.dirname(runtimeDb),
     paths.dirname(tokens),
     paths.dirname(envStore),
   ];
-  deletePaths.push(...uni-cliConfigRoots);
-  adduni-cliConfigFiles(deletePaths, uni-cliConfigRoots, paths);
+  deletePaths.push(...uniCliConfigRoots);
+  adduniCliConfigFiles(deletePaths, uniCliConfigRoots, paths);
 
   if (platform === "darwin") {
     deletePaths.push(paths.join(homedir, "Library", "Caches", SHIP_IT_CACHE_DOMAIN));
@@ -742,7 +742,7 @@ async function quiesceForNuke({ runtimeManager, uiControlServer, removeWindowsBr
   // default profile may run it; isolated profiles leave containers alone rather
   // than force-removing production's.
   if (!options.scopeToProfile) {
-    await bestEffort(errors, "sandbox-docker-cleanup", () => runtimeManager.sandboxCleanupuni-cliContainers(), 24_000);
+    await bestEffort(errors, "sandbox-docker-cleanup", () => runtimeManager.sandboxCleanupuniCliContainers(), 24_000);
   }
   await bestEffort(errors, "windows-brand-shortcut", removeWindowsBrandShortcut, 5000);
 }

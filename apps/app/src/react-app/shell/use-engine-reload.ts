@@ -1,7 +1,7 @@
 // Engine reload wiring for the session route: UI-triggered engine reload,
 // reload-coordinator registration, the post-org-onboarding reload latch,
 // server reload-event polling, and desktop engine info. Extracted verbatim
-// from session-route.tsx; reload events are now typed (uni-cliReloadEvent)
+// from session-route.tsx; reload events are now typed (uniCliReloadEvent)
 // instead of `any`.
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -9,7 +9,7 @@ import { engineInfo } from "@/app/lib/desktop";
 import { isOpencodeV2BaseUrl } from "@/app/lib/opencode-v2-adapter";
 import type { EngineInfo } from "@/app/lib/desktop-types";
 import { isDesktopRuntime } from "@/app/lib/runtime-env";
-import type { uni-cliServerClient } from "@/app/lib/uni-cli-server";
+import type { uniCliServerClient } from "@/app/lib/uni-cli-server";
 import type { ResolvedWorkspaceEndpoint } from "@/app/lib/workspace-endpoint";
 import { t } from "@/i18n";
 import { reloadEngineWithDesktopFallback } from "./engine-reload-escalation";
@@ -26,7 +26,7 @@ function taskCreateUnavailableToastId(workspaceId: string) {
 }
 
 export type UseEngineReloadInput = {
-  client: uni-cliServerClient | null;
+  client: uniCliServerClient | null;
   workspaceId: string;
   opencodeBaseUrl: string;
   workspace: RouteWorkspace | null | undefined;

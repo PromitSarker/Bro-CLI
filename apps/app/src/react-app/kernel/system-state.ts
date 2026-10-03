@@ -3,9 +3,9 @@ import { useCallback, useMemo, useState } from "react";
 import type {
   ReloadReason,
   ReloadTrigger,
-  Resetuni-cliMode,
+  ResetuniCliMode,
 } from "../../app/types";
-import { relaunchDesktopApp, resetuni-cliState } from "../../app/lib/desktop";
+import { relaunchDesktopApp, resetuniCliState } from "../../app/lib/desktop";
 import {
   addOpencodeCacheHint,
   isDesktopRuntime,
@@ -24,7 +24,7 @@ export type ReloadState = {
 
 export type ResetState = {
   resetModalOpen: boolean;
-  resetModalMode: Resetuni-cliMode;
+  resetModalMode: ResetuniCliMode;
   resetModalText: string;
   resetModalBusy: boolean;
 };
@@ -37,14 +37,14 @@ export type SystemStateControls = {
   reloadWorkspaceEngine: () => Promise<void>;
   canReloadWorkspaceEngine: boolean;
   reset: ResetState;
-  openResetModal: (mode: Resetuni-cliMode) => void;
+  openResetModal: (mode: ResetuniCliMode) => void;
   closeResetModal: () => void;
   setResetModalText: (value: string) => void;
   confirmReset: () => Promise<void>;
   setError: (message: string | null) => void;
 };
 
-function clearuni-cliLocalStorage(mode: Resetuni-cliMode) {
+function clearuniCliLocalStorage(mode: ResetuniCliMode) {
   if (typeof window === "undefined") return;
   try {
     if (mode === "all") {
@@ -83,7 +83,7 @@ export function useSystemState(
 
   const [resetModalOpen, setResetModalOpen] = useState(false);
   const [resetModalMode, setResetModalMode] =
-    useState<Resetuni-cliMode>("onboarding");
+    useState<ResetuniCliMode>("onboarding");
   const [resetModalText, setResetModalText] = useState("");
   const [resetModalBusy, setResetModalBusy] = useState(false);
 
@@ -172,7 +172,7 @@ export function useSystemState(
   }, [clearReloadRequired, options, reloadBusy]);
 
   const openResetModal = useCallback(
-    (mode: Resetuni-cliMode) => {
+    (mode: ResetuniCliMode) => {
       if (options.hasActiveRuns()) {
         options.setError(t("system.stop_active_runs_before_reset"));
         return;
@@ -203,9 +203,9 @@ export function useSystemState(
 
     try {
       if (isDesktopRuntime()) {
-        await resetuni-cliState(resetModalMode);
+        await resetuniCliState(resetModalMode);
       }
-      clearuni-cliLocalStorage(resetModalMode);
+      clearuniCliLocalStorage(resetModalMode);
       if (isDesktopRuntime()) {
         await relaunchDesktopApp();
       } else {

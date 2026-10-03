@@ -1,8 +1,8 @@
 import { randomBytes } from "node:crypto";
 import { z } from "zod";
 import { serve } from "./serve-node.js";
-import { Uni-CLIExtensionsPreview } from "./opencode-plugins/uni-cli-extensions-preview.js";
-import { uni-cliReadTransport, type uni-cliReadTransport } from "./opencode-plugins/uni-cli-read-transport.js";
+import { UniCliExtensionsPreview } from "./opencode-plugins/uni-cli-extensions-preview.js";
+import { uniCliReadTransport, type uniCliReadTransport } from "./opencode-plugins/uni-cli-read-transport.js";
 import { createV2ReadAdapter, readV2SessionActivity } from "./opencode-v2-read-adapter.js";
 import { isRecord } from "./workspace-kv-store.js";
 
@@ -25,7 +25,7 @@ function readAffordances(value: unknown): unknown {
  * same AsyncLocalStorage instance rather than separately bundled copies. */
 export async function createV2ContextBridge(hostRequest: (path: string, init?: RequestInit) => Promise<unknown>) {
   const token = randomBytes(32).toString("base64url");
-  const plugin = await Uni-CLIExtensionsPreview();
+  const plugin = await UniCliExtensionsPreview();
   const server = await serve({ hostname: "127.0.0.1", port: 0, fetch: async request => {
     if (request.headers.get("authorization") !== `Bearer ${token}`) return new Response(null, { status: 401 });
     if (request.method !== "POST" || new URL(request.url).pathname !== "/read") return new Response(null, { status: 404 });
@@ -39,7 +39,7 @@ export async function createV2ContextBridge(hostRequest: (path: string, init?: R
         signal.throwIfAborted();
         return hostRequest(path, { ...init, signal });
       };
-      const transport: uni-cliReadTransport = {
+      const transport: uniCliReadTransport = {
         engine: "v2",
         activity: (workspaceId: string, sessionId: string) => readV2SessionActivity(path => read(path), workspaceId, sessionId),
         get: createV2ReadAdapter(path => read(path)),
@@ -54,7 +54,7 @@ export async function createV2ContextBridge(hostRequest: (path: string, init?: R
           return read(path, { method: "POST", body: JSON.stringify(body), signal });
         },
       };
-      const result = await uni-cliReadTransport.run(transport, async () => {
+      const result = await uniCliReadTransport.run(transport, async () => {
         if (call.name === "uni-cli_query") return plugin.tool.uni-cli_query.execute(call.input);
         const context: unknown = JSON.parse(await plugin.tool.uni-cli_context.execute());
         const filtered = readAffordances(context);

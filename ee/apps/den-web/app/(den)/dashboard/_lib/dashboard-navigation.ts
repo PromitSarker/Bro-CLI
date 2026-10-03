@@ -91,7 +91,7 @@ export function buildDashboardNavSections({
   libraryNeedsSignIn = 0,
 }: BuildDashboardNavSectionsInput): DashboardNavSection[] {
   const workflowsEnabled = capabilities.workflows;
-  const showWeb = runtimeConfigLoaded && capabilities.uni-cliWeb;
+  const showWeb = runtimeConfigLoaded && capabilities.uniCliWeb;
   const workItems: DashboardNavItem[] = [
     {
       href: orgSlug ? getLibraryRoute(orgSlug) : "#",

@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { useDragControls } from "motion/react";
 
-import type { uni-cliServerClient } from "@/app/lib/uni-cli-server";
+import type { uniCliServerClient } from "@/app/lib/uni-cli-server";
 import { PanelTab, PanelTabClose, PanelTabItem, PanelTabList } from "@/components/panel-tabs";
 import { Button } from "@/components/ui/button";
 import { TaskRecovery } from "@/components/chat/task-recovery";
@@ -35,7 +35,7 @@ import {
   useActivePanelTab,
   useSessionPanelState,
 } from "./panel-tab-store";
-import { useControlAction, type uni-cliControlAction } from "../../../shell/control/control-provider";
+import { useControlAction, type uniCliControlAction } from "../../../shell/control/control-provider";
 import type { OpenTarget } from "../artifacts/open-target";
 import { useSidePanelTabs } from "./use-side-panel-tabs";
 import { handlePanelEscape, PanelEmpty } from "./panel-empty";
@@ -49,7 +49,7 @@ import { createBrowserBoundsSync } from "./browser-bounds-sync";
 
 type SidePanelProps = {
   sessionId: string;
-  client: uni-cliServerClient | null;
+  client: uniCliServerClient | null;
   workspaceId: string | null;
   workspaceRoot: string;
   isRemoteWorkspace?: boolean;
@@ -525,7 +525,7 @@ export function SidePanel({
 
   const { createTab, closeTab, selectTab, reorderTabs } = useSidePanelTabs(sessionId);
 
-  const seedArtifactOverflowControlAction = React.useMemo<uni-cliControlAction | null>(() => {
+  const seedArtifactOverflowControlAction = React.useMemo<uniCliControlAction | null>(() => {
     if (!import.meta.env.DEV) return null;
 
     return {
@@ -592,7 +592,7 @@ export function SidePanel({
   }, [client, sessionId, workspaceId]);
   useControlAction(seedArtifactOverflowControlAction);
 
-  const seedMarkdownPrimitiveArtifactControlAction = React.useMemo<uni-cliControlAction | null>(() => {
+  const seedMarkdownPrimitiveArtifactControlAction = React.useMemo<uniCliControlAction | null>(() => {
     if (!import.meta.env.DEV) return null;
 
     return {
@@ -637,7 +637,7 @@ export function SidePanel({
   }, [client, sessionId, workspaceId]);
   useControlAction(seedMarkdownPrimitiveArtifactControlAction);
 
-  const seedPdfArtifactControlAction = React.useMemo<uni-cliControlAction | null>(() => {
+  const seedPdfArtifactControlAction = React.useMemo<uniCliControlAction | null>(() => {
     if (!import.meta.env.DEV) return null;
 
     return {

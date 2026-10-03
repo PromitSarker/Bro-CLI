@@ -43,11 +43,11 @@ const automationIndexSchema = z.object({
   }).passthrough()),
 }).passthrough();
 
-export type Uni-CLIAutomationIndex = z.infer<typeof automationIndexSchema>;
+export type UniCliAutomationIndex = z.infer<typeof automationIndexSchema>;
 
-const catalogCache = new Map<string, { expiresAt: number; value: Promise<Uni-CLIAutomationIndex | null> }>();
+const catalogCache = new Map<string, { expiresAt: number; value: Promise<UniCliAutomationIndex | null> }>();
 
-async function readIndex(cloud: Record<string, unknown>, fetcher: McpFetch): Promise<Uni-CLIAutomationIndex | null> {
+async function readIndex(cloud: Record<string, unknown>, fetcher: McpFetch): Promise<UniCliAutomationIndex | null> {
   const text = await readMcpResourceText({
     config: cloud,
     uri: AUTOMATION_INDEX_URI,
@@ -74,10 +74,10 @@ async function readIndexCached(cloud: Record<string, unknown>, fetcher: McpFetch
  * when no connection answers, which callers render as no guidance at all rather
  * than as "you have no Automations".
  */
-export async function readUni-CLIAutomationCatalog(
+export async function readUniCliAutomationCatalog(
   config: ServerConfig,
   fetcher: McpFetch = externalFetch,
-): Promise<Uni-CLIAutomationIndex | null> {
+): Promise<UniCliAutomationIndex | null> {
   try {
     const candidates: Array<Record<string, unknown>> = [];
     const globalCloud = await readGlobalRuntimeMcpConfig(config, UNICLI_CLOUD_MCP_NAME);
@@ -102,11 +102,11 @@ export async function readUni-CLIAutomationCatalog(
   }
 }
 
-export function resetUni-CLIAutomationCatalogCacheForTests(): void {
+export function resetUniCliAutomationCatalogCacheForTests(): void {
   catalogCache.clear();
 }
 
-function scheduleText(schedule: Uni-CLIAutomationIndex["automations"][number]["schedule"]): string {
+function scheduleText(schedule: UniCliAutomationIndex["automations"][number]["schedule"]): string {
   if (schedule.kind === "once") return `once at ${new Date(schedule.at).toISOString()} (${schedule.timezone})`;
   const time = `${String(schedule.hour).padStart(2, "0")}:${String(schedule.minute).padStart(2, "0")}`;
   if (schedule.kind === "daily") return `daily at ${time} ${schedule.timezone}`;
@@ -121,7 +121,7 @@ function scheduleText(schedule: Uni-CLIAutomationIndex["automations"][number]["s
  * time-sensitive. The listing exists to know what is there and which id to
  * act on — not to be quoted as current truth.
  */
-export function renderUni-CLIAutomationInstruction(index: Uni-CLIAutomationIndex | null): string {
+export function renderUniCliAutomationInstruction(index: UniCliAutomationIndex | null): string {
   if (!index) return "";
   if (index.automations.length === 0) {
     return [

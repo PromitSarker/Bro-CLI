@@ -15,7 +15,7 @@ import {
 } from "./lp-demo-chat";
 import { LibraryView } from "./lp-demo-library";
 import { focusRing } from "./lp-demo-ui";
-import { Uni-CLIMark } from "./uni-cli-mark";
+import { UniCliMark } from "./uni-cli-mark";
 
 type View = { kind: "session"; id: SessionId } | { kind: "new" } | { kind: "library" } | { kind: "automations" };
 
@@ -99,7 +99,7 @@ export function LpDemoDesktop({ windowControls = true }: Props) {
           </div>
         ) : null}
         <div className={`${windowControls ? "mt-3.5" : "mt-1"} flex h-8 items-center gap-2 px-2.5`}>
-          <Uni-CLIMark className="h-4 w-5" />
+          <UniCliMark className="h-4 w-5" />
           <span className="text-[15px] font-medium text-[var(--lp-ink)]">Uni-CLI</span>
         </div>
         <nav className="mt-2 flex flex-col gap-0.5" aria-label="App views">

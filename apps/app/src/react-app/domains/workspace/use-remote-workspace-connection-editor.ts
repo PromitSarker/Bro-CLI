@@ -5,7 +5,7 @@ import {
   workspaceUpdateRemote,
   type WorkspaceInfo,
 } from "../../../app/lib/desktop";
-import { builduni-cliWorkspaceBaseUrl, type uni-cliServerClient } from "../../../app/lib/uni-cli-server";
+import { builduniCliWorkspaceBaseUrl, type uniCliServerClient } from "../../../app/lib/uni-cli-server";
 import { isDesktopRuntime } from "../../../app/lib/runtime-env";
 import { t } from "../../../i18n";
 import type { RemoteWorkspaceInput } from "./types";
@@ -23,7 +23,7 @@ function describeEditorError(error: unknown) {
 
 export function useRemoteWorkspaceConnectionEditor<TWorkspace extends WorkspaceInfo>(input: {
   workspaces: TWorkspace[];
-  client: uni-cliServerClient | null;
+  client: uniCliServerClient | null;
   onSaved: (workspaceId: string) => void | Promise<void>;
 }) {
   const { client, onSaved, workspaces } = input;
@@ -44,16 +44,16 @@ export function useRemoteWorkspaceConnectionEditor<TWorkspace extends WorkspaceI
 
   const initialValues = useMemo(
     () => {
-      const hostUrl = workspace?.uni-cliHostUrl ?? workspace?.baseUrl ?? "";
+      const hostUrl = workspace?.uniCliHostUrl ?? workspace?.baseUrl ?? "";
       const mountedUrl = workspace?.remoteType === "uni-cli"
-        ? builduni-cliWorkspaceBaseUrl(hostUrl, workspace.uni-cliWorkspaceId) ?? hostUrl
+        ? builduniCliWorkspaceBaseUrl(hostUrl, workspace.uniCliWorkspaceId) ?? hostUrl
         : hostUrl;
       return {
-        uni-cliHostUrl: mountedUrl,
-        uni-cliToken:
-          workspace?.uni-cliToken ??
-          workspace?.uni-cliClientToken ??
-          workspace?.uni-cliHostToken ??
+        uniCliHostUrl: mountedUrl,
+        uniCliToken:
+          workspace?.uniCliToken ??
+          workspace?.uniCliClientToken ??
+          workspace?.uniCliHostToken ??
           "",
         directory: workspace?.directory ?? workspace?.path ?? "",
         displayName: workspace?.displayName ?? workspace?.name ?? "",
@@ -81,7 +81,7 @@ export function useRemoteWorkspaceConnectionEditor<TWorkspace extends WorkspaceI
   const save = useCallback(
     async (fields: RemoteWorkspaceInput) => {
       const id = workspaceId?.trim() ?? "";
-      const baseUrl = fields.uni-cliHostUrl?.trim() ?? "";
+      const baseUrl = fields.uniCliHostUrl?.trim() ?? "";
       if (!id || !baseUrl) {
         setError(t("dashboard.remote_base_url_required"));
         return;
@@ -92,15 +92,15 @@ export function useRemoteWorkspaceConnectionEditor<TWorkspace extends WorkspaceI
       try {
         const displayName = fields.displayName?.trim() || null;
         const directory = fields.directory?.trim() || null;
-        const uni-cliToken = fields.uni-cliToken?.trim() ?? "";
+        const uniCliToken = fields.uniCliToken?.trim() ?? "";
         if (isDesktopRuntime()) {
           await workspaceUpdateRemote({
             workspaceId: id,
             baseUrl,
-            uni-cliHostUrl: baseUrl,
-            uni-cliToken,
-            uni-cliClientToken: "",
-            uni-cliHostToken: "",
+            uniCliHostUrl: baseUrl,
+            uniCliToken,
+            uniCliClientToken: "",
+            uniCliHostToken: "",
             displayName,
             directory,
             remoteType: "uni-cli",
@@ -108,14 +108,14 @@ export function useRemoteWorkspaceConnectionEditor<TWorkspace extends WorkspaceI
           await onSaved(id);
         } else {
           if (!client) throw new Error(t("app.error_connect_first"));
-          const connectionChanged = baseUrl !== (initialValues.uni-cliHostUrl?.trim() ?? "") ||
-            uni-cliToken !== (initialValues.uni-cliToken?.trim() ?? "") ||
+          const connectionChanged = baseUrl !== (initialValues.uniCliHostUrl?.trim() ?? "") ||
+            uniCliToken !== (initialValues.uniCliToken?.trim() ?? "") ||
             directory !== (initialValues.directory?.trim() || null);
           if (connectionChanged) {
             const result = await client.createRemoteWorkspace({
               baseUrl,
-              uni-cliHostUrl: baseUrl,
-              uni-cliToken: uni-cliToken || null,
+              uniCliHostUrl: baseUrl,
+              uniCliToken: uniCliToken || null,
               displayName,
               directory,
               remoteType: "uni-cli",
@@ -133,7 +133,7 @@ export function useRemoteWorkspaceConnectionEditor<TWorkspace extends WorkspaceI
         setBusy(false);
       }
     },
-    [client, initialValues.directory, initialValues.uni-cliHostUrl, initialValues.uni-cliToken, onSaved, workspaceId],
+    [client, initialValues.directory, initialValues.uniCliHostUrl, initialValues.uniCliToken, onSaved, workspaceId],
   );
 
   return {

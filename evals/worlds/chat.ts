@@ -899,7 +899,7 @@ export async function modelPickerEffortWeb(seed: Seed) {
       options: { baseURL: `${witness.url}/v1`, apiKey: "synthetic-fast-key" },
       models: { [fastModelId]: { name: "Fast witness", reasoning: true, variants: {
         high: { reasoningEffort: "high" },
-        [CATALOG_FAST_VARIANT]: { disabled: true, uni-cliNativeFast: 1 },
+        [CATALOG_FAST_VARIANT]: { disabled: true, uniCliNativeFast: 1 },
       } } },
     },
   } }, engine);

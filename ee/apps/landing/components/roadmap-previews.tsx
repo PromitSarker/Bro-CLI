@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import { BrandLogo } from "./lp-brand-logos";
 import { GoogleMark, LinearMark, SkillMark, SlackMark } from "./lp-service-marks";
-import { Uni-CLIMark } from "./uni-cli-mark";
+import { UniCliMark } from "./uni-cli-mark";
 
 /* Static previews for the roadmap. Each one shows what a product looks like
  * today, or, for "Coming soon" apps, what we are designing. Numbers and names
@@ -111,7 +111,7 @@ type ActivityRow = { who: ReactNode; title: string; detail: string; when: string
 const ACTIVITY_TODAY: ActivityRow[] = [
   { who: <span className={initialsClass}>PR</span>, title: "Priya shared Customer briefing with Design", detail: "Skill in Customer toolkit", when: "10m", action: "Try it" },
   { who: <span className={initialsClass}>JL</span>, title: "Jordan published a new version of Proposal writer", detail: "Skill you use, version 3", when: "1h", action: "Compare" },
-  { who: <span className={initialsClass}><Uni-CLIMark className="h-3.5 w-3.5" /></span>, title: "Onboarding checklist is no longer shared with you", detail: "Removed from Everyone", when: "3h", faded: true }
+  { who: <span className={initialsClass}><UniCliMark className="h-3.5 w-3.5" /></span>, title: "Onboarding checklist is no longer shared with you", detail: "Removed from Everyone", when: "3h", faded: true }
 ];
 
 const ACTIVITY_WEEK: ActivityRow[] = [
@@ -406,7 +406,7 @@ export function RoadmapSlackPreview() {
           </span>
         </div>
         <div className="flex gap-2.5">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#F0F4F9]"><Uni-CLIMark className="h-4 w-4" /></span>
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#F0F4F9]"><UniCliMark className="h-4 w-4" /></span>
           <span className="flex min-w-0 flex-1 flex-col gap-2 text-[13px] leading-[19px] text-[#1D1C1D]">
             <span><b>Uni-CLI</b> <span className="text-[11px] text-[#9AA5BA]">9:42 AM</span></span>
             <span>Three accounts slipped. Two have no meeting booked.</span>

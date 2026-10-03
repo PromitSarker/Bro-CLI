@@ -177,7 +177,7 @@ export const connectStateExpression = () => {
 export const runtimeGenerationExpression = async () => {
   const invokeDesktop = window.__UNICLI_ELECTRON__?.invokeDesktop;
   if (!invokeDesktop) return { running: false, baseUrl: "", generation: null };
-  const info = await invokeDesktop("uni-cliServerInfo");
+  const info = await invokeDesktop("uniCliServerInfo");
   return {
     running: info?.running === true,
     baseUrl: String(info?.baseUrl ?? ""),
@@ -969,7 +969,7 @@ export async function pluginEditorWithConnector(seed: Seed) {
 }
 
 export async function libraryView(seed: Seed) {
-  const password = process.env.UNICLI_EVAL_DEMO_PASSWORD?.trim() || "Uni-CLIDemo123!";
+  const password = process.env.UNICLI_EVAL_DEMO_PASSWORD?.trim() || "UniCliDemo123!";
   const caseyEmail = process.env.UNICLI_EVAL_CREATOR_EMAIL?.trim() || "casey.spec@acme.test";
   const novaEmail = process.env.UNICLI_EVAL_MEMBER_EMAIL?.trim() || "nova.spec@acme.test";
   const den = await seed.den({

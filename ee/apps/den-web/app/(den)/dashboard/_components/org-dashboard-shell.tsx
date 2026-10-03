@@ -82,7 +82,7 @@ function OrgMark({ name }: { name: string }) {
   );
 }
 
-function Uni-CLIMark({ className = "h-9 w-auto" }: { className?: string }) {
+function UniCliMark({ className = "h-9 w-auto" }: { className?: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -143,7 +143,7 @@ export function SidebarBrandMark({
   if (!iconUrl || failedUrl === iconUrl) {
     return (
       <div data-sidebar-brand-icon="fallback">
-        <Uni-CLIMark />
+        <UniCliMark />
       </div>
     );
   }
@@ -448,7 +448,7 @@ export function OrgDashboardShell({ children }: { children: React.ReactNode }) {
       cloud: false,
       installLinks: false,
       mcpConnections: false,
-      uni-cliWeb: false,
+      uniCliWeb: false,
       orgManagedDashboards: false,
       workflows: false,
     },

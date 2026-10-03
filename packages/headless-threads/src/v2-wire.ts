@@ -48,7 +48,7 @@ export const v2SessionSchema = data(
     .object({
       id: z.string(),
       title: z.string().nullish(),
-      uni-cliHomeDirectory: z.string().optional(),
+      uniCliHomeDirectory: z.string().optional(),
       location: z.object({ directory: z.string().optional() }).passthrough().optional(),
       time: z.object({ created: z.number().optional() }).passthrough().optional(),
       model: modelRefSchema.optional(),
@@ -119,7 +119,7 @@ export function v2SessionModel(session: V2Session): HeadlessThreadModel | null {
 }
 
 export function fromV2Session(session: V2Session): SessionWire {
-  const directory = session.uni-cliHomeDirectory ?? session.location?.directory;
+  const directory = session.uniCliHomeDirectory ?? session.location?.directory;
   return {
     id: session.id,
     ...(session.title === undefined ? {} : { title: session.title }),

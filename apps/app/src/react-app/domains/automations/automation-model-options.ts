@@ -26,7 +26,7 @@ const freeStarterModel: AutomationModelOption = {
   accessKind: "free",
 }
 
-function uni-cliManagedModels(provider: DenOrgLlmProvider): AutomationModelOption[] {
+function uniCliManagedModels(provider: DenOrgLlmProvider): AutomationModelOption[] {
   return Object.entries(INFERENCE_MODEL_ALIASES)
     .filter(([, model]) => model.enabled)
     .map(([modelId, model]) => ({
@@ -58,7 +58,7 @@ export function automationModelOptions(
   options: { includeFreeStarter?: boolean } = {},
 ): AutomationModelOption[] {
   const managed = providers.flatMap((provider) => provider.source === "uni-cli"
-    ? uni-cliManagedModels(provider)
+    ? uniCliManagedModels(provider)
     : authorizedProviderModels(provider))
 
   return [

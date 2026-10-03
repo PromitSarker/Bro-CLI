@@ -1,8 +1,8 @@
 import { sanitizeCloudMcpHealthDiagnostic } from "../../../app/lib/diagnostic-sanitizer";
 import type {
-  uni-cliCloudMcpEngineRefresh,
-  uni-cliCloudMcpHealth,
-  uni-cliCloudMcpProbeTrace,
+  uniCliCloudMcpEngineRefresh,
+  uniCliCloudMcpHealth,
+  uniCliCloudMcpProbeTrace,
 } from "../../../app/lib/uni-cli-server";
 
 export type CloudMcpAdvancedRow = {
@@ -40,7 +40,7 @@ export function describeCloudMcpErrorDetail(error: unknown): string | null {
  * network/TLS failure surfaces as the bare "fetch failed"), so the raw string
  * matters on a support call even when it looks unhelpfully short.
  */
-export function cloudMcpEngineErrorText(health: uni-cliCloudMcpHealth | null): string | null {
+export function cloudMcpEngineErrorText(health: uniCliCloudMcpHealth | null): string | null {
   return describeCloudMcpErrorDetail(health?.engine.error);
 }
 
@@ -79,7 +79,7 @@ function shortRevision(revision: string | null | undefined): string {
   return trimmed.length > 12 ? trimmed.slice(0, 12) : trimmed;
 }
 
-export function cloudMcpProbeTraceLines(trace: uni-cliCloudMcpProbeTrace | null | undefined): string[] {
+export function cloudMcpProbeTraceLines(trace: uniCliCloudMcpProbeTrace | null | undefined): string[] {
   if (!trace) return [];
   return trace.steps.map((step) => {
     const parts = [
@@ -93,7 +93,7 @@ export function cloudMcpProbeTraceLines(trace: uni-cliCloudMcpProbeTrace | null 
   });
 }
 
-export function cloudMcpEngineRefreshLines(refresh: uni-cliCloudMcpEngineRefresh | null | undefined): string[] {
+export function cloudMcpEngineRefreshLines(refresh: uniCliCloudMcpEngineRefresh | null | undefined): string[] {
   if (!refresh) return [];
   const lines = refresh.steps.map((step) => {
     const label = step.step === "engine_disconnect" ? "engine disconnect" : step.step === "reapply" ? "re-register and verify" : step.step;
@@ -110,7 +110,7 @@ export function cloudMcpEngineRefreshLines(refresh: uni-cliCloudMcpEngineRefresh
  * Support-call rows for the card's Advanced section. Everything here is
  * derived from the already-sanitized health payload; no secrets are present.
  */
-export function cloudMcpAdvancedRows(health: uni-cliCloudMcpHealth | null): CloudMcpAdvancedRow[] {
+export function cloudMcpAdvancedRows(health: uniCliCloudMcpHealth | null): CloudMcpAdvancedRow[] {
   if (!health) return [];
   const rows: CloudMcpAdvancedRow[] = [];
   const failure = health.firstFailure;
@@ -218,8 +218,8 @@ export function cloudMcpAdvancedRows(health: uni-cliCloudMcpHealth | null): Clou
  * support engineer needs to line the report up with Den/server logs.
  */
 export function buildCloudMcpSupportBundle(input: {
-  health: uni-cliCloudMcpHealth | null;
-  refresh?: uni-cliCloudMcpEngineRefresh | null;
+  health: uniCliCloudMcpHealth | null;
+  refresh?: uniCliCloudMcpEngineRefresh | null;
   context?: {
     workspaceId?: string | null;
     orgId?: string | null;

@@ -1,14 +1,14 @@
 import {
   engineInfo,
   engineStart,
-  uni-cliServerInfo,
+  uniCliServerInfo,
   type EngineInfo,
-  type uni-cliServerInfo,
+  type uniCliServerInfo,
 } from "../../app/lib/desktop";
 import {
-  readuni-cliServerSettings,
-  writeuni-cliServerSettings,
-  type uni-cliServerSettings,
+  readuniCliServerSettings,
+  writeuniCliServerSettings,
+  type uniCliServerSettings,
 } from "../../app/lib/uni-cli-server";
 import { safeStringify } from "../../app/utils";
 import { recordInspectorEvent } from "../../app/lib/app-inspector";
@@ -22,13 +22,13 @@ type LocalWorkspaceLike = {
   workspaceType?: "local" | "remote" | string | null;
 };
 
-type EnsureDesktopLocaluni-cliOptions = {
+type EnsureDesktopLocaluniCliOptions = {
   route: "session" | "settings";
   workspace: LocalWorkspaceLike | null | undefined;
   allWorkspaces: LocalWorkspaceLike[];
 };
 
-function emituni-cliSettingsChanged() {
+function emituniCliSettingsChanged() {
   try {
     window.dispatchEvent(new CustomEvent("uni-cli-server-settings-changed"));
   } catch {
@@ -38,9 +38,9 @@ function emituni-cliSettingsChanged() {
 
 /** Matches the boot sequence's definition of a usable local server: running,
  * with a base URL and at least one token the route can authenticate with. */
-export function isReadyLocaluni-cliServerInfo(
-  info: uni-cliServerInfo | null | undefined,
-): info is uni-cliServerInfo {
+export function isReadyLocaluniCliServerInfo(
+  info: uniCliServerInfo | null | undefined,
+): info is uniCliServerInfo {
   return Boolean(
     info?.running === true &&
       info.baseUrl?.trim() &&
@@ -51,9 +51,9 @@ export function isReadyLocaluni-cliServerInfo(
 export const LOCAL_UNICLI_READINESS_MAX_ATTEMPTS = 20;
 export const LOCAL_UNICLI_READINESS_RETRY_DELAY_MS = 500;
 
-export function uni-cliServerSettingsChanged(
-  previous: uni-cliServerSettings,
-  next: uni-cliServerSettings,
+export function uniCliServerSettingsChanged(
+  previous: uniCliServerSettings,
+  next: uniCliServerSettings,
 ): boolean {
   return previous.urlOverride !== next.urlOverride
     || previous.portOverride !== next.portOverride
@@ -69,23 +69,23 @@ export function uni-cliServerSettingsChanged(
  * gap, not a failure. Bounded: returns the last observed info (ready or not)
  * after `maxAttempts` polls so callers decide how to report exhaustion.
  */
-export async function waitForReadyLocaluni-cliServerInfo(options?: {
-  fetchInfo?: () => Promise<uni-cliServerInfo | null>;
+export async function waitForReadyLocaluniCliServerInfo(options?: {
+  fetchInfo?: () => Promise<uniCliServerInfo | null>;
   maxAttempts?: number;
   wait?: (delayMs: number) => Promise<void>;
-}): Promise<uni-cliServerInfo | null> {
+}): Promise<uniCliServerInfo | null> {
   const fetchInfo =
-    options?.fetchInfo ?? (() => uni-cliServerInfo() as Promise<uni-cliServerInfo | null>);
+    options?.fetchInfo ?? (() => uniCliServerInfo() as Promise<uniCliServerInfo | null>);
   const maxAttempts = Math.max(1, options?.maxAttempts ?? LOCAL_UNICLI_READINESS_MAX_ATTEMPTS);
   const wait =
     options?.wait ??
     ((delayMs: number) => new Promise<void>((resolve) => window.setTimeout(resolve, delayMs)));
 
-  let lastInfo: uni-cliServerInfo | null = null;
+  let lastInfo: uniCliServerInfo | null = null;
   for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
     if (attempt > 0) await wait(LOCAL_UNICLI_READINESS_RETRY_DELAY_MS);
     lastInfo = await fetchInfo().catch(() => null);
-    if (isReadyLocaluni-cliServerInfo(lastInfo)) return lastInfo;
+    if (isReadyLocaluniCliServerInfo(lastInfo)) return lastInfo;
   }
   return lastInfo;
 }
@@ -103,7 +103,7 @@ export type DesktopLocalReconnectInput = {
 /**
  * Gate for the session route's local reconnect effect. Reconnect must not
  * start while desktop runtime bootstrap is still in flight — the boot
- * sequence owns starting the server, and probing `uni-cliServerInfo`
+ * sequence owns starting the server, and probing `uniCliServerInfo`
  * mid-bootstrap is what surfaced "did not report a base URL" errors during
  * app updates. It runs only once boot completed (`ready`), definitively
  * failed (`error`), or is idle after the route already became interactive
@@ -127,8 +127,8 @@ function describeError(error: unknown) {
   return serialized && serialized !== "{}" ? serialized : "Unknown error";
 }
 
-export async function ensureDesktopLocaluni-cliConnection(
-  options: EnsureDesktopLocaluni-cliOptions,
+export async function ensureDesktopLocaluniCliConnection(
+  options: EnsureDesktopLocaluniCliOptions,
 ) {
   const workspace = options.workspace;
   const workspaceRoot = workspace?.path?.trim() ?? "";
@@ -161,7 +161,7 @@ export async function ensureDesktopLocaluni-cliConnection(
       await engineStart(workspaceRoot, {
         runtime: "direct",
         workspacePaths,
-        uni-cliRemoteAccess: readuni-cliServerSettings().remoteAccessEnabled === true,
+        uniCliRemoteAccess: readuniCliServerSettings().remoteAccessEnabled === true,
       });
       startedEngine = true;
     }
@@ -169,21 +169,21 @@ export async function ensureDesktopLocaluni-cliConnection(
     // The server publishes its base URL and tokens asynchronously after a
     // (re)start, so gate on observed readiness with bounded retries instead
     // of failing on the first empty answer.
-    const info = await waitForReadyLocaluni-cliServerInfo();
-    if (!isReadyLocaluni-cliServerInfo(info) || !info.baseUrl) {
+    const info = await waitForReadyLocaluniCliServerInfo();
+    if (!isReadyLocaluniCliServerInfo(info) || !info.baseUrl) {
       throw new Error("Uni-CLI server did not become ready after activation.");
     }
 
-    const previousSettings = readuni-cliServerSettings();
-    const nextSettings = writeuni-cliServerSettings({
+    const previousSettings = readuniCliServerSettings();
+    const nextSettings = writeuniCliServerSettings({
       urlOverride: info.baseUrl,
       token: info.ownerToken?.trim() || info.clientToken?.trim() || undefined,
       hostToken: info.hostToken?.trim() || undefined,
       portOverride: info.port ?? undefined,
       remoteAccessEnabled: info.remoteAccessEnabled === true,
     });
-    if (startedEngine || uni-cliServerSettingsChanged(previousSettings, nextSettings)) {
-      emituni-cliSettingsChanged();
+    if (startedEngine || uniCliServerSettingsChanged(previousSettings, nextSettings)) {
+      emituniCliSettingsChanged();
     }
 
     recordInspectorEvent("route.local_uni-cli.ensure.success", {

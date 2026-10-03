@@ -302,7 +302,7 @@ export async function cloudDraftRouting(seed: Seed) {
   if (record(gateway).status !== 200 || record(gateway).gatewayStatus !== "connected") throw new Error(`Fixture gateway did not connect during engine configuration: ${JSON.stringify(gateway)}`);
   const session = await seed.session(app, { title: "Slack draft review" });
   const hostSetup = {
-    name: app.handle.name, uni-cliUrl: app.uni-cliUrl, workspaceRoot: app.workspaceRoot,
+    name: app.handle.name, uniCliUrl: app.uniCliUrl, workspaceRoot: app.workspaceRoot,
     workspaceId: workspace.workspaceId, cloudUrl: `${den.ref.apiUrl}/mcp/agent`,
     token: field(credentials, "token"), appHostToken: field(credentials, "appHostToken"),
   };

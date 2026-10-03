@@ -101,7 +101,7 @@ async function main() {
   const transportModule = await import("./apps/server/src/agent-context-transport-probe.ts");
   const cloudModule = await import("./apps/server/src/agent-context-cloud-probe.ts");
   const diagnosticsModule = await import("./apps/server/src/agent-context-diagnostics.ts");
-  const cloudProbe = await cloudModule.probeuni-cliCloudCatalog({
+  const cloudProbe = await cloudModule.probeuniCliCloudCatalog({
     workspaceId: "ws_egress_lab_product_diagnostics",
     workspaceType: "local",
     runtimeConfigAvailable: true,

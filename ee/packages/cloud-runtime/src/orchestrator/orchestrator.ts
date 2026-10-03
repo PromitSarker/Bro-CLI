@@ -1,10 +1,10 @@
 import { randomUUID } from "node:crypto"
 import {
   renderCheckpointFlushCommand,
-  renderUni-CLIBootstrapScript,
+  renderUniCliBootstrapScript,
   renderRestoreMarkerExistsCommand,
-  type Uni-CLIBootstrapConfig,
-  type Uni-CLICheckpointConfig,
+  type UniCliBootstrapConfig,
+  type UniCliCheckpointConfig,
 } from "../bootstrap/uni-cli-runtime"
 import { runtimeProviderErrorCode } from "../contract/errors"
 import type {
@@ -160,7 +160,7 @@ export function createCloudRuntimeOrchestrator(deps: CloudRuntimeOrchestratorDep
     return new Date(Math.max(issuedAtMs, expiresAtMs - config.endpointRefreshLeadMs))
   }
 
-  function checkpointConfig(): Uni-CLICheckpointConfig {
+  function checkpointConfig(): UniCliCheckpointConfig {
     return {
       dataMountPath: config.dataMountPath,
       runtimeDataPath: config.runtimeDataPath,
@@ -171,7 +171,7 @@ export function createCloudRuntimeOrchestrator(deps: CloudRuntimeOrchestratorDep
     }
   }
 
-  function bootstrapConfig(input: ProvisionInput): Uni-CLIBootstrapConfig {
+  function bootstrapConfig(input: ProvisionInput): UniCliBootstrapConfig {
     return {
       ...checkpointConfig(),
       workspaceMountPath: config.workspaceMountPath,
@@ -336,7 +336,7 @@ export function createCloudRuntimeOrchestrator(deps: CloudRuntimeOrchestratorDep
 
   async function startProcess(input: ProvisionInput, handle: SandboxHandle, sessionId: string): Promise<StartedProcess> {
     const exec = await provider.exec(handle, {
-      script: renderUni-CLIBootstrapScript(bootstrapConfig(input)),
+      script: renderUniCliBootstrapScript(bootstrapConfig(input)),
       detach: true,
       timeoutMs: config.createTimeoutMs,
       sessionId,

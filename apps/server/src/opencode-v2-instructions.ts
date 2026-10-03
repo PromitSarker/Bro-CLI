@@ -3,7 +3,7 @@ import { UNICLI_AGENT_PROMPT } from "./uni-cli-agent-prompt.js";
 export const UNICLI_V2_INSTRUCTION_KEY = "uni-cli.context";
 
 /** Discover remote skills on demand through Connect; native skills are workspace files. */
-export function buildUni-CLIV2Instructions(connectReady: boolean) {
+export function buildUniCliV2Instructions(connectReady: boolean) {
   return {
     // Keep v1 guidance, translating only the native MCP tool spelling.
     operatingInstructions: UNICLI_AGENT_PROMPT.replaceAll("uni-cli-cloud_", "uni-cli-cloud."),

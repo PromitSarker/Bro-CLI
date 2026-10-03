@@ -1,11 +1,11 @@
 /** @jsxImportSource react */
 import { use, type ReactNode } from "react";
-import { isuni-cliGatewayRuntime } from "@/app/lib/gateway-runtime";
+import { isuniCliGatewayRuntime } from "@/app/lib/gateway-runtime";
 import { WebStartupScreen } from "./workspace-startup-status";
 
 // Startup gates cannot depend on the providers they are still waiting to mount.
 export function StartupScreen({ message = "Starting Uni-CLI" }: { message?: string }) {
-  if (isuni-cliGatewayRuntime()) return <WebStartupScreen message={message} />;
+  if (isuniCliGatewayRuntime()) return <WebStartupScreen message={message} />;
   return (
     <div className="flex min-h-dvh items-center justify-center bg-dls-surface p-6 text-dls-primary">
       <div className="flex max-w-sm flex-col items-center gap-4 text-center text-sm">

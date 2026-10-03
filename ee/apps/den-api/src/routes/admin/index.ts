@@ -50,9 +50,9 @@ import { updateOrganizationMetadata } from "../../organization-metadata.js"
 import { env } from "../../env.js"
 import type { AuthContextVariables } from "../../session.js"
 import { buildOrganizationAuditEvent, logOrganizationAuditEvent, ORGANIZATION_AUDIT_ACTIONS } from "../../audit-events.js"
-import { hasUni-CLIWebComplimentaryAccess, resolveUni-CLIWebAccess, setUni-CLIWebComplimentaryAccess } from "../../uni-cli-web-access.js"
-import { isUni-CLIWebAvailable } from "../../uni-cli-web-availability.js"
-import { calculateOrganizationSeatBillingCounts, getOrganizationSeatBillingCounts, isEligibleUni-CLIWebSubscriptionStatus, isOngoingUni-CLIWebSubscriptionStatus, organizationHasOngoingUni-CLIWebSubscription, refreshOrgSubscriptionFromStripe, syncSeatSubscriptionQuantityAfterMemberChange } from "../../stripe-billing.js"
+import { hasUniCliWebComplimentaryAccess, resolveUniCliWebAccess, setUniCliWebComplimentaryAccess } from "../../uni-cli-web-access.js"
+import { isUniCliWebAvailable } from "../../uni-cli-web-availability.js"
+import { calculateOrganizationSeatBillingCounts, getOrganizationSeatBillingCounts, isEligibleUniCliWebSubscriptionStatus, isOngoingUniCliWebSubscriptionStatus, organizationHasOngoingUniCliWebSubscription, refreshOrgSubscriptionFromStripe, syncSeatSubscriptionQuantityAfterMemberChange } from "../../stripe-billing.js"
 import { buildAdminPageInfo, normalizeAdminPageRequest, sanitizeAdminSearchForLike, type AdminPageRequest } from "./scale-performance.js"
 
 type UserId = typeof AuthUserTable.$inferSelect.id
@@ -94,7 +94,7 @@ const updateOrganizationFreeSeatsSchema = z.object({
   totalFreeSeats: z.number().int().min(DEFAULT_ORGANIZATION_FREE_SEAT_COUNT).max(100000),
 })
 
-const updateOrganizationUni-CLIWebAccessSchema = z.object({
+const updateOrganizationUniCliWebAccessSchema = z.object({
   enabled: z.boolean(),
   reason: z.string().trim().min(3).max(500),
 })
@@ -324,27 +324,27 @@ function readAdminVisibleOrganizationCapabilities(metadata: Record<string, unkno
   }
 }
 
-function readAdminUni-CLIWebAccess(
+function readAdminUniCliWebAccess(
   metadata: Record<string, unknown> | string | null | undefined,
-  subscription: AdminUni-CLIWebSubscription | null,
+  subscription: AdminUniCliWebSubscription | null,
 ) {
-  const complimentaryAccess = hasUni-CLIWebComplimentaryAccess(metadata)
+  const complimentaryAccess = hasUniCliWebComplimentaryAccess(metadata)
   const hasEligibleSubscription = Boolean(
     subscription
-    && isEligibleUni-CLIWebSubscriptionStatus(subscription.status)
-    && env.stripe.uni-cliWebPriceId
-    && subscription.stripe_price_id === env.stripe.uni-cliWebPriceId
+    && isEligibleUniCliWebSubscriptionStatus(subscription.status)
+    && env.stripe.uniCliWebPriceId
+    && subscription.stripe_price_id === env.stripe.uniCliWebPriceId
     && subscription.payment_failed !== true,
   )
-  const access = resolveUni-CLIWebAccess({
-    deploymentAvailable: isUni-CLIWebAvailable(),
+  const access = resolveUniCliWebAccess({
+    deploymentAvailable: isUniCliWebAvailable(),
     hasEligibleSubscription,
     complimentaryAccess,
   })
   return {
     ...access,
     hasEligibleSubscription,
-    hasOngoingSubscription: Boolean(subscription && isOngoingUni-CLIWebSubscriptionStatus(subscription.status)),
+    hasOngoingSubscription: Boolean(subscription && isOngoingUniCliWebSubscriptionStatus(subscription.status)),
     subscriptionStatus: subscription?.status ?? null,
   }
 }
@@ -483,16 +483,16 @@ type AdminOrganizationRow = {
   seatsFreeAdditional: number
   billableSeatCount: number
   capabilities: ReturnType<typeof readAdminVisibleOrganizationCapabilities>
-  uni-cliWebAccess: AdminUni-CLIWebAccess
+  uniCliWebAccess: AdminUniCliWebAccess
   freeAuto: ReturnType<typeof readAdminFreeAuto>
 }
 
-type AdminUni-CLIWebSubscription = Pick<
+type AdminUniCliWebSubscription = Pick<
   typeof OrgSubscriptionTable.$inferSelect,
   "status" | "stripe_price_id" | "payment_failed"
 >
 
-type AdminUni-CLIWebAccess = ReturnType<typeof readAdminUni-CLIWebAccess>
+type AdminUniCliWebAccess = ReturnType<typeof readAdminUniCliWebAccess>
 
 type AdminSummary = {
   totalUsers: number
@@ -1004,7 +1004,7 @@ async function shapeAdminOrganizationRows(rows: Array<Pick<typeof OrganizationTa
       billableSeatCount: seatCounts.chargeable,
       freeAuto: readAdminFreeAuto(metadata),
       capabilities: readAdminVisibleOrganizationCapabilities(metadata),
-      uni-cliWebAccess: readAdminUni-CLIWebAccess(metadata, webSubscriptionByOrg.get(entry.id) ?? null),
+      uniCliWebAccess: readAdminUniCliWebAccess(metadata, webSubscriptionByOrg.get(entry.id) ?? null),
     }
   })
 }
@@ -1949,7 +1949,7 @@ export function registerAdminRoutes<T extends { Variables: AuthContextVariables 
     }),
     adminRoute(),
     async (c) => {
-      const body = updateOrganizationUni-CLIWebAccessSchema.safeParse(await c.req.json().catch(() => null))
+      const body = updateOrganizationUniCliWebAccessSchema.safeParse(await c.req.json().catch(() => null))
       if (!body.success) {
         return c.json({ error: "invalid_request", message: body.error.issues[0]?.message ?? "Invalid Uni-CLI Web access request." }, 400)
       }
@@ -1959,7 +1959,7 @@ export function registerAdminRoutes<T extends { Variables: AuthContextVariables 
         return c.json({ error: "invalid_request", message: "Invalid organization id." }, 400)
       }
 
-      if (body.data.enabled && await organizationHasOngoingUni-CLIWebSubscription(organizationId)) {
+      if (body.data.enabled && await organizationHasOngoingUniCliWebSubscription(organizationId)) {
         return c.json({
           error: "uni-cli_web_subscription_exists",
           message: "Cancel or finish the existing paid Uni-CLI Web subscription before granting complimentary access.",
@@ -1993,17 +1993,17 @@ export function registerAdminRoutes<T extends { Variables: AuthContextVariables 
           .limit(1)
           .for("update")
         const webSubscription = webSubscriptions[0] ?? null
-        if (body.data.enabled && webSubscription && isOngoingUni-CLIWebSubscriptionStatus(webSubscription.status)) {
+        if (body.data.enabled && webSubscription && isOngoingUniCliWebSubscriptionStatus(webSubscription.status)) {
           return "subscription_exists"
         }
 
-        const metadata = setUni-CLIWebComplimentaryAccess(organization.metadata, body.data.enabled)
+        const metadata = setUniCliWebComplimentaryAccess(organization.metadata, body.data.enabled)
         const auditEvent = buildOrganizationAuditEvent({
           organizationId,
           actorUserId,
           action: body.data.enabled
-            ? ORGANIZATION_AUDIT_ACTIONS.uni-cliWebComplimentaryAccessGranted
-            : ORGANIZATION_AUDIT_ACTIONS.uni-cliWebComplimentaryAccessRevoked,
+            ? ORGANIZATION_AUDIT_ACTIONS.uniCliWebComplimentaryAccessGranted
+            : ORGANIZATION_AUDIT_ACTIONS.uniCliWebComplimentaryAccessRevoked,
           payload: {
             reason: body.data.reason,
             complimentaryAccess: body.data.enabled,
@@ -2034,7 +2034,7 @@ export function registerAdminRoutes<T extends { Variables: AuthContextVariables 
         ok: true,
         organization: {
           id: organizationId,
-          uni-cliWebAccess: readAdminUni-CLIWebAccess(result.metadata, result.webSubscription),
+          uniCliWebAccess: readAdminUniCliWebAccess(result.metadata, result.webSubscription),
         },
       })
     },

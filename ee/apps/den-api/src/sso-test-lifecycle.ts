@@ -16,7 +16,7 @@ type SsoTestUserId = NonNullable<SsoConnection["activeTestUserId"]>
 type SsoTestFailureReason = "authentication" | "cancelled" | "expired" | "identity_mismatch" | "start_failed"
 
 const SSO_TEST_TTL_MS = 5 * 60 * 1000
-const TEST_INTENT_QUERY_KEY = "uni-cliSsoTest"
+const TEST_INTENT_QUERY_KEY = "uniCliSsoTest"
 
 const SSO_TEST_FAILURE_MESSAGES: Record<SsoTestFailureReason, string> = {
   authentication: "SSO authentication did not complete successfully. Check the provider configuration and try again.",

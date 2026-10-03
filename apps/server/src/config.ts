@@ -1,5 +1,5 @@
 import { dirname, resolve } from "node:path";
-import { uni-cliServerConfigPath } from "@uni-cli/paths";
+import { uniCliServerConfigPath } from "@uni-cli/paths";
 import type { ApprovalMode, ApprovalConfig, ServerConfig, WorkspaceConfig, LogFormat } from "./types.js";
 import { buildWorkspaceInfos } from "./workspaces.js";
 import { parseList, readJsonFile, shortId } from "./utils.js";
@@ -232,7 +232,7 @@ async function loadFileConfig(configPath: string): Promise<FileConfig> {
 }
 
 export async function resolveServerConfig(cli: CliArgs): Promise<ServerConfig> {
-  const configPath = cli.configPath ?? uni-cliServerConfigPath();
+  const configPath = cli.configPath ?? uniCliServerConfigPath();
   const fileConfig = await loadFileConfig(configPath);
   const configDir = dirname(configPath);
 

@@ -3,20 +3,20 @@ import { GlobalRegistrator } from "@happy-dom/global-registrator";
 import { act, createElement } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type { uni-cliSessionHistory } from "../src/app/lib/uni-cli-server";
+import type { uniCliSessionHistory } from "../src/app/lib/uni-cli-server";
 import { useOpeningSessionHistory } from "../src/react-app/domains/session/surface/session-history";
-import { createuni-cliServerClient } from "../src/app/lib/uni-cli-server";
+import { createuniCliServerClient } from "../src/app/lib/uni-cli-server";
 import { composeNativeSessionHistory } from "../src/app/lib/opencode-session-native";
 import { createClient } from "../src/app/lib/opencode";
 import { interruptSessionTurn } from "../src/app/lib/opencode-interruption";
-import { builduni-cliSessionSystemContext, clearuni-cliEnvSystemContextCache } from "../src/react-app/domains/session/sync/env-context";
+import { builduniCliSessionSystemContext, clearuniCliEnvSystemContextCache } from "../src/react-app/domains/session/sync/env-context";
 
 const originalWindow = globalThis.window;
 const originalFetch = globalThis.fetch;
 afterEach(() => {
   Object.defineProperty(globalThis, "window", { configurable: true, value: originalWindow });
   Object.defineProperty(globalThis, "fetch", { configurable: true, value: originalFetch });
-  clearuni-cliEnvSystemContextCache();
+  clearuniCliEnvSystemContextCache();
 });
 
 function fixture() {
@@ -69,10 +69,10 @@ test("only the uncached send-history preflight requests isolated transport; cach
       const host = document.createElement("div");
       const root = createRoot(host);
       const calls: ({ desktopTransport: "main" } | undefined)[] = [];
-      const history: uni-cliSessionHistory = { session: { id: "ses_history", title: "History", version: "1", time: { created: 1, updated: 1 } }, messages: [] };
+      const history: uniCliSessionHistory = { session: { id: "ses_history", title: "History", version: "1", time: { created: 1, updated: 1 } }, messages: [] };
       const key = ["send-history-isolation", String(warm)];
       if (warm) client.setQueryData(key, history);
-      let readSend: (() => Promise<uni-cliSessionHistory["messages"]>) | undefined;
+      let readSend: (() => Promise<uniCliSessionHistory["messages"]>) | undefined;
       function Harness() {
         const opening = useOpeningSessionHistory({ owner: String(warm), sessionId: "ses_history", snapshotQueryKey: key,
           readSnapshot: async () => history,
@@ -102,8 +102,8 @@ test("only the uncached send-history preflight requests isolated transport; cach
 
 test("ordinary-send environment preflight opts in without changing other environment reads or disclosing values", async () => {
   const world = fixture();
-  const client = createuni-cliServerClient({ baseUrl: "http://127.0.0.1:8788", token: "fixture-client", hostToken: "fixture-host" });
-  const context = await builduni-cliSessionSystemContext(client, { cacheKey: "ses_root", readPendingChanges: () => false, desktopTransport: "main" });
+  const client = createuniCliServerClient({ baseUrl: "http://127.0.0.1:8788", token: "fixture-client", hostToken: "fixture-host" });
+  const context = await builduniCliSessionSystemContext(client, { cacheKey: "ses_root", readPendingChanges: () => false, desktopTransport: "main" });
   expect(context).toContain("FIXTURE_KEY");
   expect(context).not.toContain("fixture-host");
   expect(world.renderer).toHaveLength(0);

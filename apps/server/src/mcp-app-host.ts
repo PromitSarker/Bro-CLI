@@ -14,11 +14,11 @@ import {
   CONNECT_MCP_APP_HOST_CAPABILITY_HEADER,
   CONNECT_MCP_APP_HOST_NAME_PREFIX,
   connectMcpAppHostName,
-  findUni-CLIConnectMcpAppHostServer,
-  readUni-CLIConnectMcpAppHostAuthorization,
-  readUni-CLIConnectMcpAppHostAuthorizationRevision,
-  readUni-CLIConnectMcpAppHostCatalog,
-  refreshUni-CLIConnectMcpAppHostCatalog,
+  findUniCliConnectMcpAppHostServer,
+  readUniCliConnectMcpAppHostAuthorization,
+  readUniCliConnectMcpAppHostAuthorizationRevision,
+  readUniCliConnectMcpAppHostCatalog,
+  refreshUniCliConnectMcpAppHostCatalog,
   type ConnectMcpCatalogDiagnostic,
 } from "./connect-mcp-server-catalog.js";
 import type { ServerConfig } from "./types.js";
@@ -131,7 +131,7 @@ async function launchFingerprint(input: { serverConfig: ServerConfig; workspaceI
   const runtimeRevisions = readRuntimeMcpConfigRevisions(input.serverConfig, input.workspaceId,
     serverName.startsWith(CONNECT_MCP_APP_HOST_NAME_PREFIX) ? "uni-cli-cloud" : serverName);
   const privateRevision = serverName.startsWith(CONNECT_MCP_APP_HOST_NAME_PREFIX)
-    ? await readUni-CLIConnectMcpAppHostAuthorizationRevision(input.serverConfig, input.workspaceId) : null;
+    ? await readUniCliConnectMcpAppHostAuthorizationRevision(input.serverConfig, input.workspaceId) : null;
   return createHash("sha256").update(JSON.stringify({ config, managed, runtimeRevisions, privateRevision })).digest("hex");
 }
 
@@ -505,18 +505,18 @@ async function privateConnectMcpConfigUntimed(input: {
 }): Promise<{ serverName: string; config: Record<string, unknown> } | null> {
   // Ordinary user-configured servers do not depend on Connect discovery.
   if (input.connectionId === undefined && !input.serverName?.startsWith(CONNECT_MCP_APP_HOST_NAME_PREFIX)) return null;
-  let descriptor = await findUni-CLIConnectMcpAppHostServer(
+  let descriptor = await findUniCliConnectMcpAppHostServer(
     input.serverConfig,
     input.workspaceId,
     { connectionId: input.connectionId, serverName: input.serverName },
   );
   if (!descriptor) {
-    const refreshed = await refreshUni-CLIConnectMcpAppHostCatalog(input.serverConfig, input.workspaceId);
+    const refreshed = await refreshUniCliConnectMcpAppHostCatalog(input.serverConfig, input.workspaceId);
     if (refreshed.diagnostic !== "ready" && refreshed.diagnostic !== "empty") {
       throw connectCatalogError(refreshed.diagnostic);
     }
     if (refreshed.status === "synced") {
-      descriptor = await findUni-CLIConnectMcpAppHostServer(
+      descriptor = await findUniCliConnectMcpAppHostServer(
         input.serverConfig,
         input.workspaceId,
         { connectionId: input.connectionId, serverName: input.serverName },
@@ -524,7 +524,7 @@ async function privateConnectMcpConfigUntimed(input: {
     }
   }
   if (!descriptor) return null;
-  const appHostAuthorization = await readUni-CLIConnectMcpAppHostAuthorization(
+  const appHostAuthorization = await readUniCliConnectMcpAppHostAuthorization(
     input.serverConfig,
     input.workspaceId,
     descriptor.url,
@@ -683,11 +683,11 @@ export async function listMcpAppCatalog(input: {
   // capability gateway. Their catalog and authorization live in the private
   // app-host store, not the workspace MCP config, and their launches resolve
   // through a connection reference (app audience only).
-  let connectCatalog = await readUni-CLIConnectMcpAppHostCatalog(input.serverConfig, input.workspaceId);
+  let connectCatalog = await readUniCliConnectMcpAppHostCatalog(input.serverConfig, input.workspaceId);
   if (connectCatalog.servers.length === 0) {
-    const refreshed = await refreshUni-CLIConnectMcpAppHostCatalog(input.serverConfig, input.workspaceId);
+    const refreshed = await refreshUniCliConnectMcpAppHostCatalog(input.serverConfig, input.workspaceId);
     if (refreshed.status === "synced") {
-      connectCatalog = await readUni-CLIConnectMcpAppHostCatalog(input.serverConfig, input.workspaceId);
+      connectCatalog = await readUniCliConnectMcpAppHostCatalog(input.serverConfig, input.workspaceId);
     }
   }
   // A Connect host can also appear in the workspace MCP config under the same
@@ -728,7 +728,7 @@ export async function listMcpAppCatalog(input: {
       displayName: descriptor.name,
       connectionId: descriptor.connectionId,
     };
-    const authorization = await readUni-CLIConnectMcpAppHostAuthorization(
+    const authorization = await readUniCliConnectMcpAppHostAuthorization(
       input.serverConfig,
       input.workspaceId,
       descriptor.url,

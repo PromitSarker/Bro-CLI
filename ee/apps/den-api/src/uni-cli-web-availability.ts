@@ -1,23 +1,23 @@
 import { env } from "./env.js"
-import { hasUni-CLIWebComplimentaryAccess } from "./uni-cli-web-access.js"
+import { hasUniCliWebComplimentaryAccess } from "./uni-cli-web-access.js"
 
-export function uni-cliWebDeploymentAvailable(enabled: boolean) {
+export function uniCliWebDeploymentAvailable(enabled: boolean) {
   return enabled === true
 }
 
-export function isUni-CLIWebAvailable() {
-  return uni-cliWebDeploymentAvailable(env.uni-cliWebEnabled)
+export function isUniCliWebAvailable() {
+  return uniCliWebDeploymentAvailable(env.uniCliWebEnabled)
 }
 
-export function uni-cliWebAvailableForOrganization(
+export function uniCliWebAvailableForOrganization(
   enabled: boolean,
   metadata: Record<string, unknown> | string | null | undefined,
 ) {
-  return uni-cliWebDeploymentAvailable(enabled) || hasUni-CLIWebComplimentaryAccess(metadata)
+  return uniCliWebDeploymentAvailable(enabled) || hasUniCliWebComplimentaryAccess(metadata)
 }
 
-export function isUni-CLIWebAvailableForOrganization(
+export function isUniCliWebAvailableForOrganization(
   metadata: Record<string, unknown> | string | null | undefined,
 ) {
-  return uni-cliWebAvailableForOrganization(env.uni-cliWebEnabled, metadata)
+  return uniCliWebAvailableForOrganization(env.uniCliWebEnabled, metadata)
 }

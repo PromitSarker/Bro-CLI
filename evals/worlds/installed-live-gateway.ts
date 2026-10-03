@@ -2,14 +2,14 @@ import { readFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { uni-cliConfigDir } from "../../packages/paths/index.mjs";
+import { uniCliConfigDir } from "../../packages/paths/index.mjs";
 import { record } from "./engine-live-parity.ts";
 
 /** Explicit opt-in: use a configured credential only at its original destination.
  * Never print, serialize as evidence, or pass this object to assertion failures. */
 export async function installedLiveGateway() {
   if (process.env.UNICLI_LIVE_INSTALLED_GATEWAY !== "1") return null;
-  const db = new DatabaseSync(join(uni-cliConfigDir(), "runtime.sqlite"), { readOnly: true });
+  const db = new DatabaseSync(join(uniCliConfigDir(), "runtime.sqlite"), { readOnly: true });
   let rows;
   try { rows = db.prepare("SELECT config_json FROM runtime_opencode_configs").all(); } finally { db.close(); }
   const auth: unknown = JSON.parse(await readFile(join(homedir(), ".local/share/opencode/auth.json"), "utf8"));

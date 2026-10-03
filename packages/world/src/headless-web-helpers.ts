@@ -18,13 +18,13 @@ function stripTrailingSlashes(value: string): string {
 export type HeadlessRuntimePids = {
   launcher: number;
   web: number | null;
-  uni-cliServer: number | null;
+  uniCliServer: number | null;
 };
 
 export type HeadlessRuntimeManifest = {
   mode: "local-server";
   webUrl: string;
-  uni-cliUrl: string;
+  uniCliUrl: string;
   healthUrl: string;
   workspace: string;
   token: string;
@@ -148,7 +148,7 @@ export function buildHeadlessCorsOrigins(input: {
   ]));
 }
 
-export function builduni-cliServerArgs(input: {
+export function builduniCliServerArgs(input: {
   host: string;
   port: number;
   configPath: string;
@@ -171,7 +171,7 @@ export function builduni-cliServerArgs(input: {
 
 export function buildHeadlessRuntimeManifest(input: {
   webUrl: string;
-  uni-cliUrl: string;
+  uniCliUrl: string;
   workspace: string;
   token: string;
   hostToken: string;
@@ -182,7 +182,7 @@ export function buildHeadlessRuntimeManifest(input: {
   denTarget?: string | null;
   pid?: number;
   webPid?: number | null;
-  uni-cliServerPid?: number | null;
+  uniCliServerPid?: number | null;
   startedAt?: string;
   supervisorPid?: number | null;
   world?: { name: string; state: HeadlessWebState; launchId?: string };
@@ -192,8 +192,8 @@ export function buildHeadlessRuntimeManifest(input: {
   return {
     mode: "local-server",
     webUrl: input.webUrl,
-    uni-cliUrl: input.uni-cliUrl,
-    healthUrl: `${stripTrailingSlashes(input.uni-cliUrl)}/health`,
+    uniCliUrl: input.uniCliUrl,
+    healthUrl: `${stripTrailingSlashes(input.uniCliUrl)}/health`,
     workspace: path.resolve(input.workspace),
     token: input.token,
     hostToken: input.hostToken,
@@ -209,7 +209,7 @@ export function buildHeadlessRuntimeManifest(input: {
     pids: {
       launcher: launcherPid,
       web: input.webPid ?? null,
-      uni-cliServer: input.uni-cliServerPid ?? null,
+      uniCliServer: input.uniCliServerPid ?? null,
     },
     ...(input.supervisorPid === undefined ? {} : { supervisorPid: input.supervisorPid }),
     ...(input.world ? { world: input.world } : {}),

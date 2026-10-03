@@ -17,9 +17,9 @@ export interface OpencodeDbPathOptions extends PathOptions {
 export declare const MAX_CONFIG_ROOT_LENGTH: 4096;
 
 export declare function normalizeWorkspaceRootPath(value: unknown, opts?: PathOptions): string;
-export declare function uni-cliConfigDir(opts?: PathOptions): string;
-export declare function uni-cliServerConfigPath(opts?: PathOptions): string;
-export declare function uni-cliEnvStorePath(opts?: PathOptions): string;
+export declare function uniCliConfigDir(opts?: PathOptions): string;
+export declare function uniCliServerConfigPath(opts?: PathOptions): string;
+export declare function uniCliEnvStorePath(opts?: PathOptions): string;
 export declare function globalOpencodeConfigDir(opts?: PathOptions): string;
 export declare function resolveGlobalOpencodeConfigPath(opts?: PathOptions): string;
 export declare function workspaceOpencodeConfigCandidates(workspaceRoot: string): string[];
@@ -27,7 +27,7 @@ export declare function resolveWorkspaceOpencodeConfigPath(workspaceRoot: string
 export declare function desktopBootstrapPath(opts?: PathOptions): string;
 export declare function legacyDesktopBootstrapPath(opts?: PathOptions): string;
 export declare function expandHomePath(value: string, opts?: PathOptions): string;
-export declare function uni-cliServerDataDir(opts?: PathOptions): string;
+export declare function uniCliServerDataDir(opts?: PathOptions): string;
 export declare function opencodeDataDirs(opts?: PathOptions): string[];
 export declare function opencodeDbCandidates(opts?: OpencodeDbPathOptions): string[];
 export declare function opencodeCacheDirs(opts?: PathOptions): string[];

@@ -164,7 +164,7 @@ async function requestFromSurface(
     throw new Error(`Could not serialize engine session probe body for ${path}`);
   }
   const value = await evalIn(surface, browserScript(async (path, value, inputValue, inputValue2) => {
-    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uniCliServerInfo");
     if (!info?.running || !info.baseUrl) return { status: 0, body: { error: "local_server_unavailable" } };
     const baseUrl = String(info.baseUrl);
     let end = baseUrl.length;

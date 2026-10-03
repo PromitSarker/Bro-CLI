@@ -33,7 +33,7 @@ const statusGrantSchema = z.object({
 const desktopHandoffGrantResponseSchema = z.object({
   grant: z.string(),
   expiresAt: z.string().datetime(),
-  uni-cliUrl: z.string().url(),
+  uniCliUrl: z.string().url(),
   returnUrl: z.string().url().optional(),
 }).meta({ ref: "DesktopHandoffGrantResponse" })
 
@@ -186,7 +186,7 @@ export function resolveDesktopDenBaseUrl(request: Request) {
   return origin
 }
 
-function builduni-cliDeepLink(input: {
+function builduniCliDeepLink(input: {
   grant: string
   denBaseUrl: string
 }) {
@@ -503,7 +503,7 @@ export function registerDesktopAuthRoutes<T extends { Variables: AuthContextVari
     return c.json({
       grant,
       expiresAt: expiresAt.toISOString(),
-      uni-cliUrl: builduni-cliDeepLink({
+      uniCliUrl: builduniCliDeepLink({
         grant,
         denBaseUrl,
       }),

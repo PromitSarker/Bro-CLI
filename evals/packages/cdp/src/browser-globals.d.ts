@@ -1,5 +1,5 @@
 import type { DesktopCommandName, DesktopCommandArgs, DesktopCommandResult } from "@uni-cli/types/desktop-ipc";
-import type { uni-cliContextSnapshot } from "@uni-cli/types/uni-cli-context";
+import type { uniCliContextSnapshot } from "@uni-cli/types/uni-cli-context";
 
 /** Test-facing browser protocols. State is installed by the corresponding world before use. */
 declare global {
@@ -7,7 +7,7 @@ declare global {
     __uni-cliControl: {
       listActions(): { id: string; disabled: boolean; args?: unknown; [key: string]: unknown }[];
       execute(action: string, args?: unknown): Promise<{ ok: boolean; error?: string; result?: unknown; value?: unknown }>;
-      context(): uni-cliContextSnapshot;
+      context(): uniCliContextSnapshot;
       snapshot(): { route: string; narration: string };
       setEnabled(enabled: boolean): void;
       command(request: { id: string; args?: unknown; [key: string]: unknown }): Promise<unknown>;

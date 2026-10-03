@@ -1,7 +1,7 @@
 import type {
-  uni-cliCloudMcpFailure,
-  uni-cliCloudMcpHealth,
-  uni-cliCloudMcpProviderModelContext,
+  uniCliCloudMcpFailure,
+  uniCliCloudMcpHealth,
+  uniCliCloudMcpProviderModelContext,
 } from "../../../app/lib/uni-cli-server";
 import type { CloudMcpUserState } from "./cloud-mcp-user-state";
 
@@ -16,7 +16,7 @@ const REQUIRED_PROJECTED_TOOL_IDS = [
 ];
 
 export type CloudMcpSubmissionIssue = Pick<
-  uni-cliCloudMcpFailure,
+  uniCliCloudMcpFailure,
   "code" | "stage" | "retryable" | "recommendedAction" | "message"
 >;
 
@@ -27,7 +27,7 @@ export type CloudMcpSubmissionGateContext = {
   serverBaseUrl: string;
   orgId: string | null;
   workspaceId: string;
-  providerModel?: uni-cliCloudMcpProviderModelContext;
+  providerModel?: uniCliCloudMcpProviderModelContext;
   userState: CloudMcpUserState | null;
 };
 
@@ -41,13 +41,13 @@ export type CloudMcpSubmissionGateDecision =
     };
 
 export type CloudMcpSubmissionReadinessAssessment =
-  | { ready: true; health: uni-cliCloudMcpHealth }
-  | { ready: false; health: uni-cliCloudMcpHealth | null; issue: CloudMcpSubmissionIssue };
+  | { ready: true; health: uniCliCloudMcpHealth }
+  | { ready: false; health: uniCliCloudMcpHealth | null; issue: CloudMcpSubmissionIssue };
 
 export type CloudMcpSubmissionReadinessResult =
-  | { outcome: "ready"; health: uni-cliCloudMcpHealth; attempts: number }
-  | { outcome: "bypass"; health: uni-cliCloudMcpHealth; attempts: number; reason: "disabled" }
-  | { outcome: "failed"; health: uni-cliCloudMcpHealth | null; issue: CloudMcpSubmissionIssue; attempts: number };
+  | { outcome: "ready"; health: uniCliCloudMcpHealth; attempts: number }
+  | { outcome: "bypass"; health: uniCliCloudMcpHealth; attempts: number; reason: "disabled" }
+  | { outcome: "failed"; health: uniCliCloudMcpHealth | null; issue: CloudMcpSubmissionIssue; attempts: number };
 
 export type CloudMcpSubmissionAttempt = {
   phase: "readiness" | "repair";
@@ -117,7 +117,7 @@ function genericSubmissionIssue(input?: {
   };
 }
 
-function failureIssue(health: uni-cliCloudMcpHealth): CloudMcpSubmissionIssue {
+function failureIssue(health: uniCliCloudMcpHealth): CloudMcpSubmissionIssue {
   const failure = health.firstFailure;
   if (!failure) return genericSubmissionIssue();
   return {
@@ -129,7 +129,7 @@ function failureIssue(health: uni-cliCloudMcpHealth): CloudMcpSubmissionIssue {
   };
 }
 
-function healthShowsExplicitDisable(health: uni-cliCloudMcpHealth): boolean {
+function healthShowsExplicitDisable(health: uniCliCloudMcpHealth): boolean {
   const code = health.firstFailure?.code.trim().toLowerCase().replace(/[-.]/g, "_") ?? "";
   return health.desired.config?.enabled === false || code === "cloud_mcp_disabled" || code === "cloud_disabled";
 }
@@ -215,8 +215,8 @@ export async function resolveCloudMcpSubmissionAuth(
  * experimental listing or be verified as tool-capable by its provider.
  */
 export function assessCloudMcpSubmissionReadiness(input: {
-  health: uni-cliCloudMcpHealth | null;
-  providerModel: uni-cliCloudMcpProviderModelContext;
+  health: uniCliCloudMcpHealth | null;
+  providerModel: uniCliCloudMcpProviderModelContext;
 }): CloudMcpSubmissionReadinessAssessment {
   const health = input.health;
   if (!health) {
@@ -359,9 +359,9 @@ function errorAssessment(error: unknown): CloudMcpSubmissionReadinessAssessment 
 }
 
 export async function ensureCloudMcpSubmissionReadiness(input: {
-  providerModel: uni-cliCloudMcpProviderModelContext;
-  check: () => Promise<uni-cliCloudMcpHealth | null>;
-  repair: () => Promise<uni-cliCloudMcpHealth | null>;
+  providerModel: uniCliCloudMcpProviderModelContext;
+  check: () => Promise<uniCliCloudMcpHealth | null>;
+  repair: () => Promise<uniCliCloudMcpHealth | null>;
   retryDelaysMs?: number[];
   attemptTimeoutMs?: number;
   wait?: (delayMs: number) => Promise<void>;

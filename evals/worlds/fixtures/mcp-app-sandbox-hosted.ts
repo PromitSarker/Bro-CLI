@@ -1,9 +1,9 @@
-import type { uni-cliMcpAppResource } from "../../../apps/app/src/app/lib/uni-cli-server";
+import type { uniCliMcpAppResource } from "../../../apps/app/src/app/lib/uni-cli-server";
 import type { PreservedMcpAppResult } from "../../../apps/app/src/components/chat/mcp-app-frame";
 
 export type HostedSandboxResource = {
   label: string;
-  app: uni-cliMcpAppResource;
+  app: uniCliMcpAppResource;
   inputArguments: Record<string, unknown>;
   result: PreservedMcpAppResult;
 };

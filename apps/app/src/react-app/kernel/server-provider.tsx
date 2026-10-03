@@ -13,16 +13,16 @@ import { createOpencodeClient } from "@opencode-ai/sdk/v2/client";
 
 import { desktopFetch } from "../../app/lib/desktop";
 import {
-  getuni-cliGatewayOrigin,
-  readuni-cliGatewayDenToken,
+  getuniCliGatewayOrigin,
+  readuniCliGatewayDenToken,
 } from "../../app/lib/gateway-runtime";
 import { isWebDeployment } from "../../app/lib/uni-cli-deployment";
-import { normalizeuni-cliServerUrl } from "../../app/lib/uni-cli-server";
+import { normalizeuniCliServerUrl } from "../../app/lib/uni-cli-server";
 import { isDesktopRuntime } from "../../app/utils";
 import { initialServerState, serverReducer } from "./server-provider-state";
 
 export function normalizeServerUrl(input: string): string | undefined {
-  return normalizeuni-cliServerUrl(input) ?? undefined;
+  return normalizeuniCliServerUrl(input) ?? undefined;
 }
 
 export function serverDisplayName(url: string): string {
@@ -63,8 +63,8 @@ function readStoredActive(): string {
   }
 }
 
-function readuni-cliToken(): string {
-  if (getuni-cliGatewayOrigin()) return readuni-cliGatewayDenToken();
+function readuniCliToken(): string {
+  if (getuniCliGatewayOrigin()) return readuniCliGatewayDenToken();
 
   if (typeof window === "undefined") return "";
   try {
@@ -74,14 +74,14 @@ function readuni-cliToken(): string {
   }
 }
 
-export function builduni-cliHealthHeaders(url: string): Record<string, string> | undefined {
-  const token = readuni-cliToken();
+export function builduniCliHealthHeaders(url: string): Record<string, string> | undefined {
+  const token = readuniCliToken();
   return token && url.includes("/opencode") ? { Authorization: `Bearer ${token}` } : undefined;
 }
 
 async function checkHealth(url: string): Promise<boolean> {
   if (!url) return false;
-  const headers = builduni-cliHealthHeaders(url);
+  const headers = builduniCliHealthHeaders(url);
   const client = createOpencodeClient({
     baseUrl: url,
     headers,
@@ -107,7 +107,7 @@ export function ServerProvider({ children, defaultUrl }: ServerProviderProps) {
     if (readyRef.current) return;
     if (typeof window === "undefined") return;
 
-    const gatewayOrigin = getuni-cliGatewayOrigin();
+    const gatewayOrigin = getuniCliGatewayOrigin();
     const fallback = normalizeServerUrl(gatewayOrigin ? `${gatewayOrigin}/opencode` : defaultUrl) ?? "";
 
     // Hosted web deployments served by Uni-CLI must reuse the OpenCode proxy

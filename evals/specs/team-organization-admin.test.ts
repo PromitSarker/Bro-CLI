@@ -265,7 +265,7 @@ test("team Admin grants are live, scoped, protected, and cleared across SCIM lif
     const { createConnection } = createRequire(import.meta.resolve('@uni-cli/env'))('mysql2/promise');
     const db = await createConnection(process.env.DATABASE_URL);
     const input = JSON.parse(process.env.TEAM_ADMIN_TEST_INPUT);
-    await db.execute("UPDATE organization SET metadata = JSON_SET(metadata, '$.complimentaryAccess', JSON_OBJECT('uni-cliWeb', true)) WHERE id = ?", [input.organizationId]);
+    await db.execute("UPDATE organization SET metadata = JSON_SET(metadata, '$.complimentaryAccess', JSON_OBJECT('uniCliWeb', true)) WHERE id = ?", [input.organizationId]);
     const suffix = input.teamId.slice(4);
     const action = { kind: 'saved_script', script: {
       pluginId: 'plg_' + suffix, configObjectId: 'cob_' + suffix,

@@ -54,7 +54,7 @@ export function isAutomationProposalToolPart(part: DynamicToolUIPart): boolean {
     && parseAutomationProposal(part.output) !== null
 }
 
-export function Uni-CLIAutomationProposalTool({ part }: { part: DynamicToolUIPart }) {
+export function UniCliAutomationProposalTool({ part }: { part: DynamicToolUIPart }) {
   const navigate = useNavigate()
   const denAuth = useDenAuth()
   const automationsEnabled = useAutomationDeploymentEnabled()

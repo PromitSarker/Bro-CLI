@@ -314,7 +314,7 @@ server.tool(
       return { content: [{ type: "text", text: `Connected to ${data.app || "Uni-CLI"}\nBridge: ${bridge.baseUrl}\nVersion: ${data.version ?? "?"}` }] };
     } catch (error) {
       clearBridgeCache();
-      return { content: [{ type: "text", text: `Bridge file found but not reachable: ${error.message}\nUni-CLI may have quit. Relaunch it.` }], isError: true };
+      return { content: [{ type: "text", text: `Bridge file found but not reachable: ${error.message}\nUniCli may have quit. Relaunch it.` }], isError: true };
     }
   }
 );

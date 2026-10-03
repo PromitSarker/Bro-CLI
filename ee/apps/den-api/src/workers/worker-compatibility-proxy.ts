@@ -2,9 +2,9 @@ import { and, eq, inArray, isNull } from "@uni-cli-ee/den-db/drizzle"
 import { WorkerTable, WorkerTokenTable } from "@uni-cli-ee/den-db/schema"
 import { db } from "../db.js"
 import {
-  getUni-CLIWebRuntimeAccess,
-  uni-cliWebAccessRequiredPayload,
-  type Uni-CLIWebRuntimeAccessResolver,
+  getUniCliWebRuntimeAccess,
+  uniCliWebAccessRequiredPayload,
+  type UniCliWebRuntimeAccessResolver,
 } from "../uni-cli-web-runtime-access.js"
 import { resolveCloudRuntimeAccess } from "./worker-access.js"
 
@@ -25,7 +25,7 @@ type ResolveCloudAccess = typeof resolveCloudRuntimeAccess
 
 export type CloudWorkerCompatibilityOptions = {
   authenticate?: AuthenticateWorkerRequest
-  getUni-CLIWebAccess?: Uni-CLIWebRuntimeAccessResolver
+  getUniCliWebAccess?: UniCliWebRuntimeAccessResolver
   resolveCloudAccess?: ResolveCloudAccess
   fetchImpl?: typeof fetch
   maxActiveRequestsPerWorker?: number
@@ -169,8 +169,8 @@ function jsonError(
   })
 }
 
-function uni-cliWebAccessRequiredResponse() {
-  return Response.json(uni-cliWebAccessRequiredPayload(), {
+function uniCliWebAccessRequiredResponse() {
+  return Response.json(uniCliWebAccessRequiredPayload(), {
     status: 403,
     headers: {
       "Cache-Control": "no-store",
@@ -263,16 +263,16 @@ export async function proxyCloudWorkerCompatibilityRequest(input: {
   }
 
   // The stable /v1/cloud/workers/:id URL, token handling, and response shape are
-  // unchanged. Published desktops connect here only after Uni-CLIWebAccessGate
+  // unchanged. Published desktops connect here only after UniCliWebAccessGate
   // (v0.18.42+) granted Web access; the recheck terminates a worker token into a
   // live VM, so it enforces the same entitlement as provisioning and tokens.
   let webAccess
   try {
-    webAccess = await (options.getUni-CLIWebAccess ?? getUni-CLIWebRuntimeAccess)(authorization.organizationId)
+    webAccess = await (options.getUniCliWebAccess ?? getUniCliWebRuntimeAccess)(authorization.organizationId)
   } catch {
     return jsonError(503, "worker_runtime_unavailable")
   }
-  if (!webAccess.hasAccess) return uni-cliWebAccessRequiredResponse()
+  if (!webAccess.hasAccess) return uniCliWebAccessRequiredResponse()
 
   const maximum = Math.max(1, options.maxActiveRequestsPerWorker ?? DEFAULT_MAX_ACTIVE_REQUESTS_PER_WORKER)
   const release = acquireWorkerRequest(input.workerId, maximum)

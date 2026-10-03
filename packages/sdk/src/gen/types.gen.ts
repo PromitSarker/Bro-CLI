@@ -326,7 +326,7 @@ export type CloudInstanceResponse = {
   };
 };
 
-export type Uni-CLIWebAccessRequiredError = {
+export type UniCliWebAccessRequiredError = {
   error: "uni-cli_web_access_required";
   message: string;
 };
@@ -676,7 +676,7 @@ export type AutomationDetail = {
   latestRun: AutomationRun | null;
 };
 
-export type AutomationUni-CLIWebAccessRequiredError = {
+export type AutomationUniCliWebAccessRequiredError = {
   error: "uni-cli_web_access_required";
   message: string;
 };
@@ -3238,7 +3238,7 @@ export type PluginArchAccessGrantMutationResponse = {
   item: PluginArchAccessGrant;
 };
 
-export type Uni-CLIExtensionManifest = {
+export type UniCliExtensionManifest = {
   schemaVersion: 1;
   id: string;
   name: string;
@@ -3286,7 +3286,7 @@ export type PluginArchExtensionProjection = {
     | "opencode-plugin"
     | "mcp-directory"
     | "manual";
-  manifest: Uni-CLIExtensionManifest | null;
+  manifest: UniCliExtensionManifest | null;
 };
 
 export type PluginArchPluginListItem = {
@@ -4655,7 +4655,7 @@ export type WorkerPaymentRequiredError = {
   message: string;
 };
 
-export type WorkerUni-CLIWebAccessRequiredError = {
+export type WorkerUniCliWebAccessRequiredError = {
   error: "uni-cli_web_access_required";
   message: string;
 };
@@ -4684,12 +4684,12 @@ export type WorkerTokensResponse = {
     client: string;
   };
   connect: {
-    uni-cliUrl: string | null;
+    uniCliUrl: string | null;
     workspaceId: string | null;
   } | null;
   directPreview?: {
     version: 1;
-    uni-cliUrl: string;
+    uniCliUrl: string;
     workspaceId: string | null;
     expiresAt: string;
   } | null;
@@ -4709,7 +4709,7 @@ export type WorkerRuntimeResponse = {
   [key: string]: unknown;
 };
 
-export type WorkerRuntimeUni-CLIWebAccessRequiredError = {
+export type WorkerRuntimeUniCliWebAccessRequiredError = {
   error: "uni-cli_web_access_required";
   message: string;
 };
@@ -5339,7 +5339,7 @@ export type PatchV1AdminOrganizationsByOrganizationIdDpaResponses = {
 export type PatchV1AdminOrganizationsByOrganizationIdDpaResponse =
   PatchV1AdminOrganizationsByOrganizationIdDpaResponses[keyof PatchV1AdminOrganizationsByOrganizationIdDpaResponses];
 
-export type PutV1AdminOrganizationsByOrganizationIduni-cliWebAccessData = {
+export type PutV1AdminOrganizationsByOrganizationIduniCliWebAccessData = {
   body?: never;
   path: {
     organizationId: string;
@@ -5348,7 +5348,7 @@ export type PutV1AdminOrganizationsByOrganizationIduni-cliWebAccessData = {
   url: "/v1/admin/organizations/{organizationId}/uni-cli-web-access";
 };
 
-export type PutV1AdminOrganizationsByOrganizationIduni-cliWebAccessErrors = {
+export type PutV1AdminOrganizationsByOrganizationIduniCliWebAccessErrors = {
   /**
    * The request body or organization id was invalid.
    */
@@ -5377,10 +5377,10 @@ export type PutV1AdminOrganizationsByOrganizationIduni-cliWebAccessErrors = {
   };
 };
 
-export type PutV1AdminOrganizationsByOrganizationIduni-cliWebAccessError =
-  PutV1AdminOrganizationsByOrganizationIduni-cliWebAccessErrors[keyof PutV1AdminOrganizationsByOrganizationIduni-cliWebAccessErrors];
+export type PutV1AdminOrganizationsByOrganizationIduniCliWebAccessError =
+  PutV1AdminOrganizationsByOrganizationIduniCliWebAccessErrors[keyof PutV1AdminOrganizationsByOrganizationIduniCliWebAccessErrors];
 
-export type PutV1AdminOrganizationsByOrganizationIduni-cliWebAccessResponses = {
+export type PutV1AdminOrganizationsByOrganizationIduniCliWebAccessResponses = {
   /**
    * Uni-CLI Web access was updated.
    */
@@ -5392,8 +5392,8 @@ export type PutV1AdminOrganizationsByOrganizationIduni-cliWebAccessResponses = {
   };
 };
 
-export type PutV1AdminOrganizationsByOrganizationIduni-cliWebAccessResponse =
-  PutV1AdminOrganizationsByOrganizationIduni-cliWebAccessResponses[keyof PutV1AdminOrganizationsByOrganizationIduni-cliWebAccessResponses];
+export type PutV1AdminOrganizationsByOrganizationIduniCliWebAccessResponse =
+  PutV1AdminOrganizationsByOrganizationIduniCliWebAccessResponses[keyof PutV1AdminOrganizationsByOrganizationIduniCliWebAccessResponses];
 
 export type GetV1AdminOrganizationsByOrganizationIdCapabilitiesData = {
   body?: never;
@@ -6555,7 +6555,7 @@ export type GetV1CloudInstanceErrors = {
   /**
    * Uni-CLI Web access is not active for the organization.
    */
-  403: Uni-CLIWebAccessRequiredError;
+  403: UniCliWebAccessRequiredError;
   /**
    * Cloud is not available for this organization.
    */
@@ -6588,7 +6588,7 @@ export type PostV1CloudInstanceRetryErrors = {
   /**
    * Uni-CLI Web access is not active for the organization.
    */
-  403: Uni-CLIWebAccessRequiredError;
+  403: UniCliWebAccessRequiredError;
   /**
    * Cloud is not available for this organization.
    */
@@ -6622,7 +6622,7 @@ export type PostV1CloudInstanceUpdateErrors = {
   /**
    * Uni-CLI Web access is not active for the organization.
    */
-  403: Uni-CLIWebAccessRequiredError;
+  403: UniCliWebAccessRequiredError;
   /**
    * Cloud is not available for this organization.
    */
@@ -6656,7 +6656,7 @@ export type GetV1CloudGatewayResolveErrors = {
   /**
    * Uni-CLI Web access is not active for the organization.
    */
-  403: Uni-CLIWebAccessRequiredError;
+  403: UniCliWebAccessRequiredError;
   /**
    * Cloud is not available for this organization or gateway.
    */
@@ -7268,7 +7268,7 @@ export type CreateAutomationErrors = {
   /**
    * Uni-CLI Web access is required.
    */
-  403: AutomationUni-CLIWebAccessRequiredError;
+  403: AutomationUniCliWebAccessRequiredError;
   /**
    * Cloud runtime or model access is unavailable.
    */
@@ -7345,7 +7345,7 @@ export type CreateCloudAutomationErrors = {
   /**
    * Uni-CLI Web access is required.
    */
-  403: AutomationUni-CLIWebAccessRequiredError;
+  403: AutomationUniCliWebAccessRequiredError;
   /**
    * Cloud runtime or model access is unavailable.
    */
@@ -7482,7 +7482,7 @@ export type UpdateAutomationErrors = {
   /**
    * Uni-CLI Web access is required for Cloud Automations.
    */
-  403: AutomationUni-CLIWebAccessRequiredError;
+  403: AutomationUniCliWebAccessRequiredError;
   /**
    * Cloud runtime or model access is unavailable.
    */
@@ -7513,7 +7513,7 @@ export type ActivateAutomationErrors = {
   /**
    * Uni-CLI Web access is required to activate a Cloud Automation.
    */
-  403: AutomationUni-CLIWebAccessRequiredError;
+  403: AutomationUniCliWebAccessRequiredError;
   /**
    * Not found.
    */
@@ -7580,7 +7580,7 @@ export type RunAutomationNowErrors = {
   /**
    * Uni-CLI Web access is required to run a Cloud Automation.
    */
-  403: AutomationUni-CLIWebAccessRequiredError;
+  403: AutomationUniCliWebAccessRequiredError;
   /**
    * Not found.
    */
@@ -27316,7 +27316,7 @@ export type PostV1WorkersErrors = {
   /**
    * Uni-CLI Web access is required to launch a cloud worker.
    */
-  403: WorkerUni-CLIWebAccessRequiredError;
+  403: WorkerUniCliWebAccessRequiredError;
   /**
    * The organization has reached its worker limit.
    */
@@ -27486,7 +27486,7 @@ export type PostV1WorkersByIdTokensErrors = {
   /**
    * Cloud worker tokens require the worker owner and Uni-CLI Web access.
    */
-  403: ForbiddenError | WorkerUni-CLIWebAccessRequiredError;
+  403: ForbiddenError | WorkerUniCliWebAccessRequiredError;
   /**
    * The worker could not be found.
    */
@@ -27532,7 +27532,7 @@ export type GetV1WorkersByIdRuntimeErrors = {
   /**
    * Cloud runtime access requires the worker owner and Uni-CLI Web access.
    */
-  403: ForbiddenError | WorkerRuntimeUni-CLIWebAccessRequiredError;
+  403: ForbiddenError | WorkerRuntimeUniCliWebAccessRequiredError;
   /**
    * The worker could not be found.
    */
@@ -27576,7 +27576,7 @@ export type PostV1WorkersByIdRuntimeUpgradeErrors = {
   /**
    * Cloud runtime upgrades require the worker owner and Uni-CLI Web access.
    */
-  403: ForbiddenError | WorkerRuntimeUni-CLIWebAccessRequiredError;
+  403: ForbiddenError | WorkerRuntimeUniCliWebAccessRequiredError;
   /**
    * The worker could not be found.
    */

@@ -11,15 +11,15 @@ import { Button } from "@/components/ui/button";
 import { KeyRoundIcon, SkipForwardIcon, SparklesIcon } from "lucide-react";
 
 type ProviderSelectionStepProps = {
-  showUni-CLIModels?: boolean;
-  onUni-CLIModels: () => void;
+  showUniCliModels?: boolean;
+  onUniCliModels: () => void;
   onBringYourOwn: () => void;
   onSkip: () => void;
 };
 
 export function ProviderSelectionStep({
-  showUni-CLIModels = true,
-  onUni-CLIModels,
+  showUniCliModels = true,
+  onUniCliModels,
   onBringYourOwn,
   onSkip,
 }: ProviderSelectionStepProps) {
@@ -37,11 +37,11 @@ export function ProviderSelectionStep({
         </PageHeader>
 
         <div className="space-y-3">
-          {showUni-CLIModels ? (
+          {showUniCliModels ? (
             <button
               type="button"
               className="flex w-full items-start gap-4 rounded-xl border border-blue-7/50 bg-blue-2/30 p-4 text-left transition-colors hover:bg-blue-3/40"
-              onClick={onUni-CLIModels}
+              onClick={onUniCliModels}
             >
               <SparklesIcon className="mt-0.5 size-5 shrink-0 text-blue-10" />
               <div>

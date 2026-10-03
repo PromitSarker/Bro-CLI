@@ -1,9 +1,9 @@
-import type { uni-cliMcpAppResource, uni-cliServerClient } from "@/app/lib/uni-cli-server";
+import type { uniCliMcpAppResource, uniCliServerClient } from "@/app/lib/uni-cli-server";
 import { startMcpAppTiming } from "@uni-cli/types/mcp-app-timing";
 
 /** The host surface owns this value. Never derive it from the selected workspace or App HTML. */
 export type McpAppOrigin = {
-  client: uni-cliServerClient;
+  client: uniCliServerClient;
   workspaceId: string;
   sessionId: string | null;
   engine?: "v1" | "v2";
@@ -25,7 +25,7 @@ export function snapshotMcpAppArguments(args?: Record<string, unknown>) {
 
 export function createMcpAppActions(
   origin: McpAppOrigin,
-  app: uni-cliMcpAppResource,
+  app: uniCliMcpAppResource,
 ) {
   let active = true;
   const assertActive = () => {

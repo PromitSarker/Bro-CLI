@@ -1,10 +1,10 @@
 import type { WorkspaceConnectionState } from "../../../app/types";
 import type { WorkspaceInfo } from "../../../app/lib/desktop";
 import {
-  createuni-cliServerClient,
-  normalizeuni-cliServerUrl,
-  parseuni-cliWorkspaceIdFromUrl,
-  type uni-cliServerClient,
+  createuniCliServerClient,
+  normalizeuniCliServerUrl,
+  parseuniCliWorkspaceIdFromUrl,
+  type uniCliServerClient,
 } from "../../../app/lib/uni-cli-server";
 import { redactTokenLikeText } from "../../../app/utils";
 
@@ -29,9 +29,9 @@ export type RemoteWorkspaceConnectionResult = {
 type TestOptions = {
   now?: () => number;
   createClient?: (target: RemoteWorkspaceConnectionTarget) => Pick<
-    uni-cliServerClient,
+    uniCliServerClient,
     "health" | "capabilities" | "status" | "listWorkspaces"
-  > | Promise<Pick<uni-cliServerClient, "health" | "capabilities" | "status" | "listWorkspaces">>;
+  > | Promise<Pick<uniCliServerClient, "health" | "capabilities" | "status" | "listWorkspaces">>;
 };
 
 function trim(value: string | null | undefined) {
@@ -59,7 +59,7 @@ function endpointLabel(baseUrl: string) {
   }
 }
 
-function stripuni-cliWorkspaceMount(baseUrl: string) {
+function stripuniCliWorkspaceMount(baseUrl: string) {
   try {
     const url = new URL(baseUrl);
     const segments = url.pathname.split("/").filter(Boolean);
@@ -117,11 +117,11 @@ export function getRemoteWorkspaceConnectionKey(workspace: WorkspaceInfo): strin
     workspace.workspaceType,
     workspace.remoteType ?? "",
     trim(workspace.baseUrl),
-    trim(workspace.uni-cliHostUrl),
-    trim(workspace.uni-cliWorkspaceId),
-    trim(workspace.uni-cliToken),
-    trim(workspace.uni-cliClientToken),
-    trim(workspace.uni-cliHostToken),
+    trim(workspace.uniCliHostUrl),
+    trim(workspace.uniCliWorkspaceId),
+    trim(workspace.uniCliToken),
+    trim(workspace.uniCliClientToken),
+    trim(workspace.uniCliHostToken),
   ].join("\u001f");
 }
 
@@ -129,20 +129,20 @@ function displayWorkspaceName(workspace: unknown) {
   if (!workspace || typeof workspace !== "object") return "";
   const value = workspace as {
     displayName?: string | null;
-    uni-cliWorkspaceName?: string | null;
+    uniCliWorkspaceName?: string | null;
     name?: string | null;
     id?: string | null;
   };
   return (
     trim(value.displayName) ||
-    trim(value.uni-cliWorkspaceName) ||
+    trim(value.uniCliWorkspaceName) ||
     trim(value.name) ||
     trim(value.id)
   );
 }
 
 function defaultCreateClient(target: RemoteWorkspaceConnectionTarget) {
-  return createuni-cliServerClient({
+  return createuniCliServerClient({
     baseUrl: target.baseUrl,
     token: target.token || undefined,
   });
@@ -171,7 +171,7 @@ export function resolveRemoteWorkspaceConnectionTarget(workspace: WorkspaceInfo)
     };
   }
 
-  const rawHostUrl = trim(workspace.uni-cliHostUrl) || trim(workspace.baseUrl);
+  const rawHostUrl = trim(workspace.uniCliHostUrl) || trim(workspace.baseUrl);
   if (!rawHostUrl) {
     return {
       ok: false,
@@ -183,7 +183,7 @@ export function resolveRemoteWorkspaceConnectionTarget(workspace: WorkspaceInfo)
     };
   }
 
-  const normalizedHostUrl = normalizeuni-cliServerUrl(rawHostUrl);
+  const normalizedHostUrl = normalizeuniCliServerUrl(rawHostUrl);
   if (!normalizedHostUrl || !isValidHttpEndpoint(normalizedHostUrl)) {
     return {
       ok: false,
@@ -196,15 +196,15 @@ export function resolveRemoteWorkspaceConnectionTarget(workspace: WorkspaceInfo)
   }
 
   const workspaceId =
-    trim(workspace.uni-cliWorkspaceId) ||
-    parseuni-cliWorkspaceIdFromUrl(normalizedHostUrl) ||
-    parseuni-cliWorkspaceIdFromUrl(trim(workspace.baseUrl)) ||
+    trim(workspace.uniCliWorkspaceId) ||
+    parseuniCliWorkspaceIdFromUrl(normalizedHostUrl) ||
+    parseuniCliWorkspaceIdFromUrl(trim(workspace.baseUrl)) ||
     null;
-  const hostBaseUrl = stripuni-cliWorkspaceMount(normalizedHostUrl);
+  const hostBaseUrl = stripuniCliWorkspaceMount(normalizedHostUrl);
   const token =
-    trim(workspace.uni-cliToken) ||
-    trim(workspace.uni-cliClientToken) ||
-    trim(workspace.uni-cliHostToken);
+    trim(workspace.uniCliToken) ||
+    trim(workspace.uniCliClientToken) ||
+    trim(workspace.uniCliHostToken);
 
   return {
     ok: true,

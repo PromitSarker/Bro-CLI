@@ -5,7 +5,7 @@ export type SessionMetadataRuntime = {
   workspaceId: string;
   runtimeWorkspaceId: string;
   opencodeBaseUrl: string;
-  uni-cliToken: string;
+  uniCliToken: string;
 };
 
 export type SessionMetadataCallbacks = {

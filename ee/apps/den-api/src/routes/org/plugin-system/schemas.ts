@@ -698,7 +698,7 @@ export const extensionManifestSchema = z.object({
   contributions: z.array(jsonObjectSchema).optional(),
   setup: jsonObjectSchema.optional(),
   lifecycle: jsonObjectSchema.optional(),
-}).passthrough().meta({ ref: "Uni-CLIExtensionManifest" })
+}).passthrough().meta({ ref: "UniCliExtensionManifest" })
 
 export const pluginExtensionSchema = z.object({
   id: pluginIdSchema,

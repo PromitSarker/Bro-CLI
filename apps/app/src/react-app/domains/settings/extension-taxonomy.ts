@@ -1,4 +1,4 @@
-import { isBuiltInUni-CLIExtension, type McpDirectoryInfo } from "../../../app/constants";
+import { isBuiltInUniCliExtension, type McpDirectoryInfo } from "../../../app/constants";
 import { t } from "../../../i18n";
 
 /**
@@ -37,7 +37,7 @@ export function primaryLibraryFilter(filter?: ExtensionInventoryFilter): Extensi
 
 /** Built-ins ship with Uni-CLI and run here, so they are apps. Accounts arrive as org connections. */
 export function taxonomyForDirectoryEntry(entry: McpDirectoryInfo): ExtensionTaxonomy {
-  if (isBuiltInUni-CLIExtension(entry) || entry.kind === "ui-control") return "app";
+  if (isBuiltInUniCliExtension(entry) || entry.kind === "ui-control") return "app";
   return "mcp";
 }
 

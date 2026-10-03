@@ -59,10 +59,10 @@ function connectionActionMcpResultFromError(error: string): JSONValue | null {
 
 function toolCallProviderMetadata(part: ToolPart): ProviderMetadata {
   const stateMetadata = "metadata" in part.state && isRecord(part.state.metadata) ? part.state.metadata : {};
-  const persistedMcpResult = isJsonValue(stateMetadata.uni-cliMcpResult)
-    ? stateMetadata.uni-cliMcpResult
-    : isJsonValue(stateMetadata.uni-cliMcpApp)
-      ? stateMetadata.uni-cliMcpApp
+  const persistedMcpResult = isJsonValue(stateMetadata.uniCliMcpResult)
+    ? stateMetadata.uniCliMcpResult
+    : isJsonValue(stateMetadata.uniCliMcpApp)
+      ? stateMetadata.uniCliMcpApp
       : null;
   const mcpResult = persistedMcpResult
     ?? (part.state.status === "error" ? connectionActionMcpResultFromError(part.state.error) : null);
@@ -72,7 +72,7 @@ function toolCallProviderMetadata(part: ToolPart): ProviderMetadata {
     ? stateMetadata.sessionId.trim()
     : null;
   const appBuilder = /(?:^|_)(?:search_capabilities|prepare_app|create_app|update_app)$/.test(part.tool);
-  const toolStartedAt = (appBuilder || part.tool === "task" || part.metadata?.uni-cliV2CodeMode === true) && "time" in part.state && typeof part.state.time?.start === "number"
+  const toolStartedAt = (appBuilder || part.tool === "task" || part.metadata?.uniCliV2CodeMode === true) && "time" in part.state && typeof part.state.time?.start === "number"
     && Number.isFinite(part.state.time.start)
     ? part.state.time.start
     : null;
@@ -84,7 +84,7 @@ function toolCallProviderMetadata(part: ToolPart): ProviderMetadata {
     ...(childSessionId ? { childSessionId } : {}),
     ...(toolStartedAt === null ? {} : { toolStartedAt }),
     ...(toolCompletedAt === null ? {} : { toolCompletedAt }),
-    ...(part.metadata?.uni-cliV2CodeMode === true ? {
+    ...(part.metadata?.uniCliV2CodeMode === true ? {
       codeMode: {
         calls: Array.isArray(stateMetadata.toolCalls) && isJsonValue(stateMetadata.toolCalls) ? stateMetadata.toolCalls : [],
       },
@@ -141,7 +141,7 @@ export function parseDynamicToolUIPart(part: ToolPart): DynamicToolUIPart | null
   }
 
   if (part.state.status === "completed") {
-    if (part.metadata?.uni-cliV2CodeMode === true && part.state.metadata.error === true) {
+    if (part.metadata?.uniCliV2CodeMode === true && part.state.metadata.error === true) {
       return {
         type: "dynamic-tool", toolName: part.tool, toolCallId: part.callID,
         state: "output-error", input: part.state.input,

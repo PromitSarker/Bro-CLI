@@ -151,11 +151,11 @@ export async function provisionWindowsReleaseSandbox(options: {
     const installCmd = "C:\\ow\\install.cmd";
     await stage(step, "win-install", "Install as the signed-in Administrator", async () => {
     await runPowerShell(exec, sandbox,
-      `${commandFile(installCmd, ["@echo off", `"${INSTALLER}" /S`])}\n${task("Uni-CLIWorldInstall", installCmd)}`,
+      `${commandFile(installCmd, ["@echo off", `"${INSTALLER}" /S`])}\n${task("UniCliWorldInstall", installCmd)}`,
       "install Windows release as interactive Administrator");
     await pollWindowsUntil(async () => {
       const result = await runPowerShell(exec, sandbox,
-        `if ((Test-Path -LiteralPath ${literal(BINARY)}) -and ((& schtasks.exe /query /tn Uni-CLIWorldInstall /fo list /v | Out-String) -match 'Status:\\s+Ready')) { Write-Output 'INSTALLED' }`,
+        `if ((Test-Path -LiteralPath ${literal(BINARY)}) -and ((& schtasks.exe /query /tn UniCliWorldInstall /fo list /v | Out-String) -match 'Status:\\s+Ready')) { Write-Output 'INSTALLED' }`,
         "Windows interactive installer status", 30_000);
       return result.includes("INSTALLED") ? true : undefined;
     }, 300_000, "Windows interactive installer");
@@ -164,7 +164,7 @@ export async function provisionWindowsReleaseSandbox(options: {
     const launchCmd = "C:\\ow\\launch.cmd";
     await stage(step, "win-launch", "Launch Uni-CLI in the desktop session", async () => {
     await runPowerShell(exec, sandbox,
-      `${commandFile(launchCmd, ["@echo off", `"${BINARY}" --no-sandbox --remote-debugging-port=9222 > "${LOG}" 2>&1`])}\n${task("Uni-CLIWorldLaunch", launchCmd)}`,
+      `${commandFile(launchCmd, ["@echo off", `"${BINARY}" --no-sandbox --remote-debugging-port=9222 > "${LOG}" 2>&1`])}\n${task("UniCliWorldLaunch", launchCmd)}`,
       "launch Windows release as interactive Administrator");
     const observed = await pollWindowsUntil(async () => {
       const output = await runPowerShell(exec, sandbox,

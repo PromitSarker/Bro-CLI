@@ -1,7 +1,7 @@
-import type { uni-cliSessionGroupEvent } from "@/app/lib/uni-cli-server";
+import type { uniCliSessionGroupEvent } from "@/app/lib/uni-cli-server";
 
 export type SessionGroupEventResponse = {
-  items: uni-cliSessionGroupEvent[];
+  items: uniCliSessionGroupEvent[];
   gap?: boolean;
   reset?: boolean;
 };
@@ -19,7 +19,7 @@ export class SessionGroupEventPoller {
   async poll(
     key: string,
     request: (options: { since: number }) => Promise<SessionGroupEventResponse>,
-    apply: (items: uni-cliSessionGroupEvent[]) => Promise<void>,
+    apply: (items: uniCliSessionGroupEvent[]) => Promise<void>,
   ): Promise<void> {
     const currentCursor = this.cursorByWorkspace.get(key) ?? 0;
     try {

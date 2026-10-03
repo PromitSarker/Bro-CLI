@@ -24,8 +24,8 @@ import {
 import { ensureLocalWorkspaceFiles } from "./workspace-init.js";
 import { findManagedEngineWorkspace, resolveManagedEngineCwd, shouldStartManagedEngine } from "./workspaces.js";
 import { runtimeStorageDir } from "./runtime-db.js";
-import { keepuni-cliRuntimeConfigFileFresh, writeuni-cliRuntimeConfigFile } from "./uni-cli-runtime-config.js";
-import { migrateuni-cliCloudMcpRuntimeConfig } from "./cloud-mcp-health.js";
+import { keepuniCliRuntimeConfigFileFresh, writeuniCliRuntimeConfigFile } from "./uni-cli-runtime-config.js";
+import { migrateuniCliCloudMcpRuntimeConfig } from "./cloud-mcp-health.js";
 import { migrateWorkspaceRuntimeConfigToEngineGlobal } from "./runtime-opencode-config-store.js";
 import { resolveOpencodeModelsUrl } from "./opencode-models-url.js";
 import { startWorkerActivityHeartbeat } from "./worker-activity-heartbeat.js";
@@ -116,7 +116,7 @@ let stopRuntimeConfigFileRefresh: (() => void) | undefined;
 
 if (!config.readOnly) {
   await ensureLocalWorkspaceFiles(config.workspaces);
-  await migrateuni-cliCloudMcpRuntimeConfig(config);
+  await migrateuniCliCloudMcpRuntimeConfig(config);
   await migrateWorkspaceRuntimeConfigToEngineGlobal(config);
 }
 
@@ -138,10 +138,10 @@ if (manageEngine) {
   // effort: a failed reap must never block startup.
   await reapOrphanEngineInstances(config, { logger }).catch(() => undefined);
   // Server-managed config file: the engine re-reads it from disk on every
-  // instance rebuild, and keepuni-cliRuntimeConfigFileFresh synchronizes it
+  // instance rebuild, and keepuniCliRuntimeConfigFileFresh synchronizes it
   // on every runtime-DB write — so disposes always pick up current state.
-  const { path: runtimeConfigPath } = await writeuni-cliRuntimeConfigFile(config);
-  stopRuntimeConfigFileRefresh = keepuni-cliRuntimeConfigFileFresh(config);
+  const { path: runtimeConfigPath } = await writeuniCliRuntimeConfigFile(config);
+  stopRuntimeConfigFileRefresh = keepuniCliRuntimeConfigFileFresh(config);
   const managedOpencodeCwd = resolveManagedEngineCwd({
     explicit: process.env.UNICLI_MANAGED_OPENCODE_CWD,
     workspace: findManagedEngineWorkspace(config.workspaces),

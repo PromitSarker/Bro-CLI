@@ -13,7 +13,7 @@
  * Kept dependency-free so unit tests and specs can import it directly.
  */
 
-export type uni-cliRuntimeFacts = {
+export type uniCliRuntimeFacts = {
   /** IANA zone, for example America/Los_Angeles. */
   timeZone: string;
   /** Offset of that zone at `now`, for example UTC-07:00. */
@@ -26,7 +26,7 @@ export type uni-cliRuntimeFacts = {
   locale: string;
 };
 
-export type uni-cliRuntimeFactsInput = {
+export type uniCliRuntimeFactsInput = {
   now?: Date;
   timeZone?: string;
   locale?: string;
@@ -96,7 +96,7 @@ function offsetFor(timeZone: string, now: Date): string {
   return formatOffset(Math.round((asUtc - wholeSeconds) / 60_000));
 }
 
-export function readuni-cliRuntimeFacts(input: uni-cliRuntimeFactsInput = {}): uni-cliRuntimeFacts {
+export function readuniCliRuntimeFacts(input: uniCliRuntimeFactsInput = {}): uniCliRuntimeFacts {
   const now = input.now ?? new Date();
   const locale = input.locale ?? detectLocale();
   let timeZone = input.timeZone ?? detectTimeZone();
@@ -130,7 +130,7 @@ export function readuni-cliRuntimeFacts(input: uni-cliRuntimeFactsInput = {}): u
   };
 }
 
-export function renderuni-cliRuntimeContext(facts: uni-cliRuntimeFacts): string {
+export function renderuniCliRuntimeContext(facts: uniCliRuntimeFacts): string {
   return [
     "User context:",
     `- Time zone: ${facts.timeZone} (${facts.utcOffset})`,

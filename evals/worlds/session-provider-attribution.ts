@@ -42,7 +42,7 @@ export async function sessionProviderAttribution(seed: Seed, { place }: { place:
   const [session] = await seed.sessions(app, ["Provider terminal attribution"]);
   if (!session) throw new Error("Attribution session not created");
   const server = await evaluate(app.client, async () => {
-    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
     if (!info.running || !info.baseUrl) throw new Error("Isolated server is unavailable");
     return { baseUrl: info.baseUrl, token: info.ownerToken ?? info.clientToken };
   }, { awaitPromise: true });

@@ -9,7 +9,7 @@ import {
 } from "./run.js"
 import { z } from "zod"
 import { appLogger } from "../observability/logger.js"
-import { uni-cliYourConnectionsUrl } from "../mcp/connection-navigation.js"
+import { uniCliYourConnectionsUrl } from "../mcp/connection-navigation.js"
 import { executeRemoteSessionCapability, type RemoteSessionAction } from "../mcp/remote-session-capabilities.js"
 import { buildSlackPrompt, SlackApiError, slackClient, slackEventSchema } from "./protocol.js"
 import { headlessRemoteCall } from "./headless.js"
@@ -129,7 +129,7 @@ export async function processSlackEvent(event: EventRow, suppliedDeps = defaultW
                   type: "button",
                   action_id: "connect_uni-cli",
                   text: { type: "plain_text", text: "Connect Uni-CLI" },
-                  url: uni-cliYourConnectionsUrl(event.connectionId),
+                  url: uniCliYourConnectionsUrl(event.connectionId),
                 },
               ],
             },
@@ -194,7 +194,7 @@ export async function processSlackEvent(event: EventRow, suppliedDeps = defaultW
             {
               type: "button",
               text: { type: "plain_text", text: "Connect Uni-CLI" },
-              url: uni-cliYourConnectionsUrl(event.connectionId),
+              url: uniCliYourConnectionsUrl(event.connectionId),
               action_id: "connect_uni-cli",
             },
           ],

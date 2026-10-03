@@ -5,8 +5,8 @@ import { fileURLToPath } from "node:url";
 import { expect } from "vitest";
 import { appWeb, eventually, needs, SkipError, test } from "@uni-cli/testkit";
 import { readHeadlessRuntimeManifest, resolveHeadlessWorldRuntimePaths } from "@uni-cli/world";
-import { Uni-CLIExtensionsPreview } from "../../apps/server/src/opencode-plugins/uni-cli-extensions-preview";
-import { builduni-cliProviderContributions } from "../../apps/server/src/opencode-plugins/uni-cli-provider-adapters";
+import { UniCliExtensionsPreview } from "../../apps/server/src/opencode-plugins/uni-cli-extensions-preview";
+import { builduniCliProviderContributions } from "../../apps/server/src/opencode-plugins/uni-cli-provider-adapters";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -23,11 +23,11 @@ function records(value: unknown): Record<string, unknown>[] {
 }
 
 test("session.create advertises clipping and returns every validation issue without creating sessions", async ({ evidence }) => {
-  const create = builduni-cliProviderContributions([]).flatMap((entry) => entry.affordances).find((entry) => entry.id === "session.create");
+  const create = builduniCliProviderContributions([]).flatMap((entry) => entry.affordances).find((entry) => entry.id === "session.create");
   const description = create?.arguments.find((argument) => argument.name === "sessions")?.description;
   expect(description).toContain("title (≤120 chars, longer is clipped)");
   expect(description).toContain("prompt (≤100000 chars)");
-  const plugin = await Uni-CLIExtensionsPreview();
+  const plugin = await UniCliExtensionsPreview();
   const output = outputOf(await plugin.tool.uni-cli_execute.execute({ id: "session.create", args: { sessions: [
     { title: "", prompt: "Valid prompt" },
     { title: "First", prompt: "P".repeat(100_001) },
@@ -52,10 +52,10 @@ test("session.create clips a 145-character title and session.list_sessions retur
     await using app = await appWeb({ name: "session-title-cap", workspacePath: scratch, place });
     const paths = resolveHeadlessWorldRuntimePaths(fileURLToPath(new URL("../../", import.meta.url)), app.handle.name);
     const runtime = await readHeadlessRuntimeManifest(paths.runtimeManifestPath);
-    if (!runtime || runtime.uni-cliUrl !== app.uni-cliUrl || runtime.workspace !== scratch) throw new Error("Could not identify the test-owned headless runtime");
-    process.env.UNICLI_SERVER_URL = runtime.uni-cliUrl;
+    if (!runtime || runtime.uniCliUrl !== app.uniCliUrl || runtime.workspace !== scratch) throw new Error("Could not identify the test-owned headless runtime");
+    process.env.UNICLI_SERVER_URL = runtime.uniCliUrl;
     process.env.UNICLI_SERVER_TOKEN = runtime.token;
-    const plugin = await Uni-CLIExtensionsPreview({ directory: scratch });
+    const plugin = await UniCliExtensionsPreview({ directory: scratch });
     const title = "T".repeat(145);
     const clipped = `${title.slice(0, 119)}…`;
     const boundary = "B".repeat(120);

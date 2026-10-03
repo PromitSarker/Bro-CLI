@@ -55,12 +55,12 @@ function parseAcceptedClaim(payload: unknown): AcceptedClaim | null {
   };
 }
 
-function getuni-cliUrl(payload: unknown): string | null {
+function getuniCliUrl(payload: unknown): string | null {
   if (typeof payload !== "object" || payload === null) {
     return null;
   }
 
-  const url = (payload as { uni-cliUrl?: unknown }).uni-cliUrl;
+  const url = (payload as { uniCliUrl?: unknown }).uniCliUrl;
   return typeof url === "string" && url.trim() ? url : null;
 }
 
@@ -211,12 +211,12 @@ export function WorkspaceClaimScreen({
       throw new Error(getErrorMessage(payload, `Could not prepare an Uni-CLI link (${response.status}).`));
     }
 
-    const uni-cliUrl = getuni-cliUrl(payload);
-    if (!uni-cliUrl) {
+    const uniCliUrl = getuniCliUrl(payload);
+    if (!uniCliUrl) {
       throw new Error("No Uni-CLI link was returned.");
     }
 
-    return uni-cliUrl;
+    return uniCliUrl;
   }
 
   async function handleOpenDesktop() {
@@ -233,7 +233,7 @@ export function WorkspaceClaimScreen({
     }
   }
 
-  async function handleCopyUni-CLILink() {
+  async function handleCopyUniCliLink() {
     setCopyBusy(true);
     setLinkCopied(false);
     setHandoffError(null);
@@ -243,8 +243,8 @@ export function WorkspaceClaimScreen({
         throw new Error("Clipboard is not available in this browser.");
       }
 
-      const uni-cliUrl = await createDesktopHandoff();
-      await navigator.clipboard.writeText(uni-cliUrl);
+      const uniCliUrl = await createDesktopHandoff();
+      await navigator.clipboard.writeText(uniCliUrl);
       setLinkCopied(true);
       window.setTimeout(() => setLinkCopied(false), 1800);
     } catch (error) {
@@ -342,7 +342,7 @@ export function WorkspaceClaimScreen({
             <button
               type="button"
               className={`den-button-primary w-full sm:w-auto ${isLoopback ? "bg-blue-600 shadow-[0_16px_34px_-18px_rgba(37,99,235,0.75)] hover:!bg-blue-700" : ""}`}
-              onClick={() => void handleCopyUni-CLILink()}
+              onClick={() => void handleCopyUniCliLink()}
               disabled={handoffBusy || copyBusy}
             >
               <Copy className="size-4" aria-hidden />

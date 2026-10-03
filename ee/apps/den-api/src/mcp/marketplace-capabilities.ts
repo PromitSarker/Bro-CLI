@@ -30,7 +30,7 @@ import { getConnectedAccount, getOrgOAuthClient } from "../capability-sources/oa
 import { db } from "../db.js"
 import { organizationBuildsMcpApps } from "../mcp-app-rollout.js"
 import { resolvePluginArchGrantRole } from "../routes/org/plugin-system/access.js"
-import { uni-cliOrganizationConnectionsUrl, uni-cliYourConnectionsUrl } from "./connection-navigation.js"
+import { uniCliOrganizationConnectionsUrl, uniCliYourConnectionsUrl } from "./connection-navigation.js"
 import { parseCodemodeScriptPayload, type CodemodeScriptInputIssue } from "./codemode-script-object.js"
 import { type BuiltCodemodeTools } from "./codemode-tools.js"
 import { executeWorkflow } from "./workflow-service.js"
@@ -937,7 +937,7 @@ function marketplaceRequirementAction(input: {
       label: `${input.state === "reconnect" ? "Reconnect" : "Connect"} ${connectionName}`,
       surface: "uni-cli_your_connections",
       retry: "search_capabilities",
-      url: uni-cliYourConnectionsUrl(input.connectionId),
+      url: uniCliYourConnectionsUrl(input.connectionId),
     }
   }
 
@@ -946,7 +946,7 @@ function marketplaceRequirementAction(input: {
     label: `Ask an org admin to configure Connections for ${input.pluginName}`,
     surface: "uni-cli_organization_connections",
     retry: "search_capabilities",
-    url: uni-cliOrganizationConnectionsUrl(),
+    url: uniCliOrganizationConnectionsUrl(),
   }
 }
 

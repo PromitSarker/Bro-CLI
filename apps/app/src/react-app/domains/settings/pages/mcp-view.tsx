@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 
 import { desktopRestrictionNotice } from "../../../../app/cloud/desktop-app-restrictions";
-import { isBuiltInUni-CLIExtension, getMcpServerName, type McpDirectoryInfo } from "../../../../app/constants";
+import { isBuiltInUniCliExtension, getMcpServerName, type McpDirectoryInfo } from "../../../../app/constants";
 import { evaluateEnablement } from "../../../../app/enablement";
 import type { EnablementResult } from "../../../../app/extensions";
 import type { CloudImportedPlugin, CloudImportedPluginFile } from "../../../../app/cloud/import-state";
@@ -85,14 +85,14 @@ import {
   canDisconnectMemberConnection,
   canMemberAuthorizeConnection,
 } from "../../connections/native-provider-connections";
-import type { uni-cliClaudePluginPreview } from "../../../../app/lib/uni-cli-server";
+import type { uniCliClaudePluginPreview } from "../../../../app/lib/uni-cli-server";
 import {
-  isUni-CLIExtensionEnabled,
-  isUni-CLIExtensionHidden,
+  isUniCliExtensionEnabled,
+  isUniCliExtensionHidden,
   UNICLI_EXTENSION_STATE_CHANGED,
   readExtensionLayout,
-  setUni-CLIExtensionEnabled,
-  setUni-CLIExtensionHidden,
+  setUniCliExtensionEnabled,
+  setUniCliExtensionHidden,
   writeExtensionLayout,
 } from "../extension-state";
 import {
@@ -228,7 +228,7 @@ export type McpViewProps = {
   /** Organization policy restriction for Uni-CLI-provided built-in extensions. */
   builtInExtensionsDisabled?: boolean;
   /** Preview a Claude Code plugin bundle from a GitHub URL ("Will install" disclosure). */
-  previewClaudePlugin?: (url: string) => Promise<uni-cliClaudePluginPreview>;
+  previewClaudePlugin?: (url: string) => Promise<uniCliClaudePluginPreview>;
   /** Install a Claude Code plugin bundle from a GitHub URL. */
   installClaudePlugin?: (url: string) => Promise<{ ok: boolean; message: string }>;
   /** Connected org-level External MCP Connections rendered in My Extensions. */
@@ -425,8 +425,8 @@ export function McpView(props: McpViewProps) {
   const [pendingPlugin, setPendingPlugin] = useState<CloudImportedPlugin | null>(null);
   const [landingConnector, setLandingConnector] = useState<{ pluginId: string; name: string } | null>(null);
   const [detailSkillContent, setDetailSkillContent] = useState<string | null>(null);
-  const [uni-cliUiMcpCommand, setuni-cliUiMcpCommand] = useState<string[] | null>(null);
-  const [uni-cliUiMcpEnvironment, setuni-cliUiMcpEnvironment] = useState<Record<string, string> | null>(null);
+  const [uniCliUiMcpCommand, setuniCliUiMcpCommand] = useState<string[] | null>(null);
+  const [uniCliUiMcpEnvironment, setuniCliUiMcpEnvironment] = useState<Record<string, string> | null>(null);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<ExtensionInventoryFilter>(primaryLibraryFilter(props.initialFilter));
   const [onlyNeedsSignIn, setOnlyNeedsSignIn] = useState(props.initialState === "needs_signin");
@@ -972,21 +972,21 @@ export function McpView(props: McpViewProps) {
     if (!isDesktopRuntime()) return;
     void (async () => {
       try {
-        const command = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("getuni-cliUiMcpCommand");
+        const command = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("getuniCliUiMcpCommand");
         if (Array.isArray(command) && command.every((part) => typeof part === "string")) {
-          setuni-cliUiMcpCommand(command);
+          setuniCliUiMcpCommand(command);
         }
-        const environment = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("getuni-cliUiMcpEnvironment");
+        const environment = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("getuniCliUiMcpEnvironment");
         if (environment && typeof environment === "object" && !Array.isArray(environment)) {
-          setuni-cliUiMcpEnvironment(Object.fromEntries(
+          setuniCliUiMcpEnvironment(Object.fromEntries(
             Object.entries(environment).filter((entry): entry is [string, string] =>
               typeof entry[0] === "string" && typeof entry[1] === "string"
             ),
           ));
         }
       } catch {
-        setuni-cliUiMcpCommand(null);
-        setuni-cliUiMcpEnvironment(null);
+        setuniCliUiMcpCommand(null);
+        setuniCliUiMcpEnvironment(null);
       }
     })();
   }, []);
@@ -1093,11 +1093,11 @@ export function McpView(props: McpViewProps) {
   };
 
   const isEntryConfigured = (entry: McpDirectoryInfo) => {
-    if (props.builtInExtensionsDisabled && isBuiltInUni-CLIExtension(entry)) return false;
+    if (props.builtInExtensionsDisabled && isBuiltInUniCliExtension(entry)) return false;
     const result = enablementForEntry(entry);
     if (result) return result.active;
     // Fallback for entries without enablement context.
-    if (isToggleOnlyExtension(entry)) return isUni-CLIExtensionEnabled(entry);
+    if (isToggleOnlyExtension(entry)) return isUniCliExtensionEnabled(entry);
     if (entry.kind === "extension" && !isMcpBackedExtension(entry)) return props.isExtensionConnected?.(entry) ?? false;
     return isQuickConnectConfigured(entry);
   };
@@ -1107,16 +1107,16 @@ export function McpView(props: McpViewProps) {
   // `allowManageExtensions`. Entries the member already installed stay usable
   // but can no longer be managed.
   const builtInDisabledReasonForEntry = (entry: McpDirectoryInfo) =>
-    props.builtInExtensionsDisabled && isBuiltInUni-CLIExtension(entry)
+    props.builtInExtensionsDisabled && isBuiltInUniCliExtension(entry)
       ? builtInExtensionDisabledReason()
       : null;
   const manageDisabledReasonForEntry = (entry: McpDirectoryInfo) =>
-    !props.allowManageExtensions && !isBuiltInUni-CLIExtension(entry)
+    !props.allowManageExtensions && !isBuiltInUniCliExtension(entry)
       ? manageExtensionsDisabledReason()
       : null;
 
   const launchCommandForEntry = (entry: McpDirectoryInfo) => {
-    if (entry.serverName === "uni-cli-ui") return uni-cliUiMcpCommand ?? undefined;
+    if (entry.serverName === "uni-cli-ui") return uniCliUiMcpCommand ?? undefined;
     return entry.command;
   };
 
@@ -1188,13 +1188,13 @@ export function McpView(props: McpViewProps) {
       {detailEntry ? (() => {
         const extensionConfigSlot = props.configSlotForEntry?.(detailEntry) ?? null;
         const hasConfigSlot = extensionConfigSlot !== null;
-        const hidden = isUni-CLIExtensionHidden(detailEntry);
+        const hidden = isUniCliExtensionHidden(detailEntry);
         const builtInDisabledReason = builtInDisabledReasonForEntry(detailEntry);
         const disabledReason = builtInDisabledReason ?? manageDisabledReasonForEntry(detailEntry);
         const isConnected = builtInDisabledReason
           ? false
           : isToggleOnlyExtension(detailEntry)
-          ? isUni-CLIExtensionEnabled(detailEntry)
+          ? isUniCliExtensionEnabled(detailEntry)
           : detailEntry.kind === "extension" && !isMcpBackedExtension(detailEntry)
           ? props.isExtensionConnected?.(detailEntry) ?? false
           : isQuickConnectConfigured(detailEntry);
@@ -1220,13 +1220,13 @@ export function McpView(props: McpViewProps) {
             resourceLabels={extensionResourceLabels(detailEntry)}
             contributionLabels={extensionContributionLabels(detailEntry)}
             launchCommand={launchCommandForEntry(detailEntry)}
-            environment={detailEntry.serverName === "uni-cli-ui" ? uni-cliUiMcpEnvironment ?? undefined : undefined}
+            environment={detailEntry.serverName === "uni-cli-ui" ? uniCliUiMcpEnvironment ?? undefined : undefined}
             url={typeof detailEntry.url === "string" ? detailEntry.url : undefined}
             oauth={detailEntry.oauth}
             configSlot={disabledReason ? null : extensionConfigSlot}
             showEnablementCard
             onConnect={disabledReason ? undefined : isToggleOnlyExtension(detailEntry) ? () => {
-              setUni-CLIExtensionEnabled(detailEntry, true);
+              setUniCliExtensionEnabled(detailEntry, true);
               closeDetail();
             } : hasConfigSlot ? undefined : async () => {
               setMcpConnectFailure(null);
@@ -1241,21 +1241,21 @@ export function McpView(props: McpViewProps) {
               });
             }}
             onUninstall={disabledReason ? undefined : isToggleOnlyExtension(detailEntry) && isConnected ? () => {
-              setUni-CLIExtensionEnabled(detailEntry, false);
+              setUniCliExtensionEnabled(detailEntry, false);
             } : isQuickConnectConfigured(detailEntry) ? () => {
               const slug = getMcpIdentityKey(detailEntry);
               props.removeMcp(slug);
               closeDetail();
             } : undefined}
             onChat={chatWith({ connectors: [detailEntry.name] })}
-            onHide={() => setUni-CLIExtensionHidden(detailEntry, true)}
-            onShow={() => setUni-CLIExtensionHidden(detailEntry, false)}
+            onHide={() => setUniCliExtensionHidden(detailEntry, true)}
+            onShow={() => setUniCliExtensionHidden(detailEntry, false)}
           />
         );
       })() : null}
 
       {detailSkill ? (() => {
-        const hidden = isUni-CLIExtensionHidden(getSkillHiddenId(detailSkill));
+        const hidden = isUniCliExtensionHidden(getSkillHiddenId(detailSkill));
         return (
           <ExtensionDetailModal
             open={!!detailSkill}
@@ -1288,8 +1288,8 @@ export function McpView(props: McpViewProps) {
               closeDetail();
             } : undefined}
             onChat={chatWith({ skills: [detailSkill.name] })}
-            onHide={() => setUni-CLIExtensionHidden(getSkillHiddenId(detailSkill), true)}
-            onShow={() => setUni-CLIExtensionHidden(getSkillHiddenId(detailSkill), false)}
+            onHide={() => setUniCliExtensionHidden(getSkillHiddenId(detailSkill), true)}
+            onShow={() => setUniCliExtensionHidden(getSkillHiddenId(detailSkill), false)}
           />
         );
       })() : null}
@@ -1424,7 +1424,7 @@ export function McpView(props: McpViewProps) {
       })() : null}
 
       {detailPlugin ? (() => {
-        const hidden = isUni-CLIExtensionHidden(`plugin:${detailPlugin.pluginId}`);
+        const hidden = isUniCliExtensionHidden(`plugin:${detailPlugin.pluginId}`);
         const marketplaceName = detailPlugin.files.find((file) => file.marketplaceName)?.marketplaceName;
         const cloudItem = libraryCloud.pluginById.get(detailPlugin.pluginId);
         const pluginTaxonomy = cloudItem ? libraryCloudItemTaxonomy(cloudItem.componentKinds, cloudItem.componentCount) : "plugin";
@@ -1472,8 +1472,8 @@ export function McpView(props: McpViewProps) {
               void props.removeCloudPlugin?.(detailPlugin.pluginId);
               closeDetail();
             } : undefined}
-            onHide={() => setUni-CLIExtensionHidden(`plugin:${detailPlugin.pluginId}`, true)}
-            onShow={() => setUni-CLIExtensionHidden(`plugin:${detailPlugin.pluginId}`, false)}
+            onHide={() => setUniCliExtensionHidden(`plugin:${detailPlugin.pluginId}`, true)}
+            onShow={() => setUniCliExtensionHidden(`plugin:${detailPlugin.pluginId}`, false)}
           />
         );
       })() : null}
@@ -1617,7 +1617,7 @@ export function McpView(props: McpViewProps) {
   for (const entry of libraryDirectoryEntries) {
     const configured = isEntryConfigured(entry);
     const enablement = props.enablementContext ? enablementForEntry(entry) : null;
-    const hidden = isUni-CLIExtensionHidden(entry);
+    const hidden = isUniCliExtensionHidden(entry);
     const disabledReason = builtInDisabledReasonForEntry(entry) ?? (configured ? null : manageDisabledReasonForEntry(entry));
     const runtimeStatus = quickConnectStatus(entry)?.status;
     const ready = runtimeStatus ? runtimeStatus === "connected" : configured || enablement?.active;
@@ -1687,7 +1687,7 @@ export function McpView(props: McpViewProps) {
     const fromOrg = skill.origin === "uni-cli-connect";
     if (fromOrg && skill.pluginName && pluginRowNames.has(skill.pluginName.toLowerCase())) continue;
     if (fromOrg && ownedPluginNames.has(skill.name.toLowerCase())) continue;
-    const hidden = isUni-CLIExtensionHidden(getSkillHiddenId(skill));
+    const hidden = isUniCliExtensionHidden(getSkillHiddenId(skill));
     rows.push({
       key: `skill:${skill.path}`,
       section: fromOrg ? "uni-cli" : "mac",
@@ -1790,7 +1790,7 @@ export function McpView(props: McpViewProps) {
       : libraryCloudItemTaxonomy(plugin.files.map((file) => file.objectType), plugin.files.length));
     const group = taxonomy === "connection" ? connectorGroup(plugin.name) : "ready";
     const attention = libraryRowAttention(group);
-    const hidden = isUni-CLIExtensionHidden(`plugin:${plugin.pluginId}`);
+    const hidden = isUniCliExtensionHidden(`plugin:${plugin.pluginId}`);
     const fileCount = plugin.files.length;
     rows.push({
       needsSignIn: group === "needs_signin",
@@ -1845,13 +1845,13 @@ export function McpView(props: McpViewProps) {
 
   const sharedOwned = ownedPlugins.filter((plugin) => isLibraryAudienceShared(libraryCloud.audienceFor(plugin.id)));
   const firstSharedOwned = sharedOwned[0];
-  const uni-cliRowCount = rows.filter((row) => row.section === "uni-cli").length;
+  const uniCliRowCount = rows.filter((row) => row.section === "uni-cli").length;
   const needsSignInCount = rows.filter((row) => row.needsSignIn === true).length;
   const sectionMeta: Partial<Record<LibrarySection, string | null>> = {
     mine: firstSharedOwned
       ? t("extensions.section_mine_shared", { count: String(sharedOwned.length), audience: libraryAudienceName(libraryCloud.audienceFor(firstSharedOwned.id)) })
       : t("extensions.section_mine_just_me", { count: String(ownedPlugins.length) }),
-    uni-cli: uni-cliRowCount > 0 ? t("extensions.section_uni-cli_meta", { count: String(uni-cliRowCount) }) : null,
+    uni-cli: uniCliRowCount > 0 ? t("extensions.section_uni-cli_meta", { count: String(uniCliRowCount) }) : null,
   };
 
   const inventory = (

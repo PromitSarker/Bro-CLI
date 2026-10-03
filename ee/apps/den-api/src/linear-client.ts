@@ -30,7 +30,7 @@ export type CompleteLinearIssueInput = {
 const logger = appLogger.child({ component: "linear" })
 
 const ISSUE_CREATE_MUTATION = `
-mutation Uni-CLIIssueCreate($input: IssueCreateInput!) {
+mutation UniCliIssueCreate($input: IssueCreateInput!) {
   issueCreate(input: $input) {
     success
     issue {
@@ -42,7 +42,7 @@ mutation Uni-CLIIssueCreate($input: IssueCreateInput!) {
 }`
 
 const ISSUE_COMPLETE_MUTATION = `
-mutation Uni-CLIIssueComplete($id: String!, $input: IssueUpdateInput!) {
+mutation UniCliIssueComplete($id: String!, $input: IssueUpdateInput!) {
   issueUpdate(id: $id, input: $input) {
     success
     issue {

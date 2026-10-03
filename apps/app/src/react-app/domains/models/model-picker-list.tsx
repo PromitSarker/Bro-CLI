@@ -52,14 +52,14 @@ export type ModelPickerListProps = {
   onSetWorkspaceDefault?: (model: ModelRef, variant?: string | null) => void | boolean | Promise<void | boolean>;
   /** Effort currently applied to `current`; kept when that model becomes the workspace default. */
   currentBehaviorValue?: string | null;
-  uni-cliModelsSyncing?: boolean;
+  uniCliModelsSyncing?: boolean;
   onReloadWorkspace?: () => void | Promise<unknown>;
   onRetryAuto?: () => void | Promise<unknown>;
 };
 
 type AutoRowState = { model: ModelRef; state: AutoPickerState; code?: string | null; resetsAt?: string | null };
 export function ModelPickerList(props: ModelPickerListProps) {
-  return isAutoModel(props.current) || props.options.some(isAutoModel) || props.uni-cliModelsSyncing
+  return isAutoModel(props.current) || props.options.some(isAutoModel) || props.uniCliModelsSyncing
     ? <AutoStatusModelPickerList {...props} /> : <ModelPickerRows {...props} />;
 }
 
@@ -69,10 +69,10 @@ function AutoStatusModelPickerList(props: ModelPickerListProps) {
   const availableAuto = props.options.find(isAutoModel);
   const auto = isAutoModel(props.current) ? props.current : availableAuto;
   const matches = auto && status && modelRefKey(auto) === modelRefKey(status);
-  const state: AutoPickerState = props.uni-cliModelsSyncing ? "sync" : snapshot?.status === "error" ? "unavailable" : matches ? (autoQuietlyUnavailable(status) ? "ready" : autoNotOffered(status) ? "not_offered" : status.state) : "ready";
+  const state: AutoPickerState = props.uniCliModelsSyncing ? "sync" : snapshot?.status === "error" ? "unavailable" : matches ? (autoQuietlyUnavailable(status) ? "ready" : autoNotOffered(status) ? "not_offered" : status.state) : "ready";
   const switchedOff = freeAutoSwitchedOff(status);
   const blockedByPolicy = props.retainedSelection !== undefined && props.retainedSelection.reason !== "unavailable" && isAutoModel(props.current);
-  return <ModelPickerRows {...props} retainedSelection={switchedOff && isAutoModel(props.current) ? undefined : props.retainedSelection} options={withAutoDefaultPin(switchedOff ? props.options.filter((option) => !isAutoModel(option)) : props.options, status)} uni-cliModelsSyncing={!switchedOff && !blockedByPolicy && props.uni-cliModelsSyncing} autoRow={!switchedOff && !blockedByPolicy && auto ? { model: auto, state, code: status?.code, resetsAt: status?.allowance?.resetsAt } : undefined} />;
+  return <ModelPickerRows {...props} retainedSelection={switchedOff && isAutoModel(props.current) ? undefined : props.retainedSelection} options={withAutoDefaultPin(switchedOff ? props.options.filter((option) => !isAutoModel(option)) : props.options, status)} uniCliModelsSyncing={!switchedOff && !blockedByPolicy && props.uniCliModelsSyncing} autoRow={!switchedOff && !blockedByPolicy && auto ? { model: auto, state, code: status?.code, resetsAt: status?.allowance?.resetsAt } : undefined} />;
 }
 
 /** Context-menu rows show the chord that triggers the same command (DESIGN S6). */
@@ -81,7 +81,7 @@ function menuChord(label: string, chord: string) {
 }
 
 function ModelPickerRows({ options, current, query, onQueryChange, onSelect, focusAlternative = false, footer, searchInputRef, autoFocusSearch = true,
-  catalogState, retainedSelection, onConnectProvider, onOpenProviderSettings, onSetWorkspaceDefault, currentBehaviorValue, uni-cliModelsSyncing, onReloadWorkspace, onRetryAuto, autoRow,
+  catalogState, retainedSelection, onConnectProvider, onOpenProviderSettings, onSetWorkspaceDefault, currentBehaviorValue, uniCliModelsSyncing, onReloadWorkspace, onRetryAuto, autoRow,
 }: ModelPickerListProps & { autoRow?: AutoRowState }) {
   const favorites = useModelCollectionsStore((state) => state.favorites);
   const recent = useModelCollectionsStore((state) => state.recent);
@@ -219,7 +219,7 @@ function ModelPickerRows({ options, current, query, onQueryChange, onSelect, foc
         {retained?.reason === "disabled" && onOpenProviderSettings ? <Button size="sm" variant="outline" onClick={onOpenProviderSettings}>AI providers</Button> : null}
       </>}>{retainedCopy.detail}</PickerNotice> : null}
       {autoRow && autoRow.state !== "ready" ? <AutoPickerRecovery state={autoRow.state} code={autoRow.code} resetsAt={autoRow.resetsAt} onRetry={onRetryAuto} onReload={onReloadWorkspace} hasAlternatives={Boolean(alternativeKey)} />
-        : uni-cliModelsSyncing ? <AutoPickerRecovery state="sync" onReload={onReloadWorkspace} /> : null}
+        : uniCliModelsSyncing ? <AutoPickerRecovery state="sync" onReload={onReloadWorkspace} /> : null}
       {empty ? <PickerNotice action={onConnectProvider ? <Button size="sm" onClick={onConnectProvider}>Connect a provider</Button> : null}>Nothing is connected in this workspace.</PickerNotice> : null}
       {focusAlternative && !alternativeKey && hasOptions && onConnectProvider ? <PickerNotice action={<Button size="sm" variant="outline" onClick={onConnectProvider}>Connect a provider</Button>}>Nothing else is connected in this workspace.</PickerNotice> : null}
       {footer}

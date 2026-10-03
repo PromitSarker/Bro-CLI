@@ -21,7 +21,7 @@ export async function readDesktopProfile(read = readFile) {
   const validRegistry = (value) => Array.isArray(value?.workspaces) && value.workspaces.length === 1
     && value.workspaces.every((workspace) => workspace.path === expectedWorkspacePath && (workspace.workspaceType ?? "local") === "local"
       && (workspace.preset ?? "starter") === "starter" && (workspace.name ?? "Uni-CLI Chat") === "Uni-CLI Chat"
-      && (workspace.displayName ?? "Uni-CLI Chat") === "Uni-CLI Chat" && !workspace.baseUrl && !workspace.uni-cliHostUrl && !workspace.uni-cliToken);
+      && (workspace.displayName ?? "Uni-CLI Chat") === "Uni-CLI Chat" && !workspace.baseUrl && !workspace.uniCliHostUrl && !workspace.uniCliToken);
   const legacy = await optional(`${profile.userDataPath}/workspace-state.json`);
   const noBootstrap = await optional(profile.environment.UNICLI_DESKTOP_BOOTSTRAP_PATH) === undefined && await optional(`${root}/bootstrap.json`) === undefined;
   const dataHomes = [profile.environment.XDG_DATA_HOME, `${profile.userDataPath}/uni-cli-dev-data/xdg/data`];
@@ -82,7 +82,7 @@ export async function observeDesktop({ nonce, expectedWorkspacePath }, loadProdu
     const ordinaryModel = (model) => model === undefined || model === null || model === "" || model === modelRef
       || (record(model) && model.providerID === DEFAULT_MODEL.providerID && model.modelID === DEFAULT_MODEL.modelID);
     flags.ordinaryDefaultModel = ordinaryModel(localStorage.getItem("uni-cli.defaultModel")) && ordinaryModel(prefs.defaultModel);
-    const info = await desktop.uni-cliServerInfo();
+    const info = await desktop.uniCliServerInfo();
     const bootstrap = await desktop.getDesktopBootstrapConfig();
     const base = new URL(info.baseUrl);
     flags.nativeLocalOnly = info.running === true && info.remoteAccessEnabled === false && localUrl(info.baseUrl)
@@ -104,7 +104,7 @@ export async function observeDesktop({ nonce, expectedWorkspacePath }, loadProdu
       && nativeWorkspace.workspaceType === "local" && nativeWorkspace.path === expectedWorkspacePath && nativeWorkspace.preset === "starter"
       && nativeWorkspace.name === "Uni-CLI Chat"
       && nativeWorkspace.id === workspace?.id && localUrl(nativeWorkspace.baseUrl) && localUrl(nativeWorkspace.opencode?.baseUrl)
-      && !nativeWorkspace.uni-cliHostUrl && !nativeWorkspace.uni-cliToken;
+      && !nativeWorkspace.uniCliHostUrl && !nativeWorkspace.uniCliToken;
     flags.noNativeCloudSession = cloud?.hasSession === false;
     flags.noProvisionedModel = record(providers?.provider) && emptyMap(providers.provider)
       && Array.isArray(cloud?.providers) && cloud.providers.length === 0 && Array.isArray(cloud?.skippedProviders) && cloud.skippedProviders.length === 0;

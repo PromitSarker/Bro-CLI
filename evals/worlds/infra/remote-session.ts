@@ -44,7 +44,7 @@ export async function main(): Promise<void> {
     name: REMOTE_SESSION_NAME,
     outputs: {
       webUrl: handle.manifest.webUrl,
-      uni-cliUrl: handle.manifest.uni-cliUrl,
+      uniCliUrl: handle.manifest.uniCliUrl,
       workspace: handle.manifest.workspace,
       runtimeManifest: handle.manifest.runtimeManifestPath,
     },

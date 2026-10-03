@@ -39,7 +39,7 @@ export async function browserWebMcpWorld(seed: Seed) {
     await configureBrowserFixtureModel(base.app, workspacePath, origin);
     const enginePath = `/workspace/${base.workspace.workspaceId}/opencode`;
     await seed.evalIn(base.app, browserScript(async (disposePath) => {
-      const info = await window.__UNICLI_ELECTRON__.invokeDesktop('uni-cliServerInfo');
+      const info = await window.__UNICLI_ELECTRON__.invokeDesktop('uniCliServerInfo');
       const response = await fetch(info.baseUrl + disposePath, {
         method: 'POST', headers: { Authorization: 'Bearer ' + info.clientToken },
         signal: AbortSignal.timeout(30000),

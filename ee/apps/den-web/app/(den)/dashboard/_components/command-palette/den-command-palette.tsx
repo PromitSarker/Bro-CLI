@@ -36,7 +36,7 @@ const EMPTY_CAPABILITIES: DenOrgCapabilities = {
   cloud: false,
   installLinks: false,
   mcpConnections: false,
-  uni-cliWeb: false,
+  uniCliWeb: false,
   orgManagedDashboards: false,
   workflows: false,
 };

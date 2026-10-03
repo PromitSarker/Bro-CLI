@@ -9,7 +9,7 @@ type ReactSessionRuntimeProps = {
   sessionId: string | null;
   activeSessionIds?: string[];
   opencodeBaseUrl: string;
-  uni-cliToken: string;
+  uniCliToken: string;
   onSessionCreated?: (session: Session) => void;
   onSessionUpdated?: (update: { sessionId: string; info: Record<string, unknown> }) => void;
   onSessionDeleted?: (sessionId: string) => void;
@@ -29,7 +29,7 @@ export function ReactSessionRuntime(props: ReactSessionRuntimeProps) {
     const input = {
       workspaceId: props.workspaceId,
       baseUrl: props.opencodeBaseUrl,
-      uni-cliToken: props.uni-cliToken,
+      uniCliToken: props.uniCliToken,
       visibleSessionId: props.sessionId,
       ...stableCallbacks,
     };
@@ -39,7 +39,7 @@ export function ReactSessionRuntime(props: ReactSessionRuntimeProps) {
       releaseSessions();
       releaseWorkspace();
     };
-  }, [props.workspaceId, props.sessionId, activeSessionIdsKey, props.opencodeBaseUrl, props.uni-cliToken, stableCallbacks]);
+  }, [props.workspaceId, props.sessionId, activeSessionIdsKey, props.opencodeBaseUrl, props.uniCliToken, stableCallbacks]);
 
   return null;
 }

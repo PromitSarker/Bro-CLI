@@ -33,11 +33,11 @@ export async function localSendDenOutageWorld(seed: Seed) {
   const baseUrl = `http://127.0.0.1:${address.port}`;
   const paths = resolveHeadlessWorldRuntimePaths(fileURLToPath(new URL("../../", import.meta.url)), base.app.handle.name);
   const runtime = await readHeadlessRuntimeManifest(paths.runtimeManifestPath);
-  if (!runtime || runtime.workspace !== base.workspacePath || runtime.uni-cliUrl !== base.app.uni-cliUrl) {
+  if (!runtime || runtime.workspace !== base.workspacePath || runtime.uniCliUrl !== base.app.uniCliUrl) {
     throw new Error("Outage fixture could not identify its owned headless runtime");
   }
   // Host-only identity arrangement, not renderer Cloud sign-in or provider sync.
-  const installed = await fetch(`${runtime.uni-cliUrl}/den-session/identity`, {
+  const installed = await fetch(`${runtime.uniCliUrl}/den-session/identity`, {
     method: "PUT",
     headers: { "X-Uni-CLI-Host-Token": runtime.hostToken, "Content-Type": "application/json" },
     body: JSON.stringify({ baseUrl, token: "den-outage-fixture-token", orgId: "org_test" }),

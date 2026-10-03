@@ -28,7 +28,7 @@ export async function engineLiveParity(seed: Seed, { place }: { place: Place }) 
   const manifest = await readHeadlessRuntimeManifest(paths.runtimeManifestPath);
   if (!manifest) throw new Error("Missing owned runtime");
   const request = async (path: string, method = "GET", body?: unknown) => {
-    const response = await fetch(`${app.uni-cliUrl}${path}`, { method,
+    const response = await fetch(`${app.uniCliUrl}${path}`, { method,
       headers: { Authorization: `Bearer ${manifest.token}`, "X-Uni-CLI-Host-Token": manifest.hostToken, "Content-Type": "application/json" },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }), signal: AbortSignal.timeout(60_000) });
     const value: unknown = await response.json();

@@ -2,9 +2,9 @@ import { createServer } from "node:http";
 import { afterEach, expect } from "vitest";
 import { test } from "@uni-cli/testkit";
 
-import { Uni-CLIExtensionsPreview } from "../../apps/server/src/opencode-plugins/uni-cli-extensions-preview";
+import { UniCliExtensionsPreview } from "../../apps/server/src/opencode-plugins/uni-cli-extensions-preview";
 import {
-  builduni-cliProviderContributions,
+  builduniCliProviderContributions,
   sessionAffordanceArgsSchemas,
 } from "../../apps/server/src/opencode-plugins/uni-cli-provider-adapters";
 
@@ -51,7 +51,7 @@ afterEach(async () => {
   else process.env.UNICLI_SERVER_TOKEN = originalEnv.token;
 });
 
-async function startFakeUni-CLIServer() {
+async function startFakeUniCliServer() {
   const requests: Array<{ pathname: string; search: string }> = [];
   const server = createServer((request, response) => {
     const url = new URL(request.url ?? "/", "http://127.0.0.1");
@@ -113,7 +113,7 @@ function ids(result: Record<string, unknown>): string[] {
 }
 
 async function plugin() {
-  const instance = await Uni-CLIExtensionsPreview();
+  const instance = await UniCliExtensionsPreview();
   return {
     search: async (args: Record<string, unknown>) => resultOf(await instance.tool.uni-cli_query.execute({ id: "session.search", args }), "session.search"),
     read: async (args: Record<string, unknown>) => resultOf(await instance.tool.uni-cli_query.execute({ id: "session.read", args }), "session.read"),
@@ -121,7 +121,7 @@ async function plugin() {
 }
 
 test("session.search advertises every schema argument so agents can widen a truncated scan", async ({ evidence }) => {
-  const contributions = builduni-cliProviderContributions([]);
+  const contributions = builduniCliProviderContributions([]);
   const affordances = contributions.find((contribution) => contribution.featureId === "sessions")?.affordances ?? [];
   const drift: string[] = [];
   for (const [id, schema] of Object.entries(sessionAffordanceArgsSchemas)) {
@@ -145,7 +145,7 @@ test("session.search advertises every schema argument so agents can widen a trun
 });
 
 test("session.search finds a session by title far beyond the default scan window and reports the window honestly", async ({ evidence }) => {
-  const fake = await startFakeUni-CLIServer();
+  const fake = await startFakeUniCliServer();
   const { search } = await plugin();
 
   const byDefault = await search({ query: "variant probe" });
@@ -171,7 +171,7 @@ test("session.search finds a session by title far beyond the default scan window
 });
 
 test("session.search match, time and archived filters narrow results instead of OR-ing terms", async ({ evidence }) => {
-  await startFakeUni-CLIServer();
+  await startFakeUniCliServer();
   const { search } = await plugin();
   const found = async (args: Record<string, unknown>) => ids(await search(args));
 
@@ -193,7 +193,7 @@ test("session.search match, time and archived filters narrow results instead of 
 });
 
 test("session.read reads from the start of a long transcript and summarizes asked/concluded in one call", async ({ evidence }) => {
-  const fake = await startFakeUni-CLIServer();
+  const fake = await startFakeUniCliServer();
   const { read } = await plugin();
 
   const tail = await read({ sessionId: "ses_1", count: 2 });

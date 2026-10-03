@@ -8,7 +8,7 @@ import { denApiCredentials, denBrowserEndpoint } from "../../(den)/_lib/den-api-
 
 function completionUrl(intentId: string, failed = false) {
   const url = new URL("/sso/test/complete", window.location.origin);
-  url.searchParams.set("uni-cliSsoTest", intentId);
+  url.searchParams.set("uniCliSsoTest", intentId);
   if (failed) url.searchParams.set("failed", "1");
   return url.toString();
 }

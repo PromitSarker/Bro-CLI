@@ -13,7 +13,7 @@ import { ActivityCaughtUp, ActivityLoading, ActivityNothingShared, ActivityRefre
 import { useActivityFeed, type ActivityFeedItem } from "@/react-app/domains/activity/use-activity-feed";
 import { useActivityStore } from "@/react-app/kernel/activity-store";
 import { useNotificationStore } from "@/react-app/kernel/notification-store";
-import { useControlAction, type uni-cliControlAction } from "./control/control-provider";
+import { useControlAction, type uniCliControlAction } from "./control/control-provider";
 import { openNotificationCenterEvent } from "./notifications";
 import { useShellConfig } from "./shell-config";
 
@@ -27,7 +27,7 @@ export function NotificationBell({ align = "end" }: { align?: "start" | "end" })
   const onActivityPage = useLocation().pathname === "/activity";
   const navigate = useNavigate();
 
-  const notificationsListAction = useMemo<uni-cliControlAction>(() => ({
+  const notificationsListAction = useMemo<uniCliControlAction>(() => ({
     id: "notifications.list",
     label: "List notifications",
     description: "Return the current background notification entries.",
@@ -47,7 +47,7 @@ export function NotificationBell({ align = "end" }: { align?: "start" | "end" })
     })),
   }), [notifications]);
   useControlAction(notificationsListAction);
-  const activityListAction = useMemo<uni-cliControlAction>(() => ({
+  const activityListAction = useMemo<uniCliControlAction>(() => ({
     id: "activity.list",
     label: "List activity",
     description: "Read this member's device-observed activity and verification status.",

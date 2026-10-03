@@ -1,13 +1,13 @@
 import { unwrap } from "@/app/lib/opencode";
 import { isOpencodeV2Client } from "@/app/lib/opencode-v2-adapter";
-import type { uni-cliServerClient } from "@/app/lib/uni-cli-server";
+import type { uniCliServerClient } from "@/app/lib/uni-cli-server";
 import type { Client } from "@/app/types";
 
 type WorkspaceType = "local" | "remote" | string;
 
 export type UpdateManagedDisabledProvidersOptions = {
   opencodeClient: Client | null;
-  uni-cliClient?: uni-cliServerClient | null;
+  uniCliClient?: uniCliServerClient | null;
   workspaceId?: string | null;
   workspaceType?: WorkspaceType | null;
   disabledProviders: unknown;
@@ -42,7 +42,7 @@ export function disabledProvidersFromConfig(config: unknown): string[] {
 
 export type ReadManagedDisabledProvidersOptions = {
   opencodeClient: Client | null;
-  uni-cliClient?: uni-cliServerClient | null;
+  uniCliClient?: uniCliServerClient | null;
   workspaceId?: string | null;
   workspaceType?: WorkspaceType | null;
   directory?: string;
@@ -60,8 +60,8 @@ export async function readManagedDisabledProviders(
   const client = options.opencodeClient;
   const workspaceId = options.workspaceId?.trim() ?? "";
   if (client && isOpencodeV2Client(client)) {
-    if (!options.uni-cliClient || !workspaceId || options.workspaceType !== "local") return [];
-    const result = await options.uni-cliClient.getRuntimeDisabledProviders(workspaceId);
+    if (!options.uniCliClient || !workspaceId || options.workspaceType !== "local") return [];
+    const result = await options.uniCliClient.getRuntimeDisabledProviders(workspaceId);
     return normalizeDisabledProviders(result.disabledProviders);
   }
   if (!client) return [];
@@ -89,8 +89,8 @@ export async function updateManagedDisabledProviders(
   const disabledProviders = normalizeDisabledProviders(options.disabledProviders);
   const workspaceId = options.workspaceId?.trim() ?? "";
 
-  if (options.uni-cliClient && workspaceId && options.workspaceType === "local") {
-    const result = await options.uni-cliClient.setRuntimeDisabledProviders(workspaceId, disabledProviders);
+  if (options.uniCliClient && workspaceId && options.workspaceType === "local") {
+    const result = await options.uniCliClient.setRuntimeDisabledProviders(workspaceId, disabledProviders);
     return { managedRuntime: true, disabledProviders: result.disabledProviders };
   }
 

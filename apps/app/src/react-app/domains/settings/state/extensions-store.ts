@@ -31,17 +31,17 @@ import {
   readOpencodeConfig,
   revealDesktopItemInDir,
   uninstallSkill as uninstallSkillCommand,
-  workspaceuni-cliRead,
-  workspaceuni-cliWrite,
+  workspaceuniCliRead,
+  workspaceuniCliWrite,
   writeLocalSkill,
   writeOpencodeConfig,
   type OpencodeConfigFile,
 } from "../../../../app/lib/desktop";
 import type {
-  uni-cliClaudePluginPreview,
-  uni-cliServerCapabilities,
-  uni-cliServerClient,
-  uni-cliServerStatus,
+  uniCliClaudePluginPreview,
+  uniCliServerCapabilities,
+  uniCliServerClient,
+  uniCliServerStatus,
 } from "../../../../app/lib/uni-cli-server";
 import {
   DenApiError,
@@ -65,7 +65,7 @@ import {
   type PendingCloudPluginChange,
 } from "../../../../app/cloud/desktop-cloud-sync";
 import { requestMemberActivityRefresh } from "@/react-app/kernel/activity-types";
-import type { uni-cliServerStore } from "../../connections/uni-cli-server-store";
+import type { uniCliServerStore } from "../../connections/uni-cli-server-store";
 import { clearCloudInventoryCache } from "../../connections/cloud-inventory-cache";
 import {
   denLibraryPluginCreateRequest,
@@ -358,11 +358,11 @@ export function createExtensionsStore(options: {
   selectedWorkspaceId: () => string;
   selectedWorkspaceRoot: () => string;
   workspaceType: () => "local" | "remote";
-  uni-cliServer: uni-cliServerStore;
-  uni-cliServerConnection?: () => {
-    uni-cliServerClient: uni-cliServerClient | null;
-    uni-cliServerStatus: uni-cliServerStatus;
-    uni-cliServerCapabilities: uni-cliServerCapabilities | null;
+  uniCliServer: uniCliServerStore;
+  uniCliServerConnection?: () => {
+    uniCliServerClient: uniCliServerClient | null;
+    uniCliServerStatus: uniCliServerStatus;
+    uniCliServerCapabilities: uniCliServerCapabilities | null;
   };
   runtimeWorkspaceId: () => string | null;
   ensureRuntimeWorkspaceId?: () => Promise<string | null | undefined>;
@@ -376,7 +376,7 @@ export function createExtensionsStore(options: {
 
   let disposed = false;
   let started = false;
-  let stopuni-cliSubscription: (() => void) | null = null;
+  let stopuniCliSubscription: (() => void) | null = null;
   let stopDenSessionListener: (() => void) | null = null;
   let lastWorkspaceContextKey = "";
   let snapshot: ExtensionsStoreSnapshot;
@@ -428,33 +428,33 @@ export function createExtensionsStore(options: {
     return `${workspaceType}:${workspaceId}:${root}:${runtimeWorkspaceId}`;
   };
 
-  const getuni-cliServerSnapshot = () => {
-    const snapshot = options.uni-cliServer.getSnapshot();
-    const connection = options.uni-cliServerConnection?.();
-    if (!connection?.uni-cliServerClient) return snapshot;
+  const getuniCliServerSnapshot = () => {
+    const snapshot = options.uniCliServer.getSnapshot();
+    const connection = options.uniCliServerConnection?.();
+    if (!connection?.uniCliServerClient) return snapshot;
     return {
       ...snapshot,
-      uni-cliServerClient: connection.uni-cliServerClient,
-      uni-cliServerStatus: connection.uni-cliServerStatus,
-      uni-cliServerCapabilities: connection.uni-cliServerCapabilities,
+      uniCliServerClient: connection.uniCliServerClient,
+      uniCliServerStatus: connection.uniCliServerStatus,
+      uniCliServerCapabilities: connection.uniCliServerCapabilities,
     };
   };
 
   const resolveWorkspaceServerTarget = async () => {
-    const uni-cliSnapshot = getuni-cliServerSnapshot();
-    const uni-cliClient = uni-cliSnapshot.uni-cliServerClient;
-    let uni-cliWorkspaceId = options.runtimeWorkspaceId()?.trim() || null;
-    if (!uni-cliWorkspaceId && uni-cliSnapshot.uni-cliServerStatus === "connected" && uni-cliClient) {
-      uni-cliWorkspaceId = (await options.ensureRuntimeWorkspaceId?.())?.trim() || null;
+    const uniCliSnapshot = getuniCliServerSnapshot();
+    const uniCliClient = uniCliSnapshot.uniCliServerClient;
+    let uniCliWorkspaceId = options.runtimeWorkspaceId()?.trim() || null;
+    if (!uniCliWorkspaceId && uniCliSnapshot.uniCliServerStatus === "connected" && uniCliClient) {
+      uniCliWorkspaceId = (await options.ensureRuntimeWorkspaceId?.())?.trim() || null;
     }
-    const hasuni-cliTarget =
-      uni-cliSnapshot.uni-cliServerStatus === "connected" &&
-      Boolean(uni-cliClient && uni-cliWorkspaceId);
+    const hasuniCliTarget =
+      uniCliSnapshot.uniCliServerStatus === "connected" &&
+      Boolean(uniCliClient && uniCliWorkspaceId);
     return {
-      uni-cliSnapshot,
-      uni-cliClient,
-      uni-cliWorkspaceId,
-      hasuni-cliTarget,
+      uniCliSnapshot,
+      uniCliClient,
+      uniCliWorkspaceId,
+      hasuniCliTarget,
     };
   };
 
@@ -499,51 +499,51 @@ export function createExtensionsStore(options: {
 
   const formatSkillPath = (location: string) => location.replace(/[/\\]SKILL\.md$/i, "");
 
-  const readWorkspaceuni-cliConfigRecord = async (): Promise<Record<string, unknown>> => {
+  const readWorkspaceuniCliConfigRecord = async (): Promise<Record<string, unknown>> => {
     const root = options.selectedWorkspaceRoot().trim();
     const isLocalWorkspace = options.workspaceType() === "local";
-    const { uni-cliSnapshot, uni-cliClient, uni-cliWorkspaceId, hasuni-cliTarget } =
+    const { uniCliSnapshot, uniCliClient, uniCliWorkspaceId, hasuniCliTarget } =
       await resolveWorkspaceServerTarget();
-    const canUseuni-cliServer =
-      hasuni-cliTarget &&
-      uni-cliSnapshot.uni-cliServerCapabilities?.config?.read !== false;
+    const canUseuniCliServer =
+      hasuniCliTarget &&
+      uniCliSnapshot.uniCliServerCapabilities?.config?.read !== false;
 
-    if (canUseuni-cliServer && uni-cliClient && uni-cliWorkspaceId) {
-      const config = await uni-cliClient.getConfig(uni-cliWorkspaceId);
+    if (canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
+      const config = await uniCliClient.getConfig(uniCliWorkspaceId);
       return config.uni-cli ?? {};
     }
 
-    if (hasuni-cliTarget) {
+    if (hasuniCliTarget) {
       return {};
     }
 
     if (isLocalWorkspace && isDesktopRuntime() && root) {
-      return await workspaceuni-cliRead({ workspacePath: root }) as unknown as Record<string, unknown>;
+      return await workspaceuniCliRead({ workspacePath: root }) as unknown as Record<string, unknown>;
     }
 
     return {};
   };
 
-  const writeWorkspaceuni-cliConfigRecord = async (config: Record<string, unknown>) => {
+  const writeWorkspaceuniCliConfigRecord = async (config: Record<string, unknown>) => {
     const root = options.selectedWorkspaceRoot().trim();
     const isLocalWorkspace = options.workspaceType() === "local";
-    const { uni-cliSnapshot, uni-cliClient, uni-cliWorkspaceId, hasuni-cliTarget } =
+    const { uniCliSnapshot, uniCliClient, uniCliWorkspaceId, hasuniCliTarget } =
       await resolveWorkspaceServerTarget();
-    const canUseuni-cliServer =
-      hasuni-cliTarget &&
-      uni-cliSnapshot.uni-cliServerCapabilities?.config?.write !== false;
+    const canUseuniCliServer =
+      hasuniCliTarget &&
+      uniCliSnapshot.uniCliServerCapabilities?.config?.write !== false;
 
-    if (canUseuni-cliServer && uni-cliClient && uni-cliWorkspaceId) {
-      await uni-cliClient.patchConfig(uni-cliWorkspaceId, { uni-cli: config });
+    if (canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
+      await uniCliClient.patchConfig(uniCliWorkspaceId, { uni-cli: config });
       return true;
     }
 
-    if (hasuni-cliTarget) {
+    if (hasuniCliTarget) {
       return false;
     }
 
     if (isLocalWorkspace && isDesktopRuntime() && root) {
-      const result = (await workspaceuni-cliWrite({
+      const result = (await workspaceuniCliWrite({
         workspacePath: root,
         config: config as never,
       })) as { ok: boolean; stderr?: string; stdout?: string };
@@ -559,17 +559,17 @@ export function createExtensionsStore(options: {
   const refreshPendingCloudPluginChanges = async (installedPlugins?: Record<string, CloudImportedPlugin>) => {
     try {
       const target = await resolveWorkspaceServerTarget();
-      if (!target.uni-cliClient || !target.uni-cliWorkspaceId) {
+      if (!target.uniCliClient || !target.uniCliWorkspaceId) {
         setStateField("pendingCloudPluginChanges", {});
         return;
       }
       const syncResult = await refreshDesktopCloudSync({
-        uni-cliClient: target.uni-cliClient,
-        workspaceId: target.uni-cliWorkspaceId,
+        uniCliClient: target.uniCliClient,
+        workspaceId: target.uniCliWorkspaceId,
       }).catch(() => null);
       const changes = syncResult
         ? syncResult.changes
-        : readPendingCloudSyncChanges(await target.uni-cliClient.getDesktopCloudSync(target.uni-cliWorkspaceId));
+        : readPendingCloudSyncChanges(await target.uniCliClient.getDesktopCloudSync(target.uniCliWorkspaceId));
       const pending = derivePendingCloudPluginChanges({
         changes,
         installedPlugins: installedPlugins ?? snapshot.importedCloudPlugins,
@@ -590,14 +590,14 @@ export function createExtensionsStore(options: {
   const refreshImportedCloudPlugins = async () => {
     try {
       const target = await resolveWorkspaceServerTarget();
-      if (target.uni-cliClient && target.uni-cliWorkspaceId) {
-        const result = await target.uni-cliClient.listCloudPlugins(target.uni-cliWorkspaceId);
+      if (target.uniCliClient && target.uniCliWorkspaceId) {
+        const result = await target.uniCliClient.listCloudPlugins(target.uniCliWorkspaceId);
         setStateField("importedCloudMarketplaces", result.marketplaces);
         setStateField("importedCloudPlugins", result.plugins);
         void refreshPendingCloudPluginChanges(result.plugins);
         return result.plugins;
       }
-      const config = await readWorkspaceuni-cliConfigRecord();
+      const config = await readWorkspaceuniCliConfigRecord();
       const cloudImports = readWorkspaceCloudImports(config);
       setStateField("importedCloudMarketplaces", cloudImports.marketplaces);
       setStateField("importedCloudPlugins", cloudImports.plugins);
@@ -611,14 +611,14 @@ export function createExtensionsStore(options: {
   };
 
   const persistImportedCloudMarketplaces = async (nextMarketplaces: Record<string, CloudImportedMarketplace>) => {
-    const config = await readWorkspaceuni-cliConfigRecord();
+    const config = await readWorkspaceuniCliConfigRecord();
     const cloudImports = readWorkspaceCloudImports(config);
     const nextCloudImports = {
       ...cloudImports,
       marketplaces: nextMarketplaces,
     };
     const nextConfig = withWorkspaceCloudImports(config, nextCloudImports);
-    const persisted = await writeWorkspaceuni-cliConfigRecord(nextConfig);
+    const persisted = await writeWorkspaceuniCliConfigRecord(nextConfig);
     if (!persisted) {
       throw new Error("Uni-CLI server unavailable. Connect to manage imported cloud marketplaces.");
     }
@@ -627,14 +627,14 @@ export function createExtensionsStore(options: {
   };
 
   const persistImportedCloudPlugins = async (nextPlugins: Record<string, CloudImportedPlugin>) => {
-    const config = await readWorkspaceuni-cliConfigRecord();
+    const config = await readWorkspaceuniCliConfigRecord();
     const cloudImports = readWorkspaceCloudImports(config);
     const nextCloudImports = {
       ...cloudImports,
       plugins: nextPlugins,
     };
     const nextConfig = withWorkspaceCloudImports(config, nextCloudImports);
-    const persisted = await writeWorkspaceuni-cliConfigRecord(nextConfig);
+    const persisted = await writeWorkspaceuniCliConfigRecord(nextConfig);
     if (!persisted) {
       throw new Error("Uni-CLI server unavailable. Connect to manage imported cloud plugins.");
     }
@@ -662,18 +662,18 @@ export function createExtensionsStore(options: {
     const isRemoteWorkspace = options.workspaceType() === "remote";
     const isLocalWorkspace = options.workspaceType() === "local";
     const root = options.selectedWorkspaceRoot().trim();
-    const { uni-cliSnapshot, uni-cliClient, uni-cliWorkspaceId, hasuni-cliTarget } =
+    const { uniCliSnapshot, uniCliClient, uniCliWorkspaceId, hasuniCliTarget } =
       await resolveWorkspaceServerTarget();
-    const canUseuni-cliServer =
-      hasuni-cliTarget &&
-      uni-cliSnapshot.uni-cliServerCapabilities?.skills?.write !== false;
+    const canUseuniCliServer =
+      hasuniCliTarget &&
+      uniCliSnapshot.uniCliServerCapabilities?.skills?.write !== false;
 
-    if (canUseuni-cliServer && uni-cliClient && uni-cliWorkspaceId) {
-      await uni-cliClient.deleteSkill(uni-cliWorkspaceId, name);
+    if (canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
+      await uniCliClient.deleteSkill(uniCliWorkspaceId, name);
       return;
     }
 
-    if (hasuni-cliTarget) {
+    if (hasuniCliTarget) {
       throw new Error("Uni-CLI server cannot remove skills for this workspace.");
     }
 
@@ -861,7 +861,7 @@ export function createExtensionsStore(options: {
     const version = object.latestVersion;
     const payload = version?.normalizedPayloadJson ?? parseJsonRecord(version?.rawSourceText ?? null);
     if (!payload) return null;
-    if (payload.uni-cliManaged === "den_external_mcp") {
+    if (payload.uniCliManaged === "den_external_mcp") {
       const id = readNonEmptyString(payload.externalMcpConnectionId);
       if (id) return id;
     }
@@ -871,7 +871,7 @@ export function createExtensionsStore(options: {
     ].filter((entry): entry is Record<string, unknown> => Boolean(entry));
     for (const container of containers) {
       for (const config of Object.values(container)) {
-        if (!isRecord(config) || config.uni-cliManaged !== "den_external_mcp") continue;
+        if (!isRecord(config) || config.uniCliManaged !== "den_external_mcp") continue;
         const id = readNonEmptyString(config.externalMcpConnectionId);
         if (id) return id;
       }
@@ -880,32 +880,32 @@ export function createExtensionsStore(options: {
   };
 
   const upsertPluginMcpConfig = async (name: string, config: Record<string, unknown>) => {
-    const uni-cliSnapshot = getuni-cliServerSnapshot();
-    const uni-cliClient = uni-cliSnapshot.uni-cliServerClient;
-    const uni-cliWorkspaceId = options.runtimeWorkspaceId();
+    const uniCliSnapshot = getuniCliServerSnapshot();
+    const uniCliClient = uniCliSnapshot.uniCliServerClient;
+    const uniCliWorkspaceId = options.runtimeWorkspaceId();
     if (
-      uni-cliSnapshot.uni-cliServerStatus === "connected" &&
-      uni-cliClient &&
-      uni-cliWorkspaceId &&
-      uni-cliSnapshot.uni-cliServerCapabilities?.mcp?.write
+      uniCliSnapshot.uniCliServerStatus === "connected" &&
+      uniCliClient &&
+      uniCliWorkspaceId &&
+      uniCliSnapshot.uniCliServerCapabilities?.mcp?.write
     ) {
-      await uni-cliClient.addMcp(uni-cliWorkspaceId, { name, config });
+      await uniCliClient.addMcp(uniCliWorkspaceId, { name, config });
       return;
     }
     throw new Error("Uni-CLI server unavailable. Connect to import MCP servers into this workspace.");
   };
 
   const deletePluginMcpConfig = async (name: string) => {
-    const uni-cliSnapshot = getuni-cliServerSnapshot();
-    const uni-cliClient = uni-cliSnapshot.uni-cliServerClient;
-    const uni-cliWorkspaceId = options.runtimeWorkspaceId();
+    const uniCliSnapshot = getuniCliServerSnapshot();
+    const uniCliClient = uniCliSnapshot.uniCliServerClient;
+    const uniCliWorkspaceId = options.runtimeWorkspaceId();
     if (
-      uni-cliSnapshot.uni-cliServerStatus === "connected" &&
-      uni-cliClient &&
-      uni-cliWorkspaceId &&
-      uni-cliSnapshot.uni-cliServerCapabilities?.mcp?.write
+      uniCliSnapshot.uniCliServerStatus === "connected" &&
+      uniCliClient &&
+      uniCliWorkspaceId &&
+      uniCliSnapshot.uniCliServerCapabilities?.mcp?.write
     ) {
-      await uni-cliClient.removeMcp(uni-cliWorkspaceId, name);
+      await uniCliClient.removeMcp(uniCliWorkspaceId, name);
       return;
     }
     throw new Error("Uni-CLI server unavailable. Connect to remove imported MCP servers from this workspace.");
@@ -927,16 +927,16 @@ export function createExtensionsStore(options: {
   };
 
   const writePluginWorkspaceFile = async (path: string, content: string) => {
-    const { uni-cliSnapshot, uni-cliClient, uni-cliWorkspaceId, hasuni-cliTarget } =
+    const { uniCliSnapshot, uniCliClient, uniCliWorkspaceId, hasuniCliTarget } =
       await resolveWorkspaceServerTarget();
     if (
-      hasuni-cliTarget &&
-      uni-cliClient &&
-      uni-cliWorkspaceId &&
-      uni-cliSnapshot.uni-cliServerCapabilities?.config?.write !== false &&
-      typeof uni-cliClient.writeWorkspaceFile === "function"
+      hasuniCliTarget &&
+      uniCliClient &&
+      uniCliWorkspaceId &&
+      uniCliSnapshot.uniCliServerCapabilities?.config?.write !== false &&
+      typeof uniCliClient.writeWorkspaceFile === "function"
     ) {
-      await uni-cliClient.writeWorkspaceFile(uni-cliWorkspaceId, { path, content, force: true });
+      await uniCliClient.writeWorkspaceFile(uniCliWorkspaceId, { path, content, force: true });
       return;
     }
     throw new Error("Uni-CLI server unavailable. Connect to import plugin files into this workspace.");
@@ -944,16 +944,16 @@ export function createExtensionsStore(options: {
 
   const deletePluginWorkspaceFiles = async (files: Array<{ path: string; recursive?: boolean }>) => {
     if (files.length === 0) return;
-    const { uni-cliSnapshot, uni-cliClient, uni-cliWorkspaceId, hasuni-cliTarget } =
+    const { uniCliSnapshot, uniCliClient, uniCliWorkspaceId, hasuniCliTarget } =
       await resolveWorkspaceServerTarget();
     if (
-      hasuni-cliTarget &&
-      uni-cliClient &&
-      uni-cliWorkspaceId &&
-      uni-cliSnapshot.uni-cliServerCapabilities?.config?.write !== false &&
-      typeof uni-cliClient.deleteWorkspaceFiles === "function"
+      hasuniCliTarget &&
+      uniCliClient &&
+      uniCliWorkspaceId &&
+      uniCliSnapshot.uniCliServerCapabilities?.config?.write !== false &&
+      typeof uniCliClient.deleteWorkspaceFiles === "function"
     ) {
-      const results = await uni-cliClient.deleteWorkspaceFiles(uni-cliWorkspaceId, files);
+      const results = await uniCliClient.deleteWorkspaceFiles(uniCliWorkspaceId, files);
       const failed = results.filter((result) => !result.ok && result.code !== "file_not_found");
       if (failed.length > 0) {
         throw new Error(
@@ -1211,9 +1211,9 @@ export function createExtensionsStore(options: {
       const client = createDenClient({ baseUrl: settings.baseUrl, token });
       const resolved = await client.getOrgPluginResolved(orgId, plugin);
       const target = await resolveWorkspaceServerTarget();
-      if (target.uni-cliClient && target.uni-cliWorkspaceId) {
+      if (target.uniCliClient && target.uniCliWorkspaceId) {
         const marketplace = marketplaceId ? findCloudMarketplace(marketplaceId) : null;
-        const result = await target.uni-cliClient.installCloudPlugin(target.uni-cliWorkspaceId, {
+        const result = await target.uniCliClient.installCloudPlugin(target.uniCliWorkspaceId, {
           marketplaceId,
           marketplace,
           resolved,
@@ -1246,12 +1246,12 @@ export function createExtensionsStore(options: {
     }
   }
 
-  async function previewClaudePlugin(url: string): Promise<uni-cliClaudePluginPreview> {
+  async function previewClaudePlugin(url: string): Promise<uniCliClaudePluginPreview> {
     const target = await resolveWorkspaceServerTarget();
-    if (!target.uni-cliClient || !target.uni-cliWorkspaceId) {
+    if (!target.uniCliClient || !target.uniCliWorkspaceId) {
       throw new Error("Uni-CLI server unavailable. Connect to install plugins from GitHub.");
     }
-    const result = await target.uni-cliClient.previewClaudePlugin(target.uni-cliWorkspaceId, { url });
+    const result = await target.uniCliClient.previewClaudePlugin(target.uniCliWorkspaceId, { url });
     return result.preview;
   }
 
@@ -1261,10 +1261,10 @@ export function createExtensionsStore(options: {
     options.setError(null);
     try {
       const target = await resolveWorkspaceServerTarget();
-      if (!target.uni-cliClient || !target.uni-cliWorkspaceId) {
+      if (!target.uniCliClient || !target.uniCliWorkspaceId) {
         throw new Error("Uni-CLI server unavailable. Connect to install plugins from GitHub.");
       }
-      const result = await target.uni-cliClient.installClaudePlugin(target.uni-cliWorkspaceId, { url });
+      const result = await target.uniCliClient.installClaudePlugin(target.uniCliWorkspaceId, { url });
       await refreshSkills({ force: true });
       await refreshImportedCloudPlugins();
       return {
@@ -1288,8 +1288,8 @@ export function createExtensionsStore(options: {
 
     try {
       const target = await resolveWorkspaceServerTarget();
-      if (target.uni-cliClient && target.uni-cliWorkspaceId) {
-        const result = await target.uni-cliClient.removeCloudPlugin(target.uni-cliWorkspaceId, pluginId);
+      if (target.uniCliClient && target.uniCliWorkspaceId) {
+        const result = await target.uniCliClient.removeCloudPlugin(target.uniCliWorkspaceId, pluginId);
         await refreshSkills({ force: true });
         await refreshCloudOrgMarketplaces({ force: true });
         void refreshPendingCloudPluginChanges();
@@ -1367,13 +1367,13 @@ export function createExtensionsStore(options: {
   async function refreshSkills(optionsOverride?: { force?: boolean }) {
     const root = options.selectedWorkspaceRoot().trim();
     const isLocalWorkspace = options.workspaceType() === "local";
-    const { uni-cliSnapshot, uni-cliClient, uni-cliWorkspaceId, hasuni-cliTarget } =
+    const { uniCliSnapshot, uniCliClient, uniCliWorkspaceId, hasuniCliTarget } =
       await resolveWorkspaceServerTarget();
-    const canUseuni-cliServer =
-      hasuni-cliTarget &&
-      uni-cliSnapshot.uni-cliServerCapabilities?.skills?.read !== false;
+    const canUseuniCliServer =
+      hasuniCliTarget &&
+      uniCliSnapshot.uniCliServerCapabilities?.skills?.read !== false;
 
-    if (!root && !hasuni-cliTarget) {
+    if (!root && !hasuniCliTarget) {
       mutateState((current) => ({
         ...current,
         skills: [],
@@ -1382,8 +1382,8 @@ export function createExtensionsStore(options: {
       return;
     }
 
-    if (canUseuni-cliServer && uni-cliClient && uni-cliWorkspaceId) {
-      const skillCacheKey = root || uni-cliWorkspaceId;
+    if (canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
+      const skillCacheKey = root || uniCliWorkspaceId;
       if (skillCacheKey !== skillsRoot) skillsLoaded = false;
       if (!optionsOverride?.force && skillsLoaded) return;
       if (refreshSkillsInFlight) return;
@@ -1392,7 +1392,7 @@ export function createExtensionsStore(options: {
       refreshSkillsAborted = false;
       try {
         setStateField("skillsStatus", null);
-        const response = await uni-cliClient.listSkills(uni-cliWorkspaceId, { includeGlobal: isLocalWorkspace });
+        const response = await uniCliClient.listSkills(uniCliWorkspaceId, { includeGlobal: isLocalWorkspace });
         if (refreshSkillsAborted) return;
         const next: SkillCard[] = Array.isArray(response.items)
           ? response.items.map((entry) => ({
@@ -1423,7 +1423,7 @@ export function createExtensionsStore(options: {
       return;
     }
 
-    if (hasuni-cliTarget) {
+    if (hasuniCliTarget) {
       mutateState((current) => ({
         ...current,
         skills: [],
@@ -1532,11 +1532,11 @@ export function createExtensionsStore(options: {
   async function refreshPlugins(scopeOverride?: PluginScope) {
     const isRemoteWorkspace = options.workspaceType() === "remote";
     const isLocalWorkspace = options.workspaceType() === "local";
-    const { uni-cliSnapshot, uni-cliClient, uni-cliWorkspaceId, hasuni-cliTarget } =
+    const { uniCliSnapshot, uniCliClient, uniCliWorkspaceId, hasuniCliTarget } =
       await resolveWorkspaceServerTarget();
-    const canUseuni-cliServer =
-      hasuni-cliTarget &&
-      uni-cliSnapshot.uni-cliServerCapabilities?.plugins?.read !== false;
+    const canUseuniCliServer =
+      hasuniCliTarget &&
+      uniCliSnapshot.uniCliServerCapabilities?.plugins?.read !== false;
 
     if (refreshPluginsInFlight) return;
     refreshPluginsInFlight = true;
@@ -1557,7 +1557,7 @@ export function createExtensionsStore(options: {
       return;
     }
 
-    if (scope === "project" && canUseuni-cliServer && uni-cliClient && uni-cliWorkspaceId) {
+    if (scope === "project" && canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
       mutateState((current) => ({
         ...current,
         pluginConfig: null,
@@ -1567,7 +1567,7 @@ export function createExtensionsStore(options: {
       try {
         mutateState((current) => ({ ...current, pluginStatus: null, sidebarPluginStatus: null }));
         if (refreshPluginsAborted) return;
-        const result = await uni-cliClient.listPlugins(uni-cliWorkspaceId, { includeGlobal: false });
+        const result = await uniCliClient.listPlugins(uniCliWorkspaceId, { includeGlobal: false });
         if (refreshPluginsAborted) return;
         const projectItems = result.items.filter((item) => item.scope === "project");
         const list = toProjectPluginListEntries(projectItems);
@@ -1594,7 +1594,7 @@ export function createExtensionsStore(options: {
       return;
     }
 
-    if (scope === "project" && hasuni-cliTarget) {
+    if (scope === "project" && hasuniCliTarget) {
       mutateState((current) => ({
         ...current,
         pluginStatus: "Uni-CLI server cannot read plugins for this workspace.",
@@ -1618,7 +1618,7 @@ export function createExtensionsStore(options: {
       return;
     }
 
-    if (!isLocalWorkspace && !canUseuni-cliServer) {
+    if (!isLocalWorkspace && !canUseuniCliServer) {
       mutateState((current) => ({
         ...current,
         pluginStatus: "Uni-CLI server unavailable. Connect to manage plugins.",
@@ -1712,11 +1712,11 @@ export function createExtensionsStore(options: {
     const triggerName = stripPluginVersion(pluginName);
 
     const isLocalWorkspace = options.workspaceType() === "local";
-    const { uni-cliSnapshot, uni-cliClient, uni-cliWorkspaceId, hasuni-cliTarget } =
+    const { uniCliSnapshot, uniCliClient, uniCliWorkspaceId, hasuniCliTarget } =
       await resolveWorkspaceServerTarget();
-    const canUseuni-cliServer =
-      hasuni-cliTarget &&
-      uni-cliSnapshot.uni-cliServerCapabilities?.plugins?.write !== false;
+    const canUseuniCliServer =
+      hasuniCliTarget &&
+      uniCliSnapshot.uniCliServerCapabilities?.plugins?.write !== false;
 
     if (!pluginName) {
       if (isManualInput) setStateField("pluginStatus", t("skills.enter_plugin_name"));
@@ -1728,10 +1728,10 @@ export function createExtensionsStore(options: {
       return;
     }
 
-    if (snapshot.pluginScope === "project" && canUseuni-cliServer && uni-cliClient && uni-cliWorkspaceId) {
+    if (snapshot.pluginScope === "project" && canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
       try {
         setStateField("pluginStatus", null);
-        await uni-cliClient.addPlugin(uni-cliWorkspaceId, pluginName);
+        await uniCliClient.addPlugin(uniCliWorkspaceId, pluginName);
         options.markReloadRequired?.("plugins", { type: "plugin", name: triggerName, action: "added" });
         if (isManualInput) setStateField("pluginInput", "");
         await refreshPlugins("project");
@@ -1741,7 +1741,7 @@ export function createExtensionsStore(options: {
       return;
     }
 
-    if (snapshot.pluginScope === "project" && hasuni-cliTarget) {
+    if (snapshot.pluginScope === "project" && hasuniCliTarget) {
       setStateField("pluginStatus", "Uni-CLI server cannot write plugins for this workspace.");
       return;
     }
@@ -1809,21 +1809,21 @@ export function createExtensionsStore(options: {
     }
 
     const isLocalWorkspace = options.workspaceType() === "local";
-    const { uni-cliSnapshot, uni-cliClient, uni-cliWorkspaceId, hasuni-cliTarget } =
+    const { uniCliSnapshot, uniCliClient, uniCliWorkspaceId, hasuniCliTarget } =
       await resolveWorkspaceServerTarget();
-    const canUseuni-cliServer =
-      hasuni-cliTarget &&
-      uni-cliSnapshot.uni-cliServerCapabilities?.plugins?.write !== false;
+    const canUseuniCliServer =
+      hasuniCliTarget &&
+      uniCliSnapshot.uniCliServerCapabilities?.plugins?.write !== false;
 
     if (snapshot.pluginScope !== "project" && !isLocalWorkspace) {
       setStateField("pluginStatus", "Global plugins are only available for local workers.");
       return;
     }
 
-    if (snapshot.pluginScope === "project" && canUseuni-cliServer && uni-cliClient && uni-cliWorkspaceId) {
+    if (snapshot.pluginScope === "project" && canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
       try {
         setStateField("pluginStatus", null);
-        await uni-cliClient.removePlugin(uni-cliWorkspaceId, name);
+        await uniCliClient.removePlugin(uniCliWorkspaceId, name);
         options.markReloadRequired?.("plugins", { type: "plugin", name: triggerName, action: "removed" });
         await refreshPlugins("project");
       } catch (error) {
@@ -1832,7 +1832,7 @@ export function createExtensionsStore(options: {
       return;
     }
 
-    if (snapshot.pluginScope === "project" && hasuni-cliTarget) {
+    if (snapshot.pluginScope === "project" && hasuniCliTarget) {
       setStateField("pluginStatus", "Uni-CLI server cannot write plugins for this workspace.");
       return;
     }
@@ -1926,18 +1926,18 @@ export function createExtensionsStore(options: {
     if (extensionMutationDenied()) return { ok: false, message: desktopRestrictionNotice("allowManageExtensions") };
     const isRemoteWorkspace = options.workspaceType() === "remote";
     const isLocalWorkspace = options.workspaceType() === "local";
-    const { uni-cliSnapshot, uni-cliClient, uni-cliWorkspaceId, hasuni-cliTarget } =
+    const { uniCliSnapshot, uniCliClient, uniCliWorkspaceId, hasuniCliTarget } =
       await resolveWorkspaceServerTarget();
-    const canUseuni-cliServer =
-      hasuni-cliTarget &&
-      uni-cliSnapshot.uni-cliServerCapabilities?.skills?.write !== false;
+    const canUseuniCliServer =
+      hasuniCliTarget &&
+      uniCliSnapshot.uniCliServerCapabilities?.skills?.write !== false;
 
-    if (canUseuni-cliServer && uni-cliClient && uni-cliWorkspaceId) {
+    if (canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
       options.setBusy(true);
       options.setError(null);
       setStateField("skillsStatus", t("skills.installing_skill_creator"));
       try {
-        await uni-cliClient.upsertSkill(uni-cliWorkspaceId, { name: "skill-creator", content: skillCreatorTemplate });
+        await uniCliClient.upsertSkill(uniCliWorkspaceId, { name: "skill-creator", content: skillCreatorTemplate });
         const message = t("skills.skill_creator_installed");
         setStateField("skillsStatus", message);
         options.markReloadRequired?.("skills", { type: "skill", name: "skill-creator", action: "added" });
@@ -1954,7 +1954,7 @@ export function createExtensionsStore(options: {
       }
     }
 
-    if (hasuni-cliTarget) {
+    if (hasuniCliTarget) {
       const message = "Uni-CLI server cannot write skills for this workspace.";
       setStateField("skillsStatus", message);
       return { ok: false, message };
@@ -2079,16 +2079,16 @@ export function createExtensionsStore(options: {
     const root = options.selectedWorkspaceRoot().trim();
     const isRemoteWorkspace = options.workspaceType() === "remote";
     const isLocalWorkspace = options.workspaceType() === "local";
-    const { uni-cliSnapshot, uni-cliClient, uni-cliWorkspaceId, hasuni-cliTarget } =
+    const { uniCliSnapshot, uniCliClient, uniCliWorkspaceId, hasuniCliTarget } =
       await resolveWorkspaceServerTarget();
-    const canUseuni-cliServer =
-      hasuni-cliTarget &&
-      uni-cliSnapshot.uni-cliServerCapabilities?.skills?.read !== false;
+    const canUseuniCliServer =
+      hasuniCliTarget &&
+      uniCliSnapshot.uniCliServerCapabilities?.skills?.read !== false;
 
-    if (canUseuni-cliServer && uni-cliClient && uni-cliWorkspaceId) {
+    if (canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
       try {
         setStateField("skillsStatus", null);
-        const result = await uni-cliClient.getSkill(uni-cliWorkspaceId, trimmed, { includeGlobal: isLocalWorkspace });
+        const result = await uniCliClient.getSkill(uniCliWorkspaceId, trimmed, { includeGlobal: isLocalWorkspace });
         return { name: result.item.name, path: result.item.path, content: result.content };
       } catch (error) {
         setStateField("skillsStatus", error instanceof Error ? error.message : t("skills.failed_to_load"));
@@ -2096,7 +2096,7 @@ export function createExtensionsStore(options: {
       }
     }
 
-    if (hasuni-cliTarget) {
+    if (hasuniCliTarget) {
       setStateField("skillsStatus", "Uni-CLI server cannot read skills for this workspace.");
       return null;
     }
@@ -2136,18 +2136,18 @@ export function createExtensionsStore(options: {
     const root = options.selectedWorkspaceRoot().trim();
     const isRemoteWorkspace = options.workspaceType() === "remote";
     const isLocalWorkspace = options.workspaceType() === "local";
-    const { uni-cliSnapshot, uni-cliClient, uni-cliWorkspaceId, hasuni-cliTarget } =
+    const { uniCliSnapshot, uniCliClient, uniCliWorkspaceId, hasuniCliTarget } =
       await resolveWorkspaceServerTarget();
-    const canUseuni-cliServer =
-      hasuni-cliTarget &&
-      uni-cliSnapshot.uni-cliServerCapabilities?.skills?.write !== false;
+    const canUseuniCliServer =
+      hasuniCliTarget &&
+      uniCliSnapshot.uniCliServerCapabilities?.skills?.write !== false;
 
-    if (canUseuni-cliServer && uni-cliClient && uni-cliWorkspaceId) {
+    if (canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
       options.setBusy(true);
       options.setError(null);
       setStateField("skillsStatus", null);
       try {
-        await uni-cliClient.upsertSkill(uni-cliWorkspaceId, {
+        await uniCliClient.upsertSkill(uniCliWorkspaceId, {
           name: trimmed,
           content: input.content,
           description: input.description,
@@ -2164,7 +2164,7 @@ export function createExtensionsStore(options: {
       return;
     }
 
-    if (hasuni-cliTarget) {
+    if (hasuniCliTarget) {
       setStateField("skillsStatus", "Uni-CLI server cannot write skills for this workspace.");
       return;
     }
@@ -2295,7 +2295,7 @@ export function createExtensionsStore(options: {
       stopDenSessionListener = () => window.removeEventListener("uni-cli-den-session-updated", onDenSessionUpdated);
     }
 
-    stopuni-cliSubscription = options.uni-cliServer.subscribe(() => {
+    stopuniCliSubscription = options.uniCliServer.subscribe(() => {
       syncFromOptions();
     });
 
@@ -2307,8 +2307,8 @@ export function createExtensionsStore(options: {
     disposed = true;
     started = false;
     abortRefreshes();
-    stopuni-cliSubscription?.();
-    stopuni-cliSubscription = null;
+    stopuniCliSubscription?.();
+    stopuniCliSubscription = null;
     stopDenSessionListener?.();
     stopDenSessionListener = null;
     listeners.clear();

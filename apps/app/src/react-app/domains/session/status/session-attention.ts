@@ -1,4 +1,4 @@
-import type { uni-cliSessionActivityInventory } from "@uni-cli/types/uni-cli-affordance";
+import type { uniCliSessionActivityInventory } from "@uni-cli/types/uni-cli-affordance";
 import { getDisplaySessionTitle } from "../../../../app/lib/session-title";
 import { currentLocale, t } from "../../../../i18n";
 import type { SessionActivityStatus, SessionChildIds, SessionWaitingKind } from "./session-activity-store";
@@ -17,7 +17,7 @@ export type SessionAttentionSource = {
   relationship: "child" | "descendant";
 };
 
-export type SessionAttention = uni-cliSessionActivityInventory & {
+export type SessionAttention = uniCliSessionActivityInventory & {
   status: SessionActivityStatus;
   blockedBy: SessionAttentionSource | null;
 };

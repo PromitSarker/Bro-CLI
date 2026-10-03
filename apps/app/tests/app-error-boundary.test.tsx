@@ -103,7 +103,7 @@ test("redaction masks bare token-like pairs outside URLs", () => {
   expect(redactCrashText("Handoff rejected: token=eyJhbGci.payload grant=g-123 state=ok")).toBe(
     "Handoff rejected: token=[redacted] grant=[redacted] state=ok",
   );
-  expect(redactCrashText("uni-cliToken=tok&accessToken=at")).toBe("uni-cliToken=[redacted]&accessToken=[redacted]");
+  expect(redactCrashText("uniCliToken=tok&accessToken=at")).toBe("uniCliToken=[redacted]&accessToken=[redacted]");
 });
 
 test("redaction keeps file:// stack frames and dev-server line:col positions intact", () => {

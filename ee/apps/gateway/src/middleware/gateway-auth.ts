@@ -2,7 +2,7 @@ import { gatewayBearerKey } from "@uni-cli-ee/utils/gateway-bearer-key"
 import { createMiddleware } from "hono/factory"
 import type { findActiveGatewayKey } from "../keys.js"
 import { buildRequestId } from "../relay.js"
-import { readUni-CLIKey, type InferenceAuthEnv } from "./inference-auth.js"
+import { readUniCliKey, type InferenceAuthEnv } from "./inference-auth.js"
 
 type GatewayKeyRow = NonNullable<Awaited<ReturnType<typeof findActiveGatewayKey>>>
 export type GatewayContext = {
@@ -15,11 +15,11 @@ export type GatewayContext = {
 export function gatewayAuth(dependencies: { findActiveGatewayKey: typeof findActiveGatewayKey }) {
   return createMiddleware<InferenceAuthEnv>(async (c, next) => {
     const requestId = buildRequestId()
-    c.set("uni-cliRequestId", requestId)
+    c.set("uniCliRequestId", requestId)
     c.header("x-uni-cli-request-id", requestId)
     let bearer
     try {
-      const value = readUni-CLIKey(c.req.raw)
+      const value = readUniCliKey(c.req.raw)
       bearer = value === null ? null : gatewayBearerKey(value)
     } catch {
       return c.json({ error: { code: "invalid_api_key", type: "authentication_error", message: "A valid Uni-CLI Gateway key is required." } }, 401)

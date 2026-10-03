@@ -75,9 +75,9 @@ export async function GET() {
   return NextResponse.json(
     {
       denApiUrl: readDenApiUrl(),
-      uni-cliAppConnectUrl: readPublicRuntimeEnv("DEN_WEB_UNICLI_APP_CONNECT_URL"),
-      uni-cliWebUrl: readPublicRuntimeEnv("DEN_WEB_UNICLI_WEB_URL") || DEFAULT_UNICLI_WEB_URL,
-      uni-cliAuthCallbackUrl: readPublicRuntimeEnv("DEN_WEB_UNICLI_AUTH_CALLBACK_URL"),
+      uniCliAppConnectUrl: readPublicRuntimeEnv("DEN_WEB_UNICLI_APP_CONNECT_URL"),
+      uniCliWebUrl: readPublicRuntimeEnv("DEN_WEB_UNICLI_WEB_URL") || DEFAULT_UNICLI_WEB_URL,
+      uniCliAuthCallbackUrl: readPublicRuntimeEnv("DEN_WEB_UNICLI_AUTH_CALLBACK_URL"),
       orgMode,
       singleOrgName: readPublicRuntimeEnv("DEN_SINGLE_ORG_NAME") || "Uni-CLI",
       singleOrgSlug: readPublicRuntimeEnv("DEN_SINGLE_ORG_SLUG") || "default",

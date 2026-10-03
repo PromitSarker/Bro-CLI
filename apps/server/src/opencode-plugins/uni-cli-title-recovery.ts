@@ -145,7 +145,7 @@ function install() {
 }
 
 // Only export the factory: the engine treats every export as a plugin.
-export const Uni-CLITitleRecovery = async (input: {
+export const UniCliTitleRecovery = async (input: {
   client: { app: { log: (input: { body: {
     service: string; level: "info" | "warn"; message: string; extra: Diagnostic;
   } }) => Promise<unknown> } };

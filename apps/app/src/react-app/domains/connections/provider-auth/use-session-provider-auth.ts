@@ -20,7 +20,7 @@ import {
   shouldWaitForCloudProviderSyncBeforePolicyReconcile,
   type OrganizationModelsRefreshReason,
 } from "./managed-models-recovery";
-import { createSessionuni-cliServer } from "./session-uni-cli-server";
+import { createSessionuniCliServer } from "./session-uni-cli-server";
 import { createProviderAuthStore, useProviderAuthStoreSnapshot } from "./store";
 
 const emptyWorkspaceDisplay: WorkspaceDisplay = {
@@ -136,7 +136,7 @@ export function useSessionProviderAuth(input: UseSessionProviderAuthInput) {
         // server's providerSync capability and host-token auth so sign-in
         // pushes the Den session to the local server and sync runs
         // server-side; remote workspaces keep the config-only shape.
-        uni-cliServer: createSessionuni-cliServer({
+        uniCliServer: createSessionuniCliServer({
           endpoint: () => stateRef.current.selectedWorkspaceEndpoint ?? null,
           hostToken: () => stateRef.current.localServerHostToken ?? "",
           generation: () => stateRef.current.localServerGeneration ?? null,
@@ -218,7 +218,7 @@ export function useSessionProviderAuth(input: UseSessionProviderAuthInput) {
     policyProviderReconcileInFlightRef.current = true;
     void reconcilePolicyDisabledProviders({
       opencodeClient,
-      uni-cliClient: selectedWorkspaceEndpoint?.client ?? null,
+      uniCliClient: selectedWorkspaceEndpoint?.client ?? null,
       workspaceId: selectedWorkspaceEndpoint?.workspaceId ?? null,
       workspaceType: selectedWorkspace?.workspaceType ?? null,
       allProviders: providers,

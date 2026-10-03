@@ -32,7 +32,7 @@ import {
   parseStructuredOutputUIPart,
   STRUCTURED_OUTPUT_TOOL,
 } from "./parse-tool-parts";
-import type { uni-cliSessionHistory, uni-cliSessionSnapshot } from "@/app/lib/uni-cli-server";
+import type { uniCliSessionHistory, uniCliSessionSnapshot } from "@/app/lib/uni-cli-server";
 import type { LatestSessionHistory } from "../surface/session-render-state";
 import { applyRevertCursor, reconcileTranscriptMessages } from "./transcript-reconcile";
 import { upsertMessageByChronology } from "./message-merge";
@@ -72,7 +72,7 @@ export {
 type SyncOptions = {
   workspaceId: string;
   baseUrl: string;
-  uni-cliToken: string;
+  uniCliToken: string;
   visibleSessionId?: string | null;
   onSessionCreated?: (session: Session) => void;
   onSessionUpdated?: (update: { sessionId: string; info: Record<string, unknown> }) => void;
@@ -84,7 +84,7 @@ type ListenerRegistry<Listener> = Map<Listener, number>;
 
 type SyncEntry = {
   input: SyncOptions;
-  uni-cliToken: string;
+  uniCliToken: string;
   // Reattachment can rotate the token after the stream already failed. This
   // hook advances the stream lifecycle's connection generation so a stream
   // parked in auth backoff restarts immediately with the new credential.
@@ -139,8 +139,8 @@ function gatewayUsageProviderId(value: unknown): string | null {
 
 const idleStatus: SessionStatus = { type: "idle" };
 const syncs = new Map<string, SyncEntry>();
-const sessionSnapshotFetchStarts = new WeakMap<uni-cliSessionHistory, number>();
-const todoSnapshotFirstSeen = new WeakMap<uni-cliSessionHistory, number>();
+const sessionSnapshotFetchStarts = new WeakMap<uniCliSessionHistory, number>();
+const todoSnapshotFirstSeen = new WeakMap<uniCliSessionHistory, number>();
 const workspaceSyncDisposeGraceMs = 2_000;
 const retainedSessionTtlMs = 10 * 60_000;
 const idleRetainedSessionTtlMs = 10_000;
@@ -222,30 +222,30 @@ function releaseListener<Listener>(registry: ListenerRegistry<Listener>, listene
 
 type SyncSubscriptionFactory = (
   baseUrl: string,
-  uni-cliToken: string,
+  uniCliToken: string,
   signal: AbortSignal,
 ) => Promise<AsyncIterable<unknown>>;
 
 type SessionStatusFetcher = (
   baseUrl: string,
-  uni-cliToken: string,
+  uniCliToken: string,
   signal: AbortSignal,
 ) => Promise<Record<string, SessionStatus>>;
 
-function createSyncClient(baseUrl: string, uni-cliToken: string) {
+function createSyncClient(baseUrl: string, uniCliToken: string) {
   return isOpencodeV2BaseUrl(baseUrl)
-    ? createClientV2(baseUrl, undefined, { token: uni-cliToken })
-    : createClient(baseUrl, undefined, { token: uni-cliToken, mode: "uni-cli" });
+    ? createClientV2(baseUrl, undefined, { token: uniCliToken })
+    : createClient(baseUrl, undefined, { token: uniCliToken, mode: "uni-cli" });
 }
 
-const defaultSyncSubscriptionFactory: SyncSubscriptionFactory = async (baseUrl, uni-cliToken, signal) => {
-  const client = createSyncClient(baseUrl, uni-cliToken);
+const defaultSyncSubscriptionFactory: SyncSubscriptionFactory = async (baseUrl, uniCliToken, signal) => {
+  const client = createSyncClient(baseUrl, uniCliToken);
   const subscription = await client.event.subscribe(undefined, { signal });
   return subscription.stream;
 };
 
-const defaultSessionStatusFetcher: SessionStatusFetcher = async (baseUrl, uni-cliToken, signal) => {
-  const client = createSyncClient(baseUrl, uni-cliToken);
+const defaultSessionStatusFetcher: SessionStatusFetcher = async (baseUrl, uniCliToken, signal) => {
+  const client = createSyncClient(baseUrl, uniCliToken);
   const result = await client.session.status(undefined, { signal });
   if (result.data !== undefined) return result.data;
   throw result.error;
@@ -282,7 +282,7 @@ const defaultDeltaFlushScheduler: DeltaFlushScheduler = (lane, run) => {
 
 let deltaFlushScheduler = defaultDeltaFlushScheduler;
 
-export function markSessionSnapshotFetchStart(snapshot: uni-cliSessionHistory, startedAt: number) {
+export function markSessionSnapshotFetchStart(snapshot: uniCliSessionHistory, startedAt: number) {
   sessionSnapshotFetchStarts.set(snapshot, startedAt);
 }
 
@@ -300,8 +300,8 @@ export function sessionHistoryCredential(token?: string | null) {
   return credential;
 }
 
-export const sessionMetadataKey = (input: Pick<SyncOptions, "workspaceId" | "baseUrl" | "uni-cliToken">, sessionId: string) =>
-  ["react-session-metadata", input.workspaceId, input.baseUrl, sessionHistoryCredential(input.uni-cliToken), sessionId] as const;
+export const sessionMetadataKey = (input: Pick<SyncOptions, "workspaceId" | "baseUrl" | "uniCliToken">, sessionId: string) =>
+  ["react-session-metadata", input.workspaceId, input.baseUrl, sessionHistoryCredential(input.uniCliToken), sessionId] as const;
 
 export const snapshotKey = (workspaceId: string, sessionId: string) =>
   ["react-session-snapshot", workspaceId, sessionId] as const;
@@ -1024,13 +1024,13 @@ function applyEvent(entry: SyncEntry, workspaceId: string, event: OpencodeEvent)
     const title = typeof update.info.title === "string" ? update.info.title : "";
     if (title && !isGeneratedSessionTitle(title)) entry.titleRecovery?.resolve(update.sessionId);
     if (!isTrackedSession(entry, update.sessionId)) return;
-    const revert = (update.info as { revert?: uni-cliSessionSnapshot["session"]["revert"] }).revert;
+    const revert = (update.info as { revert?: uniCliSessionSnapshot["session"]["revert"] }).revert;
     queryClient.setQueryData(sessionMetadataKey(input, update.sessionId), { revert });
     // Keep the cached snapshot's revert cursor in sync with the server. The
     // renderer derives the visible transcript from this cursor, so a revert
     // (or its cleanup on the next prompt) must reach the snapshot cache or
     // the transcript stays frozen on stale history.
-    queryClient.setQueryData<uni-cliSessionHistory>(
+    queryClient.setQueryData<uniCliSessionHistory>(
       snapshotKey(workspaceId, update.sessionId),
       (current) => {
         if (!current) return current;
@@ -1297,7 +1297,7 @@ function applyEvent(entry: SyncEntry, workspaceId: string, event: OpencodeEvent)
       source: applyRevertCursor(current.source, messageID),
     } : current);
     queryClient.setQueryData<UIMessage[]>(transcriptKey(workspaceId, sessionID), (current = []) => applyRevertCursor(current, messageID));
-    queryClient.setQueryData<uni-cliSessionHistory>(fullKey, current => {
+    queryClient.setQueryData<uniCliSessionHistory>(fullKey, current => {
       if (!current) return current;
       const boundary = current.messages.findIndex(message => message.info.id === messageID);
       return boundary < 0 ? current : { ...current, messages: current.messages.slice(0, boundary) };
@@ -1324,7 +1324,7 @@ function applyEvent(entry: SyncEntry, workspaceId: string, event: OpencodeEvent)
     queryClient.setQueryData<UIMessage[]>(transcriptKey(workspaceId, props.sessionID), (current = []) =>
       current.filter(keep),
     );
-    queryClient.setQueryData<uni-cliSessionHistory>(
+    queryClient.setQueryData<uniCliSessionHistory>(
       snapshotKey(workspaceId, props.sessionID),
       (current) => {
         if (!current) return current;
@@ -1525,7 +1525,7 @@ function startSync(input: SyncOptions, entry: SyncEntry) {
   const lifecycle = startSyncStreamLifecycle({
     // Read the token at connect time so every retry — including a
     // generation-triggered restart — uses the latest credential.
-    subscribe: (signal) => syncSubscriptionFactory(input.baseUrl, entry.uni-cliToken, signal),
+    subscribe: (signal) => syncSubscriptionFactory(input.baseUrl, entry.uniCliToken, signal),
     onEvent: (raw) => {
       const event = normalizeEvent(raw);
       if (!event) return;
@@ -1682,7 +1682,7 @@ async function reconcileSessionPermissions(entry: SyncEntry, sessionId: string) 
   const snapshotStartedAt = Date.now();
   const snapshotRevision = getReactQueryClient().getQueryState(permissionKey(entry.input.workspaceId, sessionId))?.dataUpdateCount ?? 0;
   try {
-    const permissions = await sessionPermissionFetcher(entry.input.baseUrl, entry.uni-cliToken, sessionId,
+    const permissions = await sessionPermissionFetcher(entry.input.baseUrl, entry.uniCliToken, sessionId,
       AbortSignal.any([controller.signal, AbortSignal.timeout(10_000)]));
     if (controller.signal.aborted || syncs.get(syncKey(entry.input)) !== entry) return;
     seedPermissionState(entry.input.workspaceId, sessionId, permissions, { snapshotStartedAt, snapshotRevision });
@@ -1730,7 +1730,7 @@ async function reconcileSessionRunStatuses(
   }
   let statuses: Record<string, SessionStatus>;
   try {
-    statuses = await sessionStatusFetcher(input.baseUrl, entry.uni-cliToken, signal);
+    statuses = await sessionStatusFetcher(input.baseUrl, entry.uniCliToken, signal);
   } catch {
     // The run state itself is deliberately left untouched: a failed fetch is
     // not evidence that work stopped. It is evidence that the busy state can
@@ -1892,11 +1892,11 @@ export function ensureWorkspaceSessionSync(input: SyncOptions) {
   const existing = syncs.get(key);
   if (existing) {
     existing.input = input;
-    if (existing.uni-cliToken !== input.uni-cliToken) {
+    if (existing.uniCliToken !== input.uniCliToken) {
       // Reattachment with a rotated token (or a restarted runtime's fresh
       // credential) is a new connection generation: restart a stream parked
       // in auth backoff instead of leaving the task streaming nowhere.
-      existing.uni-cliToken = input.uni-cliToken;
+      existing.uniCliToken = input.uniCliToken;
       existing.notifyStreamGenerationChanged?.();
     }
     if (existing.disposeTimer) {
@@ -1914,7 +1914,7 @@ export function ensureWorkspaceSessionSync(input: SyncOptions) {
 
   const created: SyncEntry = {
     input,
-    uni-cliToken: input.uni-cliToken,
+    uniCliToken: input.uniCliToken,
     notifyStreamGenerationChanged: null,
     refs: 1,
     dispose: () => {},
@@ -1944,7 +1944,7 @@ export function ensureWorkspaceSessionSync(input: SyncOptions) {
   };
   created.titleRecovery = createSessionTitleRecovery({
     fetch: async (sessionId) => {
-      const client = createSyncClient(input.baseUrl, created.uni-cliToken);
+      const client = createSyncClient(input.baseUrl, created.uniCliToken);
       const [session, messages] = await Promise.all([
         client.session.get({ sessionID: sessionId }).then(unwrap),
         client.session.messages({ sessionID: sessionId, limit: 20 }).then(unwrap),
@@ -1959,7 +1959,7 @@ export function ensureWorkspaceSessionSync(input: SyncOptions) {
       };
     },
     onResolved: (sessionId, title) => {
-      getReactQueryClient().setQueryData<uni-cliSessionHistory>(
+      getReactQueryClient().setQueryData<uniCliSessionHistory>(
         snapshotKey(input.workspaceId, sessionId),
         (current) => current
           ? { ...current, session: { ...current.session, title } }
@@ -2078,7 +2078,7 @@ async function refreshSessionTodos(workspaceId: string, sessionId: string) {
 
 export function seedSessionState(
   workspaceId: string,
-  snapshot: uni-cliSessionHistory,
+  snapshot: uniCliSessionHistory,
   options: { preview?: boolean; engine?: SessionSyncEngine } = {},
 ) {
   // A reverted window cannot establish which messages are still visible.
@@ -2170,7 +2170,7 @@ export function seedSessionState(
  * that is already on screen.
  */
 export function seedCreatedSessionSnapshot(workspaceId: string, session: Session) {
-  getReactQueryClient().setQueryData<uni-cliSessionSnapshot>(
+  getReactQueryClient().setQueryData<uniCliSessionSnapshot>(
     snapshotKey(workspaceId, session.id),
     { session, messages: [], todos: [], status: { type: "idle" } },
     { updatedAt: 0 },
@@ -2190,7 +2190,7 @@ export function applySessionRevert(workspaceId: string, session: Session) {
   const queryClient = getReactQueryClient();
   const revertMessageId = session.revert?.messageID ?? null;
 
-  queryClient.setQueryData<uni-cliSessionHistory>(
+  queryClient.setQueryData<uniCliSessionHistory>(
     snapshotKey(workspaceId, session.id),
     (current) => (current ? { ...current, session: { ...current.session, revert: session.revert } } : current),
   );
@@ -2207,7 +2207,7 @@ export async function applySessionArchived(workspaceId: string, sessionId: strin
   const queryKey = snapshotKey(workspaceId, sessionId);
   // An older in-flight snapshot must not put the archived flag back after Restore.
   await queryClient.cancelQueries({ queryKey, exact: true });
-  queryClient.setQueryData<uni-cliSessionHistory>(queryKey, current => current ? {
+  queryClient.setQueryData<uniCliSessionHistory>(queryKey, current => current ? {
     ...current,
     session: { ...current.session, time: { ...current.session.time, archived: archived ? Date.now() : 0 } },
   } : current);
@@ -2218,7 +2218,7 @@ export async function applySessionArchived(workspaceId: string, sessionId: strin
 export function applySessionUnrevert(workspaceId: string, sessionId: string) {
   const queryClient = getReactQueryClient();
   void queryClient.cancelQueries({ queryKey: snapshotKey(workspaceId, sessionId) });
-  queryClient.setQueryData<uni-cliSessionHistory>(
+  queryClient.setQueryData<uniCliSessionHistory>(
     snapshotKey(workspaceId, sessionId),
     (current) => (current ? { ...current, session: { ...current.session, revert: undefined } } : current),
   );
@@ -2270,7 +2270,7 @@ export function __createWorkspaceSessionSyncForTest(input: SyncOptions) {
   const key = syncKey(input);
   syncs.set(key, {
     input,
-    uni-cliToken: input.uni-cliToken,
+    uniCliToken: input.uniCliToken,
     notifyStreamGenerationChanged: null,
     refs: 1,
     dispose: () => {},

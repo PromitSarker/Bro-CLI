@@ -14,9 +14,9 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { t } from "@/i18n";
 import type {
-  uni-cliServerCapabilities,
-  uni-cliServerClient,
-  uni-cliServerStatus,
+  uniCliServerCapabilities,
+  uniCliServerClient,
+  uniCliServerStatus,
 } from "../../../../app/lib/uni-cli-server";
 import { pickDirectory } from "../../../../app/lib/desktop";
 import {
@@ -41,9 +41,9 @@ import {
 } from "../settings-layout";
 
 export type AuthorizedFoldersPanelProps = {
-  uni-cliServerClient: uni-cliServerClient | null;
-  uni-cliServerStatus: uni-cliServerStatus;
-  uni-cliServerCapabilities: uni-cliServerCapabilities | null;
+  uniCliServerClient: uniCliServerClient | null;
+  uniCliServerStatus: uniCliServerStatus;
+  uniCliServerCapabilities: uniCliServerCapabilities | null;
   runtimeWorkspaceId: string | null;
   selectedWorkspaceRoot: string;
   activeWorkspaceType: "local" | "remote";
@@ -133,24 +133,24 @@ export function AuthorizedFoldersPanel(props: AuthorizedFoldersPanelProps) {
   const setAuthorizedFoldersStatus = (value: SetStateAction<string | null>) => dispatchFolderState({ type: "set", key: "status", value });
   const setAuthorizedFoldersError = (value: SetStateAction<string | null>) => dispatchFolderState({ type: "set", key: "error", value });
 
-  const uni-cliServerReady = props.uni-cliServerStatus === "connected";
-  const uni-cliServerWorkspaceReady = Boolean(props.runtimeWorkspaceId);
+  const uniCliServerReady = props.uniCliServerStatus === "connected";
+  const uniCliServerWorkspaceReady = Boolean(props.runtimeWorkspaceId);
   const canReadConfig =
-    uni-cliServerReady &&
-    uni-cliServerWorkspaceReady &&
-    (props.uni-cliServerCapabilities?.config?.read ?? false);
+    uniCliServerReady &&
+    uniCliServerWorkspaceReady &&
+    (props.uniCliServerCapabilities?.config?.read ?? false);
   const canWriteConfig =
-    uni-cliServerReady &&
-    uni-cliServerWorkspaceReady &&
-    (props.uni-cliServerCapabilities?.config?.write ?? false);
+    uniCliServerReady &&
+    uniCliServerWorkspaceReady &&
+    (props.uniCliServerCapabilities?.config?.write ?? false);
 
   const authorizedFoldersHint = useMemo(() => {
-    if (!uni-cliServerReady) return t("context_panel.server_disconnected");
-    if (!uni-cliServerWorkspaceReady) return t("context_panel.no_server_workspace");
+    if (!uniCliServerReady) return t("context_panel.server_disconnected");
+    if (!uniCliServerWorkspaceReady) return t("context_panel.no_server_workspace");
     if (!canReadConfig) return t("context_panel.config_access_unavailable");
     if (!canWriteConfig) return t("context_panel.config_read_only");
     return null;
-  }, [canReadConfig, canWriteConfig, uni-cliServerReady, uni-cliServerWorkspaceReady]);
+  }, [canReadConfig, canWriteConfig, uniCliServerReady, uniCliServerWorkspaceReady]);
 
   const canUseNativeFilePicker = platform.capabilities.nativeFilePicker;
   const canPickAuthorizedFolder =
@@ -162,10 +162,10 @@ export function AuthorizedFoldersPanel(props: AuthorizedFoldersPanelProps) {
   }, [authorizedFolders, workspaceRootFolder]);
 
   useEffect(() => {
-    const uni-cliClient = props.uni-cliServerClient;
-    const uni-cliWorkspaceId = props.runtimeWorkspaceId;
+    const uniCliClient = props.uniCliServerClient;
+    const uniCliWorkspaceId = props.runtimeWorkspaceId;
 
-    if (!uni-cliClient || !uni-cliWorkspaceId || !canReadConfig) {
+    if (!uniCliClient || !uniCliWorkspaceId || !canReadConfig) {
       setServerWorkspaceRoot("");
       dispatchFolderState({ type: "reset" });
       return;
@@ -176,7 +176,7 @@ export function AuthorizedFoldersPanel(props: AuthorizedFoldersPanelProps) {
 
     void (async () => {
       try {
-        const response = await uni-cliClient.listAuthorizedFolders(uni-cliWorkspaceId);
+        const response = await uniCliClient.listAuthorizedFolders(uniCliWorkspaceId);
         if (cancelled) return;
         setServerWorkspaceRoot(response.workspaceRoot.trim());
         dispatchFolderState({
@@ -196,12 +196,12 @@ export function AuthorizedFoldersPanel(props: AuthorizedFoldersPanelProps) {
     return () => {
       cancelled = true;
     };
-  }, [canReadConfig, props.uni-cliServerClient, props.runtimeWorkspaceId]);
+  }, [canReadConfig, props.uniCliServerClient, props.runtimeWorkspaceId]);
 
   const persistAuthorizedFolders = useCallback(async (nextFolders: string[]) => {
-    const uni-cliClient = props.uni-cliServerClient;
-    const uni-cliWorkspaceId = props.runtimeWorkspaceId;
-    if (!uni-cliClient || !uni-cliWorkspaceId || !canWriteConfig) {
+    const uniCliClient = props.uniCliServerClient;
+    const uniCliWorkspaceId = props.runtimeWorkspaceId;
+    if (!uniCliClient || !uniCliWorkspaceId || !canWriteConfig) {
       setAuthorizedFoldersError(t("context_panel.writable_workspace_required"));
       return false;
     }
@@ -211,7 +211,7 @@ export function AuthorizedFoldersPanel(props: AuthorizedFoldersPanelProps) {
     setAuthorizedFoldersStatus(t("context_panel.saving_folders"));
 
     try {
-      const response = await uni-cliClient.setAuthorizedFolders(uni-cliWorkspaceId, nextFolders);
+      const response = await uniCliClient.setAuthorizedFolders(uniCliWorkspaceId, nextFolders);
       setAuthorizedFolders(response.folders);
       setAuthorizedFoldersStatus(
         buildAuthorizedFoldersStatus(
@@ -229,7 +229,7 @@ export function AuthorizedFoldersPanel(props: AuthorizedFoldersPanelProps) {
     } finally {
       setAuthorizedFoldersSaving(false);
     }
-  }, [canWriteConfig, props.onConfigUpdated, props.uni-cliServerClient, props.runtimeWorkspaceId]);
+  }, [canWriteConfig, props.onConfigUpdated, props.uniCliServerClient, props.runtimeWorkspaceId]);
 
   const removeAuthorizedFolder = useCallback(async (folder: string) => {
     const nextFolders = authorizedFolders.filter((entry) => entry !== folder);

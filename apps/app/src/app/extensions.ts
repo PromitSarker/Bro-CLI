@@ -2,7 +2,7 @@
 // types.ts re-exports it for the rest of the app.
 export type ReloadReason = "plugins" | "skills" | "mcp" | "config" | "agents" | "commands";
 
-export type Uni-CLIExtensionSourceFormat =
+export type UniCliExtensionSourceFormat =
   | "agent-plugin"
   | "uni-cli-builtin"
   | "uni-cli-extension-manifest"
@@ -11,14 +11,14 @@ export type Uni-CLIExtensionSourceFormat =
   | "mcp-directory"
   | "manual";
 
-export type Uni-CLIExtensionSource = {
-  format: Uni-CLIExtensionSourceFormat;
+export type UniCliExtensionSource = {
+  format: UniCliExtensionSourceFormat;
   trusted: boolean;
   origin?: "builtin" | "den" | "workspace" | "local";
   reference?: string;
 };
 
-export type Uni-CLIExtensionResourceType =
+export type UniCliExtensionResourceType =
   | "skill"
   | "agent"
   | "command"
@@ -33,8 +33,8 @@ export type Uni-CLIExtensionResourceType =
   | "local-service"
   | "native-binary";
 
-export type Uni-CLIExtensionResource = {
-  type: Uni-CLIExtensionResourceType;
+export type UniCliExtensionResource = {
+  type: UniCliExtensionResourceType;
   id: string;
   label?: string;
   description?: string;
@@ -48,7 +48,7 @@ export type Uni-CLIExtensionResource = {
   required?: boolean;
 };
 
-export type Uni-CLIExtensionContributionType =
+export type UniCliExtensionContributionType =
   | "settings-panel"
   | "setup-instructions"
   | "composer-prompt"
@@ -59,8 +59,8 @@ export type Uni-CLIExtensionContributionType =
   | "native-capability"
   | "test-action";
 
-export type Uni-CLIExtensionContribution = {
-  type: Uni-CLIExtensionContributionType;
+export type UniCliExtensionContribution = {
+  type: UniCliExtensionContributionType;
   ref?: string;
   label?: string;
   description?: string;
@@ -68,7 +68,7 @@ export type Uni-CLIExtensionContribution = {
   location?: "settings-detail" | "composer" | "session-right-pane" | "session-rail" | "server" | "native";
 };
 
-export type Uni-CLIExtensionSetup = {
+export type UniCliExtensionSetup = {
   instructions?: string;
   primaryCta?: string;
   secondaryCta?: string;
@@ -76,7 +76,7 @@ export type Uni-CLIExtensionSetup = {
   testActionRef?: string;
 };
 
-export type Uni-CLIExtensionLifecycle = {
+export type UniCliExtensionLifecycle = {
   reload?: ReloadReason[];
   detection?: string[];
 };
@@ -106,13 +106,13 @@ export type EnablementResult = {
   met: boolean;
 };
 
-export type Uni-CLIExtensionManifest = {
+export type UniCliExtensionManifest = {
   schemaVersion: 1;
   id: string;
   name: string;
   description: string;
   preview?: boolean;
-  source: Uni-CLIExtensionSource;
+  source: UniCliExtensionSource;
   icon?: {
     src?: string;
     simpleIconSlug?: string;
@@ -120,10 +120,10 @@ export type Uni-CLIExtensionManifest = {
   composer?: {
     prompt: string;
   };
-  setup?: Uni-CLIExtensionSetup;
-  resources: Uni-CLIExtensionResource[];
-  contributions?: Uni-CLIExtensionContribution[];
-  lifecycle?: Uni-CLIExtensionLifecycle;
+  setup?: UniCliExtensionSetup;
+  resources: UniCliExtensionResource[];
+  contributions?: UniCliExtensionContribution[];
+  lifecycle?: UniCliExtensionLifecycle;
   /** Declarative conditions that must ALL be true for the extension to be "active". */
   enablement?: EnablementCondition[];
   defaultEnabled?: boolean;
@@ -131,27 +131,27 @@ export type Uni-CLIExtensionManifest = {
   platform?: Array<"darwin" | "linux" | "windows" | "web">;
 };
 
-export type Uni-CLIExtensionPlatform = NonNullable<Uni-CLIExtensionManifest["platform"]>[number];
+export type UniCliExtensionPlatform = NonNullable<UniCliExtensionManifest["platform"]>[number];
 
 export function extensionContribution(
-  manifest: Uni-CLIExtensionManifest | undefined,
-  type: Uni-CLIExtensionContributionType,
-): Uni-CLIExtensionContribution | undefined {
+  manifest: UniCliExtensionManifest | undefined,
+  type: UniCliExtensionContributionType,
+): UniCliExtensionContribution | undefined {
   return manifest?.contributions?.find((contribution) => contribution.type === type);
 }
 
 export function extensionResource(
-  manifest: Uni-CLIExtensionManifest | undefined,
-  type: Uni-CLIExtensionResourceType,
-): Uni-CLIExtensionResource | undefined {
+  manifest: UniCliExtensionManifest | undefined,
+  type: UniCliExtensionResourceType,
+): UniCliExtensionResource | undefined {
   return manifest?.resources.find((resource) => resource.type === type);
 }
 
-export function isTrustedBuiltInExtension(manifest: Uni-CLIExtensionManifest | undefined): boolean {
+export function isTrustedBuiltInExtension(manifest: UniCliExtensionManifest | undefined): boolean {
   return manifest?.source.origin === "builtin" && manifest.source.trusted;
 }
 
-export const BUILT_IN_UNICLI_EXTENSION_MANIFESTS: Uni-CLIExtensionManifest[] = [
+export const BUILT_IN_UNICLI_EXTENSION_MANIFESTS: UniCliExtensionManifest[] = [
   {
     schemaVersion: 1,
     id: "uni-cli-browser",

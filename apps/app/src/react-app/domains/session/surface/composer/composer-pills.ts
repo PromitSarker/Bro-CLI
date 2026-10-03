@@ -127,9 +127,9 @@ export function composerPillPromptParts(pill: ComposerPill): [TextPartInput, Tex
     type: "text",
     text: composerPillText(pill),
     metadata: {
-      uni-cliComposerPill: pill,
+      uniCliComposerPill: pill,
       // Prompt history recalls a Connect skill from its durable token.
-      ...(pill.kind === "connect-skill" ? { uni-cliComposerToken: encodeConnectSkillToken(pill) } : {}),
+      ...(pill.kind === "connect-skill" ? { uniCliComposerToken: encodeConnectSkillToken(pill) } : {}),
     },
   }, {
     type: "text",
@@ -137,7 +137,7 @@ export function composerPillPromptParts(pill: ComposerPill): [TextPartInput, Tex
     synthetic: true,
     // Preserve selection identity through every send path. v1 still receives
     // the instruction; the v2 adapter replaces it with a native attachment.
-    ...(pill.kind === "skill" ? { metadata: { uni-cliSelectedSkill: { name: pill.name } } } : {}),
+    ...(pill.kind === "skill" ? { metadata: { uniCliSelectedSkill: { name: pill.name } } } : {}),
   }];
 }
 

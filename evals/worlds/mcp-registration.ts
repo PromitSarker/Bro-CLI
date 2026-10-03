@@ -3,7 +3,7 @@ import { createServer } from "node:http";
 import { join } from "node:path";
 import type { Seed } from "@uni-cli/env";
 import { startMockMcp } from "@uni-cli/labs";
-import { bootManageduni-cliServer, close, isRecord, listen, readBody, sendJson, sendMockError, sendStream } from "./uni-cli-server-cli.ts";
+import { bootManageduniCliServer, close, isRecord, listen, readBody, sendJson, sendMockError, sendStream } from "./uni-cli-server-cli.ts";
 
 function gate() {
   let release: () => void = () => {};
@@ -86,7 +86,7 @@ export async function mcpRegistration(seed: Seed) {
   }));
   const token = "mcp-registration-fixture";
   let output = "";
-  let managed: Awaited<ReturnType<typeof bootManageduni-cliServer>> | undefined;
+  let managed: Awaited<ReturnType<typeof bootManageduniCliServer>> | undefined;
   const dispose = async () => {
     release.release();
     if (managed) await managed.stop();
@@ -96,7 +96,7 @@ export async function mcpRegistration(seed: Seed) {
     await rm(scratch, { recursive: true, force: true });
   };
   try {
-    managed = await bootManageduni-cliServer({ scratch, workspace, token, sink: (chunk) => { output += chunk; } });
+    managed = await bootManageduniCliServer({ scratch, workspace, token, sink: (chunk) => { output += chunk; } });
     const running = managed;
     return {
       engine: running.engine,

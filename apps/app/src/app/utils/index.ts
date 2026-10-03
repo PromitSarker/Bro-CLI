@@ -460,7 +460,7 @@ export function getWorkspaceTaskLoadErrorDisplay(workspace: WorkspaceInfo, error
   const normalized = raw.toLowerCase();
   const hasDockerHint = SANDBOX_DOCKER_OFFLINE_HINTS.some((hint) => normalized.includes(hint));
   const hasNetworkHint = SANDBOX_NETWORK_HINTS.some((hint) => normalized.includes(hint));
-  const host = `${workspace.baseUrl ?? ""} ${workspace.uni-cliHostUrl ?? ""}`.toLowerCase();
+  const host = `${workspace.baseUrl ?? ""} ${workspace.uniCliHostUrl ?? ""}`.toLowerCase();
   const localHost = host.includes("localhost") || host.includes("127.0.0.1");
 
   if (!hasDockerHint && !(localHost && hasNetworkHint)) {

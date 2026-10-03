@@ -74,7 +74,7 @@ function localServerResponse(value: unknown, path: string): LocalServerResponse 
 /** Read-only, secret-free proof through the renderer's authenticated local-server boundary. */
 async function readLocalServerIdentity(surface: Surface): Promise<LocalServerIdentity> {
   const value = await evalIn(surface, async () => {
-    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uniCliServerInfo");
     if (!info?.running || !info.baseUrl) return { error: "local_server_unavailable" };
     const request = async (path: string) => {
       const response = await fetch(String(info.baseUrl).replace(/\/+$/, "") + path, {
@@ -230,7 +230,7 @@ test.skipIf(!e2eTestsEnabled || !localPlacement || !mysqlOpen)(
         admin: {
           email: "handoff-atomic-admin-a@uni-cli.test",
           name: "Handoff Atomic Admin A",
-          password: "Uni-CLIEval123!",
+          password: "UniCliEval123!",
         },
       },
     });
@@ -241,7 +241,7 @@ test.skipIf(!e2eTestsEnabled || !localPlacement || !mysqlOpen)(
         admin: {
           email: "handoff-atomic-admin-b@uni-cli.test",
           name: "Handoff Atomic Admin B",
-          password: "Uni-CLIEval123!",
+          password: "UniCliEval123!",
         },
       },
     });
@@ -423,7 +423,7 @@ test.skipIf(!e2eTestsEnabled || !localPlacement || !mysqlOpen)(
         const credentials = {
           email: `handoff-no-org-${Date.now()}@uni-cli.test`,
           name: "Personal Handoff",
-          password: "Uni-CLIEval123!",
+          password: "UniCliEval123!",
         };
         const signup = await denFetch(denB.ref, "/api/auth/sign-up/email", {
           method: "POST",

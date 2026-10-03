@@ -3,8 +3,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { readDenSettings } from "../../../app/lib/den";
 import { recordInspectorEvent } from "../../../app/lib/app-inspector";
 import type {
-  uni-cliCloudMcpProviderModelContext,
-  uni-cliServerClient,
+  uniCliCloudMcpProviderModelContext,
+  uniCliServerClient,
 } from "../../../app/lib/uni-cli-server";
 import { denSettingsChangedEvent } from "../../../app/lib/den-session-events";
 import type { DenAuthStatus } from "../cloud/den-auth-provider";
@@ -30,15 +30,15 @@ import {
 } from "./use-session-mcp-maintenance";
 
 type CloudMcpSubmitReadinessClient = Pick<
-  uni-cliServerClient,
-  "baseUrl" | "getuni-cliCloudMcpHealth" | "reconcileuni-cliCloudMcp" | "listMcp"
+  uniCliServerClient,
+  "baseUrl" | "getuniCliCloudMcpHealth" | "reconcileuniCliCloudMcp" | "listMcp"
 >;
 
 type UseCloudMcpSubmitReadinessInput = {
   cloudAuthStatus: DenAuthStatus;
   client: CloudMcpSubmitReadinessClient | null;
   workspaceId: string | null;
-  providerModel?: uni-cliCloudMcpProviderModelContext;
+  providerModel?: uniCliCloudMcpProviderModelContext;
 };
 
 type CloudMcpSubmitInput = {
@@ -55,7 +55,7 @@ export type CloudMcpSubmitReadiness = {
 function missingContextIssue(input: {
   client: CloudMcpSubmitReadinessClient | null;
   workspaceId: string;
-  providerModel?: uni-cliCloudMcpProviderModelContext;
+  providerModel?: uniCliCloudMcpProviderModelContext;
 }): CloudMcpSubmissionIssue {
   if (!input.client || !input.workspaceId) {
     return {
@@ -249,7 +249,7 @@ export function useCloudMcpSubmitReadiness(
         }
         const result = await ensureCloudMcpSubmissionReadiness({
           providerModel,
-          check: () => client.getuni-cliCloudMcpHealth(activeWorkspaceId, providerModel, { probe: true }),
+          check: () => client.getuniCliCloudMcpHealth(activeWorkspaceId, providerModel, { probe: true }),
           repair: async () => {
             const repaired = await syncCloudControlMcpInBackground({
               client,

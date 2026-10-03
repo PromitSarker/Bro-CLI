@@ -609,7 +609,7 @@ function pageToolOutput(derived: DerivedPdf, requested: number[], served: PdfPag
 
 // Single export: the OpenCode plugin loader treats every export of a plugin
 // module as a plugin factory, so helpers must stay module-private.
-export const Uni-CLIPdfAttachments = async (factoryInput?: unknown) => {
+export const UniCliPdfAttachments = async (factoryInput?: unknown) => {
   const factoryContext = normalizeOpenCodeContext(factoryInput);
   const resolver: InputSupportResolver = factoryContext.listProviders
     ? createInputSupportResolver(factoryContext.listProviders)

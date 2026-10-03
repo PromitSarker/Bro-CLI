@@ -11,60 +11,60 @@ import {
 } from "react";
 import { useLocation, useNavigate } from "react-router";
 import {
-  uni-cliAffordanceFailureCodeSchema,
-  type uni-cliAffordanceDescriptor,
-  type uni-cliAffordanceEffects,
-  type uni-cliAffordanceFailureCode,
-  type uni-cliAffordanceOrigin,
-  type uni-cliAffordanceRequest,
-  type uni-cliAffordanceResult,
+  uniCliAffordanceFailureCodeSchema,
+  type uniCliAffordanceDescriptor,
+  type uniCliAffordanceEffects,
+  type uniCliAffordanceFailureCode,
+  type uniCliAffordanceOrigin,
+  type uniCliAffordanceRequest,
+  type uniCliAffordanceResult,
 } from "@uni-cli/types/uni-cli-affordance";
-import type { uni-cliContextSnapshot } from "@uni-cli/types/uni-cli-context";
+import type { uniCliContextSnapshot } from "@uni-cli/types/uni-cli-context";
 import { useUiControlMailbox } from "./use-ui-control-mailbox";
 
-export type uni-cliControlSideEffect = "none" | "navigation" | "mutation" | "external";
+export type uniCliControlSideEffect = "none" | "navigation" | "mutation" | "external";
 
-export type uni-cliControlActionArg = {
+export type uniCliControlActionArg = {
   name: string;
   type?: "string" | "number" | "boolean" | "object" | "array" | "unknown";
   required?: boolean;
   description?: string;
 };
 
-export type uni-cliControlActionMetadata = {
+export type uniCliControlActionMetadata = {
   id: string;
   label: string;
   description?: string;
   kind: "query" | "command";
-  effects: uni-cliAffordanceEffects;
-  sideEffect: uni-cliControlSideEffect;
+  effects: uniCliAffordanceEffects;
+  sideEffect: uniCliControlSideEffect;
   requiresConfirmation: boolean;
   requiresArgs: boolean;
   hasPreviewArgs: boolean;
   previewArgs?: unknown;
-  args?: uni-cliControlActionArg[];
+  args?: uniCliControlActionArg[];
   disabled: boolean;
   busy: boolean;
 };
 
-export type uni-cliControlSnapshot = {
+export type uniCliControlSnapshot = {
   version: number;
   enabled: boolean;
   route: string;
   status: "off" | "ready" | "acting";
   busyActionId: string | null;
   narration: string;
-  actions: uni-cliControlActionMetadata[];
+  actions: uniCliControlActionMetadata[];
 };
 
-export type uni-cliControlResult =
+export type uniCliControlResult =
   | { ok: true; actionId: string; result?: unknown }
-  | { ok: false; actionId: string; error: string; code?: uni-cliAffordanceFailureCode; hint?: string };
+  | { ok: false; actionId: string; error: string; code?: uniCliAffordanceFailureCode; hint?: string };
 
-export type uni-cliControlHelpers = {
+export type uniCliControlHelpers = {
   setNarration: (text: string) => void;
   /** The conversation whose agent issued the request, when it came through the agent bridge. */
-  origin?: uni-cliAffordanceOrigin;
+  origin?: uniCliAffordanceOrigin;
   /**
    * True when an agent issued the command through the server bridge, which
    * answers within seconds and has no person on the other end. A warning for
@@ -74,28 +74,28 @@ export type uni-cliControlHelpers = {
   bridged: boolean;
 };
 
-export type uni-cliControlTargetRef = {
+export type uniCliControlTargetRef = {
   readonly current: HTMLElement | null;
 };
 
-export type uni-cliControlAction = {
+export type uniCliControlAction = {
   id: string;
   label: string;
   description?: string;
   kind?: "query" | "command";
-  effects?: uni-cliAffordanceEffects;
-  sideEffect?: uni-cliControlSideEffect;
+  effects?: uniCliAffordanceEffects;
+  sideEffect?: uniCliControlSideEffect;
   requiresConfirmation?: boolean;
   requiresArgs?: boolean;
-  args?: uni-cliControlActionArg[];
+  args?: uniCliControlActionArg[];
   previewArgs?: unknown;
   disabled?: boolean;
-  targetRef?: uni-cliControlTargetRef;
-  execute: (args: unknown, helpers: uni-cliControlHelpers) => unknown | Promise<unknown>;
+  targetRef?: uniCliControlTargetRef;
+  execute: (args: unknown, helpers: uniCliControlHelpers) => unknown | Promise<unknown>;
 };
 
 type ControlActionRef = {
-  readonly current: uni-cliControlAction | null;
+  readonly current: uniCliControlAction | null;
 };
 
 type RegisteredAction = {
@@ -111,39 +111,39 @@ type SpotlightState = {
   rect: { x: number; y: number; width: number; height: number } | null;
 };
 
-type uni-cliControlContextValue = {
+type uniCliControlContextValue = {
   enabled: boolean;
   setEnabled: (enabled: boolean) => void;
   route: string;
   narration: string;
   busyActionId: string | null;
-  actions: uni-cliControlActionMetadata[];
+  actions: uniCliControlActionMetadata[];
   registerAction: (actionId: string, actionRef: ControlActionRef) => () => void;
-  executeAction: (actionId: string, args?: unknown, origin?: uni-cliAffordanceOrigin) => Promise<uni-cliControlResult>;
-  publishContext: (context: uni-cliContextSnapshot) => void;
-  snapshot: () => uni-cliControlSnapshot;
+  executeAction: (actionId: string, args?: unknown, origin?: uniCliAffordanceOrigin) => Promise<uniCliControlResult>;
+  publishContext: (context: uniCliContextSnapshot) => void;
+  snapshot: () => uniCliControlSnapshot;
 };
 
-export type uni-cliControlAPI = {
+export type uniCliControlAPI = {
   version: number;
-  snapshot: () => uni-cliControlSnapshot;
-  listActions: () => uni-cliControlActionMetadata[];
-  execute: (actionId: string, args?: unknown) => Promise<uni-cliControlResult>;
-  context: () => uni-cliContextSnapshot;
-  query: (request: uni-cliAffordanceRequest) => Promise<uni-cliAffordanceResult>;
-  command: (request: uni-cliAffordanceRequest) => Promise<uni-cliAffordanceResult>;
+  snapshot: () => uniCliControlSnapshot;
+  listActions: () => uniCliControlActionMetadata[];
+  execute: (actionId: string, args?: unknown) => Promise<uniCliControlResult>;
+  context: () => uniCliContextSnapshot;
+  query: (request: uniCliAffordanceRequest) => Promise<uniCliAffordanceResult>;
+  command: (request: uniCliAffordanceRequest) => Promise<uniCliAffordanceResult>;
   setEnabled: (enabled: boolean) => void;
-  subscribe: (listener: (snapshot: uni-cliControlSnapshot) => void) => () => void;
+  subscribe: (listener: (snapshot: uniCliControlSnapshot) => void) => () => void;
 };
 
 declare global {
   interface Window {
-    __uni-cliControl?: uni-cliControlAPI;
+    __uni-cliControl?: uniCliControlAPI;
   }
 }
 
 const CONTROL_API_VERSION = 2;
-const uni-cliControlContext = createContext<uni-cliControlContextValue | null>(null);
+const uniCliControlContext = createContext<uniCliControlContextValue | null>(null);
 const SPOTLIGHT_TIMING_MS = Object.freeze({
   missingTarget: 80,
   scrollIntoView: 180,
@@ -163,7 +163,7 @@ function returnedActionError(result: unknown) {
   if (!result || typeof result !== "object") return null;
   const payload: { ok?: unknown; error?: unknown; code?: unknown; hint?: unknown } = result;
   if (payload.ok !== false) return null;
-  const code = uni-cliAffordanceFailureCodeSchema.safeParse(payload.code);
+  const code = uniCliAffordanceFailureCodeSchema.safeParse(payload.code);
   return {
     error: typeof payload.error === "string" && payload.error.trim()
       ? payload.error
@@ -177,7 +177,7 @@ function isBrowser() {
   return typeof window !== "undefined" && typeof document !== "undefined";
 }
 
-function effectsForSideEffect(sideEffect: uni-cliControlSideEffect): uni-cliAffordanceEffects {
+function effectsForSideEffect(sideEffect: uniCliControlSideEffect): uniCliAffordanceEffects {
   if (sideEffect === "navigation") {
     return { data: "none", ui: "navigate", external: false };
   }
@@ -190,7 +190,7 @@ function effectsForSideEffect(sideEffect: uni-cliControlSideEffect): uni-cliAffo
   return { data: "none", ui: "none", external: false };
 }
 
-function metadataForAction(registered: RegisteredAction, busyActionId: string | null): uni-cliControlActionMetadata {
+function metadataForAction(registered: RegisteredAction, busyActionId: string | null): uniCliControlActionMetadata {
   const action = registered.ref.current;
   const sideEffect = action?.sideEffect ?? "none";
   return {
@@ -210,7 +210,7 @@ function metadataForAction(registered: RegisteredAction, busyActionId: string | 
   };
 }
 
-function affordanceForAction(action: uni-cliControlActionMetadata): uni-cliAffordanceDescriptor {
+function affordanceForAction(action: uniCliControlActionMetadata): uniCliAffordanceDescriptor {
   return {
     id: action.id,
     kind: action.kind,
@@ -252,11 +252,11 @@ function ControlModeSpotlight({ spotlight }: { spotlight: SpotlightState }) {
   );
 }
 
-export function uni-cliControlProvider({ children }: { children: ReactNode }) {
+export function uniCliControlProvider({ children }: { children: ReactNode }) {
   const location = useLocation();
   const actionsRef = useRef(new Map<string, RegisteredAction>());
-  const listenersRef = useRef(new Set<(snapshot: uni-cliControlSnapshot) => void>());
-  const contextRef = useRef<uni-cliContextSnapshot | null>(null);
+  const listenersRef = useRef(new Set<(snapshot: uniCliControlSnapshot) => void>());
+  const contextRef = useRef<uniCliContextSnapshot | null>(null);
   const contextRevisionRef = useRef(0);
   const nextOrderRef = useRef(1);
   const [version, setVersion] = useState(0);
@@ -267,11 +267,11 @@ export function uni-cliControlProvider({ children }: { children: ReactNode }) {
   const busyActionIdRef = useRef<string | null>(null);
   const busyActorRef = useRef<string | null>(null);
   const spotlightRunRef = useRef(0);
-  const apiRef = useRef<uni-cliControlAPI | null>(null);
+  const apiRef = useRef<uniCliControlAPI | null>(null);
 
   const route = `${location.pathname}${location.search}${location.hash}`;
   const enabled = enabledState;
-  const status: uni-cliControlSnapshot["status"] = !enabled ? "off" : busyActionId ? "acting" : "ready";
+  const status: uniCliControlSnapshot["status"] = !enabled ? "off" : busyActionId ? "acting" : "ready";
 
   const setEnabled = useCallback((nextEnabled: boolean) => {
     setEnabledState(nextEnabled);
@@ -287,7 +287,7 @@ export function uni-cliControlProvider({ children }: { children: ReactNode }) {
     return listActionMetadata();
   }, [listActionMetadata]);
 
-  const snapshot = useCallback((): uni-cliControlSnapshot => ({
+  const snapshot = useCallback((): uniCliControlSnapshot => ({
     version: CONTROL_API_VERSION,
     enabled,
     route,
@@ -297,13 +297,13 @@ export function uni-cliControlProvider({ children }: { children: ReactNode }) {
     actions: listActionMetadata(),
   }), [busyActionId, enabled, listActionMetadata, narration, route, status]);
 
-  const publishContext = useCallback((context: uni-cliContextSnapshot) => {
+  const publishContext = useCallback((context: uniCliContextSnapshot) => {
     if (contextRef.current === context) return;
     contextRef.current = context;
     contextRevisionRef.current += 1;
   }, []);
 
-  const contextSnapshot = useCallback((): uni-cliContextSnapshot => {
+  const contextSnapshot = useCallback((): uniCliContextSnapshot => {
     const availableAffordances = listActionMetadata().map(affordanceForAction);
     const published = contextRef.current;
     const revision = contextRevisionRef.current;
@@ -378,7 +378,7 @@ export function uni-cliControlProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const playTargetChoreography = useCallback(async (action: uni-cliControlAction, runId: number) => {
+  const playTargetChoreography = useCallback(async (action: uniCliControlAction, runId: number) => {
     if (!isBrowser()) return;
     const stillCurrent = () => spotlightRunRef.current === runId;
     const target = action.targetRef?.current;
@@ -413,9 +413,9 @@ export function uni-cliControlProvider({ children }: { children: ReactNode }) {
   const executeAction = useCallback(async (
     actionId: string,
     args?: unknown,
-    origin?: uni-cliAffordanceOrigin,
+    origin?: uniCliAffordanceOrigin,
     bridged = false,
-  ): Promise<uni-cliControlResult> => {
+  ): Promise<uniCliControlResult> => {
     const registered = actionsRef.current.get(actionId);
     const action = registered?.ref.current;
     if (!registered || !action) return { ok: false, actionId, error: `Unknown action: ${actionId}` };
@@ -472,8 +472,8 @@ export function uni-cliControlProvider({ children }: { children: ReactNode }) {
   }, [playTargetChoreography, setEnabled]);
 
   const queryAffordance = useCallback(async (
-    request: uni-cliAffordanceRequest,
-  ): Promise<uni-cliAffordanceResult> => {
+    request: uniCliAffordanceRequest,
+  ): Promise<uniCliAffordanceResult> => {
     const action = actionsRef.current.get(request.id)?.ref.current;
     const revision = contextRevisionRef.current;
     if (!action || action.kind !== "query") {
@@ -527,8 +527,8 @@ export function uni-cliControlProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const executeCommand = useCallback(async (
-    request: uni-cliAffordanceRequest,
-  ): Promise<uni-cliAffordanceResult> => {
+    request: uniCliAffordanceRequest,
+  ): Promise<uniCliAffordanceResult> => {
     const action = actionsRef.current.get(request.id)?.ref.current;
     const revision = contextRevisionRef.current;
     if (!action || action.kind === "query") {
@@ -582,7 +582,7 @@ export function uni-cliControlProvider({ children }: { children: ReactNode }) {
     };
   }, [executeAction]);
 
-  const value = useMemo<uni-cliControlContextValue>(() => ({
+  const value = useMemo<uniCliControlContextValue>(() => ({
     enabled,
     setEnabled,
     route,
@@ -617,7 +617,7 @@ export function uni-cliControlProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!isBrowser()) return;
 
-    const api: uni-cliControlAPI = {
+    const api: uniCliControlAPI = {
       version: CONTROL_API_VERSION,
       snapshot,
       listActions: () => snapshot().actions,
@@ -659,19 +659,19 @@ export function uni-cliControlProvider({ children }: { children: ReactNode }) {
   }, [snapshot, version]);
 
   return (
-    <uni-cliControlContext.Provider value={value}>
+    <uniCliControlContext.Provider value={value}>
       {children}
       <ControlModeSpotlight spotlight={spotlight} />
-    </uni-cliControlContext.Provider>
+    </uniCliControlContext.Provider>
   );
 }
 
-export function useuni-cliControl() {
-  return use(uni-cliControlContext);
+export function useuniCliControl() {
+  return use(uniCliControlContext);
 }
 
-export function usePublishuni-cliContext(context: uni-cliContextSnapshot) {
-  const control = useuni-cliControl();
+export function usePublishuniCliContext(context: uniCliContextSnapshot) {
+  const control = useuniCliControl();
   const publishContext = control?.publishContext;
 
   useEffect(() => {
@@ -679,10 +679,10 @@ export function usePublishuni-cliContext(context: uni-cliContextSnapshot) {
   }, [context, publishContext]);
 }
 
-export function useControlAction(action: uni-cliControlAction | null | false | undefined) {
-  const control = useuni-cliControl();
+export function useControlAction(action: uniCliControlAction | null | false | undefined) {
+  const control = useuniCliControl();
   const registerAction = control?.registerAction;
-  const latestActionRef = useRef<uni-cliControlAction | null>(action || null);
+  const latestActionRef = useRef<uniCliControlAction | null>(action || null);
   latestActionRef.current = action || null;
   const actionId = action ? action.id : null;
 
@@ -698,12 +698,12 @@ export function useControlAction(action: uni-cliControlAction | null | false | u
  * violating the rules of hooks. Each action is tracked by its stable id; the
  * latest closure for that id is always used, and removed ids are unregistered.
  */
-export function useControlActions(actions: readonly uni-cliControlAction[]) {
-  const control = useuni-cliControl();
+export function useControlActions(actions: readonly uniCliControlAction[]) {
+  const control = useuniCliControl();
   const registerAction = control?.registerAction;
 
   // One ref per action id, so executeAction always sees the freshest closure.
-  const refsById = useRef<Map<string, { current: uni-cliControlAction | null }>>(new Map());
+  const refsById = useRef<Map<string, { current: uniCliControlAction | null }>>(new Map());
   for (const action of actions) {
     const existing = refsById.current.get(action.id);
     if (existing) {
@@ -740,7 +740,7 @@ const SETTINGS_TABS: ReadonlySet<string> = new Set<string>(
   SETTINGS_TAB_VALUES.filter((tab) => tab !== "extensions"),
 );
 
-export function uni-cliRouteControlActions() {
+export function uniCliRouteControlActions() {
   const navigate = useNavigate();
   const location = useLocation();
   // Read through a ref so the action list stays stable across route changes.
@@ -751,7 +751,7 @@ export function uni-cliRouteControlActions() {
     navigate(target.to, { state: target.state });
   }, [navigate]);
 
-  const actions = useMemo<uni-cliControlAction[]>(() => [
+  const actions = useMemo<uniCliControlAction[]>(() => [
     {
       id: "route.session",
       label: "Open sessions",

@@ -3,7 +3,7 @@ import {
   createCloudAutomation,
   createOrgConnection,
   denFetch,
-  grantUni-CLIWebAccess,
+  grantUniCliWebAccess,
   listWorkflows,
   patchAutomation,
   readAutomation,
@@ -98,7 +98,7 @@ test("an owner saves and reopens a snapshot app, and external Workflows run live
   // Cloud Automations require Uni-CLI Web access for the organization. The
   // launched Den seeds this admin into the platform-admin allowlist, so the
   // spec grants the audited complimentary entitlement inline.
-  await grantUni-CLIWebAccess(
+  await grantUniCliWebAccess(
     den.admin,
     organizationId,
     "saved-script-automations spec exercises Cloud Automations",

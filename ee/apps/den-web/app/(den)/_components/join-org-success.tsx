@@ -4,7 +4,7 @@ import { detectPlatform, type DetectedPlatform } from "@uni-cli/ui/react";
 import { useEffect, useState } from "react";
 import {
   getDesktopHandoffGrant,
-  getDesktopHandoffuni-cliUrl,
+  getDesktopHandoffuniCliUrl,
   rememberDesktopHandoffGrant,
 } from "../_lib/desktop-handoff";
 import { getErrorMessage, requestJson } from "../_lib/den-flow";
@@ -25,20 +25,20 @@ import { OrganizationBrandIdentity, type OrganizationBrand } from "./organizatio
 
 const UNICLI_DOWNLOAD_URL = "https://uni-clilabs.com/download";
 
-function ReturnToUni-CLIStatus({
-  uni-cliUrl,
+function ReturnToUniCliStatus({
+  uniCliUrl,
   grant,
   organizationName,
 }: {
-  uni-cliUrl: string;
+  uniCliUrl: string;
   grant: string | null;
   organizationName: string;
 }) {
   const { status, timedOut } = useDesktopHandoffStatus(grant);
   const [copied, setCopied] = useState(false);
 
-  async function copyuni-cliUrl() {
-    await navigator.clipboard.writeText(uni-cliUrl);
+  async function copyuniCliUrl() {
+    await navigator.clipboard.writeText(uniCliUrl);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1800);
   }
@@ -56,15 +56,15 @@ function ReturnToUni-CLIStatus({
       <div className="grid gap-3 rounded-2xl bg-slate-50 p-4 text-sm text-slate-600" data-testid="desktop-handoff-troubleshoot" aria-live="polite">
         <p className="m-0">
           Nothing opened?{" "}
-          <button type="button" className="font-medium text-slate-950 underline-offset-4 hover:underline" onClick={() => window.location.assign(uni-cliUrl)}>
+          <button type="button" className="font-medium text-slate-950 underline-offset-4 hover:underline" onClick={() => window.location.assign(uniCliUrl)}>
             Return to Uni-CLI again
           </button>
         </p>
         <div className="grid gap-2">
           <p className="m-0">Still stuck? Copy this sign-in link into Uni-CLI:</p>
           <div className="flex flex-col gap-2 sm:flex-row">
-            <input className="den-input min-w-0 flex-1 text-xs" value={uni-cliUrl} readOnly onFocus={(event) => event.currentTarget.select()} />
-            <button type="button" className="den-button-secondary sm:w-auto" onClick={() => void copyuni-cliUrl()}>
+            <input className="den-input min-w-0 flex-1 text-xs" value={uniCliUrl} readOnly onFocus={(event) => event.currentTarget.select()} />
+            <button type="button" className="den-button-secondary sm:w-auto" onClick={() => void copyuniCliUrl()}>
               {copied ? "Copied" : "Copy link"}
             </button>
           </div>
@@ -105,7 +105,7 @@ export function JoinOrgSuccess({
   const [emailSent, setEmailSent] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [handoffBusy, setHandoffBusy] = useState(false);
-  const [desktopuni-cliUrl, setDesktopuni-cliUrl] = useState<string | null>(null);
+  const [desktopuniCliUrl, setDesktopuniCliUrl] = useState<string | null>(null);
   const [desktopGrant, setDesktopGrant] = useState<string | null>(null);
   const [downloadHref, setDownloadHref] = useState<string | null>(null);
 
@@ -179,7 +179,7 @@ export function JoinOrgSuccess({
     }
   }
 
-  async function handleReturnToUni-CLI() {
+  async function handleReturnToUniCli() {
     setHandoffBusy(true);
     setActionError(null);
 
@@ -194,17 +194,17 @@ export function JoinOrgSuccess({
         return;
       }
 
-      const uni-cliUrl = getDesktopHandoffuni-cliUrl(payload);
-      if (!uni-cliUrl) {
+      const uniCliUrl = getDesktopHandoffuniCliUrl(payload);
+      if (!uniCliUrl) {
         setActionError("Uni-CLI sign-in was prepared, but no app link was returned.");
         return;
       }
 
-      const grant = getDesktopHandoffGrant(payload, uni-cliUrl);
+      const grant = getDesktopHandoffGrant(payload, uniCliUrl);
       rememberDesktopHandoffGrant(grant);
-      setDesktopuni-cliUrl(uni-cliUrl);
+      setDesktopuniCliUrl(uniCliUrl);
       setDesktopGrant(grant);
-      window.location.assign(uni-cliUrl);
+      window.location.assign(uniCliUrl);
     } catch (error) {
       setActionError(error instanceof Error ? error.message : "Could not return to Uni-CLI.");
     } finally {
@@ -273,13 +273,13 @@ export function JoinOrgSuccess({
               {emailSent ? <div className="den-notice is-info">Sent — check your inbox when you&apos;re back at your desk.</div> : null}
             </div>
           ) : desktopAuthRequested ? (
-            desktopuni-cliUrl ? (
-              <ReturnToUni-CLIStatus uni-cliUrl={desktopuni-cliUrl} grant={desktopGrant} organizationName={organizationName} />
+            desktopuniCliUrl ? (
+              <ReturnToUniCliStatus uniCliUrl={desktopuniCliUrl} grant={desktopGrant} organizationName={organizationName} />
             ) : (
               <button
                 type="button"
                 className="den-button-primary min-h-12 w-full"
-                onClick={() => void handleReturnToUni-CLI()}
+                onClick={() => void handleReturnToUniCli()}
                 disabled={handoffBusy}
                 data-testid="join-org-return-uni-cli"
               >
@@ -303,7 +303,7 @@ export function JoinOrgSuccess({
               <button
                 type="button"
                 className="min-h-12 w-full rounded-full px-3 text-sm font-medium text-slate-500 underline-offset-4 hover:text-slate-950 hover:underline"
-                onClick={() => void handleReturnToUni-CLI()}
+                onClick={() => void handleReturnToUniCli()}
                 disabled={handoffBusy}
                 data-testid="join-org-open-app"
               >
@@ -312,7 +312,7 @@ export function JoinOrgSuccess({
             </div>
           )}
 
-          {desktopAuthRequested && desktopuni-cliUrl ? null : (
+          {desktopAuthRequested && desktopuniCliUrl ? null : (
             <div className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700" data-testid="join-org-connected">
               Connected — Uni-CLI is set up for {organizationName}
             </div>

@@ -13,7 +13,7 @@ const EXECUTABLE_ENV_KEYS = ["PATH", "PNPM_HOME", "TMPDIR", "SHELL", "SYSTEMROOT
 
 export interface AppWebRuntime {
   webUrl: string;
-  uni-cliUrl: string;
+  uniCliUrl: string;
   runtimeDirectory: string;
   fixtureRoot: string;
   source: SandboxRepoSourceReceipt | null;
@@ -103,29 +103,29 @@ export async function startLocalRuntime(worldName: string, workspaceRoot: string
       browserHostSuffix: options.browserHostSuffix,
       env: { ...executableEnvironment(process.env), ...isolatedRuntimeEnvironment(fixtureRoot, options.engine), ...options.env, ...(options.webPort ? { UNICLI_WEB_PORT: String(options.webPort) } : {}), ...appWebDenEnvironment(options.den), ...bootstrapEnv },
     });
-    return { webUrl: runtime.manifest.webUrl, uni-cliUrl: runtime.manifest.uni-cliUrl, runtimeDirectory, fixtureRoot, source: null, stop: () => runtime.stop() };
+    return { webUrl: runtime.manifest.webUrl, uniCliUrl: runtime.manifest.uniCliUrl, runtimeDirectory, fixtureRoot, source: null, stop: () => runtime.stop() };
   } catch (error) {
     await rm(fixtureRoot, { recursive: true, force: true }).catch(() => undefined);
     throw error;
   }
 }
 
-export function parseRemoteRuntime(output: string): Pick<AppWebRuntime, "webUrl" | "uni-cliUrl"> & { runtimeManifestPath: string } {
+export function parseRemoteRuntime(output: string): Pick<AppWebRuntime, "webUrl" | "uniCliUrl"> & { runtimeManifestPath: string } {
   const line = output.split(/\r?\n/).map((entry) => entry.trim()).filter(Boolean).at(-1) ?? "";
   let value: unknown;
   try { value = JSON.parse(line); } catch { throw new Error("Remote app-web launcher did not return a JSON receipt."); }
   if (typeof value !== "object" || value === null
     || !("webUrl" in value) || typeof value.webUrl !== "string"
-    || !("uni-cliUrl" in value) || typeof value.uni-cliUrl !== "string"
+    || !("uniCliUrl" in value) || typeof value.uniCliUrl !== "string"
     || !("runtimeManifestPath" in value) || typeof value.runtimeManifestPath !== "string") {
     throw new Error("Remote app-web launcher returned an invalid receipt.");
   }
-  for (const url of [new URL(value.webUrl), new URL(value.uni-cliUrl)]) {
+  for (const url of [new URL(value.webUrl), new URL(value.uniCliUrl)]) {
     if (url.protocol !== "http:" || !["127.0.0.1", "localhost"].includes(url.hostname) || !url.port || url.username || url.password) {
       throw new Error("Remote app-web runtime URLs must be sandbox-loopback HTTP URLs.");
     }
   }
-  return { webUrl: value.webUrl, uni-cliUrl: value.uni-cliUrl, runtimeManifestPath: value.runtimeManifestPath };
+  return { webUrl: value.webUrl, uniCliUrl: value.uniCliUrl, runtimeManifestPath: value.runtimeManifestPath };
 }
 
 async function runRemoteModule(sandbox: string, modulePath: string, source: string, payload: unknown, context: string, timeoutMs: number): Promise<string> {
@@ -169,7 +169,7 @@ const handle = await launchHeadlessWeb({
   browserHostSuffix: input.browserHostSuffix, env: { ...executable, ...input.env, ...bootstrapEnv },
 });
 await handle.detach();
-console.log(JSON.stringify({ webUrl: handle.manifest.webUrl, uni-cliUrl: handle.manifest.uni-cliUrl, runtimeManifestPath: handle.manifest.runtimeManifestPath }));
+console.log(JSON.stringify({ webUrl: handle.manifest.webUrl, uniCliUrl: handle.manifest.uniCliUrl, runtimeManifestPath: handle.manifest.runtimeManifestPath }));
 `;
 
 const REMOTE_STOP_SOURCE = `
@@ -199,7 +199,7 @@ export async function startRemoteRuntime(sandbox: string, worldName: string, wor
   const receipt = parseRemoteRuntime(output);
   if (receipt.runtimeManifestPath !== posix.join(runtimeDirectory, "runtime.json")) throw new Error("Remote app-web runtime manifest mismatch.");
   return {
-    webUrl: receipt.webUrl, uni-cliUrl: receipt.uni-cliUrl, runtimeDirectory, fixtureRoot, source,
+    webUrl: receipt.webUrl, uniCliUrl: receipt.uniCliUrl, runtimeDirectory, fixtureRoot, source,
     stop: async () => {
       await runRemoteModule(sandbox, stopModulePath, REMOTE_STOP_SOURCE, {
         runtimeManifestPath: receipt.runtimeManifestPath,

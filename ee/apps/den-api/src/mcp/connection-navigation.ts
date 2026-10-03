@@ -1,11 +1,11 @@
 import { env } from "../env.js"
 
-export function uni-cliYourConnectionsUrl(connectionId: string) {
+export function uniCliYourConnectionsUrl(connectionId: string) {
   const url = new URL("/dashboard/your-connections", env.betterAuthUrl)
   url.searchParams.set("connectionId", connectionId)
   return url.toString()
 }
 
-export function uni-cliOrganizationConnectionsUrl() {
+export function uniCliOrganizationConnectionsUrl() {
   return new URL("/dashboard/mcp-connections", env.betterAuthUrl).toString()
 }

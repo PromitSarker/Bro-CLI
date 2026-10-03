@@ -85,7 +85,7 @@ export type DesktopIntegrationResult = {
   error?: string;
 };
 
-export type uni-cliServerInfo = {
+export type uniCliServerInfo = {
   running: boolean;
   /**
    * Monotonic per-start identity of the embedded server within this desktop
@@ -154,7 +154,7 @@ export type OpencodeCommandDraft = {
   subtask?: boolean;
 };
 
-export type Workspaceuni-cliConfig = {
+export type WorkspaceuniCliConfig = {
   version: number;
   workspace?: {
     name?: string | null;
@@ -172,7 +172,7 @@ export type AppBuildInfo = {
   version: string;
   gitSha?: string | null;
   buildEpoch?: string | null;
-  uni-cliDevMode?: boolean;
+  uniCliDevMode?: boolean;
   os?: string | null;
   arch?: string | null;
 };
@@ -228,7 +228,7 @@ export type DesktopBootstrapConfig = {
   } | null;
 };
 
-export type uni-cliDockerCleanupResult = {
+export type uniCliDockerCleanupResult = {
   candidates: string[];
   removed: string[];
   errors: string[];
@@ -369,12 +369,12 @@ export type WorkspaceCreateRemoteInput = {
   remoteType?: "uni-cli" | "opencode" | null;
   directory?: string | null;
   displayName?: string | null;
-  uni-cliHostUrl?: string | null;
-  uni-cliToken?: string | null;
-  uni-cliClientToken?: string | null;
-  uni-cliHostToken?: string | null;
-  uni-cliWorkspaceId?: string | null;
-  uni-cliWorkspaceName?: string | null;
+  uniCliHostUrl?: string | null;
+  uniCliToken?: string | null;
+  uniCliClientToken?: string | null;
+  uniCliHostToken?: string | null;
+  uniCliWorkspaceId?: string | null;
+  uniCliWorkspaceName?: string | null;
   sandboxBackend?: string | null;
   sandboxRunId?: string | null;
   sandboxContainerName?: string | null;
@@ -410,12 +410,12 @@ export type DesktopCommandMap = {
     args: [input: { workspacePath: string; folderPath?: string; authorizedRoot?: string }];
     result: unknown;
   };
-  workspaceuni-cliRead: {
+  workspaceuniCliRead: {
     args: [input: { workspacePath: string }];
-    result: Workspaceuni-cliConfig;
+    result: WorkspaceuniCliConfig;
   };
-  workspaceuni-cliWrite: {
-    args: [input: { workspacePath: string; config: Workspaceuni-cliConfig }];
+  workspaceuniCliWrite: {
+    args: [input: { workspacePath: string; config: WorkspaceuniCliConfig }];
     result: unknown;
   };
   workspaceExportConfig: {
@@ -470,8 +470,8 @@ export type DesktopCommandMap = {
   };
   desktopIntegrationRemove: { args: []; result: DesktopIntegrationResult };
   getUiControlBridgeInfo: { args: []; result: UiControlBridgeInfo | null };
-  getuni-cliUiMcpCommand: { args: []; result: string[] };
-  getuni-cliUiMcpEnvironment: { args: []; result: Record<string, string> };
+  getuniCliUiMcpCommand: { args: []; result: string[] };
+  getuniCliUiMcpEnvironment: { args: []; result: Record<string, string> };
 
   // Bootstrap config
   getDesktopBootstrapConfig: { args: []; result: DesktopBootstrapConfig };
@@ -491,21 +491,21 @@ export type DesktopCommandMap = {
     args: [rawUrl: string];
     result: { ok: true; config: DesktopBootstrapConfig } | ConnectLinkVerifyFailure;
   };
-  nukeuni-cliAndOpencodeConfigPreview: { args: [options?: NukeOptions]; result: NukeManifestPreview };
-  nukeuni-cliAndOpencodeConfigAndExit: { args: [options?: NukeOptions]; result: NukeReceipt };
+  nukeuniCliAndOpencodeConfigPreview: { args: [options?: NukeOptions]; result: NukeManifestPreview };
+  nukeuniCliAndOpencodeConfigAndExit: { args: [options?: NukeOptions]; result: NukeReceipt };
 
   // Sandbox
-  sandboxCleanupuni-cliContainers: { args: []; result: uni-cliDockerCleanupResult };
+  sandboxCleanupuniCliContainers: { args: []; result: uniCliDockerCleanupResult };
 
   // uni-cli server sidecar
-  uni-cliServerInfo: { args: []; result: uni-cliServerInfo };
+  uniCliServerInfo: { args: []; result: uniCliServerInfo };
   automationRunnerConfigure: {
     args: [configuration: { baseUrl: string; token: string; runnerId: string } | null];
     result: { connected: boolean };
   };
-  uni-cliServerRestart: {
+  uniCliServerRestart: {
     args: [options?: Record<string, unknown>];
-    result: uni-cliServerInfo;
+    result: uniCliServerInfo;
   };
 
   // Dialogs
@@ -559,7 +559,7 @@ export type DesktopCommandMap = {
    * the renderer's localStorage cleanup is mode-scoped. Follow-up: decide
    * whether "onboarding" should preserve desktop workspace state.
    */
-  resetuni-cliState: { args: [mode?: "onboarding" | "all"]; result: unknown };
+  resetuniCliState: { args: [mode?: "onboarding" | "all"]; result: unknown };
   resetOpencodeCache: { args: []; result: CacheResetResult };
   opencodeMcpAuth: { args: [action: string, name: string]; result: ExecResult };
   setWindowDecorations: { args: [decorated: boolean]; result: unknown };

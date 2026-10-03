@@ -314,7 +314,7 @@ function setMermaidView(element: HTMLElement, view: "rendered" | "source") {
   const showRendered = view === "rendered" && mermaidSvgByElement.has(element);
   rendered.hidden = !showRendered;
   source.hidden = showRendered;
-  element.dataset.uni-cliMermaidState = showRendered ? "rendered" : "source";
+  element.dataset.uniCliMermaidState = showRendered ? "rendered" : "source";
   renderedButton?.setAttribute("aria-pressed", String(showRendered));
   sourceButton?.setAttribute("aria-pressed", String(!showRendered));
   renderedButton?.classList.toggle("bg-muted", showRendered);
@@ -339,13 +339,13 @@ async function enhanceMermaidElement(element: HTMLElement, theme: ResolvedThemeM
 
   const result = await renderMermaidSource(code.textContent ?? "", theme);
   if (signal.aborted || !element.isConnected) return;
-  const preserveSource = mermaidSvgByElement.has(element) && element.dataset.uni-cliMermaidState === "source";
+  const preserveSource = mermaidSvgByElement.has(element) && element.dataset.uniCliMermaidState === "source";
 
   element.setAttribute("aria-busy", "false");
   if (result.status === "source") {
     mermaidSvgByElement.delete(element);
     renderedPane.replaceChildren();
-    element.dataset.uni-cliMermaidReason = result.reason;
+    element.dataset.uniCliMermaidReason = result.reason;
     if (renderedButton instanceof HTMLButtonElement) renderedButton.disabled = true;
     if (downloadButton instanceof HTMLButtonElement) downloadButton.hidden = true;
     if (status instanceof HTMLElement) status.textContent = sourceStatus(result.reason);
@@ -353,10 +353,10 @@ async function enhanceMermaidElement(element: HTMLElement, theme: ResolvedThemeM
     return;
   }
 
-  delete element.dataset.uni-cliMermaidReason;
+  delete element.dataset.uniCliMermaidReason;
   renderedPane.innerHTML = result.svg;
   mermaidSvgByElement.set(element, result.svg);
-  element.dataset.uni-cliMermaidTheme = theme;
+  element.dataset.uniCliMermaidTheme = theme;
   if (renderedButton instanceof HTMLButtonElement) renderedButton.disabled = false;
   if (downloadButton instanceof HTMLButtonElement) downloadButton.hidden = false;
   if (status instanceof HTMLElement) status.hidden = true;
@@ -385,7 +385,7 @@ export function useMermaidEnhancer(
       const diagram = button?.closest("[data-uni-cli-mermaid]");
       if (!(button instanceof HTMLButtonElement) || !(diagram instanceof HTMLElement)) return;
 
-      const view = button.dataset.uni-cliMermaidView;
+      const view = button.dataset.uniCliMermaidView;
       if (view === "source" || view === "rendered") {
         event.preventDefault();
         setMermaidView(diagram, view);

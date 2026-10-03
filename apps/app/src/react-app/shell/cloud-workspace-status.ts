@@ -104,9 +104,9 @@ export function cloudWorkspaceTakeoverCopy(input: {
 export function formatCloudWorkspaceVersion(version: string | null): string | null {
   const trimmed = version?.trim() ?? "";
   if (!trimmed) return null;
-  const uni-cliPrefix = "uni-cli-";
-  if (!trimmed.toLowerCase().startsWith(uni-cliPrefix)) return trimmed;
-  const withoutPrefix = trimmed.slice(uni-cliPrefix.length);
+  const uniCliPrefix = "uni-cli-";
+  if (!trimmed.toLowerCase().startsWith(uniCliPrefix)) return trimmed;
+  const withoutPrefix = trimmed.slice(uniCliPrefix.length);
   return withoutPrefix.toLowerCase().startsWith("v") ? withoutPrefix : `v${withoutPrefix}`;
 }
 

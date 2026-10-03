@@ -1,5 +1,5 @@
 import { expect } from "vitest";
-import { denFetch, grantUni-CLIWebAccess, readAvailableModels } from "@uni-cli/behaviors";
+import { denFetch, grantUniCliWebAccess, readAvailableModels } from "@uni-cli/behaviors";
 import type { DenSession } from "@uni-cli/behaviors";
 import { addInitScript, navigate } from "@uni-cli/cdp";
 import { checkedExec, defaultDaytonaExec, execInSandbox } from "@uni-cli/hosts";
@@ -121,7 +121,7 @@ async function gatewayWebPicker(seed: Seed) {
   const member = den.members.member;
   if (!member) throw new Error("The isolated Den did not provision its member.");
   const orgId = await organizationId(den.admin);
-  await grantUni-CLIWebAccess(den.admin, orgId, "Synthetic hosted-web Gateway picker coverage");
+  await grantUniCliWebAccess(den.admin, orgId, "Synthetic hosted-web Gateway picker coverage");
   const catalogModel = await firstCatalogModel(den.admin, orgId);
   const providerId = await createProvider(den.admin, orgId, catalogModel.id);
   const model = await connectProvider(member, orgId, providerId, catalogModel.id);

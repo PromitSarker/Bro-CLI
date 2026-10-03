@@ -1,4 +1,4 @@
-import type { uni-cliServerClient } from "@/app/lib/uni-cli-server";
+import type { uniCliServerClient } from "@/app/lib/uni-cli-server";
 import type { ModelRef } from "@/app/types";
 import type { RejectedTurnOwner } from "./draft-store";
 
@@ -6,8 +6,8 @@ export type QueuedSendContext = {
   workspaceId: string;
   workspaceRoot: string;
   opencodeBaseUrl: string;
-  uni-cliToken: string;
-  client: uni-cliServerClient;
+  uniCliToken: string;
+  client: uniCliServerClient;
   agent: string | null;
   variant: string | null;
   model: ModelRef | null;

@@ -68,7 +68,7 @@ export function createFreeMemberHandler(dependencies: FreeMemberDependencies = d
           const recorder = createRequestLogRecorder({ insertRequestLog: usageLog.insert, updateRequestLog: usageLog.update,
             reporter: safeInferenceReporter(usageLog.reporter ?? sentryInferenceReporter) })
           recorder.start({ identity: { kind: "models", organizationId: key.organization_id, orgMembershipId: key.org_membership_id, inferenceKeyId: key.id },
-            uni-cliRequestId: requestId, route: "uni-cli_free", protocol: prepared.protocol === "responses" ? "openai_responses" : "openai_chat", upstreamProviderId: "openai",
+            uniCliRequestId: requestId, route: "uni-cli_free", protocol: prepared.protocol === "responses" ? "openai_responses" : "openai_chat", upstreamProviderId: "openai",
             upstreamHost: upstream.hostname, upstreamPath: upstream.pathname, method: "POST",
             requestedModel: INFERENCE_FREE_MODEL_ID, upstreamModel: INFERENCE_FREE_MODEL_ID, stream, signal })
           return recorder

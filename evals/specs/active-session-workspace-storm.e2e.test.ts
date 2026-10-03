@@ -147,7 +147,7 @@ function parseSurfaceFacts(value: unknown): SurfaceFacts {
 function parseEngineRuntimeFacts(value: unknown): EngineRuntimeFacts {
   const root = isRecord(value) ? value : {};
   const engine = isRecord(root.engine) ? root.engine : {};
-  const uni-cliServer = isRecord(root.uni-cliServer) ? root.uni-cliServer : {};
+  const uniCliServer = isRecord(root.uniCliServer) ? root.uniCliServer : {};
   const pool = isRecord(root.enginePool) ? root.enginePool : {};
   const generations: EngineGenerationFact[] = [];
   if (Array.isArray(pool.generations)) {
@@ -163,7 +163,7 @@ function parseEngineRuntimeFacts(value: unknown): EngineRuntimeFacts {
   return {
     lifecycleState: typeof root.lifecycleState === "string" ? root.lifecycleState : "",
     enginePid: typeof engine.pid === "number" ? engine.pid : null,
-    engineRollover: uni-cliServer.engineRollover === true,
+    engineRollover: uniCliServer.engineRollover === true,
     generations,
   };
 }
@@ -269,7 +269,7 @@ function agentWorkloads(plans: WorkspacePlan[]) {
 
 async function listWorkspaces(desktopApp: App): Promise<WorkspaceListing> {
   const value = await evalIn(desktopApp, async () => {
-    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uniCliServerInfo");
     if (!info?.running || !info.baseUrl) return { error: "local_server_unavailable" };
     const response = await fetch(String(info.baseUrl).replace(/\/+$/, "") + "/workspaces", {
       headers: { Authorization: "Bearer " + String(info.ownerToken ?? info.clientToken ?? "") },
@@ -308,7 +308,7 @@ async function createWorkspace(desktopApp: App, path: string): Promise<string> {
 
 async function configureWorkspaces(desktopApp: App, plans: WorkspacePlan[], baseUrl: string): Promise<void> {
   const result = await evalIn(desktopApp, browserScript(async (value, providerId, inputValue, modelId, modelName, inputProviderId, inputModelId, inputValue2) => {
-    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uniCliServerInfo");
     if (!info?.running || !info.baseUrl) return { error: "local_server_unavailable" };
     const root = String(info.baseUrl).replace(/\/+$/, "");
     const headers = {
@@ -430,7 +430,7 @@ async function readEngineRuntimeFacts(desktopApp: App): Promise<EngineRuntimeFac
 
 async function readWorkspaceFileFacts(desktopApp: App, plan: WorkspacePlan): Promise<WorkspaceFileFacts> {
   const value = await evalIn(desktopApp, browserScript(async (workspaceId, value) => {
-    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uniCliServerInfo");
     if (!info?.running || !info.baseUrl) return { status: 0, content: "" };
     const response = await fetch(
       String(info.baseUrl).replace(/\/+$/, "") + "/workspace/" + encodeURIComponent(workspaceId)

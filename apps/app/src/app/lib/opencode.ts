@@ -180,7 +180,7 @@ async function postSessionRequest<T>(
   return { error, request, response };
 }
 
-function resolveuni-cliWorkspaceMount(baseUrl: string): { baseUrl: string; workspaceId: string } | null {
+function resolveuniCliWorkspaceMount(baseUrl: string): { baseUrl: string; workspaceId: string } | null {
   try {
     const url = new URL(baseUrl);
     const match = url.pathname
@@ -381,7 +381,7 @@ export function createClient(baseUrl: string, directory?: string, auth?: Opencod
   });
 
   const session = client.session as typeof client.session;
-  const uni-cliMount = auth?.mode === "uni-cli" ? resolveuni-cliWorkspaceMount(baseUrl) : null;
+  const uniCliMount = auth?.mode === "uni-cli" ? resolveuniCliWorkspaceMount(baseUrl) : null;
   const sessionOverrides = session as any as {
     promptAsync: (parameters: PromptAsyncParameters, options?: { throwOnError?: boolean }) => Promise<FieldsResult<{}>>;
     command: (parameters: CommandParameters, options?: { throwOnError?: boolean }) => Promise<FieldsResult<{}>>;
@@ -408,7 +408,7 @@ export function createClient(baseUrl: string, directory?: string, auth?: Opencod
 
   const commandOriginal = sessionOverrides.command.bind(session);
   sessionOverrides.command = (parameters: CommandParameters, options?: { throwOnError?: boolean }) => {
-    if (!uni-cliMount && !("reasoning_effort" in parameters)) {
+    if (!uniCliMount && !("reasoning_effort" in parameters)) {
       return commandOriginal(parameters, options);
     }
     const { sessionID, directory: requestDirectory, ...body } = parameters;

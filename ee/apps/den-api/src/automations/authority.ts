@@ -55,7 +55,7 @@ export type AutomationAuthorityResult =
 
 export type AutomationModelAuthorityStore = {
   findActiveMember(input: { organizationId: string; ownerMemberId: string }): Promise<AutomationAuthorityMember | null>
-  findUni-CLIProvider(input: { organizationId: string; ownerMemberId: string }): Promise<AutomationAuthorityProvider | null>
+  findUniCliProvider(input: { organizationId: string; ownerMemberId: string }): Promise<AutomationAuthorityProvider | null>
   findProvider(input: { organizationId: string; providerId: string }): Promise<AutomationAuthorityProvider | null>
   findModel(input: { providerRecordId: ProviderId; modelId: string }): Promise<AutomationAuthorityModel | null>
   canAccessProvider(input: { member: AutomationAuthorityMember; providerRecordId: ProviderId }): Promise<boolean>
@@ -72,7 +72,7 @@ const databaseAuthorityStore: AutomationModelAuthorityStore = {
     return members[0] ?? null
   },
 
-  async findUni-CLIProvider(input) {
+  async findUniCliProvider(input) {
     if (!await organizationAllowsManagedModels(normalizeDenTypeId("organization", input.organizationId))) return null
     const providers = await db.select().from(LlmProviderTable).where(and(
       eq(LlmProviderTable.organizationId, normalizeDenTypeId("organization", input.organizationId)),
@@ -129,7 +129,7 @@ const databaseAuthorityStore: AutomationModelAuthorityStore = {
   },
 }
 
-function enabledUni-CLIModel(modelId: string) {
+function enabledUniCliModel(modelId: string) {
   const model = Object.entries(INFERENCE_MODEL_ALIASES)
     .find(([candidate]) => candidate === modelId)?.[1]
   return model?.enabled === true ? model : null
@@ -205,11 +205,11 @@ export async function resolveAutomationModelAccessWithStore(
   }
 
   if (input.providerId === "uni-cli") {
-    const model = enabledUni-CLIModel(input.modelId)
+    const model = enabledUniCliModel(input.modelId)
     if (!model) {
       return { ok: false, code: "model_access_lost", message: "The selected Uni-CLI-managed model is not available." }
     }
-    const provider = await store.findUni-CLIProvider(input)
+    const provider = await store.findUniCliProvider(input)
     if (!provider) {
       return { ok: false, code: "provider_unavailable", message: "Uni-CLI Models are not available for the Automation owner." }
     }

@@ -1,4 +1,4 @@
-import { labeluni-cliSessionModel, type uni-cliCatalogModel, type uni-cliSessionActivityInventory, type uni-cliSessionModel } from "@uni-cli/types/uni-cli-affordance";
+import { labeluniCliSessionModel, type uniCliCatalogModel, type uniCliSessionActivityInventory, type uniCliSessionModel } from "@uni-cli/types/uni-cli-affordance";
 
 import { getDisplaySessionTitle } from "../../../../app/lib/session-title";
 import type { SessionActivityStatus } from "../status/session-activity-store";
@@ -35,7 +35,7 @@ export type ControlSessionLike = {
   model?: ControlSessionEngineModel | null;
 };
 
-export type ListedControlSession = uni-cliSessionActivityInventory & {
+export type ListedControlSession = uniCliSessionActivityInventory & {
   sessionId: string;
   title: string;
   workspace: string;
@@ -44,14 +44,14 @@ export type ListedControlSession = uni-cliSessionActivityInventory & {
   /** Live activity, the same source as the sidebar indicator. */
   status: SessionActivityStatus;
   /** Model and reasoning effort the session is bound to; null before any model is bound. */
-  model: uni-cliSessionModel | null;
+  model: uniCliSessionModel | null;
 };
 
 export type ListControlSessionsState = {
   workspaces: ControlSessionWorkspace[];
   sessionsByWorkspaceId: Record<string, ControlSessionLike[]>;
   pinnedIds: readonly string[];
-  modelCatalogByWorkspaceId?: Record<string, readonly uni-cliCatalogModel[]>;
+  modelCatalogByWorkspaceId?: Record<string, readonly uniCliCatalogModel[]>;
   statusFor: (workspaceId: string, sessionId: string) => SessionActivityStatus;
   attentionFor?: (workspaceId: string, sessionId: string) => SessionAttention | undefined;
 };
@@ -66,7 +66,7 @@ export function isWorkingStatus(status: SessionActivityStatus): boolean {
  * bound. The engine writes the literal variant "default" for a turn that
  * named none; agents read null for that, the composer pill's value.
  */
-export function controlSessionModel(session: ControlSessionLike): uni-cliSessionModel | null {
+export function controlSessionModel(session: ControlSessionLike): uniCliSessionModel | null {
   const model = session.model;
   const providerId = model?.providerID?.trim();
   const modelId = model?.id?.trim();
@@ -123,7 +123,7 @@ export function listControlSessions(args: unknown, state: ListControlSessionsSta
         working: activity.working,
         descendantActivity: activity.descendantActivity,
         inventoryComplete: activity.inventoryComplete,
-        model: labeluni-cliSessionModel(controlSessionModel(session), state.modelCatalogByWorkspaceId?.[workspace.id] ?? []),
+        model: labeluniCliSessionModel(controlSessionModel(session), state.modelCatalogByWorkspaceId?.[workspace.id] ?? []),
       });
     }
   }

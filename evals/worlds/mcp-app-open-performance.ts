@@ -49,7 +49,7 @@ export async function mcpAppOpenPerformance(seed: Seed, context: { place: Place 
           if (request.url?.startsWith("/host/")) {
             const chunks: Buffer[] = [];
             for await (const chunk of request) chunks.push(Buffer.from(chunk));
-            const result = await fetch(`${runtime.uni-cliUrl}${request.url.slice(5)}`, {
+            const result = await fetch(`${runtime.uniCliUrl}${request.url.slice(5)}`, {
               method: request.method, headers: { "content-type": "application/json", authorization: `Bearer ${runtime.token}` },
               ...(request.method !== "GET" && request.method !== "HEAD" ? { body: Buffer.concat(chunks) } : {}),
               signal: AbortSignal.timeout(30_000),
@@ -62,7 +62,7 @@ export async function mcpAppOpenPerformance(seed: Seed, context: { place: Place 
           response.setHeader("Cache-Control", "no-store");
           if (request.url === "/fixture-config") {
             response.setHeader("Content-Type", "application/json");
-            response.end(JSON.stringify({ baseUrl: "/host", directBaseUrl: runtime.uni-cliUrl, token: runtime.token,
+            response.end(JSON.stringify({ baseUrl: "/host", directBaseUrl: runtime.uniCliUrl, token: runtime.token,
               workspaceId: world.workspace.workspaceId, sessionId: world.session.sessionId,
               disablePresentationCache: process.env.UNICLI_MCP_APP_BASELINE === "1",
               apps: world.performanceApps.map(app => ({ ...app, serverName: connectMcpAppHostName(app.appId) })) }));

@@ -7,8 +7,8 @@ import {
   extensionContribution,
   extensionResource,
   isTrustedBuiltInExtension,
-  type Uni-CLIExtensionManifest,
-  type Uni-CLIExtensionPlatform,
+  type UniCliExtensionManifest,
+  type UniCliExtensionPlatform,
 } from "./extensions";
 
 export const MODEL_PREF_KEY = "uni-cli.defaultModel";
@@ -62,10 +62,10 @@ export type McpDirectoryInfo = {
   /** Whether this extension is still in preview. */
   preview?: boolean;
   /** Normalized extension manifest backing this catalog entry. */
-  extensionManifest?: Uni-CLIExtensionManifest;
+  extensionManifest?: UniCliExtensionManifest;
 };
 
-function extensionManifestToDirectoryInfo(manifest: Uni-CLIExtensionManifest): McpDirectoryInfo {
+function extensionManifestToDirectoryInfo(manifest: UniCliExtensionManifest): McpDirectoryInfo {
   const mcpResource = extensionResource(manifest, "mcp");
   return {
     id: manifest.id,
@@ -86,7 +86,7 @@ function extensionManifestToDirectoryInfo(manifest: Uni-CLIExtensionManifest): M
   };
 }
 
-export function isBuiltInUni-CLIExtension(entry: Pick<McpDirectoryInfo, "kind" | "extensionManifest">): boolean {
+export function isBuiltInUniCliExtension(entry: Pick<McpDirectoryInfo, "kind" | "extensionManifest">): boolean {
   return entry.kind === "extension" && isTrustedBuiltInExtension(entry.extensionManifest);
 }
 
@@ -197,19 +197,19 @@ export const MCP_QUICK_CONNECT: McpDirectoryInfo[] = [
 
 export const UNICLI_EXTENSION_CATALOG = MCP_QUICK_CONNECT.filter((entry) => entry.kind === "extension");
 
-export function resolveUni-CLIExtensionCatalogPlatform(
+export function resolveUniCliExtensionCatalogPlatform(
   platform: "web" | "desktop",
   os?: "macos" | "windows" | "linux",
-): Uni-CLIExtensionPlatform {
+): UniCliExtensionPlatform {
   if (platform === "web") return "web";
   if (os === "macos") return "darwin";
   if (os === "windows") return "windows";
   return "linux";
 }
 
-export function filterUni-CLIExtensionCatalogForPlatform<TEntry extends Pick<McpDirectoryInfo, "extensionManifest">>(
+export function filterUniCliExtensionCatalogForPlatform<TEntry extends Pick<McpDirectoryInfo, "extensionManifest">>(
   entries: TEntry[],
-  platform: Uni-CLIExtensionPlatform,
+  platform: UniCliExtensionPlatform,
 ): TEntry[] {
   return entries.filter((entry) => {
     const platforms = entry.extensionManifest?.platform;

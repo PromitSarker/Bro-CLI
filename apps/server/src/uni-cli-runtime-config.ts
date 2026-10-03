@@ -20,16 +20,16 @@ import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import {
-  uni-cliExtensionsPreviewPluginPath,
-  uni-cliCapabilitiesKnowledgePluginPath,
-  uni-cliAnthropicAdaptiveThinkingPluginPath,
-  uni-cliAnthropicToolSchemaPluginPath,
-  uni-cliTitleRecoveryPluginPath,
-  uni-cliGatewayQuotaPluginPath,
-  uni-cliOfficeAttachmentsPluginPath,
-  uni-cliSpreadsheetsPluginPath,
-  uni-cliChromeDevtoolsPluginPath,
-  uni-cliPdfAttachmentsPluginPath,
+  uniCliExtensionsPreviewPluginPath,
+  uniCliCapabilitiesKnowledgePluginPath,
+  uniCliAnthropicAdaptiveThinkingPluginPath,
+  uniCliAnthropicToolSchemaPluginPath,
+  uniCliTitleRecoveryPluginPath,
+  uniCliGatewayQuotaPluginPath,
+  uniCliOfficeAttachmentsPluginPath,
+  uniCliSpreadsheetsPluginPath,
+  uniCliChromeDevtoolsPluginPath,
+  uniCliPdfAttachmentsPluginPath,
 } from "./uni-cli-extensions-plugin-path.js";
 import type { ServerConfig } from "./types.js";
 import { runtimeStorageDir } from "./runtime-db.js";
@@ -46,7 +46,7 @@ import {
 import { CONNECT_MCP_SERVER_NAME_PREFIX } from "./connect-mcp-server-catalog.js";
 import { UNICLI_AGENT_PROMPT } from "./uni-cli-agent-prompt.js";
 
-export async function builduni-cliRuntimeConfigObject(
+export async function builduniCliRuntimeConfigObject(
   config?: ServerConfig,
 ): Promise<Record<string, unknown>> {
   // Workspace-independent by design: the injected engine config file is
@@ -55,10 +55,10 @@ export async function builduni-cliRuntimeConfigObject(
   // engine-pool fingerprint. Per-workspace MCPs reach the engine through the
   // dynamic push path instead.
   const runtimeConfig = config ? await readGlobalRuntimeOpencodeConfig(config) : {};
-  return builduni-cliRuntimeConfigObjectFromSnapshot(runtimeConfig);
+  return builduniCliRuntimeConfigObjectFromSnapshot(runtimeConfig);
 }
 
-export function builduni-cliRuntimeConfigObjectFromSnapshot(
+export function builduniCliRuntimeConfigObjectFromSnapshot(
   runtimeConfig: RuntimeOpencodeConfig,
 ): Record<string, unknown> {
   if (!DESKTOP_POLICY_ENFORCEMENT_ENABLED) {
@@ -100,20 +100,20 @@ export function builduni-cliRuntimeConfigObjectFromSnapshot(
       },
     },
     plugin: [
-      uni-cliChromeDevtoolsPluginPath(),
+      uniCliChromeDevtoolsPluginPath(),
       // Registration order is prompt order: the knowledge plugin appends the
       // operating rules first, then the extensions plugin adds app-control
       // mechanics, live Connect steering, and the remote skill and Automation
       // catalogs, so rules precede state and state precedes data.
-      uni-cliCapabilitiesKnowledgePluginPath(),
-      uni-cliExtensionsPreviewPluginPath(),
-      uni-cliOfficeAttachmentsPluginPath(),
-      uni-cliSpreadsheetsPluginPath(),
-      uni-cliPdfAttachmentsPluginPath(),
-      uni-cliAnthropicAdaptiveThinkingPluginPath(),
-      uni-cliAnthropicToolSchemaPluginPath(),
-      uni-cliTitleRecoveryPluginPath(),
-      uni-cliGatewayQuotaPluginPath(),
+      uniCliCapabilitiesKnowledgePluginPath(),
+      uniCliExtensionsPreviewPluginPath(),
+      uniCliOfficeAttachmentsPluginPath(),
+      uniCliSpreadsheetsPluginPath(),
+      uniCliPdfAttachmentsPluginPath(),
+      uniCliAnthropicAdaptiveThinkingPluginPath(),
+      uniCliAnthropicToolSchemaPluginPath(),
+      uniCliTitleRecoveryPluginPath(),
+      uniCliGatewayQuotaPluginPath(),
       ...runtimePluginList(runtimeConfig).filter((plugin) => !isManagedPolicyPlugin(plugin)),
     ],
     ...(disabledProviders.length ? { disabled_providers: disabledProviders } : {}),
@@ -141,35 +141,35 @@ function stableStringify(value: unknown): string {
   return JSON.stringify(stableJsonValue(value));
 }
 
-export async function builduni-cliRuntimeConfig(config?: ServerConfig): Promise<string> {
-  return stableStringify(await builduni-cliRuntimeConfigObject(config));
+export async function builduniCliRuntimeConfig(config?: ServerConfig): Promise<string> {
+  return stableStringify(await builduniCliRuntimeConfigObject(config));
 }
 
-export function uni-cliRuntimeConfigFilePath(config: ServerConfig): string {
+export function uniCliRuntimeConfigFilePath(config: ServerConfig): string {
   return join(runtimeStorageDir(config), "runtime-opencode-config.json");
 }
 
 // Serialize file writes per path so a slow older write can never land after
 // (and clobber) a newer one. Content is built inside the queued job so each
 // job reads the latest runtime-DB state.
-export interface uni-cliRuntimeConfigWriteResult {
+export interface uniCliRuntimeConfigWriteResult {
   path: string;
   changed: boolean;
 }
 
-const fileWriteQueue = new Map<string, Promise<uni-cliRuntimeConfigWriteResult>>();
+const fileWriteQueue = new Map<string, Promise<uniCliRuntimeConfigWriteResult>>();
 
 /**
  * Rebuild the engine-visible runtime config file from the runtime DB.
  * Atomic (temp file + rename) so the engine never reads a partial file
  * mid-dispose.
  */
-export async function writeuni-cliRuntimeConfigFile(
+export async function writeuniCliRuntimeConfigFile(
   config: ServerConfig,
-): Promise<uni-cliRuntimeConfigWriteResult> {
-  const path = uni-cliRuntimeConfigFilePath(config);
+): Promise<uniCliRuntimeConfigWriteResult> {
+  const path = uniCliRuntimeConfigFilePath(config);
   const job = async () => {
-    const content = await builduni-cliRuntimeConfig(config);
+    const content = await builduniCliRuntimeConfig(config);
     const current = await readFile(path, "utf8").catch(() => undefined);
     if (current === content) return { path, changed: false };
     await mkdir(runtimeStorageDir(config), { recursive: true });
@@ -189,9 +189,9 @@ export async function writeuni-cliRuntimeConfigFile(
  * instance rebuild reads fresh state instead of a spawn-time snapshot.
  * Returns an unsubscribe function.
  */
-export function keepuni-cliRuntimeConfigFileFresh(config: ServerConfig): () => void {
+export function keepuniCliRuntimeConfigFileFresh(config: ServerConfig): () => void {
   return onRuntimeOpencodeConfigWrite((writeConfig, writtenWorkspaceId) => {
     if (!isEngineGlobalRuntimeConfigId(writtenWorkspaceId)) return;
-    void writeuni-cliRuntimeConfigFile(writeConfig).catch(() => undefined);
+    void writeuniCliRuntimeConfigFile(writeConfig).catch(() => undefined);
   });
 }

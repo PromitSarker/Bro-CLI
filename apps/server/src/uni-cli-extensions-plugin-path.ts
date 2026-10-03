@@ -14,7 +14,7 @@ function resourcesPathFromAppAsarPath(path: string): string | null {
   return match ? path.slice(0, match.index) : null;
 }
 
-export function uni-cliPluginPath(name: string, here?: string): string {
+export function uniCliPluginPath(name: string, here?: string): string {
   const pluginDir = process.env.UNICLI_EXTENSIONS_PLUGIN_DIR;
   if (pluginDir) {
     return join(pluginDir, `${name}.js`);
@@ -31,17 +31,17 @@ export function uni-cliPluginPath(name: string, here?: string): string {
   return join(here, "opencode-plugins", `${name}.${extension}`);
 }
 
-export const uni-cliExtensionsPreviewPluginPath = () => uni-cliPluginPath("uni-cli-extensions-preview");
-export const uni-cliChromeDevtoolsPluginPath = () => uni-cliPluginPath("uni-cli-chrome-devtools");
-export const uni-cliCapabilitiesKnowledgePluginPath = () => uni-cliPluginPath("uni-cli-capabilities-knowledge");
-export const uni-cliAnthropicAdaptiveThinkingPluginPath = () => uni-cliPluginPath("uni-cli-anthropic-adaptive-thinking");
-export const uni-cliAnthropicToolSchemaPluginPath = () => uni-cliPluginPath("uni-cli-anthropic-tool-schema");
-export const uni-cliOfficeAttachmentsPluginPath = () => uni-cliPluginPath("uni-cli-office-attachments");
-export const uni-cliSpreadsheetsPluginPath = () => uni-cliPluginPath("uni-cli-spreadsheets");
-export const uni-cliPdfAttachmentsPluginPath = () => uni-cliPluginPath("uni-cli-pdf-attachments");
-export const uni-cliTitleRecoveryPluginPath = () => uni-cliPluginPath("uni-cli-title-recovery");
-export const uni-cliGatewayQuotaPluginPath = () => uni-cliPluginPath("uni-cli-gateway-quota");
-export const uni-cliGatewayQuotaV2PluginPath = () => uni-cliPluginPath("uni-cli-gateway-quota-v2");
-export const uni-cliContextV2PluginPath = () => uni-cliPluginPath("uni-cli-context-v2");
-export const uni-cliProviderFiltersV2PluginPath = () => uni-cliPluginPath("uni-cli-provider-filters-v2");
-export const uni-cliMcpResultsV2PluginPath = () => uni-cliPluginPath("uni-cli-mcp-results-v2");
+export const uniCliExtensionsPreviewPluginPath = () => uniCliPluginPath("uni-cli-extensions-preview");
+export const uniCliChromeDevtoolsPluginPath = () => uniCliPluginPath("uni-cli-chrome-devtools");
+export const uniCliCapabilitiesKnowledgePluginPath = () => uniCliPluginPath("uni-cli-capabilities-knowledge");
+export const uniCliAnthropicAdaptiveThinkingPluginPath = () => uniCliPluginPath("uni-cli-anthropic-adaptive-thinking");
+export const uniCliAnthropicToolSchemaPluginPath = () => uniCliPluginPath("uni-cli-anthropic-tool-schema");
+export const uniCliOfficeAttachmentsPluginPath = () => uniCliPluginPath("uni-cli-office-attachments");
+export const uniCliSpreadsheetsPluginPath = () => uniCliPluginPath("uni-cli-spreadsheets");
+export const uniCliPdfAttachmentsPluginPath = () => uniCliPluginPath("uni-cli-pdf-attachments");
+export const uniCliTitleRecoveryPluginPath = () => uniCliPluginPath("uni-cli-title-recovery");
+export const uniCliGatewayQuotaPluginPath = () => uniCliPluginPath("uni-cli-gateway-quota");
+export const uniCliGatewayQuotaV2PluginPath = () => uniCliPluginPath("uni-cli-gateway-quota-v2");
+export const uniCliContextV2PluginPath = () => uniCliPluginPath("uni-cli-context-v2");
+export const uniCliProviderFiltersV2PluginPath = () => uniCliPluginPath("uni-cli-provider-filters-v2");
+export const uniCliMcpResultsV2PluginPath = () => uniCliPluginPath("uni-cli-mcp-results-v2");

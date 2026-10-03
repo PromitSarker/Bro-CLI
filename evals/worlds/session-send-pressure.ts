@@ -16,7 +16,7 @@ export async function sessionSendPressure(seed: Seed, context: { place: Place })
   const newerDraft = "Keep this newer draft unsent.";
   const reply = "Archive fixture reply.";
   const server = await evaluate(app.client, async () => {
-    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
     if (!info.baseUrl || !info.running) throw new Error("Isolated fixture is not running");
     return { baseUrl: info.baseUrl, token: info.ownerToken ?? info.clientToken };
   }, { awaitPromise: true });

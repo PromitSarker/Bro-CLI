@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { SkipError } from "@uni-cli/env";
 import type { Seed } from "@uni-cli/env";
 import { buildTestPdf, pdfDataUrl } from "../../apps/server/src/pdf-attachments/pdf-fixture.test-helper.ts";
-import { bootManageduni-cliServer, close, engineBinary, isRecord, listen, readBody, sendJson, sendMockError, sendStream } from "./uni-cli-server-cli.ts";
+import { bootManageduniCliServer, close, engineBinary, isRecord, listen, readBody, sendJson, sendMockError, sendStream } from "./uni-cli-server-cli.ts";
 
 // A PDF attached in chat must work with every model the engine can run. The
 // engine forwards a PDF part to the provider untouched, so a model without PDF
@@ -173,7 +173,7 @@ export async function pdfRouting(seed: Seed): Promise<PdfRoutingWorld> {
   const token = "pdf-routing-client-token";
   let output = "";
   const sink = (chunk: string) => { output += chunk; };
-  let managed: Awaited<ReturnType<typeof bootManageduni-cliServer>> | null = null;
+  let managed: Awaited<ReturnType<typeof bootManageduniCliServer>> | null = null;
   const dispose = async () => {
     if (managed) await managed.stop();
     await close(provider);
@@ -183,7 +183,7 @@ export async function pdfRouting(seed: Seed): Promise<PdfRoutingWorld> {
   };
 
   try {
-    managed = await bootManageduni-cliServer({ scratch, workspace, token, sink, binary });
+    managed = await bootManageduniCliServer({ scratch, workspace, token, sink, binary });
     const engineVersion = spawnSync(managed.binary, ["--version"], { encoding: "utf8" }).stdout.trim();
     const attachment: PdfRoutingWorld["attachment"] = { type: "file", mime: "application/pdf", filename: ATTACHED_PDF, url: pdfDataUrl(buildTestPdf(["Quarterly revenue report", "Second page", null])) };
 

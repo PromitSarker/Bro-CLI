@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { setTimeout as delay } from "node:timers/promises";
 const services = JSON.parse(await readFile("/opt/uni-cli-preview/services.json", "utf8"));
 const outputs = JSON.parse(await readFile("/opt/uni-cli-preview/outputs.json", "utf8"));
-const headers = { authorization: `Bearer ${outputs.uni-cliToken.value}` };
+const headers = { authorization: `Bearer ${outputs.uniCliToken.value}` };
 const deadline = Date.now() + 60_000;
 while (true) {
   try {

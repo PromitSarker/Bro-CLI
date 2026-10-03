@@ -16,7 +16,7 @@ export type InferenceContext = {
 
 export type InferenceAuthVariables = {
   inference: InferenceContext | GatewayContext
-  uni-cliRequestId: string
+  uniCliRequestId: string
 }
 
 export type InferenceAuthEnv = { Variables: InferenceAuthVariables }
@@ -25,7 +25,7 @@ export type InferenceAuthDependencies = {
   findActiveInferenceKey: typeof findActiveInferenceKeyFn
 }
 
-export function readUni-CLIKey(request: Request) {
+export function readUniCliKey(request: Request) {
   const auth = request.headers.get("authorization")
   const candidates = ["x-api-key", "x-goog-api-key", "api-key"].flatMap((name) => {
     const value = request.headers.get(name)
@@ -41,7 +41,7 @@ export function readUni-CLIKey(request: Request) {
 }
 
 export function readInferenceBearerKey(request: Request) {
-  const value = readUni-CLIKey(request)
+  const value = readUniCliKey(request)
   if (value?.startsWith("ow_gw_")) throw new Error("invalid_api_key")
   return value ? inferenceBearerKey(value) : null
 }
@@ -49,7 +49,7 @@ export function readInferenceBearerKey(request: Request) {
 export function inferenceAuth(dependencies: InferenceAuthDependencies) {
   return createMiddleware<InferenceAuthEnv>(async (c, next) => {
     const requestId = buildRequestId()
-    c.set("uni-cliRequestId", requestId)
+    c.set("uniCliRequestId", requestId)
     c.header("x-uni-cli-request-id", requestId)
     let bearerKey
     try { bearerKey = readInferenceBearerKey(c.req.raw) } catch (error) {

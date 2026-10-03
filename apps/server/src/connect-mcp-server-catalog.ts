@@ -55,9 +55,9 @@ const appHostCredentialSchema = z.object({
   origin: z.string().url(),
 });
 
-export type Uni-CLIConnectMcpServerIndex = z.output<typeof indexSchema>;
+export type UniCliConnectMcpServerIndex = z.output<typeof indexSchema>;
 /** Index shape as Den publishes it; `exposeDirectly` is absent from older Den releases and defaults to false. */
-export type Uni-CLIConnectMcpServerIndexInput = z.input<typeof indexSchema>;
+export type UniCliConnectMcpServerIndexInput = z.input<typeof indexSchema>;
 
 /**
  * Safe to surface: no credentials or provider data. Missing auth requires a
@@ -76,16 +76,16 @@ export type ConnectMcpCatalogDiagnostic =
   | "discovery_unavailable";
 
 export type ConnectMcpCatalogReadResult = {
-  index: Uni-CLIConnectMcpServerIndex | null;
+  index: UniCliConnectMcpServerIndex | null;
   diagnostic: ConnectMcpCatalogDiagnostic;
 };
 
-const emptyIndex = (): Uni-CLIConnectMcpServerIndex => ({
+const emptyIndex = (): UniCliConnectMcpServerIndex => ({
   schemaVersion: CONNECT_MCP_SERVER_INDEX_SCHEMA_VERSION,
   servers: [],
 });
 
-const appHostCatalogStore = createWorkspaceKvStore<Uni-CLIConnectMcpServerIndex>({
+const appHostCatalogStore = createWorkspaceKvStore<UniCliConnectMcpServerIndex>({
   tableName: "connect_mcp_app_host_catalogs",
   valueColumn: "catalog_json",
   parse: (json) => {
@@ -99,9 +99,9 @@ const appHostCatalogStore = createWorkspaceKvStore<Uni-CLIConnectMcpServerIndex>
   serialize: (value) => JSON.stringify(value),
 });
 
-type Uni-CLIConnectMcpAppHostCredential = z.infer<typeof appHostCredentialSchema>;
+type UniCliConnectMcpAppHostCredential = z.infer<typeof appHostCredentialSchema>;
 
-const appHostAuthorizationStore = createWorkspaceKvStore<Uni-CLIConnectMcpAppHostCredential | null>({
+const appHostAuthorizationStore = createWorkspaceKvStore<UniCliConnectMcpAppHostCredential | null>({
   tableName: "connect_mcp_app_host_authorizations",
   valueColumn: "authorization_json",
   parse: (json) => {
@@ -133,7 +133,7 @@ function endpointOrigin(value: unknown): string | null {
 
 function normalizeAppHostProxyUrl(
   cloudMcpUrl: unknown,
-  server: Uni-CLIConnectMcpServerIndex["servers"][number],
+  server: UniCliConnectMcpServerIndex["servers"][number],
 ): string | null {
   if (typeof cloudMcpUrl !== "string") return null;
   let cloudEndpoint: URL;
@@ -219,7 +219,7 @@ function modelFacingHeaders(cloudMcp: Record<string, unknown>): Record<string, s
  */
 export function directConnectMcpRuntimeEntries(
   cloudMcp: Record<string, unknown>,
-  index: Uni-CLIConnectMcpServerIndex,
+  index: UniCliConnectMcpServerIndex,
 ): Record<string, Record<string, unknown>> {
   const headers = modelFacingHeaders(cloudMcp);
   if (!headers) return {};
@@ -234,23 +234,23 @@ export function directConnectMcpRuntimeEntries(
     }]));
 }
 
-export async function readUni-CLIConnectMcpAppHostCatalog(
+export async function readUniCliConnectMcpAppHostCatalog(
   config: ServerConfig,
   workspaceId: string,
-): Promise<Uni-CLIConnectMcpServerIndex> {
+): Promise<UniCliConnectMcpServerIndex> {
   return await timeMcpApp("desktop.connect-catalog-read", () => appHostCatalogStore.get(config, workspaceId)) ?? emptyIndex();
 }
 
-export async function writeUni-CLIConnectMcpAppHostCatalog(
+export async function writeUniCliConnectMcpAppHostCatalog(
   config: ServerConfig,
   workspaceId: string,
-  catalog: Uni-CLIConnectMcpServerIndexInput,
+  catalog: UniCliConnectMcpServerIndexInput,
 ): Promise<void> {
   const parsed = indexSchema.safeParse(catalog);
   await appHostCatalogStore.set(config, workspaceId, parsed.success ? parsed.data : emptyIndex());
 }
 
-export async function readUni-CLIConnectMcpAppHostAuthorization(
+export async function readUniCliConnectMcpAppHostAuthorization(
   config: ServerConfig,
   workspaceId: string,
   endpointUrl: string,
@@ -268,17 +268,17 @@ export async function readUni-CLIConnectMcpAppHostAuthorization(
  * Local provisioning for the caller's validated effective Cloud config only;
  * never validates tokens or proves provider availability or access.
  */
-export async function readUni-CLIConnectMcpAppHostAuthorizationReady(
+export async function readUniCliConnectMcpAppHostAuthorizationReady(
   config: ServerConfig,
   workspaceId: string,
   cloudMcp: Record<string, unknown> | null,
 ): Promise<boolean | null> {
   if (!cloudMcp || cloudMcp.type !== "remote" || cloudMcp.enabled !== true || typeof cloudMcp.url !== "string"
     || !await trustedAppHostCloudEndpoint(cloudMcp)) return null;
-  return await readUni-CLIConnectMcpAppHostAuthorization(config, workspaceId, cloudMcp.url, { readOnly: true }) !== null;
+  return await readUniCliConnectMcpAppHostAuthorization(config, workspaceId, cloudMcp.url, { readOnly: true }) !== null;
 }
 
-export async function writeUni-CLIConnectMcpAppHostAuthorization(
+export async function writeUniCliConnectMcpAppHostAuthorization(
   config: ServerConfig,
   workspaceId: string,
   value: string,
@@ -297,31 +297,31 @@ export async function writeUni-CLIConnectMcpAppHostAuthorization(
 }
 
 /** Private storage generation, including revoke/re-authorize cycles with the same bearer. */
-export async function readUni-CLIConnectMcpAppHostAuthorizationRevision(config: ServerConfig, workspaceId: string): Promise<number | null> {
+export async function readUniCliConnectMcpAppHostAuthorizationRevision(config: ServerConfig, workspaceId: string): Promise<number | null> {
   return (await appHostAuthorizationStore.getRow(config, workspaceId))?.updatedAt ?? null;
 }
 
-export async function findUni-CLIConnectMcpAppHostServer(
+export async function findUniCliConnectMcpAppHostServer(
   config: ServerConfig,
   workspaceId: string,
   reference: { connectionId?: string; serverName?: string },
-): Promise<Uni-CLIConnectMcpServerIndex["servers"][number] | null> {
-  const catalog = await readUni-CLIConnectMcpAppHostCatalog(config, workspaceId);
+): Promise<UniCliConnectMcpServerIndex["servers"][number] | null> {
+  const catalog = await readUniCliConnectMcpAppHostCatalog(config, workspaceId);
   return catalog.servers.find((server) => (
     (reference.connectionId !== undefined && server.connectionId === reference.connectionId)
     || (reference.serverName !== undefined && connectMcpAppHostName(server.connectionId) === reference.serverName)
   )) ?? null;
 }
 
-export async function readUni-CLIConnectMcpServerIndex(
+export async function readUniCliConnectMcpServerIndex(
   cloudMcp: Record<string, unknown>,
   appHostAuthorization: string,
   fetcher: McpFetch = externalFetch,
-): Promise<Uni-CLIConnectMcpServerIndex | null> {
-  return (await readUni-CLIConnectMcpServerIndexWithDiagnostics(cloudMcp, appHostAuthorization, fetcher)).index;
+): Promise<UniCliConnectMcpServerIndex | null> {
+  return (await readUniCliConnectMcpServerIndexWithDiagnostics(cloudMcp, appHostAuthorization, fetcher)).index;
 }
 
-export async function readUni-CLIConnectMcpServerIndexWithDiagnostics(
+export async function readUniCliConnectMcpServerIndexWithDiagnostics(
   cloudMcp: Record<string, unknown>,
   appHostAuthorization: string | null,
   fetcher: McpFetch = externalFetch,
@@ -352,7 +352,7 @@ export async function readUni-CLIConnectMcpServerIndexWithDiagnostics(
   }
   const parsed = indexSchema.safeParse(value);
   if (!parsed.success) return { index: null, diagnostic: "invalid_catalog" };
-  const servers: Uni-CLIConnectMcpServerIndex["servers"] = [];
+  const servers: UniCliConnectMcpServerIndex["servers"] = [];
   for (const server of parsed.data.servers) {
     const url = normalizeAppHostProxyUrl(cloudMcp.url, server);
     if (!url) return { index: null, diagnostic: "invalid_proxy_descriptor" };
@@ -366,7 +366,7 @@ export async function readUni-CLIConnectMcpServerIndexWithDiagnostics(
  * cached catalog may be stale. Unlike startup reconciliation, an unavailable
  * opportunistic refresh preserves the last known-good catalog.
  */
-export async function refreshUni-CLIConnectMcpAppHostCatalog(
+export async function refreshUniCliConnectMcpAppHostCatalog(
   config: ServerConfig,
   workspaceId: string,
   fetcher?: McpFetch,
@@ -376,15 +376,15 @@ export async function refreshUni-CLIConnectMcpAppHostCatalog(
   if (!cloudMcp) {
     return { status: "unavailable", appHostNames: [], diagnostic: "discovery_unavailable" };
   }
-  const appHostAuthorization = await readUni-CLIConnectMcpAppHostAuthorization(
+  const appHostAuthorization = await readUniCliConnectMcpAppHostAuthorization(
     config,
     workspaceId,
     String(cloudMcp.url),
   );
-  const { index, diagnostic } = await readUni-CLIConnectMcpServerIndexWithDiagnostics(cloudMcp, appHostAuthorization, fetcher);
+  const { index, diagnostic } = await readUniCliConnectMcpServerIndexWithDiagnostics(cloudMcp, appHostAuthorization, fetcher);
   if (!index) return { status: "unavailable", appHostNames: [], diagnostic };
 
-  await writeUni-CLIConnectMcpAppHostCatalog(config, workspaceId, index);
+  await writeUniCliConnectMcpAppHostCatalog(config, workspaceId, index);
   return {
     status: "synced",
     diagnostic,
@@ -398,7 +398,7 @@ export async function refreshUni-CLIConnectMcpAppHostCatalog(
  * and removes any legacy Uni-CLI-owned provider endpoints. User-authored MCP
  * configurations and durable provider records are untouched.
  */
-export async function reconcileUni-CLIConnectMcpServers(input: {
+export async function reconcileUniCliConnectMcpServers(input: {
   config: ServerConfig;
   workspace: WorkspaceInfo;
   cloudMcp: Record<string, unknown>;
@@ -407,7 +407,7 @@ export async function reconcileUni-CLIConnectMcpServers(input: {
 }): Promise<{ status: "synced" | "unavailable"; appHostNames: string[]; directNames: string[]; removedNames: string[]; diagnostic: ConnectMcpCatalogDiagnostic }> {
   const trustedCloudEndpoint = await trustedAppHostCloudEndpoint(input.cloudMcp);
   if (trustedCloudEndpoint && input.appHostAuthorization !== undefined) {
-    await writeUni-CLIConnectMcpAppHostAuthorization(
+    await writeUniCliConnectMcpAppHostAuthorization(
       input.config,
       input.workspace.id,
       input.appHostAuthorization,
@@ -415,15 +415,15 @@ export async function reconcileUni-CLIConnectMcpServers(input: {
     );
   }
   const appHostAuthorization = trustedCloudEndpoint
-    ? await readUni-CLIConnectMcpAppHostAuthorization(
+    ? await readUniCliConnectMcpAppHostAuthorization(
       input.config,
       input.workspace.id,
       String(input.cloudMcp.url),
     )
     : null;
-  const { index, diagnostic } = await readUni-CLIConnectMcpServerIndexWithDiagnostics(input.cloudMcp, appHostAuthorization, input.fetcher);
+  const { index, diagnostic } = await readUniCliConnectMcpServerIndexWithDiagnostics(input.cloudMcp, appHostAuthorization, input.fetcher);
   const privateCatalog = index ?? emptyIndex();
-  await writeUni-CLIConnectMcpAppHostCatalog(input.config, input.workspace.id, privateCatalog);
+  await writeUniCliConnectMcpAppHostCatalog(input.config, input.workspace.id, privateCatalog);
 
   // Without a fresh index, fail closed: a connection whose direct exposure was
   // revoked must not linger in the model-facing runtime on a stale catalog.

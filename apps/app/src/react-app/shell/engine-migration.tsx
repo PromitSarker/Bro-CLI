@@ -3,12 +3,12 @@ import { useEffect, useRef, useState } from "react";
 import { create } from "zustand";
 import { ChevronRight, LoaderCircle, TriangleAlert } from "lucide-react";
 import {
-  createuni-cliServerClient,
-  uni-cliServerError,
+  createuniCliServerClient,
+  uniCliServerError,
   type EngineActivity,
   type EngineV2MigrationStatus,
   type EngineV2PreviewStatus,
-  type uni-cliServerClient,
+  type uniCliServerClient,
 } from "@/app/lib/uni-cli-server";
 import { isDesktopRuntime } from "@/app/lib/runtime-env";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -27,7 +27,7 @@ import { Progress } from "@/components/ui/progress";
 import { toast } from "@/components/ui/sonner";
 import { t } from "@/i18n";
 import { cn } from "@/lib/utils";
-import { resolveuni-cliConnection } from "./uni-cli-connection";
+import { resolveuniCliConnection } from "./uni-cli-connection";
 
 /**
  * One home for switching chat engines and migrating v1 history (S6). The
@@ -37,7 +37,7 @@ import { resolveuni-cliConnection } from "./uni-cli-connection";
  */
 
 export type EngineMigrationClient = Pick<
-  uni-cliServerClient,
+  uniCliServerClient,
   "getEngineV2PreviewStatus" | "getEngineActivity" | "switchOpencodeEngine" | "migrateOpencodeHistory"
 >;
 
@@ -98,7 +98,7 @@ function messageOf(cause: unknown, fallback: string): string {
 
 /** Running v1 tasks reported by a refused migration, or null for any other failure. */
 function refusedForRunningTasks(cause: unknown): number | null {
-  if (!(cause instanceof uni-cliServerError) || cause.code !== "engine_migration_active_sessions") return null;
+  if (!(cause instanceof uniCliServerError) || cause.code !== "engine_migration_active_sessions") return null;
   const details = cause.details;
   const count = (key: "busySessions" | "waitingRequests") => {
     if (!details || typeof details !== "object" || !(key in details)) return 0;
@@ -531,9 +531,9 @@ function useRunningMigrationDiscovery(enabled: boolean) {
     let cancelled = false;
     void (async () => {
       try {
-        const connection = await resolveuni-cliConnection();
+        const connection = await resolveuniCliConnection();
         if (cancelled || !connection.normalizedBaseUrl || !connection.resolvedToken) return;
-        const client = createuni-cliServerClient({
+        const client = createuniCliServerClient({
           baseUrl: connection.normalizedBaseUrl,
           token: connection.resolvedToken,
           hostToken: connection.resolvedHostToken,

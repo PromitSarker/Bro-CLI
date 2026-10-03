@@ -1,6 +1,6 @@
 import { startMcpAppTiming } from "@uni-cli/types/mcp-app-timing";
 import { mcpAppResolutionRetryDelayMs } from "./mcp-app-resolution"
-import { uni-cliServerError, type uni-cliMcpAppLaunchReference, type uni-cliMcpAppResource } from "./uni-cli-server"
+import { uniCliServerError, type uniCliMcpAppLaunchReference, type uniCliMcpAppResource } from "./uni-cli-server"
 import type { McpAppOrigin } from "../../components/chat/mcp-app-origin"
 
 // Canonical JSON also keeps equivalent React inputs from restarting discovery.
@@ -31,9 +31,9 @@ export function createMcpAppDiscoveryScheduler(now = Date.now) {
   return function schedule(
     origin: McpAppOrigin,
     toolName: string,
-    launch: uni-cliMcpAppLaunchReference | null,
+    launch: uniCliMcpAppLaunchReference | null,
     manual: boolean,
-    receive: (app: uni-cliMcpAppResource | null) => void,
+    receive: (app: uniCliMcpAppResource | null) => void,
     fail: (error: unknown) => void,
   ): () => void {
     let scopes = clients.get(origin.client)
@@ -93,7 +93,7 @@ export function createMcpAppDiscoveryScheduler(now = Date.now) {
         }, error => {
           resolvedTiming()
           if (cancelled) { finish?.(); return }
-          const auth = error instanceof uni-cliServerError && ["mcp_auth_required", "mcp_access_denied"].includes(error.code)
+          const auth = error instanceof uniCliServerError && ["mcp_auth_required", "mcp_access_denied"].includes(error.code)
           const delay = auth ? null : mcpAppResolutionRetryDelayMs(error, index)
           if (delay === null) { negative({ error }); return }
           timer = window.setTimeout(() => { timer = undefined; attempt(index + 1) }, delay)

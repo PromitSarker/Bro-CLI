@@ -1,27 +1,27 @@
 import { describe, expect, test } from "bun:test";
 
-import type { uni-cliServerClient } from "../src/app/lib/uni-cli-server";
+import type { uniCliServerClient } from "../src/app/lib/uni-cli-server";
 import {
-  builduni-cliEnvSystemContext,
-  builduni-cliSessionSystemContext,
-  clearuni-cliEnvSystemContextCache,
+  builduniCliEnvSystemContext,
+  builduniCliSessionSystemContext,
+  clearuniCliEnvSystemContextCache,
 } from "../src/react-app/domains/session/sync/env-context";
 
-function client(keys: string[], calls: { count: number }): uni-cliServerClient {
+function client(keys: string[], calls: { count: number }): uniCliServerClient {
   return {
     baseUrl: "http://127.0.0.1:3000",
     listUserEnvKeys: async () => {
       calls.count += 1;
       return { keys };
     },
-  } as uni-cliServerClient;
+  } as uniCliServerClient;
 }
 
-describe("builduni-cliEnvSystemContext", () => {
+describe("builduniCliEnvSystemContext", () => {
   test("lists configured key names without inventing secret values", async () => {
-    clearuni-cliEnvSystemContextCache();
+    clearuniCliEnvSystemContextCache();
     const calls = { count: 0 };
-    const context = await builduni-cliEnvSystemContext(
+    const context = await builduniCliEnvSystemContext(
       client(["NBA_LIVE_KEY", "bad-key", "ANTHROPIC_API_KEY", "NBA_LIVE_KEY"], calls),
       {
         cacheKey: "session-a",
@@ -37,19 +37,19 @@ describe("builduni-cliEnvSystemContext", () => {
   });
 
   test("caches key context per session", async () => {
-    clearuni-cliEnvSystemContextCache();
+    clearuniCliEnvSystemContextCache();
     const calls = { count: 0 };
     const server = client(["OPENROUTER_API_KEY"], calls);
 
-    await builduni-cliEnvSystemContext(server, {
+    await builduniCliEnvSystemContext(server, {
       cacheKey: "session-a",
       readPendingChanges: () => false,
     });
-    await builduni-cliEnvSystemContext(server, {
+    await builduniCliEnvSystemContext(server, {
       cacheKey: "session-a",
       readPendingChanges: () => false,
     });
-    await builduni-cliEnvSystemContext(server, {
+    await builduniCliEnvSystemContext(server, {
       cacheKey: "session-b",
       readPendingChanges: () => false,
     });
@@ -58,10 +58,10 @@ describe("builduni-cliEnvSystemContext", () => {
   });
 
   test("does not truncate long key lists", async () => {
-    clearuni-cliEnvSystemContextCache();
+    clearuniCliEnvSystemContextCache();
     const calls = { count: 0 };
     const keys = Array.from({ length: 90 }, (_, index) => `KEY_${index}`);
-    const context = await builduni-cliEnvSystemContext(client(keys, calls), {
+    const context = await builduniCliEnvSystemContext(client(keys, calls), {
       cacheKey: "session-a",
       readPendingChanges: () => false,
     });
@@ -72,9 +72,9 @@ describe("builduni-cliEnvSystemContext", () => {
   });
 
   test("skips context while environment changes are pending", async () => {
-    clearuni-cliEnvSystemContextCache();
+    clearuniCliEnvSystemContextCache();
     const calls = { count: 0 };
-    const context = await builduni-cliEnvSystemContext(client(["ANTHROPIC_API_KEY"], calls), {
+    const context = await builduniCliEnvSystemContext(client(["ANTHROPIC_API_KEY"], calls), {
       cacheKey: "session-a",
       readPendingChanges: () => true,
     });
@@ -84,11 +84,11 @@ describe("builduni-cliEnvSystemContext", () => {
   });
 });
 
-describe("builduni-cliSessionSystemContext", () => {
+describe("builduniCliSessionSystemContext", () => {
   test("always carries the user's time zone context and appends env keys when present", async () => {
-    clearuni-cliEnvSystemContextCache();
+    clearuniCliEnvSystemContextCache();
     const calls = { count: 0 };
-    const context = await builduni-cliSessionSystemContext(client(["ANTHROPIC_API_KEY"], calls), {
+    const context = await builduniCliSessionSystemContext(client(["ANTHROPIC_API_KEY"], calls), {
       cacheKey: "session-a",
       readPendingChanges: () => false,
     });
@@ -103,12 +103,12 @@ describe("builduni-cliSessionSystemContext", () => {
   });
 
   test("still returns the user context when there are no env keys, no client, or pending changes", async () => {
-    clearuni-cliEnvSystemContextCache();
+    clearuniCliEnvSystemContextCache();
     const calls = { count: 0 };
 
-    const noKeys = await builduni-cliSessionSystemContext(client([], calls), { cacheKey: "s1", readPendingChanges: () => false });
-    const noClient = await builduni-cliSessionSystemContext(null, { cacheKey: "s2", readPendingChanges: () => false });
-    const pending = await builduni-cliSessionSystemContext(client(["KEY"], calls), { cacheKey: "s3", readPendingChanges: () => true });
+    const noKeys = await builduniCliSessionSystemContext(client([], calls), { cacheKey: "s1", readPendingChanges: () => false });
+    const noClient = await builduniCliSessionSystemContext(null, { cacheKey: "s2", readPendingChanges: () => false });
+    const pending = await builduniCliSessionSystemContext(client(["KEY"], calls), { cacheKey: "s3", readPendingChanges: () => true });
 
     for (const context of [noKeys, noClient, pending]) {
       expect(context.startsWith("User context:")).toBe(true);

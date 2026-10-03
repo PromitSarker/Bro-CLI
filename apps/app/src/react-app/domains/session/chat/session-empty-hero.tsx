@@ -10,11 +10,11 @@ import { resolveOrganizationPromptCardContent } from "@/components/chat/task-sug
 import { useCheckDesktopRestriction, useOrgRestrictions } from "@/react-app/domains/cloud/desktop-config-provider";
 import { useDenAuth } from "@/react-app/domains/cloud/den-auth-provider";
 import {
-  getUni-CLIModelsActionUrl,
-  hideUni-CLIModelsPromo,
-  isUni-CLIModelsPromoHidden,
-  uni-cliModelsPromoChangedEvent,
-  useUni-CLIModelsPromoEligibility,
+  getUniCliModelsActionUrl,
+  hideUniCliModelsPromo,
+  isUniCliModelsPromoHidden,
+  uniCliModelsPromoChangedEvent,
+  useUniCliModelsPromoEligibility,
 } from "@/react-app/domains/cloud/uni-cli-models-promo";
 import { usePlatform } from "@/react-app/kernel/platform";
 import { persistableComposerDraftText, useComposerStateStore } from "@/react-app/domains/session/surface/composer-state-store";
@@ -127,13 +127,13 @@ export function SessionEmptyHero(props: SessionEmptyHeroProps) {
   const canAddProviders = !checkDesktopRestriction({ restriction: "allowCustomProviders" });
   const platform = usePlatform();
   const denAuth = useDenAuth();
-  const uni-cliModelsPromoEligible = useUni-CLIModelsPromoEligibility();
-  const [modelsPromoHidden, setModelsPromoHidden] = useState(isUni-CLIModelsPromoHidden);
+  const uniCliModelsPromoEligible = useUniCliModelsPromoEligibility();
+  const [modelsPromoHidden, setModelsPromoHidden] = useState(isUniCliModelsPromoHidden);
 
   useEffect(() => {
-    const handlePromoChanged = () => setModelsPromoHidden(isUni-CLIModelsPromoHidden());
-    window.addEventListener(uni-cliModelsPromoChangedEvent, handlePromoChanged);
-    return () => window.removeEventListener(uni-cliModelsPromoChangedEvent, handlePromoChanged);
+    const handlePromoChanged = () => setModelsPromoHidden(isUniCliModelsPromoHidden());
+    window.addEventListener(uniCliModelsPromoChangedEvent, handlePromoChanged);
+    return () => window.removeEventListener(uniCliModelsPromoChangedEvent, handlePromoChanged);
   }, []);
 
   // A chat deep link (Den's connector "Chat" action) seeds the composer with
@@ -155,9 +155,9 @@ export function SessionEmptyHero(props: SessionEmptyHeroProps) {
   // (the built-in `opencode` provider) and the hosted offering applies.
   const onFreeStarterModel = props.composer?.selectedModel.providerID === DEFAULT_MODEL.providerID;
   const showModelsHint =
-    uni-cliModelsPromoEligible &&
+    uniCliModelsPromoEligible &&
     !modelsPromoHidden &&
-    !props.composer?.uni-cliModelsEntitled &&
+    !props.composer?.uniCliModelsEntitled &&
     onFreeStarterModel;
 
   const organizationPrompts = orgRestrictions.onboardingPrompts;
@@ -229,7 +229,7 @@ export function SessionEmptyHero(props: SessionEmptyHeroProps) {
           <button
             type="button"
             className="flex items-center gap-1 font-medium text-blue-10 transition-colors hover:text-blue-11"
-            onClick={() => platform.openLink(getUni-CLIModelsActionUrl(denAuth.isSignedIn, "sign-up"))}
+            onClick={() => platform.openLink(getUniCliModelsActionUrl(denAuth.isSignedIn, "sign-up"))}
           >
             Get frontier models with no API keys
             <ArrowRight className="size-3" />
@@ -237,7 +237,7 @@ export function SessionEmptyHero(props: SessionEmptyHeroProps) {
           <button
             type="button"
             className="flex size-5 items-center justify-center rounded text-muted-foreground/70 transition-colors hover:text-foreground"
-            onClick={hideUni-CLIModelsPromo}
+            onClick={hideUniCliModelsPromo}
             aria-label="Hide Uni-CLI Models hint"
           >
             <X className="size-3" />

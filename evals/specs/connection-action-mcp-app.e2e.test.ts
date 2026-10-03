@@ -33,7 +33,7 @@ function toolPayload(part: Record<string, unknown>) {
   const state = record(part.state);
   expect(state.status).toBe("completed");
   const metadata = isRecord(state.metadata) ? state.metadata : {};
-  const result = metadata.uni-cliMcpResult ?? metadata.uni-cliMcpApp;
+  const result = metadata.uniCliMcpResult ?? metadata.uniCliMcpApp;
   if (isRecord(result)) {
     expect(result.isError).not.toBe(true);
     if (isRecord(result.structuredContent)) return result.structuredContent;

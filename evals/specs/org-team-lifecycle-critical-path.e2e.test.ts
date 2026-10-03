@@ -369,7 +369,7 @@ test.skipIf(missingRequirements.length > 0)(title, { timeout: 45 * 60_000 }, asy
   const providerName = `Mega OpenAI Models ${stamp}`;
   const teammateEmail = `taylor.critical-path.${stamp}@acme.test`;
   const outsiderEmail = `riley.critical-path.${stamp}@acme.test`;
-  const password = "Uni-CLIEval123!";
+  const password = "UniCliEval123!";
   // The authored skill's marker must survive verbatim model reproduction, so keep it short (base36), like llmNonce below.
   const skillNonce = `critical-path-${stamp.toString(36)}`;
   const skillName = `critical-path-echo-${stamp}`;

@@ -10,7 +10,7 @@ export type FeedbackEmailProps = {
   entrypoint: string
   deployment: string
   appVersion: string
-  uni-cliServerVersion: string
+  uniCliServerVersion: string
   opencodeVersion: string
   osName: string
   osVersion: string
@@ -28,7 +28,7 @@ export function FeedbackEmail({
   entrypoint,
   deployment,
   appVersion,
-  uni-cliServerVersion,
+  uniCliServerVersion,
   opencodeVersion,
   osName,
   osVersion,
@@ -44,7 +44,7 @@ export function FeedbackEmail({
     ["Entrypoint", entrypoint],
     ["Deployment", deployment],
     ["App version", appVersion],
-    ["Uni-CLI server", uni-cliServerVersion],
+    ["Uni-CLI server", uniCliServerVersion],
     ["OpenCode", opencodeVersion],
     ["OS", osLabel],
     ["Platform", platform],

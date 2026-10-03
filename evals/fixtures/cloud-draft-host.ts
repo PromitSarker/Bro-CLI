@@ -22,13 +22,13 @@ export async function reconcileDraftHost(value: unknown) {
   const root = fileURLToPath(new URL("../../", import.meta.url));
   const paths = resolveHeadlessWorldRuntimePaths(root, name);
   const runtime = await readHeadlessRuntimeManifest(paths.runtimeManifestPath);
-  if (!runtime || runtime.uni-cliUrl !== input.uni-cliUrl || runtime.workspace !== input.workspaceRoot) {
+  if (!runtime || runtime.uniCliUrl !== input.uniCliUrl || runtime.workspace !== input.workspaceRoot) {
     throw new Error("Draft fixture could not identify its owned headless runtime");
   }
   const token = text(input.token);
   const appHostToken = text(input.appHostToken);
   const hostHeaders = { "X-Uni-CLI-Host-Token": runtime.hostToken, "Content-Type": "application/json" };
-  const issuedResponse = await fetch(`${runtime.uni-cliUrl}/tokens`, {
+  const issuedResponse = await fetch(`${runtime.uniCliUrl}/tokens`, {
     method: "POST", headers: hostHeaders,
     body: JSON.stringify({ scope: "owner", label: "Synthetic draft setup" }),
     signal: AbortSignal.timeout(15_000),
@@ -38,7 +38,7 @@ export async function reconcileDraftHost(value: unknown) {
   const ownerToken = text(issued.token);
   const ownerId = text(issued.id);
   try {
-    const response = await fetch(`${runtime.uni-cliUrl}/workspace/${encodeURIComponent(text(input.workspaceId))}/mcp/uni-cli-cloud/reconcile`, {
+    const response = await fetch(`${runtime.uniCliUrl}/workspace/${encodeURIComponent(text(input.workspaceId))}/mcp/uni-cli-cloud/reconcile`, {
       method: "POST",
       headers: { Authorization: `Bearer ${ownerToken}`, "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -71,7 +71,7 @@ export async function reconcileDraftHost(value: unknown) {
       jsonBody: Object.keys(body).length > 0,
     };
   } finally {
-    const revoked = await fetch(`${runtime.uni-cliUrl}/tokens/${encodeURIComponent(ownerId)}`, {
+    const revoked = await fetch(`${runtime.uniCliUrl}/tokens/${encodeURIComponent(ownerId)}`, {
       method: "DELETE", headers: hostHeaders, signal: AbortSignal.timeout(15_000),
     });
     if (!revoked.ok) throw new Error(`Draft owner credential revocation failed: ${revoked.status}`);

@@ -1,4 +1,4 @@
-export const Uni-CLIConnectInstaller = () => {
+export const UniCliConnectInstaller = () => {
   const MCP_SERVER_URL = "https://api.uni-clilabs.com/mcp/agent";
   const CURSOR_INSTALL_LINK = "cursor://anysphere.cursor-deeplink/mcp/install?name=uni-cli&config=eyJ1cmwiOiJodHRwczovL2FwaS5vcGVud29ya2xhYnMuY29tL21jcC9hZ2VudCJ9";
   const VS_CODE_INSTALL_LINK = "vscode:mcp/install?%7B%22name%22%3A%22uni-cli%22%2C%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fapi.uni-clilabs.com%2Fmcp%2Fagent%22%7D";

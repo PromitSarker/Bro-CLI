@@ -4,7 +4,7 @@ export const UNICLI_CLOUD_MCP_CONNECTION_ACTION_VERSION = 1 as const
 export const UNICLI_CLOUD_MCP_CONNECTION_ACTION_KIND = "connection_action" as const
 export const UNICLI_CLOUD_MCP_CONNECTION_ACTION_SOURCE = "uni-cli-cloud" as const
 
-export const uni-cliCloudMcpConnectionActionSchema = z.object({
+export const uniCliCloudMcpConnectionActionSchema = z.object({
   version: z.literal(UNICLI_CLOUD_MCP_CONNECTION_ACTION_VERSION),
   kind: z.literal(UNICLI_CLOUD_MCP_CONNECTION_ACTION_KIND),
   source: z.literal(UNICLI_CLOUD_MCP_CONNECTION_ACTION_SOURCE),
@@ -46,7 +46,7 @@ export const uni-cliCloudMcpConnectionActionSchema = z.object({
  * API-key, provider-admin, and support actions remain descriptive because the
  * current member may not own the credential or have permission to repair it.
  */
-export const uni-cliCloudMcpInlineReconnectSchema = uni-cliCloudMcpConnectionActionSchema.extend({
+export const uniCliCloudMcpInlineReconnectSchema = uniCliCloudMcpConnectionActionSchema.extend({
   authType: z.literal("oauth"),
   credentialMode: z.literal("per_member"),
   state: z.literal("reauth_required"),
@@ -58,5 +58,5 @@ export const uni-cliCloudMcpInlineReconnectSchema = uni-cliCloudMcpConnectionAct
   }),
 })
 
-export type uni-cliCloudMcpConnectionAction = z.infer<typeof uni-cliCloudMcpConnectionActionSchema>
-export type uni-cliCloudMcpInlineReconnect = z.infer<typeof uni-cliCloudMcpInlineReconnectSchema>
+export type uniCliCloudMcpConnectionAction = z.infer<typeof uniCliCloudMcpConnectionActionSchema>
+export type uniCliCloudMcpInlineReconnect = z.infer<typeof uniCliCloudMcpInlineReconnectSchema>

@@ -44,7 +44,7 @@ async function memberIdByEmail(admin: DenSession, orgId: string, email: string):
 test(title, { timeout: 300_000 }, async ({ evidence, place }) => {
   const runId = `${Date.now().toString(36)}${process.pid.toString(36)}`;
   const organizationName = `Super-admin SSO ${runId}`;
-  const password = "Uni-CLIEval123!";
+  const password = "UniCliEval123!";
 
   await using den = await server({ place, org: { name: organizationName, members: {} } });
   const superAdmin = await inviteMember(den, "superAdmin", {

@@ -34,7 +34,7 @@ export type UseModelCatalogInput = {
   current?: ModelRef;
   savedSelection?: RetainedModelSelection;
   sessionScoped?: boolean;
-  uni-cliModelsSyncing?: boolean;
+  uniCliModelsSyncing?: boolean;
 };
 
 export type ModelCatalogView = {
@@ -130,7 +130,7 @@ export function useModelCatalog(input: UseModelCatalogInput): ModelCatalogView {
   }) : undefined;
   const options = useMemo(() => withoutBlockedSelection(catalog.options, retainedSelection), [catalog.options, retainedSelection?.model.providerID, retainedSelection?.model.modelID, retainedSelection?.reason]);
   const auto = options.find(isAutoModel);
-  const autoBlocked = Boolean(input.uni-cliModelsSyncing || autoQuery.isError
+  const autoBlocked = Boolean(input.uniCliModelsSyncing || autoQuery.isError
     || (auto && autoStatus && modelRefKey(autoStatus) === modelRefKey(auto) && autoStatus.state !== "ready"));
   const actionOptions = useMemo(() => withAutoActionState(options, { blocked: autoBlocked }), [options, autoBlocked]);
   const hiddenByChoice = retainedSelection?.reason === "policy" || retainedSelection?.reason === "disabled";

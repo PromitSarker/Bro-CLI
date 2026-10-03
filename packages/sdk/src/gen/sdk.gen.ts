@@ -865,8 +865,8 @@ import type {
   PutApiAuthScimV2UsersByUserIdResponses,
   PutV1AdminOrganizationsByOrganizationIdCapabilitiesErrors,
   PutV1AdminOrganizationsByOrganizationIdCapabilitiesResponses,
-  PutV1AdminOrganizationsByOrganizationIduni-cliWebAccessErrors,
-  PutV1AdminOrganizationsByOrganizationIduni-cliWebAccessResponses,
+  PutV1AdminOrganizationsByOrganizationIduniCliWebAccessErrors,
+  PutV1AdminOrganizationsByOrganizationIduniCliWebAccessResponses,
   PutV1CapabilitiesMicrosoft365DriveFilesErrors,
   PutV1CapabilitiesMicrosoft365DriveFilesResponses,
   PutV1DesktopPoliciesByKeyByExternalKeyErrors,
@@ -1263,7 +1263,7 @@ export class DenClient extends HeyApiClient {
    *
    * Toggles complimentary Uni-CLI Web access for the organization and records an audit event. Access cannot be granted while a paid Uni-CLI Web subscription is ongoing. Body: { enabled: boolean, reason: string }.
    */
-  public putV1AdminOrganizationsByOrganizationIduni-cliWebAccess<ThrowOnError extends boolean = false>(
+  public putV1AdminOrganizationsByOrganizationIduniCliWebAccess<ThrowOnError extends boolean = false>(
     parameters: {
       organizationId: string;
     },
@@ -1271,8 +1271,8 @@ export class DenClient extends HeyApiClient {
   ) {
     const params = buildClientParams([parameters], [{ args: [{ in: "path", key: "organizationId" }] }]);
     return (options?.client ?? this.client).put<
-      PutV1AdminOrganizationsByOrganizationIduni-cliWebAccessResponses,
-      PutV1AdminOrganizationsByOrganizationIduni-cliWebAccessErrors,
+      PutV1AdminOrganizationsByOrganizationIduniCliWebAccessResponses,
+      PutV1AdminOrganizationsByOrganizationIduniCliWebAccessErrors,
       ThrowOnError
     >({
       url: "/v1/admin/organizations/{organizationId}/uni-cli-web-access",

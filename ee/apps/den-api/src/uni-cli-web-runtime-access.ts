@@ -3,7 +3,7 @@
  *
  * Desktop-first rollout, already complete on the client side: published
  * desktop builds since v0.18.42 (#4214) wrap the hosted gateway runtime in
- * `Uni-CLIWebAccessGate`
+ * `UniCliWebAccessGate`
  * (apps/app/src/react-app/domains/cloud/uni-cli-web-access-gate.tsx), which
  * resolves Web access through `GET /v1/org` + `GET /v1/billing/web` and renders
  * the access screen before any Cloud instance, worker, or remote-session route
@@ -22,38 +22,38 @@
  * packages/types/src/automations.ts.
  */
 import { normalizeDenTypeId } from "@uni-cli-ee/utils/typeid"
-import { Uni-CLIWebAccessRequiredError } from "./uni-cli-web-access-error.js"
-import { getUni-CLIWebAccess } from "./stripe-billing.js"
+import { UniCliWebAccessRequiredError } from "./uni-cli-web-access-error.js"
+import { getUniCliWebAccess } from "./stripe-billing.js"
 
 export {
   UNICLI_WEB_ACCESS_REQUIRED_CODE,
   UNICLI_WEB_ACCESS_REQUIRED_MESSAGE,
-  Uni-CLIWebAccessRequiredError,
-  uni-cliWebAccessRequiredPayload,
+  UniCliWebAccessRequiredError,
+  uniCliWebAccessRequiredPayload,
 } from "./uni-cli-web-access-error.js"
 
-export type Uni-CLIWebRuntimeAccess = {
+export type UniCliWebRuntimeAccess = {
   hasAccess: boolean
 }
 
-export type Uni-CLIWebRuntimeAccessResolver = (
+export type UniCliWebRuntimeAccessResolver = (
   organizationId: string,
-) => Promise<Uni-CLIWebRuntimeAccess>
+) => Promise<UniCliWebRuntimeAccess>
 
-export const getUni-CLIWebRuntimeAccess: Uni-CLIWebRuntimeAccessResolver = async (organizationId) => {
-  const access = await getUni-CLIWebAccess(
+export const getUniCliWebRuntimeAccess: UniCliWebRuntimeAccessResolver = async (organizationId) => {
+  const access = await getUniCliWebAccess(
     normalizeDenTypeId("organization", organizationId),
   )
   return { hasAccess: access.hasAccess }
 }
 
-export async function requireUni-CLIWebRuntimeAccess(
+export async function requireUniCliWebRuntimeAccess(
   organizationId: string,
-  resolveAccess: Uni-CLIWebRuntimeAccessResolver = getUni-CLIWebRuntimeAccess,
+  resolveAccess: UniCliWebRuntimeAccessResolver = getUniCliWebRuntimeAccess,
 ) {
   const access = await resolveAccess(organizationId)
   if (!access.hasAccess) {
-    throw new Uni-CLIWebAccessRequiredError()
+    throw new UniCliWebAccessRequiredError()
   }
   return access
 }

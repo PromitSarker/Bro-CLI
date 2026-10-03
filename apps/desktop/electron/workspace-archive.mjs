@@ -240,7 +240,7 @@ function isSafeArchivePath(name) {
   return !normalized.split("/").some((part) => part === ".." || part === "");
 }
 
-function defaultuni-cliConfig(targetDir, preset = "starter") {
+function defaultuniCliConfig(targetDir, preset = "starter") {
   return {
     version: 1,
     workspace: {
@@ -307,12 +307,12 @@ export async function importWorkspaceConfig({ archivePath, targetDir, name }) {
   const opencodeDir = path.join(targetDir, ".opencode");
   if (!(await pathExists(opencodeDir))) throw new Error("Archive is missing .opencode config");
 
-  const uni-cliPath = path.join(opencodeDir, "uni-cli.json");
+  const uniCliPath = path.join(opencodeDir, "uni-cli.json");
   let preset = "starter";
   let workspaceName = typeof name === "string" && name.trim() ? name.trim() : null;
 
-  if (await pathExists(uni-cliPath)) {
-    const raw = await readFile(uni-cliPath, "utf8");
+  if (await pathExists(uniCliPath)) {
+    const raw = await readFile(uniCliPath, "utf8");
     try {
       const config = JSON.parse(raw);
       config.authorizedRoots = [targetDir];
@@ -322,14 +322,14 @@ export async function importWorkspaceConfig({ archivePath, targetDir, name }) {
       if (typeof config.workspace?.preset === "string" && config.workspace.preset.trim()) {
         preset = config.workspace.preset.trim();
       }
-      await writeFile(uni-cliPath, `${JSON.stringify(config, null, 2)}\n`, "utf8");
+      await writeFile(uniCliPath, `${JSON.stringify(config, null, 2)}\n`, "utf8");
     } catch {
-      const config = defaultuni-cliConfig(targetDir, preset);
-      await writeFile(uni-cliPath, `${JSON.stringify(config, null, 2)}\n`, "utf8");
+      const config = defaultuniCliConfig(targetDir, preset);
+      await writeFile(uniCliPath, `${JSON.stringify(config, null, 2)}\n`, "utf8");
     }
   } else {
-    const config = defaultuni-cliConfig(targetDir, preset);
-    await writeFile(uni-cliPath, `${JSON.stringify(config, null, 2)}\n`, "utf8");
+    const config = defaultuniCliConfig(targetDir, preset);
+    await writeFile(uniCliPath, `${JSON.stringify(config, null, 2)}\n`, "utf8");
   }
 
   return {

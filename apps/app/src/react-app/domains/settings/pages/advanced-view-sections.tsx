@@ -9,7 +9,7 @@ import { Field, FieldLabel } from "@/components/ui/field";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import type { uni-cliServerClient, uni-cliCloudMcpHealth, uni-cliRuntimeConfigStatus, uni-cliServerStatus } from "@/app/lib/uni-cli-server";
+import type { uniCliServerClient, uniCliCloudMcpHealth, uniCliRuntimeConfigStatus, uniCliServerStatus } from "@/app/lib/uni-cli-server";
 import { sanitizeCloudMcpHealthDiagnostic, sanitizeDiagnosticRecord } from "@/app/lib/diagnostic-sanitizer";
 import {
   DEFAULT_DEN_API_BASE_URL,
@@ -295,9 +295,9 @@ interface AdvancedRuntimeSectionProps {
   clientStatusLabel: string;
   clientTone: SettingsTone;
   clientDetailLines: string[];
-  uni-cliStatusLabel: string;
-  uni-cliTone: SettingsTone;
-  uni-cliDetailLines: string[];
+  uniCliStatusLabel: string;
+  uniCliTone: SettingsTone;
+  uniCliDetailLines: string[];
 }
 
 export function AdvancedRuntimeSection(props: AdvancedRuntimeSectionProps) {
@@ -321,9 +321,9 @@ export function AdvancedRuntimeSection(props: AdvancedRuntimeSectionProps) {
           icon={<Server size={18} />}
           title={t("settings.uni-cli_server_label")}
           description={t("settings.uni-cli_server_desc")}
-          statusLabel={props.uni-cliStatusLabel}
-          tone={props.uni-cliTone}
-          detailLines={props.uni-cliDetailLines}
+          statusLabel={props.uniCliStatusLabel}
+          tone={props.uniCliTone}
+          detailLines={props.uniCliDetailLines}
         />
       </div>
     </LayoutSection>
@@ -353,11 +353,11 @@ function formatMetadataRecord(value: Record<string, string | number | boolean | 
   return Object.entries(value).map(([key, nested]) => `${key}=${formatMaybe(nested)}`).join(", ");
 }
 
-function formatSupportedFeatures(features: uni-cliCloudMcpHealth["compatibility"]["supportedFeatures"]): string {
+function formatSupportedFeatures(features: uniCliCloudMcpHealth["compatibility"]["supportedFeatures"]): string {
   return Object.entries(features).map(([key, enabled]) => `${key}:${enabled ? "yes" : "no"}`).join(", ");
 }
 
-function formatPluginHashes(hashes: uni-cliCloudMcpHealth["compatibility"]["pluginFileHashes"]): string {
+function formatPluginHashes(hashes: uniCliCloudMcpHealth["compatibility"]["pluginFileHashes"]): string {
   if (hashes.length === 0) return "none";
   return hashes.map((hash) => `${hash.name}=${hash.sha256 ? hash.sha256.slice(0, 12) : `unavailable${hash.error ? ` (${hash.error})` : ""}`}`).join(", ");
 }
@@ -369,8 +369,8 @@ function formatMcpToolExposure(input: { checked: boolean; includesMcpTools: bool
 }
 
 interface AdvancedCloudMcpDiagnosticsSectionProps {
-  cloudMcpHealth: uni-cliCloudMcpHealth | null;
-  onRefresh: () => Promise<uni-cliCloudMcpHealth | null>;
+  cloudMcpHealth: uniCliCloudMcpHealth | null;
+  onRefresh: () => Promise<uniCliCloudMcpHealth | null>;
 }
 
 export function AdvancedCloudMcpDiagnosticsSection(props: AdvancedCloudMcpDiagnosticsSectionProps) {
@@ -491,7 +491,7 @@ export function AdvancedCloudMcpDiagnosticsSection(props: AdvancedCloudMcpDiagno
 interface AdvancedRuntimeConfigSourcesSectionProps {
   busy: boolean;
   canInspect: boolean;
-  configStatus: uni-cliRuntimeConfigStatus | null;
+  configStatus: uniCliRuntimeConfigStatus | null;
   configStatusBusy: boolean;
   configStatusError: string | null;
   onRefresh: () => Promise<void>;
@@ -809,7 +809,7 @@ export function AdvancedFeatureFlagsSection(props: AdvancedFeatureFlagsSectionPr
   );
 }
 
-export function AdvancedEngineV2PreviewSection(props: { client: uni-cliServerClient | null }) {
+export function AdvancedEngineV2PreviewSection(props: { client: uniCliServerClient | null }) {
   const engine = useOpencodeEngineControls(props.client);
   const runtimeError = engine.status?.enabled ? engine.status.lastError : undefined;
   const engineNote = engine.blockedReason ?? (engine.migrating ? "Wait for chat migration to finish." : undefined);
@@ -941,9 +941,9 @@ interface AdvancedConnectionSectionProps {
   busy: boolean;
   headerStatus: string;
   baseUrl: string;
-  uni-cliServerUrl: string;
-  uni-cliServerStatus: uni-cliServerStatus;
-  uni-cliReconnectBusy: boolean;
+  uniCliServerUrl: string;
+  uniCliServerStatus: uniCliServerStatus;
+  uniCliReconnectBusy: boolean;
   isLocalEngineRunning: boolean;
   restartBusy: boolean;
   reconnectStatus: string | null;
@@ -971,10 +971,10 @@ export function AdvancedConnectionSection(props: AdvancedConnectionSectionProps)
             variant="outline"
             size="sm"
             onClick={() => void props.onReconnect()}
-            disabled={props.busy || props.uni-cliReconnectBusy || !props.uni-cliServerUrl.trim()}
+            disabled={props.busy || props.uniCliReconnectBusy || !props.uniCliServerUrl.trim()}
           >
-            <RefreshCcw size={14} className={props.uni-cliReconnectBusy ? "animate-spin" : ""} />
-            {props.uni-cliReconnectBusy ? t("settings.reconnecting") : t("settings.reconnect_server")}
+            <RefreshCcw size={14} className={props.uniCliReconnectBusy ? "animate-spin" : ""} />
+            {props.uniCliReconnectBusy ? t("settings.reconnecting") : t("settings.reconnect_server")}
           </Button>
 
           {props.isLocalEngineRunning ? (
@@ -1003,7 +1003,7 @@ export function AdvancedConnectionSection(props: AdvancedConnectionSectionProps)
             </Button>
           ) : null}
 
-          {!props.isLocalEngineRunning && props.uni-cliServerStatus === "connected" ? (
+          {!props.isLocalEngineRunning && props.uniCliServerStatus === "connected" ? (
             <Button
               type="button"
               variant="outline"

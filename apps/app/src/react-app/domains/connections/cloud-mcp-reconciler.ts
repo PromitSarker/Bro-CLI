@@ -4,12 +4,12 @@ import {
   resolveCloudMcpResourceUrl,
 } from "../../../app/lib/den";
 import type {
-  uni-cliCloudMcpEngineRefresh,
-  uni-cliCloudMcpEngineRefreshResult,
-  uni-cliCloudMcpFailure,
-  uni-cliCloudMcpHealth,
-  uni-cliCloudMcpProviderModelContext,
-  uni-cliCloudMcpReconcilePayload,
+  uniCliCloudMcpEngineRefresh,
+  uniCliCloudMcpEngineRefreshResult,
+  uniCliCloudMcpFailure,
+  uniCliCloudMcpHealth,
+  uniCliCloudMcpProviderModelContext,
+  uniCliCloudMcpReconcilePayload,
 } from "../../../app/lib/uni-cli-server";
 import {
   CLOUD_MCP_SERVER_NAME,
@@ -36,23 +36,23 @@ export const UNICLI_CLOUD_EXPECTED_TOOLS = [
 
 export type CloudMcpClient = {
   baseUrl: string;
-  getuni-cliCloudMcpHealth: (
+  getuniCliCloudMcpHealth: (
     workspaceId: string,
-    providerModel?: uni-cliCloudMcpProviderModelContext,
+    providerModel?: uniCliCloudMcpProviderModelContext,
     options?: { probe?: boolean },
-  ) => Promise<uni-cliCloudMcpHealth>;
-  reconcileuni-cliCloudMcp: (
+  ) => Promise<uniCliCloudMcpHealth>;
+  reconcileuniCliCloudMcp: (
     workspaceId: string,
-    payload: uni-cliCloudMcpReconcilePayload,
-  ) => Promise<uni-cliCloudMcpHealth>;
-  refreshuni-cliCloudMcpCatalog?: (
+    payload: uniCliCloudMcpReconcilePayload,
+  ) => Promise<uniCliCloudMcpHealth>;
+  refreshuniCliCloudMcpCatalog?: (
     workspaceId: string,
-    providerModel?: uni-cliCloudMcpProviderModelContext,
-  ) => Promise<uni-cliCloudMcpHealth>;
-  refreshuni-cliCloudMcpEngine?: (
+    providerModel?: uniCliCloudMcpProviderModelContext,
+  ) => Promise<uniCliCloudMcpHealth>;
+  refreshuniCliCloudMcpEngine?: (
     workspaceId: string,
     payload?: { provider?: string; model?: string; trigger?: string },
-  ) => Promise<uni-cliCloudMcpEngineRefreshResult>;
+  ) => Promise<uniCliCloudMcpEngineRefreshResult>;
 };
 
 export type CloudMcpOperationContext = CloudMcpScope & {
@@ -60,7 +60,7 @@ export type CloudMcpOperationContext = CloudMcpScope & {
   orgSlug?: string | null;
   orgName?: string | null;
   fallbackUrl?: string | null;
-  providerModel?: uni-cliCloudMcpProviderModelContext;
+  providerModel?: uniCliCloudMcpProviderModelContext;
   connectCatalogEnabled?: boolean;
   trigger?: string;
 };
@@ -69,7 +69,7 @@ export type CloudMcpOperationMode = "health" | "repair";
 
 export type CloudMcpOperationResult = {
   status: "checked" | "ready" | "repaired" | "unchanged" | "skipped" | "failed";
-  health: uni-cliCloudMcpHealth | null;
+  health: uniCliCloudMcpHealth | null;
   skippedReason?: "signed_out" | "missing_org" | "missing_workspace" | "disabled" | "deduped" | "mint_failed";
   attempts: number;
   markerWritten: boolean;
@@ -129,7 +129,7 @@ function normalizeCode(code: string | null | undefined): string {
   return code?.trim().toLowerCase().replace(/[-.]/g, "_") ?? "";
 }
 
-function isProviderProjectionFailure(failure?: uni-cliCloudMcpFailure | null): boolean {
+function isProviderProjectionFailure(failure?: uniCliCloudMcpFailure | null): boolean {
   if (!failure) return false;
   if (failure.stage === "provider_projection") return true;
   const code = normalizeCode(failure.code);
@@ -183,10 +183,10 @@ function resolveMcpUrl(token: DenMcpToken, fallbackUrl?: string | null): string 
   return fallback || null;
 }
 
-export function builduni-cliCloudMcpReconcilePayload(input: {
+export function builduniCliCloudMcpReconcilePayload(input: {
   context: CloudMcpOperationContext;
   token: DenMcpToken;
-}): uni-cliCloudMcpReconcilePayload | null {
+}): uniCliCloudMcpReconcilePayload | null {
   const workspaceId = input.context.workspaceId.trim();
   const url = resolveMcpUrl(input.token, input.context.fallbackUrl);
   if (!workspaceId || !url) return null;
@@ -250,7 +250,7 @@ export function isCloudMcpAuthTokenFailureCode(code: string | null | undefined):
  * direct-probe 401 reports code `invalid_mcp_token` with alias
  * `uni-cli_cloud_token_expired`). Remint decisions must consider both.
  */
-export function isCloudMcpAuthTokenFailure(failure: Pick<uni-cliCloudMcpFailure, "code" | "aliases"> | null | undefined): boolean {
+export function isCloudMcpAuthTokenFailure(failure: Pick<uniCliCloudMcpFailure, "code" | "aliases"> | null | undefined): boolean {
   if (!failure) return false;
   if (isCloudMcpAuthTokenFailureCode(failure.code)) return true;
   return (failure.aliases ?? []).some((alias) => isCloudMcpAuthTokenFailureCode(alias));
@@ -274,7 +274,7 @@ function shouldSkipForPrerequisite(input: CloudMcpReconcilerInput, scope: CloudM
 }
 
 function writeUsableMarker(input: {
-  health: uni-cliCloudMcpHealth | null;
+  health: uniCliCloudMcpHealth | null;
   scope: CloudMcpScope;
   expiresAt: string | null;
 }): boolean {
@@ -284,7 +284,7 @@ function writeUsableMarker(input: {
 }
 
 async function probeHealth(input: CloudMcpReconcilerInput, scope: CloudMcpScope, options?: { writeFreshnessMarker?: boolean }): Promise<CloudMcpOperationResult> {
-  const health = await input.client.getuni-cliCloudMcpHealth(
+  const health = await input.client.getuniCliCloudMcpHealth(
     scope.workspaceId,
     input.context.providerModel,
     input.probe ? { probe: true } : undefined,
@@ -302,22 +302,22 @@ async function probeHealth(input: CloudMcpReconcilerInput, scope: CloudMcpScope,
   };
 }
 
-async function mintAndPost(input: CloudMcpReconcilerInput, scope: CloudMcpScope): Promise<{ health: uni-cliCloudMcpHealth | null; token: DenMcpToken | null }> {
+async function mintAndPost(input: CloudMcpReconcilerInput, scope: CloudMcpScope): Promise<{ health: uniCliCloudMcpHealth | null; token: DenMcpToken | null }> {
   const token = await input.mintToken({
     baseUrl: scope.denBaseUrl,
     authToken: input.context.denAuthToken,
     orgId: scope.orgId,
   });
   if (!token) return { health: null, token: null };
-  const payload = builduni-cliCloudMcpReconcilePayload({ context: { ...input.context, ...scope }, token });
+  const payload = builduniCliCloudMcpReconcilePayload({ context: { ...input.context, ...scope }, token });
   if (!payload) return { health: null, token };
   return {
-    health: await input.client.reconcileuni-cliCloudMcp(scope.workspaceId, payload),
+    health: await input.client.reconcileuniCliCloudMcp(scope.workspaceId, payload),
     token,
   };
 }
 
-function needsAppHostAuthorizationRepair(health: uni-cliCloudMcpHealth, scope: CloudMcpScope, now: number): boolean {
+function needsAppHostAuthorizationRepair(health: uniCliCloudMcpHealth, scope: CloudMcpScope, now: number): boolean {
   if (health.appHostAuthorizationReady !== false) return false;
   const attempt = readCloudMcpUnhealthyRemintAttempt(scope);
   if (!attempt) return true;
@@ -330,15 +330,15 @@ async function refreshHealthyCloudCatalog(
   scope: CloudMcpScope,
   result: CloudMcpOperationResult,
 ): Promise<CloudMcpOperationResult> {
-  if (result.health?.appHostAuthorizationReady !== true || !input.client.refreshuni-cliCloudMcpCatalog) return result;
-  const health = await input.client.refreshuni-cliCloudMcpCatalog(scope.workspaceId, input.context.providerModel);
+  if (result.health?.appHostAuthorizationReady !== true || !input.client.refreshuniCliCloudMcpCatalog) return result;
+  const health = await input.client.refreshuniCliCloudMcpCatalog(scope.workspaceId, input.context.providerModel);
   const refreshed = health.connectCatalogDiagnostic === "ready" || health.connectCatalogDiagnostic === "empty";
   return { ...result, health, status: !health.usable ? "failed" : refreshed ? "repaired" : "unchanged" };
 }
 
 async function repairCloudMcp(input: CloudMcpReconcilerInput, scope: CloudMcpScope): Promise<CloudMcpOperationResult> {
   const now = input.now ?? Date.now();
-  let appHostOnlyHealth: uni-cliCloudMcpHealth | null = null;
+  let appHostOnlyHealth: uniCliCloudMcpHealth | null = null;
   if (!input.force) {
     const healthResult = await probeHealth(input, scope, { writeFreshnessMarker: true });
     if (healthResult.health?.appHostAuthorizationReady === true) clearCloudMcpUnhealthyRemintAttempt(scope);
@@ -354,7 +354,7 @@ async function repairCloudMcp(input: CloudMcpReconcilerInput, scope: CloudMcpSco
     now,
     refreshMarginMs: input.refreshMarginMs,
   })) {
-    const health = await input.client.getuni-cliCloudMcpHealth(scope.workspaceId, input.context.providerModel);
+    const health = await input.client.getuniCliCloudMcpHealth(scope.workspaceId, input.context.providerModel);
     if (health.usable && !needsAppHostAuthorizationRepair(health, scope, now)) {
       return refreshHealthyCloudCatalog(input, scope, { status: "unchanged", health, attempts: 0, markerWritten: false, reminted: false });
     }
@@ -406,7 +406,7 @@ async function repairCloudMcp(input: CloudMcpReconcilerInput, scope: CloudMcpSco
   };
 }
 
-export async function rununi-cliCloudMcpReconciler(input: CloudMcpReconcilerInput): Promise<CloudMcpOperationResult> {
+export async function rununiCliCloudMcpReconciler(input: CloudMcpReconcilerInput): Promise<CloudMcpOperationResult> {
   const scope = normalizedContextScope(input.context);
   if (!scope) return { status: "skipped", health: null, skippedReason: "missing_workspace", attempts: 0, markerWritten: false, reminted: false };
   const prerequisite = shouldSkipForPrerequisite(input, scope);
@@ -428,8 +428,8 @@ export async function rununi-cliCloudMcpReconciler(input: CloudMcpReconcilerInpu
 export type CloudMcpEngineRefreshRunResult = {
   status: "refreshed" | "failed" | "skipped";
   skippedReason?: "missing_workspace" | "unsupported";
-  health: uni-cliCloudMcpHealth | null;
-  refresh: uni-cliCloudMcpEngineRefresh | null;
+  health: uniCliCloudMcpHealth | null;
+  refresh: uniCliCloudMcpEngineRefresh | null;
 };
 
 const engineRefreshInFlight = new Map<string, Promise<CloudMcpEngineRefreshRunResult>>();
@@ -440,7 +440,7 @@ const engineRefreshInFlight = new Map<string, Promise<CloudMcpEngineRefreshRunRe
  * the explicit "try again from scratch" lever: engine disconnect, then
  * re-registration from the persisted desired config, then a direct probe.
  */
-export async function rununi-cliCloudMcpEngineRefresh(input: {
+export async function rununiCliCloudMcpEngineRefresh(input: {
   client: CloudMcpClient;
   context: CloudMcpOperationContext;
 }): Promise<CloudMcpEngineRefreshRunResult> {
@@ -448,7 +448,7 @@ export async function rununi-cliCloudMcpEngineRefresh(input: {
   if (!scope?.workspaceId) {
     return { status: "skipped", skippedReason: "missing_workspace", health: null, refresh: null };
   }
-  const refreshEngine = input.client.refreshuni-cliCloudMcpEngine;
+  const refreshEngine = input.client.refreshuniCliCloudMcpEngine;
   if (!refreshEngine) {
     return { status: "skipped", skippedReason: "unsupported", health: null, refresh: null };
   }
@@ -480,7 +480,7 @@ export function cloudMcpFailureStageLabel(input: {
   signedIn: boolean;
   orgSelected: boolean;
   userState?: CloudMcpUserState | null;
-  health?: uni-cliCloudMcpHealth | null;
+  health?: uniCliCloudMcpHealth | null;
 }): string {
   if (!input.signedIn) return "Sign in required";
   if (!input.orgSelected) return "Select an organization";
@@ -503,7 +503,7 @@ export function cloudMcpRecommendedAction(input: {
   signedIn: boolean;
   orgSelected: boolean;
   userState?: CloudMcpUserState | null;
-  health?: uni-cliCloudMcpHealth | null;
+  health?: uniCliCloudMcpHealth | null;
 }): string {
   if (!input.signedIn) return "Sign in to Uni-CLI Cloud.";
   if (!input.orgSelected) return "Choose the organization agents should use.";
@@ -532,7 +532,7 @@ export function cloudMcpDisplaySummary(input: {
   orgSelected: boolean;
   connecting: boolean;
   userState?: CloudMcpUserState | null;
-  health?: uni-cliCloudMcpHealth | null;
+  health?: uniCliCloudMcpHealth | null;
 }): CloudMcpDisplaySummary {
   if (input.connecting) {
     return {
@@ -582,9 +582,9 @@ export function cloudMcpDisplaySummary(input: {
   };
 }
 
-export async function cleanupuni-cliCloudMcpAfterSignOut(input: {
+export async function cleanupuniCliCloudMcpAfterSignOut(input: {
   context: CloudMcpScope;
-  uni-cliClient: CleanupClient | null;
+  uniCliClient: CleanupClient | null;
   opencodeClient: OpenCodeDisconnectClient | null;
   directory: string;
 }): Promise<void> {
@@ -592,8 +592,8 @@ export async function cleanupuni-cliCloudMcpAfterSignOut(input: {
   if (scope) clearCloudMcpScopedMetadata(scope);
 
   await Promise.all([
-    input.uni-cliClient && scope
-      ? input.uni-cliClient.removeMcp(scope.workspaceId, CLOUD_MCP_SERVER_NAME).catch(() => null)
+    input.uniCliClient && scope
+      ? input.uniCliClient.removeMcp(scope.workspaceId, CLOUD_MCP_SERVER_NAME).catch(() => null)
       : Promise.resolve(null),
     input.opencodeClient && input.directory.trim()
       ? input.opencodeClient.mcp.disconnect({ directory: input.directory.trim(), name: CLOUD_MCP_SERVER_NAME }).catch(() => null)

@@ -30,7 +30,7 @@ function parsePendingChangesState(raw: string | null): PendingChangesState {
   }
 }
 
-export function builduni-cliEnvRuntimeKey(input: {
+export function builduniCliEnvRuntimeKey(input: {
   baseUrl?: string | null;
   pid?: number | null;
   port?: number | null;
@@ -47,7 +47,7 @@ export function builduni-cliEnvRuntimeKey(input: {
   return `${baseUrl || "uni-cli"}::${runtime || "runtime"}`;
 }
 
-export function readuni-cliEnvPendingChanges(runtimeKey?: string | null): boolean {
+export function readuniCliEnvPendingChanges(runtimeKey?: string | null): boolean {
   const localStorage = getStorage("localStorage");
   const sessionStorage = getStorage("sessionStorage");
   const state = parsePendingChangesState(localStorage?.getItem(PENDING_CHANGES_KEY) ?? null);
@@ -59,14 +59,14 @@ export function readuni-cliEnvPendingChanges(runtimeKey?: string | null): boolea
 
   const currentRuntimeKey = runtimeKey?.trim() || undefined;
   if (currentRuntimeKey && pending.runtimeKey && pending.runtimeKey !== currentRuntimeKey) {
-    writeuni-cliEnvPendingChanges(false);
+    writeuniCliEnvPendingChanges(false);
     return false;
   }
 
   return true;
 }
 
-export function writeuni-cliEnvPendingChanges(value: boolean, runtimeKey?: string | null): void {
+export function writeuniCliEnvPendingChanges(value: boolean, runtimeKey?: string | null): void {
   const localStorage = getStorage("localStorage");
   const sessionStorage = getStorage("sessionStorage");
   try {

@@ -107,7 +107,7 @@ import {
   upsertPluginMcpRequirementBinding,
   type PluginMcpRequirementBindingRow,
 } from "../../../mcp/plugin-mcp-requirement-bindings.js"
-import { uni-cliYourConnectionsUrl } from "../../../mcp/connection-navigation.js"
+import { uniCliYourConnectionsUrl } from "../../../mcp/connection-navigation.js"
 import {
   declaredPluginMcpAuthType,
   requiredPluginMcpAuthType,
@@ -866,7 +866,7 @@ const RETIRED_GOOGLE_WORKSPACE_MANIFEST = {
   ],
 } as const
 
-function defaultUni-CLIManifestForPlugin(row: PluginRow) {
+function defaultUniCliManifestForPlugin(row: PluginRow) {
   return DEFAULT_UNICLI_EXTENSION_MANIFESTS.find((manifest) => manifest.name === row.name && manifest.description === row.description) ?? null
 }
 
@@ -902,7 +902,7 @@ function serializedPluginSourceFormat(row: PluginRow) {
 function serializePluginExtension(row: PluginRow, componentCounts: Record<string, number>) {
   const builtInManifest = row.name === RETIRED_GOOGLE_WORKSPACE_MANIFEST.name && row.description === RETIRED_GOOGLE_WORKSPACE_MANIFEST.description
     ? RETIRED_GOOGLE_WORKSPACE_MANIFEST
-    : defaultUni-CLIManifestForPlugin(row)
+    : defaultUniCliManifestForPlugin(row)
   if (builtInManifest) {
     return {
       description: builtInManifest.description,
@@ -3041,7 +3041,7 @@ export async function removePluginMembership(input: { configObjectId: ConfigObje
 }
 
 export async function listMarketplaces(input: { context: PluginArchActorContext; cursor?: string; limit?: number; q?: string; status?: MarketplaceRow["status"] }) {
-  await ensureDefaultUni-CLIMarketplace(input.context)
+  await ensureDefaultUniCliMarketplace(input.context)
 
   const rows = await db
     .select()
@@ -3079,9 +3079,9 @@ export async function listMarketplaces(input: { context: PluginArchActorContext;
   return pageItems(visible, input.cursor, input.limit)
 }
 
-async function ensureDefaultUni-CLIMarketplace(context: PluginArchActorContext) {
+async function ensureDefaultUniCliMarketplace(context: PluginArchActorContext) {
   const organizationId = context.organizationContext.organization.id
-  if (await defaultUni-CLIMarketplaceSeedComplete(organizationId)) {
+  if (await defaultUniCliMarketplaceSeedComplete(organizationId)) {
     return
   }
 
@@ -3096,7 +3096,7 @@ async function ensureDefaultUni-CLIMarketplace(context: PluginArchActorContext) 
 
     const now = new Date()
     await retireStarterPlaceholders({ database: tx, organizationId, retiredAt: now })
-    await retireDefaultUni-CLIPlugins({ database: tx, organizationId, retiredAt: now })
+    await retireDefaultUniCliPlugins({ database: tx, organizationId, retiredAt: now })
 
     const marketplace = await ensureDefaultMarketplace({
       context,
@@ -3116,12 +3116,12 @@ async function ensureDefaultUni-CLIMarketplace(context: PluginArchActorContext) 
   })
 }
 
-async function defaultUni-CLIMarketplaceSeedComplete(organizationId: OrganizationId) {
+async function defaultUniCliMarketplaceSeedComplete(organizationId: OrganizationId) {
   const retirable = await findRetirableStarterPlaceholders(db, organizationId)
   if (retirable.memberships.length > 0 || retirable.emptyMarketplaceIds.length > 0) {
     return false
   }
-  if ((await findRetirableDefaultUni-CLIPluginIds(db, organizationId)).length > 0) {
+  if ((await findRetirableDefaultUniCliPluginIds(db, organizationId)).length > 0) {
     return false
   }
 
@@ -3134,12 +3134,12 @@ async function defaultUni-CLIMarketplaceSeedComplete(organizationId: Organizatio
       eq(MarketplaceTable.status, "active"),
       isNull(MarketplaceTable.deletedAt),
     ))
-  const uni-cliMarketplaceId = defaultMarketplaces.find((marketplace) => marketplace.logoUrl === DEFAULT_UNICLI_MARKETPLACE_LOGO_URL)?.id
-  if (!uni-cliMarketplaceId) {
+  const uniCliMarketplaceId = defaultMarketplaces.find((marketplace) => marketplace.logoUrl === DEFAULT_UNICLI_MARKETPLACE_LOGO_URL)?.id
+  if (!uniCliMarketplaceId) {
     return false
   }
 
-  const marketplaceIds = [uni-cliMarketplaceId]
+  const marketplaceIds = [uniCliMarketplaceId]
   const marketplaceGrantRows = await db
     .select({ marketplaceId: MarketplaceAccessGrantTable.marketplaceId, role: MarketplaceAccessGrantTable.role })
     .from(MarketplaceAccessGrantTable)
@@ -3194,7 +3194,7 @@ async function defaultUni-CLIMarketplaceSeedComplete(organizationId: Organizatio
   const expectedMemberships = new Set<string>()
   for (const entry of defaultPluginEntries) {
     const pluginId = pluginIdByEntry.get(defaultMarketplacePluginEntryKey(entry))
-    if (pluginId) expectedMemberships.add(defaultMarketplacePluginMembershipKey(uni-cliMarketplaceId, pluginId))
+    if (pluginId) expectedMemberships.add(defaultMarketplacePluginMembershipKey(uniCliMarketplaceId, pluginId))
   }
 
   const membershipRows = await db
@@ -3297,7 +3297,7 @@ async function retireStarterPlaceholders(input: { database: DbTransaction; organ
  * Retired built-in plugins are retired only while they are still the untouched
  * system seed: no source, no contents. Anything imported or filled in stays.
  */
-async function findRetirableDefaultUni-CLIPluginIds(database: typeof db | DbTransaction, organizationId: OrganizationId) {
+async function findRetirableDefaultUniCliPluginIds(database: typeof db | DbTransaction, organizationId: OrganizationId) {
   if (RETIRED_DEFAULT_UNICLI_PLUGINS.length === 0) return []
   const rows = await database
     .select({ description: PluginTable.description, id: PluginTable.id, name: PluginTable.name })
@@ -3321,8 +3321,8 @@ async function findRetirableDefaultUni-CLIPluginIds(database: typeof db | DbTran
     .map((row) => row.id)
 }
 
-async function retireDefaultUni-CLIPlugins(input: { database: DbTransaction; organizationId: OrganizationId; retiredAt: Date }) {
-  const pluginIds = await findRetirableDefaultUni-CLIPluginIds(input.database, input.organizationId)
+async function retireDefaultUniCliPlugins(input: { database: DbTransaction; organizationId: OrganizationId; retiredAt: Date }) {
+  const pluginIds = await findRetirableDefaultUniCliPluginIds(input.database, input.organizationId)
   if (pluginIds.length === 0) return
   await input.database.update(MarketplacePluginTable)
     .set({ removedAt: input.retiredAt })
@@ -3707,7 +3707,7 @@ export async function getMarketplaceResolved(input: { context: PluginArchActorCo
           teamIds: input.context.memberTeams.map((team) => team.id),
         },
         pluginIds,
-        desktopManifestPluginIds: pluginRows.flatMap((row) => defaultUni-CLIManifestForPlugin(row) ? [row.id] : []),
+        desktopManifestPluginIds: pluginRows.flatMap((row) => defaultUniCliManifestForPlugin(row) ? [row.id] : []),
       })
     : new Map<string, never>()
 
@@ -5717,14 +5717,14 @@ function connectionBackedMcpPayload(input: {
       [serverName]: {
         type: "remote",
         url: input.server.url,
-        uni-cliManaged: "den_external_mcp",
+        uniCliManaged: "den_external_mcp",
         externalMcpConnectionId: input.connectionId,
         externalMcpConnectionOwnedByPlugin: input.ownedByPlugin,
         requiredAuthType: input.authType,
         ...(input.authType === "oauth" ? { oauth: true } : {}),
       },
     },
-    uni-cliManaged: "den_external_mcp",
+    uniCliManaged: "den_external_mcp",
     externalMcpConnectionId: input.connectionId,
     externalMcpConnectionOwnedByPlugin: input.ownedByPlugin,
     requiredAuthType: input.authType,
@@ -5870,7 +5870,7 @@ export async function configureMarketplacePluginMcpRequirement(input: {
     binding: serializePluginMcpRequirementBinding(binding),
     connection: serializePluginMcpRequirementConnection(refreshedConnection ?? connection),
     links: {
-      yourConnections: uni-cliYourConnectionsUrl(connection.id),
+      yourConnections: uniCliYourConnectionsUrl(connection.id),
     },
   }
 }
@@ -6016,7 +6016,7 @@ export async function importGithubPluginMcps(input: {
           requiredAuthType: authType,
           githubUrl: input.githubUrl,
           name: externalMcpConnectionName({ pluginName: server.pluginName, serverName: server.name }),
-          uni-cliManaged: "den_external_mcp",
+          uniCliManaged: "den_external_mcp",
           repositoryFullName: plan.repositoryFullName,
           sourceFormat: plan.classification === "agent_plugin_repo" ? "agent-plugin" : "claude-plugin",
           sourceSchemaVersion: server.sourceSchemaVersion,

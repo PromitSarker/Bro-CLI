@@ -51,7 +51,7 @@ async function finishedSteps(api: ProgressApi, vmId: string, file: string): Prom
  * is read, no builder is alive; callers keep the furthest progress they saw.
  */
 export async function buildProgress(sha: string, world: PreviewWorld, api: ProgressApi = client()): Promise<BuildProgress> {
-  const { vms } = await api.vms.list({ metadata: `uni-cliBuild:${buildLabel(sha, world).uni-cliBuild}`, limit: 20 });
+  const { vms } = await api.vms.list({ metadata: `uniCliBuild:${buildLabel(sha, world).uniCliBuild}`, limit: 20 });
   const live = vms.filter((vm) => vm.state === "starting" || vm.state === "running")
     .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
   const newest = live[0];

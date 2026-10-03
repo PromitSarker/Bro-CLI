@@ -12,7 +12,7 @@ import { resolveExtensionIconSrc } from "@/react-app/design-system/extension-ico
 import { t } from "../../../../i18n";
 import { buildDenAuthUrl, readDenBootstrapConfig } from "../../../../app/lib/den";
 import { markDesktopSignInInitiated } from "../../../../app/lib/den-sign-in-intent";
-import { type uni-cliServerClient, type uni-cliServerStatus } from "../../../../app/lib/uni-cli-server";
+import { type uniCliServerClient, type uniCliServerStatus } from "../../../../app/lib/uni-cli-server";
 import { getDisplaySessionTitle } from "../../../../app/lib/session-title";
 import type { BootPhase } from "../../../../app/lib/startup-boot";
 import { openDesktopUrl, openDesktopWorkspaceFile, revealDesktopItemInDir, type WorkspaceInfo } from "../../../../app/lib/desktop";
@@ -95,7 +95,7 @@ import { useCreateTab, useOpenBrowserRailPane } from "../panel/use-side-panel-ta
 import { TerminalDock } from "../terminal/terminal-dock";
 import { useActivePanelTab, usePanelTabStore, useSessionPanelState } from "../panel/panel-tab-store";
 import { useWorkspaceShellLayout } from "../../../shell/workspace-shell-layout";
-import { useControlAction, type uni-cliControlAction } from "../../../shell/control/control-provider";
+import { useControlAction, type uniCliControlAction } from "../../../shell/control/control-provider";
 import { cn } from "@/lib/utils";
 import {
   canNavigateSelectedConversationHistory,
@@ -142,7 +142,7 @@ type StatusBarOverrides = {
   showSettingsButton: boolean;
   reloadBusy: boolean;
   reloadError: string | null;
-  uni-cliConnectState: SessionCloudMcpMaintenanceState;
+  uniCliConnectState: SessionCloudMcpMaintenanceState;
 };
 
 export type SessionPageHistoryControls = {
@@ -197,7 +197,7 @@ export type SessionPageSidebarProps = {
 
 export type SessionPageSurfaceProps = Omit<
   SessionSurfaceProps,
-  "client" | "workspaceId" | "sessionId" | "opencodeBaseUrl" | "uni-cliToken" | "isControlTarget"
+  "client" | "workspaceId" | "sessionId" | "opencodeBaseUrl" | "uniCliToken" | "isControlTarget"
 >;
 
 export type SessionPagePaneRuntime = {
@@ -208,9 +208,9 @@ export type SessionPagePaneRuntime = {
   workspaceType?: WorkspaceInfo["workspaceType"];
   runtimeWorkspaceId: string;
   opencodeBaseUrl: string;
-  uni-cliToken: string;
-  client: uni-cliServerClient;
-  environmentClient?: uni-cliServerClient | null;
+  uniCliToken: string;
+  client: uniCliServerClient;
+  environmentClient?: uniCliServerClient | null;
   surface: SessionPageSurfaceProps;
 } | {
   status: "unavailable";
@@ -243,10 +243,10 @@ export type SessionPageProps = {
   opencodeBaseUrl?: string | null;
   workspaces: WorkspaceInfo[];
   clientConnected: boolean;
-  uni-cliServerStatus: uni-cliServerStatus;
-  uni-cliServerClient: uni-cliServerClient | null;
-  environmentClient?: uni-cliServerClient | null;
-  uni-cliServerToken?: string | null;
+  uniCliServerStatus: uniCliServerStatus;
+  uniCliServerClient: uniCliServerClient | null;
+  environmentClient?: uniCliServerClient | null;
+  uniCliServerToken?: string | null;
   developerMode: boolean;
   headerStatus: string;
   busyHint: string | null;
@@ -357,15 +357,15 @@ function WorkbenchPaneHeader(props: {
 /** Every visible conversation owns its pending interactions, including the side pane. */
 function SplitSessionSurface({ metadataCallbacks, ...props }: SessionSurfaceProps & { metadataCallbacks?: SessionMetadataCallbacks }) {
   const client = useMemo(() => isOpencodeV2BaseUrl(props.opencodeBaseUrl)
-    ? createClientV2(props.opencodeBaseUrl, props.workspaceRoot, { token: props.uni-cliToken })
-    : createClient(props.opencodeBaseUrl, props.workspaceRoot, { token: props.uni-cliToken, mode: "uni-cli" }),
-  [props.opencodeBaseUrl, props.uni-cliToken, props.workspaceRoot]);
+    ? createClientV2(props.opencodeBaseUrl, props.workspaceRoot, { token: props.uniCliToken })
+    : createClient(props.opencodeBaseUrl, props.workspaceRoot, { token: props.uniCliToken, mode: "uni-cli" }),
+  [props.opencodeBaseUrl, props.uniCliToken, props.workspaceRoot]);
   const interactions = useSessionInteractions({
     client, workspaceId: props.workspaceId, sessionId: props.sessionId, workspaceRoot: props.workspaceRoot ?? "",
   });
   return <>
     <ReactSessionRuntime {...metadataCallbacks} workspaceId={props.workspaceId} sessionId={props.sessionId}
-      opencodeBaseUrl={props.opencodeBaseUrl} uni-cliToken={props.uni-cliToken} />
+      opencodeBaseUrl={props.opencodeBaseUrl} uniCliToken={props.uniCliToken} />
     <SessionSurface {...props} {...interactions} />
   </>;
 }
@@ -682,7 +682,7 @@ export function SessionPage(props: SessionPageProps) {
   }, []);
   const createBrowserTab = useCreateTab();
   const openTargetForRuntime = useCallback((runtime: {
-    client: uni-cliServerClient | null;
+    client: uniCliServerClient | null;
     runtimeWorkspaceId: string | null;
     workspaceRoot: string;
     workspaceType?: WorkspaceInfo["workspaceType"];
@@ -796,14 +796,14 @@ export function SessionPage(props: SessionPageProps) {
   }, [activePanelTab?.id, browserUrlForTarget, createBrowserTab, openOwnerSidePanel, openTab, props.selectedSessionId, setCurrentSidePanel]);
   const openTarget = useCallback((target: OpenTarget, options?: OpenTargetOptions, sourceSessionId?: string) => {
     openTargetForRuntime({
-      client: props.uni-cliServerClient,
+      client: props.uniCliServerClient,
       runtimeWorkspaceId: props.runtimeWorkspaceId,
       workspaceRoot: props.selectedWorkspaceRoot,
       workspaceType: props.selectedWorkspaceDisplay.workspaceType,
     }, target, options, sourceSessionId);
   }, [
     openTargetForRuntime,
-    props.uni-cliServerClient,
+    props.uniCliServerClient,
     props.runtimeWorkspaceId,
     props.selectedWorkspaceDisplay.workspaceType,
     props.selectedWorkspaceRoot,
@@ -815,7 +815,7 @@ export function SessionPage(props: SessionPageProps) {
     setCurrentSidePanel("panel");
   }, [setCurrentSidePanel]);
   const openBrowserRailPane = useOpenBrowserRailPane(sidePanelSessionKey, browserRailActive, setCurrentSidePanel);
-  const openBrowserUrlControlAction = useMemo<uni-cliControlAction>(() => ({
+  const openBrowserUrlControlAction = useMemo<uniCliControlAction>(() => ({
     id: "browser.open_url",
     label: "Open URL in built-in browser",
     description: "Open a built-in browser tab and return its tab_id and CDP handle. The tab is protected from suspension for its task lifetime until browser.release_tab declares all running and queued browser work complete.",
@@ -843,7 +843,7 @@ export function SessionPage(props: SessionPageProps) {
     },
   }), [openOwnerSidePanel, props.selectedSessionId]);
   useControlAction(openBrowserUrlControlAction);
-  const restoreBrowserTabControlAction = useMemo<uni-cliControlAction>(() => ({
+  const restoreBrowserTabControlAction = useMemo<uniCliControlAction>(() => ({
     id: "browser.restore_tab",
     label: "Restore browser tab",
     description: "Acquire a fresh protected CDP handle for a tab owned by this conversation. A suspended tab reloads its saved URL, not its previous document, retaining tab_id with a new target_id. A live tab keeps its document. Always use the returned handle. Protection lasts until browser.release_tab.",
@@ -861,7 +861,7 @@ export function SessionPage(props: SessionPageProps) {
     },
   }), [props.selectedSessionId]);
   useControlAction(restoreBrowserTabControlAction);
-  const releaseBrowserTabControlAction = useMemo<uni-cliControlAction>(() => ({
+  const releaseBrowserTabControlAction = useMemo<uniCliControlAction>(() => ({
     id: "browser.release_tab",
     label: "Release browser tab",
     description: "Declare all running and queued browser work on this conversation's tab complete and remove its suspension protection. Release does not close, suspend, or invalidate the current target. The user may then manually suspend it. Before starting later browser work, call browser.restore_tab and use its returned protected handle.",
@@ -879,7 +879,7 @@ export function SessionPage(props: SessionPageProps) {
     },
   }), [props.selectedSessionId]);
   useControlAction(releaseBrowserTabControlAction);
-  const setBrowserProxyControlAction = useMemo<uni-cliControlAction>(() => ({
+  const setBrowserProxyControlAction = useMemo<uniCliControlAction>(() => ({
     id: "browser.set_proxy",
     label: "Set built-in browser proxy",
     description: "Route all built-in browser traffic through an HTTP/SOCKS proxy (e.g. to browse from another location). Applies to every built-in browser tab until cleared. Pass an empty proxy to restore system network settings.",
@@ -1064,13 +1064,13 @@ export function SessionPage(props: SessionPageProps) {
 
   const reactSessionBaseUrl = props.opencodeBaseUrl?.trim() ?? "";
   const reactSessionToken =
-    props.uni-cliServerToken?.trim() ||
-    props.uni-cliServerClient?.token?.trim() ||
+    props.uniCliServerToken?.trim() ||
+    props.uniCliServerClient?.token?.trim() ||
     "";
   const canRenderReactSurface = Boolean(
     props.selectedSessionId &&
       props.runtimeWorkspaceId &&
-      props.uni-cliServerClient &&
+      props.uniCliServerClient &&
       reactSessionBaseUrl &&
       reactSessionToken &&
       props.surface,
@@ -1091,7 +1091,7 @@ export function SessionPage(props: SessionPageProps) {
     }
     if (
       props.runtimeWorkspaceId
-      && props.uni-cliServerClient
+      && props.uniCliServerClient
       && reactSessionBaseUrl
       && reactSessionToken
       && props.surface
@@ -1104,8 +1104,8 @@ export function SessionPage(props: SessionPageProps) {
         workspaceType: props.selectedWorkspaceDisplay.workspaceType,
         runtimeWorkspaceId: props.runtimeWorkspaceId,
         opencodeBaseUrl: reactSessionBaseUrl,
-        uni-cliToken: reactSessionToken,
-        client: props.uni-cliServerClient,
+        uniCliToken: reactSessionToken,
+        client: props.uniCliServerClient,
         environmentClient: props.environmentClient,
         surface: props.surface,
       };
@@ -1223,7 +1223,7 @@ export function SessionPage(props: SessionPageProps) {
     return null;
   }, [props.selectedSessionId, props.sidebar.workspaceSessionGroups]);
 
-  const focusWorkbenchSessionControlAction = useMemo<uni-cliControlAction>(() => ({
+  const focusWorkbenchSessionControlAction = useMemo<uniCliControlAction>(() => ({
     id: "workbench.session.focus",
     label: "Focus an open session",
     description: "Focus a session already visible in either split-screen pane, or reuse its existing tab without opening a duplicate.",
@@ -1363,7 +1363,7 @@ export function SessionPage(props: SessionPageProps) {
   ) : activeSidePanel === "panel" ? (
     <SidePanel
       sessionId={sidePanelSessionKey}
-      client={props.uni-cliServerClient}
+      client={props.uniCliServerClient}
       workspaceId={props.runtimeWorkspaceId}
       workspaceRoot={props.selectedWorkspaceRoot}
       isRemoteWorkspace={props.surface?.isRemoteWorkspace ?? false}
@@ -1458,7 +1458,7 @@ export function SessionPage(props: SessionPageProps) {
           extensionsActive={props.extensionsActive}
           status={{
             clientConnected: props.clientConnected,
-            uni-cliServerStatus: props.uni-cliServerStatus,
+            uniCliServerStatus: props.uniCliServerStatus,
             developerMode: props.developerMode,
             showConnectionStatus: Boolean(props.selectedWorkspaceId),
             providerConnectedIds: props.providerConnectedIds,
@@ -1466,7 +1466,7 @@ export function SessionPage(props: SessionPageProps) {
             showSettingsButton: props.statusBar?.showSettingsButton,
             reloadBusy: props.statusBar?.reloadBusy,
             reloadError: props.statusBar?.reloadError,
-            uni-cliConnectState: props.statusBar?.uni-cliConnectState,
+            uniCliConnectState: props.statusBar?.uniCliConnectState,
             onSendFeedback: props.onSendFeedback,
           }}
         />
@@ -1797,11 +1797,11 @@ export function SessionPage(props: SessionPageProps) {
                             // Spread `surface` first so the explicit per-workspace
                             // routing props below CAN'T be silently overridden by
                             // anything that leaks into `surface`. SessionSurface's
-                            // server target (client/workspaceId/sessionId/opencodeBaseUrl/uni-cliToken)
+                            // server target (client/workspaceId/sessionId/opencodeBaseUrl/uniCliToken)
                             // must come from the resolved workspace endpoint passed by
                             // SessionRoute, not from anything in `surface`.
                             {...props.surface!}
-                            client={props.uni-cliServerClient!}
+                            client={props.uniCliServerClient!}
                             environmentClient={props.environmentClient}
                             workspaceId={props.runtimeWorkspaceId!}
                             sessionId={props.selectedSessionId!}
@@ -1810,7 +1810,7 @@ export function SessionPage(props: SessionPageProps) {
                             isControlTarget={activeWorkbenchPane === "primary"}
                             chatPane={canRenderSplitSurface ? "primary" : undefined}
                             opencodeBaseUrl={reactSessionBaseUrl}
-                            uni-cliToken={reactSessionToken}
+                            uniCliToken={reactSessionToken}
                             todos={props.todos}
                             activePermission={props.activePermission}
                             activePermissionSourceTitle={props.activePermissionSourceTitle}
@@ -1876,7 +1876,7 @@ export function SessionPage(props: SessionPageProps) {
                                     workspaceId: splitSession.workspaceId,
                                     runtimeWorkspaceId: splitPaneRuntime.runtimeWorkspaceId,
                                     opencodeBaseUrl: splitPaneRuntime.opencodeBaseUrl,
-                                    uni-cliToken: splitPaneRuntime.uni-cliToken,
+                                    uniCliToken: splitPaneRuntime.uniCliToken,
                                   })}
                                   client={splitPaneRuntime.client}
                                   environmentClient={splitPaneRuntime.environmentClient}
@@ -1888,7 +1888,7 @@ export function SessionPage(props: SessionPageProps) {
                                   isControlTarget={activeWorkbenchPane === "secondary"}
                                   chatPane="secondary"
                                   opencodeBaseUrl={splitPaneRuntime.opencodeBaseUrl}
-                                  uni-cliToken={splitPaneRuntime.uni-cliToken}
+                                  uniCliToken={splitPaneRuntime.uniCliToken}
                                   onOpenTarget={(target, options, sourceSessionId) => openTargetForRuntime({
                                     client: splitPaneRuntime.client,
                                     runtimeWorkspaceId: splitPaneRuntime.runtimeWorkspaceId,

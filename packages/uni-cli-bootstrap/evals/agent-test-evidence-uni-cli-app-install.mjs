@@ -29,7 +29,7 @@ const binDir = join(temp, "bin")
 const appDir = join(temp, "Applications")
 const dmgPath = join(temp, "Uni-CLI.dmg")
 const manifestPath = join(temp, "uni-cli-install-manifest.json")
-const installeduni-cli = join(binDir, "uni-cli-bootstrap")
+const installeduniCli = join(binDir, "uni-cli-bootstrap")
 mkdirSync(outDir, { recursive: true })
 
 const frames = []
@@ -109,9 +109,9 @@ try {
     action: "node bin/uni-cli.mjs install --install-dir <tmp> --bin-dir <tmp>/bin --json",
     assert: "exit 0 and an uni-cli executable exists",
     evidence: { status: installCli.status, body: installCli.json },
-  }, installCli.status === 0 && existsSync(installeduni-cli))
+  }, installCli.status === 0 && existsSync(installeduniCli))
 
-  const installApp = run(installeduni-cli, ["install", "app", "--manifest", manifestPath, "--app-dir", appDir, "--json"], { timeout: 30_000 })
+  const installApp = run(installeduniCli, ["install", "app", "--manifest", manifestPath, "--app-dir", appDir, "--json"], { timeout: 30_000 })
   const appPath = join(appDir, "Uni-CLI.app")
   prove("The installed CLI can download, verify, mount, and install Uni-CLI.app from a DMG", {
     action: "uni-cli install app --manifest <fixture-manifest> --app-dir <tmp>/Applications --json",
@@ -119,12 +119,12 @@ try {
     evidence: { status: installApp.status, body: installApp.json, appExists: existsSync(appPath), stderr: installApp.stderr },
   }, installApp.status === 0 && installApp.json?.ok === true && installApp.json?.install?.artifact?.sha256 === digest && existsSync(appPath))
 
-  const doctor = run(installeduni-cli, ["doctor", "--install-dir", installDir, "--bin-dir", binDir, "--app", "--app-dir", appDir, "--json"])
+  const doctor = run(installeduniCli, ["doctor", "--install-dir", installDir, "--bin-dir", binDir, "--app", "--app-dir", appDir, "--json"])
   prove("doctor verifies the installed desktop app", {
     action: "uni-cli doctor --app --app-dir <tmp>/Applications --json",
-    assert: "exit 0 with uni-cliApp and appInstallManifest checks passing",
+    assert: "exit 0 with uniCliApp and appInstallManifest checks passing",
     evidence: { status: doctor.status, body: doctor.json, stderr: doctor.stderr },
-  }, doctor.status === 0 && doctor.json?.ok === true && doctor.json?.checks?.some((check) => check.name === "uni-cliApp" && check.ok) && doctor.json?.checks?.some((check) => check.name === "appInstallManifest" && check.ok))
+  }, doctor.status === 0 && doctor.json?.ok === true && doctor.json?.checks?.some((check) => check.name === "uniCliApp" && check.ok) && doctor.json?.checks?.some((check) => check.name === "appInstallManifest" && check.ok))
 } finally {
   rmSync(temp, { recursive: true, force: true })
 }

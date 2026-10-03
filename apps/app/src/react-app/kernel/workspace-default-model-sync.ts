@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { uni-cliServerError, type uni-cliServerClient, type WorkspaceDefaultModelRef } from "../../app/lib/uni-cli-server";
+import { uniCliServerError, type uniCliServerClient, type WorkspaceDefaultModelRef } from "../../app/lib/uni-cli-server";
 import type { ResolvedWorkspaceEndpoint } from "../../app/lib/workspace-endpoint";
 import type { ModelRef } from "../../app/types";
 
@@ -33,7 +33,7 @@ const defaultScheduleTimer: ScheduleTimer = (run, ms) => {
 
 /** A 404 that is not about the workspace means the server predates the route. */
 function isMissingRoute(error: unknown): boolean {
-  return error instanceof uni-cliServerError && error.status === 404 && error.code !== "workspace_not_found";
+  return error instanceof uniCliServerError && error.status === 404 && error.code !== "workspace_not_found";
 }
 
 export function workspaceDefaultModelPayload(model: ModelRef | null, variant: string | null): WorkspaceDefaultModelRef | null {
@@ -124,7 +124,7 @@ const sharedSync = new WorkspaceDefaultModelSync();
 
 export type UseWorkspaceDefaultModelSyncInput = {
   endpoint: (Pick<ResolvedWorkspaceEndpoint, "baseUrl" | "token" | "workspaceId"> & {
-    client: Pick<uni-cliServerClient, "setWorkspaceDefaultModel">;
+    client: Pick<uniCliServerClient, "setWorkspaceDefaultModel">;
   }) | null;
   /** False while the workspace's server is unreachable; a reconnect writes again. */
   connected: boolean;

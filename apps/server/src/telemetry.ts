@@ -6,14 +6,14 @@ export type ServerTelemetryContext = {
   requestSignal?: AbortSignal;
 };
 
-export type uni-cliDesktopTelemetry = {
+export type uniCliDesktopTelemetry = {
   captureException: (error: unknown, context?: ServerTelemetryContext) => boolean;
 };
 
 declare global {
   // Provided by the Electron host when the embedded server runs in desktop mode.
   // The standalone uni-cli-server package leaves this unset.
-  var __uni-cliDesktopTelemetry: uni-cliDesktopTelemetry | undefined;
+  var __uni-cliDesktopTelemetry: uniCliDesktopTelemetry | undefined;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

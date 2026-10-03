@@ -25,7 +25,7 @@ const defaultWorkspaces: RouteWorkspace[] = [
   { id: "ws_2", name: "Two", displayNameResolved: "Two", workspaceType: "local", path: "/tmp/ws_2" },
   {
     id: "rem_remote", name: "Remote", displayNameResolved: "Remote", workspaceType: "remote",
-    remoteType: "uni-cli", path: "/tmp/remote", baseUrl: "http://remote.invalid", uni-cliToken: "remote-token",
+    remoteType: "uni-cli", path: "/tmp/remote", baseUrl: "http://remote.invalid", uniCliToken: "remote-token",
   },
 ];
 let workspaces = defaultWorkspaces;
@@ -81,10 +81,10 @@ mock.module("@/app/lib/opencode-v2-adapter", () => ({
 }));
 
 const serverModule = await import("../src/app/lib/uni-cli-server");
-const createServerClient = serverModule.createuni-cliServerClient;
+const createServerClient = serverModule.createuniCliServerClient;
 mock.module("@/app/lib/uni-cli-server", () => ({
   ...serverModule,
-  createuni-cliServerClient: (options: Parameters<typeof createServerClient>[0]) => ({
+  createuniCliServerClient: (options: Parameters<typeof createServerClient>[0]) => ({
     ...createServerClient(options),
     listWorkspaces: async () => ({ items: workspaces, activeId: "ws_1" }),
     activateWorkspace: async () => undefined,
@@ -92,7 +92,7 @@ mock.module("@/app/lib/uni-cli-server", () => ({
       const remoteStatus = remoteStatuses.get(options.baseUrl);
       if (remoteStatus) return remoteStatus.promise;
       if (options.baseUrl === "http://remote.invalid") {
-        throw new serverModule.uni-cliServerError(404, "not_found", "Legacy worker");
+        throw new serverModule.uniCliServerError(404, "not_found", "Legacy worker");
       }
       return localStatus.promise;
     },
@@ -109,7 +109,7 @@ mock.module("@/react-app/shell/route-workspaces", () => ({
   },
 }));
 mock.module("@/react-app/shell/uni-cli-connection", () => ({
-  resolveuni-cliConnection: async () => ({
+  resolveuniCliConnection: async () => ({
     normalizedBaseUrl: connection.baseUrl, resolvedToken: connection.token, resolvedHostToken: "", hostInfo: null,
   }),
 }));
@@ -311,7 +311,7 @@ for (const v2 of [false, true]) {
   test(`${engine} Settings return still hydrates the selected session after its inventory fails`, async () => {
     const { inventory, hydration } = await returnFromSettings(v2);
     await act(async () => {
-      inventory.response.reject(new serverModule.uni-cliServerError(400, "invalid_response", "Invalid inventory response"));
+      inventory.response.reject(new serverModule.uniCliServerError(400, "invalid_response", "Invalid inventory response"));
     });
     expect(route().sessionsByWorkspaceId.ws_1).toEqual([]);
     expect(route().retryingWorkspaceIds).not.toContain("ws_1");
@@ -573,7 +573,7 @@ test("returning from remote B to remote A waits for fresh routing while retainin
   await act(async () => {
     route().setWorkspaces((current) => [...current, {
       id: "rem_b", name: "B", displayNameResolved: "B", workspaceType: "remote",
-      remoteType: "uni-cli", path: "/tmp/b", baseUrl: "http://remote-b.invalid", uni-cliToken: "remote-b-token",
+      remoteType: "uni-cli", path: "/tmp/b", baseUrl: "http://remote-b.invalid", uniCliToken: "remote-b-token",
     }]);
   });
 
@@ -603,7 +603,7 @@ test("editing an unselected remote endpoint refreshes it without accepting the o
   if (!stale) throw new Error("Expected remote inventory load");
   await act(async () => {
     route().setWorkspaces((current) => current.map((workspace) => workspace.id === "rem_remote"
-      ? { ...workspace, baseUrl: "http://remote-new.invalid", uni-cliToken: "remote-token-2" }
+      ? { ...workspace, baseUrl: "http://remote-new.invalid", uniCliToken: "remote-token-2" }
       : workspace));
   });
   const fresh = requests.find((request) => request.endpoint.baseUrl === "http://remote-new.invalid");

@@ -1,9 +1,9 @@
 import type { SessionCloudMcpMaintenanceState } from "./use-session-mcp-maintenance";
 import { t } from "@/i18n";
 
-export type Uni-CLIConnectStateStatus = "available" | "missing" | "invalid" | "unreadable";
+export type UniCliConnectStateStatus = "available" | "missing" | "invalid" | "unreadable";
 
-export type Uni-CLIConnectStateSummary = {
+export type UniCliConnectStateSummary = {
   status: "ready" | "not_configured" | "disabled" | "unavailable";
   statusLabel: string;
   tone: "ready" | "neutral" | "error";
@@ -11,10 +11,10 @@ export type Uni-CLIConnectStateSummary = {
   recommendedAction: string;
 };
 
-export function resolveUni-CLIConnectStateSummary(
-  status: Uni-CLIConnectStateStatus,
+export function resolveUniCliConnectStateSummary(
+  status: UniCliConnectStateStatus,
   connectEnabled: boolean,
-): Uni-CLIConnectStateSummary {
+): UniCliConnectStateSummary {
   if (status === "missing") {
     return {
       status: "not_configured",
@@ -51,20 +51,20 @@ export function resolveUni-CLIConnectStateSummary(
   };
 }
 
-export type Uni-CLIConnectStatus = {
+export type UniCliConnectStatus = {
   state: "checking" | "ready" | "needs_attention";
   label: "Checking" | "Ready" | "Needs attention";
   description: string;
 };
 
-export function uni-cliConnectAttentionTitle(description: string): string {
+export function uniCliConnectAttentionTitle(description: string): string {
   return `One possible issue: ${description}`;
 }
 
-export function resolveUni-CLIConnectStatus(
+export function resolveUniCliConnectStatus(
   signedIn: boolean,
   maintenance: SessionCloudMcpMaintenanceState | undefined,
-): Uni-CLIConnectStatus | null {
+): UniCliConnectStatus | null {
   if (!signedIn) return null;
 
   // Den authentication is ready, but maintenance itself is workspace-scoped.

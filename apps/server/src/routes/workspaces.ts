@@ -6,8 +6,8 @@ import { inheritWorkspaceOpencodeConnection, resolveWorkspaceOpencodeConnection 
 import { externalFetch } from "../server-fetch.js";
 import type { ServerConfig, WorkspaceInfo } from "../types.js";
 import { ensureDir, exists, shortId } from "../utils.js";
-import { defaultWorkspaceuni-cliConfig, ensureWorkspaceFiles } from "../workspace-init.js";
-import { seeduni-cliWorkspaceConfigIfEmpty } from "../uni-cli-workspace-config-store.js";
+import { defaultWorkspaceuniCliConfig, ensureWorkspaceFiles } from "../workspace-init.js";
+import { seeduniCliWorkspaceConfigIfEmpty } from "../uni-cli-workspace-config-store.js";
 import { workspaceIdForPath, workspaceIdForRemote } from "../workspaces.js";
 import { addRoute, type Route } from "./registry.js";
 
@@ -49,7 +49,7 @@ function normalizeRemoteDirectory(value: unknown): string {
   return value.trim().replace(/\\/g, "/").replace(/\/+$/, "");
 }
 
-function parseuni-cliWorkspaceIdFromUrl(input: string | null | undefined): string | null {
+function parseuniCliWorkspaceIdFromUrl(input: string | null | undefined): string | null {
   const raw = input?.trim() ?? "";
   if (!raw) return null;
   try {
@@ -72,7 +72,7 @@ function parseuni-cliWorkspaceIdFromUrl(input: string | null | undefined): strin
   }
 }
 
-function stripuni-cliWorkspaceMount(input: string | null | undefined): string | null {
+function stripuniCliWorkspaceMount(input: string | null | undefined): string | null {
   const raw = input?.trim() ?? "";
   if (!raw) return null;
   try {
@@ -91,8 +91,8 @@ function stripuni-cliWorkspaceMount(input: string | null | undefined): string | 
   }
 }
 
-function uni-cliRemoteWorkspaceId(hostUrl: string, workspaceId: string | null | undefined): string {
-  const remoteWorkspaceId = workspaceId?.trim() || parseuni-cliWorkspaceIdFromUrl(hostUrl);
+function uniCliRemoteWorkspaceId(hostUrl: string, workspaceId: string | null | undefined): string {
+  const remoteWorkspaceId = workspaceId?.trim() || parseuniCliWorkspaceIdFromUrl(hostUrl);
   return remoteWorkspaceId ? `rem_${remoteWorkspaceId}` : workspaceIdForRemote(hostUrl, null);
 }
 
@@ -103,7 +103,7 @@ function workspaceDirectoryCandidates(workspace: Record<string, unknown>): strin
     .filter(Boolean);
 }
 
-function selectuni-cliWorkspaceForConnection(list: unknown, directory: string | null): Record<string, unknown> | null {
+function selectuniCliWorkspaceForConnection(list: unknown, directory: string | null): Record<string, unknown> | null {
   if (!isRecord(list)) return null;
   const rawItems = Array.isArray(list.items)
     ? list.items
@@ -122,15 +122,15 @@ function selectuni-cliWorkspaceForConnection(list: unknown, directory: string | 
   return (activeId ? items.find((item) => readStringField(item, "id") === activeId) : null) ?? items[0] ?? null;
 }
 
-function uni-cliWorkspaceDisplayName(workspace: Record<string, unknown>): string | null {
+function uniCliWorkspaceDisplayName(workspace: Record<string, unknown>): string | null {
   return readStringField(workspace, "displayName")
-    || readStringField(workspace, "uni-cliWorkspaceName")
+    || readStringField(workspace, "uniCliWorkspaceName")
     || readStringField(workspace, "name")
     || readStringField(workspace, "id")
     || null;
 }
 
-async function fetchuni-cliWorkspaceList(hostUrl: string, token: string, hostToken: string): Promise<unknown> {
+async function fetchuniCliWorkspaceList(hostUrl: string, token: string, hostToken: string): Promise<unknown> {
   const url = `${hostUrl.replace(/\/+$/, "")}/workspaces`;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 8_000);
@@ -158,14 +158,14 @@ async function fetchuni-cliWorkspaceList(hostUrl: string, token: string, hostTok
   }
 }
 
-async function discoveruni-cliWorkspace(input: {
+async function discoveruniCliWorkspace(input: {
   hostUrl: string;
   token: string;
   hostToken: string;
   directory: string | null;
 }): Promise<Record<string, unknown> | null> {
-  const list = await fetchuni-cliWorkspaceList(input.hostUrl, input.token, input.hostToken);
-  return selectuni-cliWorkspaceForConnection(list, input.directory);
+  const list = await fetchuniCliWorkspaceList(input.hostUrl, input.token, input.hostToken);
+  return selectuniCliWorkspaceForConnection(list, input.directory);
 }
 
 function ensurePlainObject(value: unknown): Record<string, unknown> {
@@ -201,10 +201,10 @@ function serializeWorkspaceConfigEntry(workspace: WorkspaceInfo): Record<string,
     ...(!isLocalWorkspace && workspace.baseUrl ? { baseUrl: workspace.baseUrl } : {}),
     ...(!isLocalWorkspace && workspace.directory ? { directory: workspace.directory } : {}),
     ...(workspace.displayName ? { displayName: workspace.displayName } : {}),
-    ...(workspace.uni-cliHostUrl ? { uni-cliHostUrl: workspace.uni-cliHostUrl } : {}),
-    ...(workspace.uni-cliToken ? { uni-cliToken: workspace.uni-cliToken } : {}),
-    ...(workspace.uni-cliWorkspaceId ? { uni-cliWorkspaceId: workspace.uni-cliWorkspaceId } : {}),
-    ...(workspace.uni-cliWorkspaceName ? { uni-cliWorkspaceName: workspace.uni-cliWorkspaceName } : {}),
+    ...(workspace.uniCliHostUrl ? { uniCliHostUrl: workspace.uniCliHostUrl } : {}),
+    ...(workspace.uniCliToken ? { uniCliToken: workspace.uniCliToken } : {}),
+    ...(workspace.uniCliWorkspaceId ? { uniCliWorkspaceId: workspace.uniCliWorkspaceId } : {}),
+    ...(workspace.uniCliWorkspaceName ? { uniCliWorkspaceName: workspace.uniCliWorkspaceName } : {}),
     ...(workspace.sandboxBackend ? { sandboxBackend: workspace.sandboxBackend } : {}),
     ...(workspace.sandboxRunId ? { sandboxRunId: workspace.sandboxRunId } : {}),
     ...(workspace.sandboxContainerName ? { sandboxContainerName: workspace.sandboxContainerName } : {}),
@@ -287,10 +287,10 @@ export function registerWorkspaceRoutes(options: RegisterWorkspaceRoutesOptions)
     const workspaceId = workspaceIdForPath(workspacePath);
     // Seed the per-workspace uni-cli config in the runtime DB (replaces the
     // legacy `.opencode/uni-cli.json` file). No-op if a row already exists.
-    await seeduni-cliWorkspaceConfigIfEmpty(
+    await seeduniCliWorkspaceConfigIfEmpty(
       config,
       workspaceId,
-      defaultWorkspaceuni-cliConfig(workspacePath, preset),
+      defaultWorkspaceuniCliConfig(workspacePath, preset),
     );
 
     const workspace: WorkspaceInfo = {
@@ -340,32 +340,32 @@ export function registerWorkspaceRoutes(options: RegisterWorkspaceRoutesOptions)
     const remoteType = readStringField(body, "remoteType") === "opencode" ? "opencode" : "uni-cli";
     const directory = readStringField(body, "directory") || null;
     const displayName = readStringField(body, "displayName") || null;
-    const rawuni-cliHostUrl = readStringField(body, "uni-cliHostUrl") || null;
-    const uni-cliHostUrl = remoteType === "uni-cli"
-      ? stripuni-cliWorkspaceMount(rawuni-cliHostUrl ?? baseUrl)
-      : rawuni-cliHostUrl;
-    const uni-cliToken = readStringField(body, "uni-cliToken");
-    const uni-cliHostToken = readStringField(body, "uni-cliHostToken");
+    const rawuniCliHostUrl = readStringField(body, "uniCliHostUrl") || null;
+    const uniCliHostUrl = remoteType === "uni-cli"
+      ? stripuniCliWorkspaceMount(rawuniCliHostUrl ?? baseUrl)
+      : rawuniCliHostUrl;
+    const uniCliToken = readStringField(body, "uniCliToken");
+    const uniCliHostToken = readStringField(body, "uniCliHostToken");
     const sandboxBackend = readStringField(body, "sandboxBackend");
     const sandboxRunId = readStringField(body, "sandboxRunId");
     const sandboxContainerName = readStringField(body, "sandboxContainerName");
-    let uni-cliWorkspaceId = remoteType === "uni-cli"
-      ? readStringField(body, "uni-cliWorkspaceId")
-        || parseuni-cliWorkspaceIdFromUrl(rawuni-cliHostUrl)
-        || parseuni-cliWorkspaceIdFromUrl(baseUrl)
+    let uniCliWorkspaceId = remoteType === "uni-cli"
+      ? readStringField(body, "uniCliWorkspaceId")
+        || parseuniCliWorkspaceIdFromUrl(rawuniCliHostUrl)
+        || parseuniCliWorkspaceIdFromUrl(baseUrl)
       : "";
-    let uni-cliWorkspaceName = readStringField(body, "uni-cliWorkspaceName") || null;
+    let uniCliWorkspaceName = readStringField(body, "uniCliWorkspaceName") || null;
 
-    if (remoteType === "uni-cli" && !uni-cliWorkspaceId) {
-      const discovered = await discoveruni-cliWorkspace({
-        hostUrl: uni-cliHostUrl ?? baseUrl,
-        token: uni-cliToken,
-        hostToken: uni-cliHostToken,
+    if (remoteType === "uni-cli" && !uniCliWorkspaceId) {
+      const discovered = await discoveruniCliWorkspace({
+        hostUrl: uniCliHostUrl ?? baseUrl,
+        token: uniCliToken,
+        hostToken: uniCliHostToken,
         directory,
       });
-      uni-cliWorkspaceId = discovered ? readStringField(discovered, "id") : "";
-      uni-cliWorkspaceName = discovered ? uni-cliWorkspaceDisplayName(discovered) : uni-cliWorkspaceName;
-      if (!uni-cliWorkspaceId) {
+      uniCliWorkspaceId = discovered ? readStringField(discovered, "id") : "";
+      uniCliWorkspaceName = discovered ? uniCliWorkspaceDisplayName(discovered) : uniCliWorkspaceName;
+      if (!uniCliWorkspaceId) {
         throw new ApiError(
           400,
           "uni-cli_workspace_not_found",
@@ -378,20 +378,20 @@ export function registerWorkspaceRoutes(options: RegisterWorkspaceRoutesOptions)
 
     const workspace: WorkspaceInfo = {
       id: remoteType === "uni-cli"
-        ? uni-cliRemoteWorkspaceId(uni-cliHostUrl ?? baseUrl, uni-cliWorkspaceId)
+        ? uniCliRemoteWorkspaceId(uniCliHostUrl ?? baseUrl, uniCliWorkspaceId)
         : workspaceIdForRemote(baseUrl, directory),
-      name: displayName ?? uni-cliWorkspaceName ?? "Remote workspace",
+      name: displayName ?? uniCliWorkspaceName ?? "Remote workspace",
       path: directory ?? "",
       preset: "remote",
       workspaceType: "remote",
       remoteType,
-      baseUrl: remoteType === "uni-cli" ? (uni-cliHostUrl ?? baseUrl) : baseUrl,
+      baseUrl: remoteType === "uni-cli" ? (uniCliHostUrl ?? baseUrl) : baseUrl,
       ...(directory ? { directory } : {}),
       ...(displayName ? { displayName } : {}),
-      ...(remoteType === "uni-cli" && uni-cliHostUrl ? { uni-cliHostUrl } : {}),
-      ...(uni-cliToken ? { uni-cliToken } : {}),
-      ...(remoteType === "uni-cli" && uni-cliWorkspaceId ? { uni-cliWorkspaceId } : {}),
-      ...(remoteType === "uni-cli" && uni-cliWorkspaceName ? { uni-cliWorkspaceName } : {}),
+      ...(remoteType === "uni-cli" && uniCliHostUrl ? { uniCliHostUrl } : {}),
+      ...(uniCliToken ? { uniCliToken } : {}),
+      ...(remoteType === "uni-cli" && uniCliWorkspaceId ? { uniCliWorkspaceId } : {}),
+      ...(remoteType === "uni-cli" && uniCliWorkspaceName ? { uniCliWorkspaceName } : {}),
       ...(sandboxBackend ? { sandboxBackend } : {}),
       ...(sandboxRunId ? { sandboxRunId } : {}),
       ...(sandboxContainerName ? { sandboxContainerName } : {}),

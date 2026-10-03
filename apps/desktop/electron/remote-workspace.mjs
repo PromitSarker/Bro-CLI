@@ -18,7 +18,7 @@ function workspaceDirectoryCandidates(workspace) {
     .filter(Boolean);
 }
 
-export function selectuni-cliWorkspaceForConnection(list, directory) {
+export function selectuniCliWorkspaceForConnection(list, directory) {
   const items = Array.isArray(list?.items)
     ? list.items
     : Array.isArray(list?.workspaces)
@@ -35,10 +35,10 @@ export function selectuni-cliWorkspaceForConnection(list, directory) {
   return (activeId ? items.find((item) => trim(item?.id) === activeId) : null) ?? items[0] ?? null;
 }
 
-export function uni-cliWorkspaceDisplayName(workspace) {
+export function uniCliWorkspaceDisplayName(workspace) {
   return (
     trim(workspace?.displayName) ||
-    trim(workspace?.uni-cliWorkspaceName) ||
+    trim(workspace?.uniCliWorkspaceName) ||
     trim(workspace?.name) ||
     trim(workspace?.id) ||
     null

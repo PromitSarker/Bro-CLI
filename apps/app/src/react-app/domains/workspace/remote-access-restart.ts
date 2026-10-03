@@ -1,9 +1,9 @@
 import { useCallback, useState } from "react";
 
-import { uni-cliServerRestart, type uni-cliServerInfo } from "../../../app/lib/desktop";
+import { uniCliServerRestart, type uniCliServerInfo } from "../../../app/lib/desktop";
 import {
-  readuni-cliServerSettings,
-  writeuni-cliServerSettings,
+  readuniCliServerSettings,
+  writeuniCliServerSettings,
 } from "../../../app/lib/uni-cli-server";
 import { t } from "../../../i18n";
 
@@ -15,7 +15,7 @@ export type RemoteAccessRestartPhase =
 
 type UseRemoteAccessRestartOptions = {
   isEnabled: () => boolean;
-  onHostInfo: (info: uni-cliServerInfo) => void;
+  onHostInfo: (info: uniCliServerInfo) => void;
   onSettingsChanged: () => void;
 };
 
@@ -27,17 +27,17 @@ export function useRemoteAccessRestart(options: UseRemoteAccessRestartOptions) {
     async (enabled: boolean) => {
       if (phase === "restarting" || phase === "reconnecting") return;
 
-      const previous = readuni-cliServerSettings();
+      const previous = readuniCliServerSettings();
       const next = { ...previous, remoteAccessEnabled: enabled };
 
       setPhase("restarting");
       setError(null);
-      writeuni-cliServerSettings(next);
+      writeuniCliServerSettings(next);
       options.onSettingsChanged();
 
       try {
-        const info = await uni-cliServerRestart({ remoteAccessEnabled: enabled }) as uni-cliServerInfo;
-        writeuni-cliServerSettings({
+        const info = await uniCliServerRestart({ remoteAccessEnabled: enabled }) as uniCliServerInfo;
+        writeuniCliServerSettings({
           urlOverride: info.baseUrl?.trim() || undefined,
           token:
             info.ownerToken?.trim() ||
@@ -51,7 +51,7 @@ export function useRemoteAccessRestart(options: UseRemoteAccessRestartOptions) {
         options.onSettingsChanged();
         setPhase("idle");
       } catch (caught) {
-        writeuni-cliServerSettings(previous);
+        writeuniCliServerSettings(previous);
         options.onSettingsChanged();
         setError(caught instanceof Error ? caught.message : t("app.error_remote_access"));
         setPhase("failed");

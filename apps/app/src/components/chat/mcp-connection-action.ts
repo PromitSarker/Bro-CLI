@@ -1,6 +1,6 @@
 import { connectionActionPayloadSchema } from "@uni-cli/types/connection-action-app"
 import { CallToolResultSchema } from "@modelcontextprotocol/sdk/types.js"
-import type { uni-cliMcpAppResource, uni-cliMcpAppToolResult } from "@/app/lib/uni-cli-server"
+import type { uniCliMcpAppResource, uniCliMcpAppToolResult } from "@/app/lib/uni-cli-server"
 import type { ChatConnectionDecisionBinding } from "@/react-app/domains/session/surface/mcp-chat-reconnect"
 import type { ChatToolReconnectCallbacks } from "@/components/tools/use-chat-tool-reconnect"
 import { chatMcpReconnectKey, respondChatConnectionDecision } from "@/components/tools/mcp-reconnect-state"
@@ -13,12 +13,12 @@ const authenticatedDecisions = new Map<string, {
   onReconnect: ChatToolReconnectCallbacks["onReconnect"]
 }>()
 
-export function hasHostConnectionActions(app: uni-cliMcpAppResource): boolean {
+export function hasHostConnectionActions(app: uniCliMcpAppResource): boolean {
   return app.resourceUri === resourceUri && app.toolName === "connection_action"
     && "hostConnectionActions" in app && app.hostConnectionActions === true
 }
 
-export function standardMcpToolResult(result: uni-cliMcpAppToolResult) {
+export function standardMcpToolResult(result: uniCliMcpAppToolResult) {
   return CallToolResultSchema.parse({
     content: result.content,
     ...(result.structuredContent ? { structuredContent: result.structuredContent } : {}),
@@ -70,7 +70,7 @@ export function createConnectionActionController(source: ConnectionActionHost) {
   }
   const callTool = async (
     actions: ReturnType<typeof createMcpAppActions>,
-    app: uni-cliMcpAppResource,
+    app: uniCliMcpAppResource,
     name: string,
     args: Record<string, unknown> | undefined,
     userInteraction: boolean,

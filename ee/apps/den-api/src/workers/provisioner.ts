@@ -252,11 +252,11 @@ async function provisionWorkerOnRender(
   const serviceName = slug(
     `${env.render.workerNamePrefix}-${input.name}-${input.workerId.slice(0, 8)}`,
   ).slice(0, 62)
-  const uni-cliServerPackage = env.render.workeruni-cliVersion?.trim()
-    ? `uni-cli-server@${env.render.workeruni-cliVersion.trim()}`
+  const uniCliServerPackage = env.render.workeruniCliVersion?.trim()
+    ? `uni-cli-server@${env.render.workeruniCliVersion.trim()}`
     : "uni-cli-server"
   const buildCommand = [
-    `npm install -g ${shellQuote(uni-cliServerPackage)}`,
+    `npm install -g ${shellQuote(uniCliServerPackage)}`,
     "node ./scripts/install-opencode.mjs",
   ].join(" && ")
   const startScript = `

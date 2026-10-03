@@ -62,7 +62,7 @@ const GlobalSDKContext = createContext<GlobalSDKContextValue | undefined>(
   undefined,
 );
 
-function readuni-cliToken(): string {
+function readuniCliToken(): string {
   if (typeof window === "undefined") return "";
   try {
     return (window.localStorage.getItem("uni-cli.server.token") ?? "").trim();
@@ -121,7 +121,7 @@ export function GlobalSDKProvider({ children }: GlobalSDKProviderProps) {
   }
   const emitter = emitterRef.current;
 
-  const token = readuni-cliToken();
+  const token = readuniCliToken();
   const headers =
     token && server.url.includes("/opencode")
       ? { Authorization: `Bearer ${token}` }

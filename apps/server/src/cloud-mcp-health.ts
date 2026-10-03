@@ -4,7 +4,7 @@ import type { createOpencodeClient, McpStatus, ToolIds, ToolList } from "@openco
 import { ApiError } from "./errors.js";
 import type { ConnectMcpCatalogDiagnostic } from "./connect-mcp-server-catalog.js";
 import { diagnoseMcpToolDenies, type McpToolDeny } from "./mcp.js";
-import { uni-cliPluginPath } from "./uni-cli-extensions-plugin-path.js";
+import { uniCliPluginPath } from "./uni-cli-extensions-plugin-path.js";
 import { sanitizeDiagnosticString, sanitizeDiagnosticValue } from "./diagnostic-sanitizer.js";
 import {
   ENGINE_GLOBAL_RUNTIME_CONFIG_ID,
@@ -423,7 +423,7 @@ type DirectCloudToolsSnapshot = {
 
 const directCloudToolsProbeFlights = new Map<string, Promise<DirectCloudToolsSnapshot>>();
 
-export function clearuni-cliCloudMcpProbeFlights(): void {
+export function clearuniCliCloudMcpProbeFlights(): void {
   directCloudToolsProbeFlights.clear();
 }
 
@@ -958,7 +958,7 @@ async function readPersistedDesiredConfig(
   return runtimeMcpMap(await readRuntimeOpencodeConfig(config, workspaceId))[UNICLI_CLOUD_MCP_NAME];
 }
 
-export async function migrateuni-cliCloudMcpRuntimeConfig(
+export async function migrateuniCliCloudMcpRuntimeConfig(
   config: ServerConfig,
 ): Promise<{ config: Record<string, unknown> | null; changed: boolean }> {
   const rows = await listRuntimeOpencodeConfigRows(config);
@@ -1016,7 +1016,7 @@ export async function migrateuni-cliCloudMcpRuntimeConfig(
  * meaning once the member is signed out. Returns the runtime names removed so
  * the caller can disconnect them from the engine.
  */
-export async function removeuni-cliCloudMcpDesiredConfig(
+export async function removeuniCliCloudMcpDesiredConfig(
   config: ServerConfig,
 ): Promise<{ changed: boolean; removedNames: string[] }> {
   const { CONNECT_DIRECT_MCP_SERVER_NAME_PREFIX } = await import("./connect-mcp-server-catalog.js");
@@ -1920,7 +1920,7 @@ async function readOpencodeVersion(opencode: WorkspaceOpencodeClient): Promise<C
   }
 }
 
-async function inspectuni-cliCloud(input: {
+async function inspectuniCliCloud(input: {
   opencode: WorkspaceOpencodeClient;
   nativeEngine?: CloudMcpNativeEngine;
   config: ServerConfig;
@@ -2188,7 +2188,7 @@ async function pluginFileHashes(): Promise<CloudMcpCompatibilitySnapshot["plugin
   const names = ["uni-cli-extensions-preview", "uni-cli-capabilities-knowledge"];
   return Promise.all(names.map(async (name) => {
     try {
-      return { name, sha256: hashString(await readFile(uni-cliPluginPath(name), "utf8")) };
+      return { name, sha256: hashString(await readFile(uniCliPluginPath(name), "utf8")) };
     } catch (error) {
       const lastError = error instanceof Error ? error.message : String(error);
       return { name, sha256: null, error: sanitizeDiagnosticString(lastError) };
@@ -2225,7 +2225,7 @@ async function compatibilitySnapshot(input: {
   };
 }
 
-type Readuni-cliCloudMcpHealthInput = {
+type ReaduniCliCloudMcpHealthInput = {
   config: ServerConfig;
   workspace: WorkspaceInfo;
   directory: string | null;
@@ -2242,8 +2242,8 @@ type DirectProbeReuse = {
   value: CloudMcpHealth["tools"]["direct"];
 };
 
-async function readuni-cliCloudMcpHealthInternal(
-  input: Readuni-cliCloudMcpHealthInput & { directProbeReuse?: DirectProbeReuse },
+async function readuniCliCloudMcpHealthInternal(
+  input: ReaduniCliCloudMcpHealthInput & { directProbeReuse?: DirectProbeReuse },
 ): Promise<CloudMcpHealth> {
   const checkedAt = new Date().toISOString();
   const startedAtMs = Date.now();
@@ -2251,8 +2251,8 @@ async function readuni-cliCloudMcpHealthInternal(
   let appHostAuthorizationReady: boolean | null = null;
   if (desired.config && !desired.validationProblem) {
     try {
-      const { readUni-CLIConnectMcpAppHostAuthorizationReady } = await import("./connect-mcp-server-catalog.js");
-      appHostAuthorizationReady = await readUni-CLIConnectMcpAppHostAuthorizationReady(input.config, input.workspace.id, desired.config);
+      const { readUniCliConnectMcpAppHostAuthorizationReady } = await import("./connect-mcp-server-catalog.js");
+      appHostAuthorizationReady = await readUniCliConnectMcpAppHostAuthorizationReady(input.config, input.workspace.id, desired.config);
     } catch {
       appHostAuthorizationReady = null;
     }
@@ -2310,7 +2310,7 @@ async function readuni-cliCloudMcpHealthInternal(
     failures: [],
   };
   if (desired.present && desired.config && desired.revision && !desired.validationProblem && input.directory && baseUrlConfigured(input.config, input.workspace)) {
-    inspection = await inspectuni-cliCloud({
+    inspection = await inspectuniCliCloud({
       opencode: input.createWorkspaceOpencodeClient(input.config, input.workspace),
       nativeEngine: input.nativeEngineForWorkspace?.(input.workspace),
       config: input.config,
@@ -2406,12 +2406,12 @@ async function readuni-cliCloudMcpHealthInternal(
   };
 }
 
-export async function readuni-cliCloudMcpHealth(input: Readuni-cliCloudMcpHealthInput): Promise<CloudMcpHealth> {
-  return readuni-cliCloudMcpHealthInternal(input);
+export async function readuniCliCloudMcpHealth(input: ReaduniCliCloudMcpHealthInput): Promise<CloudMcpHealth> {
+  return readuniCliCloudMcpHealthInternal(input);
 }
 
 async function persistDesiredConfig(config: ServerConfig, desiredConfig: Record<string, unknown>): Promise<{ changed: boolean }> {
-  const migrated = await migrateuni-cliCloudMcpRuntimeConfig(config);
+  const migrated = await migrateuniCliCloudMcpRuntimeConfig(config);
   const written = await writeGlobalRuntimeOpencodeConfig(config, (current) => ({
     ...current,
     mcp: {
@@ -2501,10 +2501,10 @@ async function reconcileConnectMcpCatalog(input: {
   directory: string;
   cloudMcp: Record<string, unknown>;
   appHostAuthorization?: string;
-  createWorkspaceOpencodeClient: Readuni-cliCloudMcpHealthInput["createWorkspaceOpencodeClient"];
+  createWorkspaceOpencodeClient: ReaduniCliCloudMcpHealthInput["createWorkspaceOpencodeClient"];
 }) {
-  const { reconcileUni-CLIConnectMcpServers } = await import("./connect-mcp-server-catalog.js");
-  const servers = await reconcileUni-CLIConnectMcpServers(input).catch((): {
+  const { reconcileUniCliConnectMcpServers } = await import("./connect-mcp-server-catalog.js");
+  const servers = await reconcileUniCliConnectMcpServers(input).catch((): {
     diagnostic: ConnectMcpCatalogDiagnostic; directNames: string[]; removedNames: string[];
   } => ({ diagnostic: "discovery_unavailable", directNames: [], removedNames: [] }));
   const opencode = input.createWorkspaceOpencodeClient(input.config, input.workspace);
@@ -2514,10 +2514,10 @@ async function reconcileConnectMcpCatalog(input: {
   return servers;
 }
 
-export async function refreshuni-cliCloudMcpCatalog(input: Readuni-cliCloudMcpHealthInput & {
+export async function refreshuniCliCloudMcpCatalog(input: ReaduniCliCloudMcpHealthInput & {
   registerRuntimeMcp: CloudMcpRuntimeRegistrar;
 }): Promise<CloudMcpHealth> {
-  const health = await readuni-cliCloudMcpHealth(input);
+  const health = await readuniCliCloudMcpHealth(input);
   if (input.config.readOnly || !input.directory || !health.usable || health.appHostAuthorizationReady !== true) return health;
   const cloudMcp = await readPersistedDesiredConfig(input.config, input.workspace.id);
   if (!cloudMcp || cloudMcp.enabled === false) return health;
@@ -2530,7 +2530,7 @@ export async function refreshuni-cliCloudMcpCatalog(input: Readuni-cliCloudMcpHe
   return { ...health, connectCatalogDiagnostic: servers.diagnostic };
 }
 
-export async function reconcileuni-cliCloudMcp(input: {
+export async function reconcileuniCliCloudMcp(input: {
   config: ServerConfig;
   workspace: WorkspaceInfo;
   directory: string | null;
@@ -2545,7 +2545,7 @@ export async function reconcileuni-cliCloudMcp(input: {
 }): Promise<CloudMcpHealth> {
   let connectCatalogDiagnostic: ConnectMcpCatalogDiagnostic | undefined;
   const readHealth = async (directProbeReuse?: DirectProbeReuse): Promise<CloudMcpHealth> => ({
-    ...await readuni-cliCloudMcpHealthInternal({
+    ...await readuniCliCloudMcpHealthInternal({
       config: input.config,
       workspace: input.workspace,
       directory: input.directory,
@@ -2666,7 +2666,7 @@ export async function reconcileuni-cliCloudMcp(input: {
   return readHealth(directProbeReuse);
 }
 
-export async function reconcilePersisteduni-cliCloudMcp(input: {
+export async function reconcilePersisteduniCliCloudMcp(input: {
   config: ServerConfig;
   workspace: WorkspaceInfo;
   directory: string | null;
@@ -2678,13 +2678,13 @@ export async function reconcilePersisteduni-cliCloudMcp(input: {
   refreshRegistrationFromLiveStatus?: CloudMcpLiveStatusObserver;
   trigger?: string;
 }): Promise<CloudMcpHealth> {
-  const migrated = await migrateuni-cliCloudMcpRuntimeConfig(input.config);
-  if (input.config.readOnly) return readuni-cliCloudMcpHealth(input);
+  const migrated = await migrateuniCliCloudMcpRuntimeConfig(input.config);
+  if (input.config.readOnly) return readuniCliCloudMcpHealth(input);
   const desiredConfig = migrated.config ?? await readPersistedDesiredConfig(input.config, input.workspace.id);
   if (!desiredConfig) {
-    return readuni-cliCloudMcpHealth(input);
+    return readuniCliCloudMcpHealth(input);
   }
-  return reconcileuni-cliCloudMcp({
+  return reconcileuniCliCloudMcp({
     ...input,
     body: {
       config: desiredConfig,
@@ -2694,7 +2694,7 @@ export async function reconcilePersisteduni-cliCloudMcp(input: {
   });
 }
 
-export function markuni-cliCloudMcpStale(workspace: WorkspaceInfo, directory: string | null): void {
+export function markuniCliCloudMcpStale(workspace: WorkspaceInfo, directory: string | null): void {
   cloudMcpDeliveryState.markWorkspaceStale(workspace, directory);
 }
 
@@ -2724,7 +2724,7 @@ export type CloudMcpEngineRefreshResult = {
 // something external re-drives it. This refresh closes any wedged client
 // first (disconnect), then re-runs the persisted reconcile, which re-POSTs
 // /mcp — an unconditional fresh connect attempt on the engine side.
-export async function refreshuni-cliCloudMcpEngine(input: {
+export async function refreshuniCliCloudMcpEngine(input: {
   config: ServerConfig;
   workspace: WorkspaceInfo;
   directory: string | null;
@@ -2753,7 +2753,7 @@ export async function refreshuni-cliCloudMcpEngine(input: {
 
   const desiredConfig = await readPersistedDesiredConfig(input.config, input.workspace.id);
   if (!desiredConfig) {
-    return finish(false, await readuni-cliCloudMcpHealth({ ...input, probe: true }), "desired_missing");
+    return finish(false, await readuniCliCloudMcpHealth({ ...input, probe: true }), "desired_missing");
   }
 
   const disconnectStarted = Date.now();
@@ -2786,7 +2786,7 @@ export async function refreshuni-cliCloudMcpEngine(input: {
   }
 
   const reapplyStarted = Date.now();
-  const health = await reconcilePersisteduni-cliCloudMcp({
+  const health = await reconcilePersisteduniCliCloudMcp({
     config: input.config,
     workspace: input.workspace,
     directory: input.directory,

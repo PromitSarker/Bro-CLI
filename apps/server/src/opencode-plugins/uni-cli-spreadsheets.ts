@@ -240,7 +240,7 @@ const writeArgsSchema = z.object({
 
 // Single export: the OpenCode plugin loader treats every export of a plugin
 // module as a plugin factory, so helpers must stay module-private.
-export const Uni-CLISpreadsheets = async (factoryInput?: unknown) => {
+export const UniCliSpreadsheets = async (factoryInput?: unknown) => {
   const factoryContext = normalizeOpenCodeContext(factoryInput);
   return {
     "experimental.chat.system.transform": async (_input: unknown, output: { system: string[] }) => {

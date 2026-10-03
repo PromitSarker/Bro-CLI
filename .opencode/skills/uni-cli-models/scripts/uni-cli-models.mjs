@@ -76,7 +76,7 @@ async function readSourceModels() {
   return sourceModels
 }
 
-async function readuni-cliModels() {
+async function readuniCliModels() {
   const models = await readJson(paths.models)
   if (!isRecord(models)) {
     throw new Error(`${paths.models} must be a JSON object keyed by model id`)
@@ -114,15 +114,15 @@ function resolveSingleSourceModel(sourceModels, query) {
   return null
 }
 
-function resolveExactuni-cliIds(uni-cliModels, ids) {
+function resolveExactuniCliIds(uniCliModels, ids) {
   const resolved = []
   for (const id of ids) {
-    if (uni-cliModels[id]) {
+    if (uniCliModels[id]) {
       resolved.push(id)
       continue
     }
 
-    const matches = findMatches(uni-cliModels, id)
+    const matches = findMatches(uniCliModels, id)
     console.error(`Uni-CLI model "${id}" was not exact. Please clarify with exact id:`)
     displayMatches(matches)
     process.exitCode = 2
@@ -177,7 +177,7 @@ async function syncAll(models, usageOverrides = new Map()) {
 }
 
 async function validate() {
-  const models = await readuni-cliModels()
+  const models = await readuniCliModels()
   for (const [id, model] of Object.entries(models)) {
     if (!isRecord(model)) throw new Error(`${id} must be an object`)
     if (model.id !== id) throw new Error(`${id} must have matching id field`)
@@ -224,15 +224,15 @@ async function add(query) {
   const selected = resolveSingleSourceModel(sourceModels, query)
   if (!selected) return
 
-  const models = await readuni-cliModels()
+  const models = await readuniCliModels()
   models[selected.id] = selected.model
   await syncAll(models)
   console.log(`added ${selected.id}`)
 }
 
 async function remove(ids) {
-  const models = await readuni-cliModels()
-  const resolved = resolveExactuni-cliIds(models, ids)
+  const models = await readuniCliModels()
+  const resolved = resolveExactuniCliIds(models, ids)
   if (!resolved) return
 
   for (const id of resolved) {
@@ -248,8 +248,8 @@ async function discount(factorText, ids) {
     throw new Error("usageFactor must be a positive number")
   }
 
-  const models = await readuni-cliModels()
-  const resolved = resolveExactuni-cliIds(models, ids)
+  const models = await readuniCliModels()
+  const resolved = resolveExactuniCliIds(models, ids)
   if (!resolved) return
 
   const currentFactors = await readUsageFactors()
@@ -277,7 +277,7 @@ if (command === "search") {
 } else if (command === "discount") {
   await discount(args[0], args.slice(1))
 } else if (command === "sync") {
-  await syncAll(await readuni-cliModels())
+  await syncAll(await readuniCliModels())
 } else if (command === "validate") {
   await validate()
 } else {

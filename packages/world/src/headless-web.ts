@@ -10,15 +10,15 @@ import {
   desktopBootstrapPath,
   globalOpencodeConfigDir,
   opencodeDbCandidates,
-  uni-cliEnvStorePath,
-  uni-cliServerConfigPath,
-  uni-cliServerDataDir,
+  uniCliEnvStorePath,
+  uniCliServerConfigPath,
+  uniCliServerDataDir,
 } from "@uni-cli/paths";
 import {
   buildHeadlessCorsOrigins,
   buildHeadlessRuntimeManifest,
   buildHeadlessServerLaunch,
-  builduni-cliServerArgs,
+  builduniCliServerArgs,
   mergeHeadlessServerConfig,
   normalizeDenTarget,
   resolveHeadlessRuntimeManifestPath,
@@ -185,7 +185,7 @@ function isOwnedRuntimeProcess(
   if (kind === "server") {
     return command.includes("apps/server/src/cli.ts")
       && commandHasArgument(command, manifest.serverConfigPath)
-      && commandHasArgument(command, runtimePort(manifest.uni-cliUrl));
+      && commandHasArgument(command, runtimePort(manifest.uniCliUrl));
   }
   return command.includes("headless-monitor.mjs")
     && commandHasArgument(command, manifest.runtimeManifestPath);
@@ -239,7 +239,7 @@ function parseRuntimeManifest(value: unknown): HeadlessRuntimeManifest | null {
   if (!isRecord(value) || value.mode !== "local-server" || !isRecord(value.pids)) return null;
   const requiredStrings = [
     "webUrl",
-    "uni-cliUrl",
+    "uniCliUrl",
     "healthUrl",
     "workspace",
     "token",
@@ -259,7 +259,7 @@ function parseRuntimeManifest(value: unknown): HeadlessRuntimeManifest | null {
   return {
     mode: "local-server",
     webUrl: String(value.webUrl),
-    uni-cliUrl: String(value.uni-cliUrl),
+    uniCliUrl: String(value.uniCliUrl),
     healthUrl: String(value.healthUrl),
     workspace: String(value.workspace),
     token: String(value.token),
@@ -276,7 +276,7 @@ function parseRuntimeManifest(value: unknown): HeadlessRuntimeManifest | null {
     pids: {
       launcher,
       web: parsedPid(value.pids.web),
-      uni-cliServer: parsedPid(value.pids.uni-cliServer),
+      uniCliServer: parsedPid(value.pids.uniCliServer),
     },
     ...(parsedPid(value.supervisorPid) === null ? {} : { supervisorPid: parsedPid(value.supervisorPid) }),
     ...(parsedWorld(value.world) ? { world: parsedWorld(value.world) } : {}),
@@ -415,9 +415,9 @@ export async function resolveInstalledProductionHeadlessState(options: {
   const homeDir = options.homeDir ?? homedir();
   const userDataDir = join(homeDir, "Library", "Application Support", "com.differentai.uni-cli");
   const pathOptions = { env, homeDir, platform };
-  const dataDir = uni-cliServerDataDir(pathOptions);
-  const serverConfigPath = uni-cliServerConfigPath(pathOptions);
-  const envStorePath = uni-cliEnvStorePath(pathOptions);
+  const dataDir = uniCliServerDataDir(pathOptions);
+  const serverConfigPath = uniCliServerConfigPath(pathOptions);
+  const envStorePath = uniCliEnvStorePath(pathOptions);
   const bootstrapPath = desktopBootstrapPath(pathOptions);
   const opencodeConfigDir = globalOpencodeConfigDir(pathOptions);
   const serverTokenStorePath = join(userDataDir, "uni-cli-server-tokens.json");
@@ -517,20 +517,20 @@ export function assertHeadlessLaunchSafety(
 export function resolveHeadlessClientConnection(input: {
   state: HeadlessWebState;
   env: NodeJS.ProcessEnv;
-  uni-cliUrl: string;
-  uni-cliPort: number;
+  uniCliUrl: string;
+  uniCliPort: number;
   token: string;
 }): HeadlessClientConnection {
   if (input.state === "installed-production") {
     return {
-      url: input.uni-cliUrl,
-      port: String(input.uni-cliPort),
+      url: input.uniCliUrl,
+      port: String(input.uniCliPort),
       token: input.token,
     };
   }
   return {
-    url: input.env.VITE_UNICLI_URL ?? input.uni-cliUrl,
-    port: input.env.VITE_UNICLI_PORT ?? String(input.uni-cliPort),
+    url: input.env.VITE_UNICLI_URL ?? input.uniCliUrl,
+    port: input.env.VITE_UNICLI_PORT ?? String(input.uniCliPort),
     token: input.env.VITE_UNICLI_TOKEN ?? input.token,
   };
 }
@@ -581,7 +581,7 @@ async function stopAcquiredChild(child: ChildProcess): Promise<void> {
 
 export function headlessRuntimeProcessesAreOwned(manifest: HeadlessRuntimeManifest): boolean {
   const webPid = manifest.pids.web;
-  const serverPid = manifest.pids.uni-cliServer;
+  const serverPid = manifest.pids.uniCliServer;
   return webPid !== null
     && serverPid !== null
     && isOwnedRuntimeProcess(manifest, webPid, "web")
@@ -603,7 +603,7 @@ async function removeRuntimeManifest(manifest: HeadlessRuntimeManifest): Promise
 
 async function stopManifest(manifest: HeadlessRuntimeManifest): Promise<void> {
   await killOwnedRuntimeProcess(manifest, manifest.pids.web, "web");
-  await killOwnedRuntimeProcess(manifest, manifest.pids.uni-cliServer, "server");
+  await killOwnedRuntimeProcess(manifest, manifest.pids.uniCliServer, "server");
   await killOwnedRuntimeProcess(manifest, manifest.supervisorPid, "supervisor");
   await removeRuntimeManifest(manifest);
 }
@@ -625,8 +625,8 @@ async function waitForOwnedRuntimeExit(manifest: HeadlessRuntimeManifest): Promi
   while (headlessRuntimeProcessesAreOwned(manifest)) await delay(500);
   const webRunning = manifest.pids.web !== null
     && isOwnedRuntimeProcess(manifest, manifest.pids.web, "web");
-  const serverRunning = manifest.pids.uni-cliServer !== null
-    && isOwnedRuntimeProcess(manifest, manifest.pids.uni-cliServer, "server");
+  const serverRunning = manifest.pids.uniCliServer !== null
+    && isOwnedRuntimeProcess(manifest, manifest.pids.uniCliServer, "server");
   return `headless process exited (web=${webRunning ? "running" : "stopped"}, server=${serverRunning ? "running" : "stopped"})`;
 }
 
@@ -635,7 +635,7 @@ export async function monitorHeadlessRuntime(runtimeManifestPath: string): Promi
   if (!manifest || manifest.runtimeManifestPath !== runtimeManifestPath) return;
   await waitForOwnedRuntimeExit(manifest);
   await killOwnedRuntimeProcess(manifest, manifest.pids.web, "web");
-  await killOwnedRuntimeProcess(manifest, manifest.pids.uni-cliServer, "server");
+  await killOwnedRuntimeProcess(manifest, manifest.pids.uniCliServer, "server");
   await removeRuntimeManifest(manifest);
 }
 
@@ -756,7 +756,7 @@ export async function launchHeadlessWeb(options: HeadlessWebLaunchOptions): Prom
     ? await resolveInstalledProductionHeadlessState({ env, fallbackWorkspace: declaredWorkspace })
     : null;
   const workspace = productionState?.workspace ?? declaredWorkspace;
-  const uni-cliPort = await resolvePort(env.UNICLI_PORT ?? DEFAULT_SERVER_PORT, "127.0.0.1");
+  const uniCliPort = await resolvePort(env.UNICLI_PORT ?? DEFAULT_SERVER_PORT, "127.0.0.1");
   const webPort = await resolvePort(env.UNICLI_WEB_PORT ?? DEFAULT_WEB_PORT, "127.0.0.1");
   const rotateTokens = options.rotateTokens === true || (options.replace === true && options.keepTokens !== true);
   const resolvedTokens = productionState ?? resolveHeadlessTokens({
@@ -779,9 +779,9 @@ export async function launchHeadlessWeb(options: HeadlessWebLaunchOptions): Prom
   }
   const webLogPath = runtimePaths.webLogPath;
   const headlessLogPath = runtimePaths.headlessLogPath;
-  const uni-cliUrl = `http://${clientHost}:${uni-cliPort}`;
+  const uniCliUrl = `http://${clientHost}:${uniCliPort}`;
   const webUrl = `http://${clientHost}:${webPort}`;
-  const browserEnv = headlessBrowserEnvironment({ browserHostSuffix: options.browserHostSuffix, uni-cliUrl });
+  const browserEnv = headlessBrowserEnvironment({ browserHostSuffix: options.browserHostSuffix, uniCliUrl });
   const denProxyEnabled = env.UNICLI_DEV_HEADLESS_WEB_DEN_PROXY === undefined
     ? true
     : readBool(env.UNICLI_DEV_HEADLESS_WEB_DEN_PROXY);
@@ -790,8 +790,8 @@ export async function launchHeadlessWeb(options: HeadlessWebLaunchOptions): Prom
   const clientConnection = resolveHeadlessClientConnection({
     state: options.state,
     env,
-    uni-cliUrl,
-    uni-cliPort,
+    uniCliUrl,
+    uniCliPort,
     token: resolvedTokens.token,
   });
   const viteEnv: NodeJS.ProcessEnv = {
@@ -818,7 +818,7 @@ export async function launchHeadlessWeb(options: HeadlessWebLaunchOptions): Prom
     ...(productionState ? {} : { UNICLI_WORKSPACE: workspace }),
     UNICLI_HOST: host,
     UNICLI_REMOTE_ACCESS: remoteAccessEnabled ? "1" : "0",
-    UNICLI_PORT: String(uni-cliPort),
+    UNICLI_PORT: String(uniCliPort),
     UNICLI_TOKEN: resolvedTokens.token,
     UNICLI_HOST_TOKEN: resolvedTokens.hostToken,
     UNICLI_SERVER_CONFIG: serverConfigPath,
@@ -834,10 +834,10 @@ export async function launchHeadlessWeb(options: HeadlessWebLaunchOptions): Prom
   const launchId = randomUUID();
   const provisionalManifest = (
     webPid: number | null,
-    uni-cliServerPid: number | null,
+    uniCliServerPid: number | null,
   ): HeadlessRuntimeManifest => buildHeadlessRuntimeManifest({
     webUrl,
-    uni-cliUrl,
+    uniCliUrl,
     workspace,
     token: resolvedTokens.token,
     hostToken: resolvedTokens.hostToken,
@@ -847,7 +847,7 @@ export async function launchHeadlessWeb(options: HeadlessWebLaunchOptions): Prom
     headlessLogPath,
     denTarget,
     webPid,
-    uni-cliServerPid,
+    uniCliServerPid,
     world: { name: options.name, state: options.state, launchId },
   });
   try {
@@ -864,9 +864,9 @@ export async function launchHeadlessWeb(options: HeadlessWebLaunchOptions): Prom
     ], webLogPath, repoRoot, viteEnv);
     acquiredChildren.push(webProcess);
     acquiredManifest = provisionalManifest(webProcess.pid ?? null, null);
-    const serverLaunch = buildHeadlessServerLaunch(repoRoot, builduni-cliServerArgs({
+    const serverLaunch = buildHeadlessServerLaunch(repoRoot, builduniCliServerArgs({
       host,
-      port: uni-cliPort,
+      port: uniCliPort,
       configPath: serverConfigPath,
       corsOrigins: buildHeadlessCorsOrigins({ webUrl, webPort }),
     }));
@@ -931,6 +931,6 @@ export async function launchHeadlessWeb(options: HeadlessWebLaunchOptions): Prom
     const cleanupDetail = cleanupErrors.length === 0
       ? ""
       : ` Cleanup could not confirm ownership release: ${cleanupErrors.join("; ")}.`;
-    throw new Error(`${messageText(error)} Headless server: ${uni-cliUrl}; web: ${webUrl}.${cleanupDetail}`);
+    throw new Error(`${messageText(error)} Headless server: ${uniCliUrl}; web: ${webUrl}.${cleanupDetail}`);
   }
 }

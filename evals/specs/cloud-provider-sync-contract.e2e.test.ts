@@ -660,7 +660,7 @@ test.skipIf(missingRequirements.length > 0)(title, { timeout: 30 * 60_000 }, asy
   // real server sync boundary. A missing model must settle into recovery.
   await deleteProvider(den.admin, orgId, catalogProviderId);
   const syncResult = await evalIn(desktopApp, async () => {
-    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
     if (!info.hostToken) throw new Error("Missing local server host token");
     const port = localStorage.getItem("uni-cli.server.port");
     const response = await fetch("http://127.0.0.1:" + port + "/cloud-provider-sync/run", {
@@ -700,7 +700,7 @@ test.skipIf(missingRequirements.length > 0)(title, { timeout: 30 * 60_000 }, asy
   expect(mockUpdate.ok).toBe(true);
   const rotatedAt = new Date().toISOString();
   const rotationStatus = await evalIn(desktopApp, browserScript(async (providerId, rotatedKey) => {
-    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
     if (!info.hostToken) throw new Error("Missing local server host token");
     const base = "http://127.0.0.1:" + localStorage.getItem("uni-cli.server.port");
     const headers = { "x-uni-cli-host-token": info.hostToken, "Content-Type": "application/json" };
@@ -743,12 +743,12 @@ test.skipIf(missingRequirements.length > 0)(title, { timeout: 30 * 60_000 }, asy
   const restart = await evalIn(desktopApp, async () => {
     const invoke = window.__UNICLI_ELECTRON__?.invokeDesktop;
     if (!invoke) throw new Error("Desktop runtime bridge unavailable");
-    const before = await invoke("uni-cliServerInfo");
+    const before = await invoke("uniCliServerInfo");
     const timeOrigin = performance.timeOrigin;
     const route = location.hash;
     const token = localStorage.getItem("uni-cli.den.authToken");
     const org = localStorage.getItem("uni-cli.den.activeOrgId");
-    const after = await invoke("uni-cliServerRestart");
+    const after = await invoke("uniCliServerRestart");
     return {
       generationChanged: after.generation !== before.generation,
       samePort: after.port === before.port,

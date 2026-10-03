@@ -49,7 +49,7 @@ function rewriteLegacyThinkingOptions(apiId: string, options: Record<string, unk
 
 // Single export: the OpenCode plugin loader treats every export of a plugin
 // module as a plugin factory, so helpers must stay module-private.
-export const Uni-CLIAnthropicAdaptiveThinking = async () => ({
+export const UniCliAnthropicAdaptiveThinking = async () => ({
   "chat.params": async (
     input: { model: { id: string; api?: { id?: string } } },
     output: { options: Record<string, unknown> },

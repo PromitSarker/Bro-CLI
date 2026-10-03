@@ -83,7 +83,7 @@ export async function bootAppWebWorld(
       await Promise.all([owned.runtimeDirectory, owned.fixtureRoot].map((path) => rm(path, { recursive: true, force: true })));
     });
     return { placement: "local", sourceSha: source.sha, sourceDirty: String(source.dirty), sourceKind: "working-tree", runtimeName,
-      webUrl: runtime.webUrl, uni-cliUrl: runtime.uni-cliUrl, runtimeDirectory: runtime.runtimeDirectory };
+      webUrl: runtime.webUrl, uniCliUrl: runtime.uniCliUrl, runtimeDirectory: runtime.runtimeDirectory };
   }
   if (!options.ref || !/^[a-f0-9]{40}$/.test(options.ref)) throw new Error("Daytona app-web requires a full pushed source SHA.");
   let sandboxId: string | undefined;
@@ -114,7 +114,7 @@ export async function bootAppWebWorld(
     sourceSha: room.source.actualSha, sourceFingerprint: room.source.preparedFingerprint, sandboxId, runtimeName,
     webUrl: { value: preview.browserOrigin, secret: true }, previewExpiresInSeconds: String((lifetimeMinutes + 10) * 60),
     previewExpires: new Date(previewIssuedAt + (lifetimeMinutes + 10) * 60_000).toISOString(),
-    runtimeWebUrl: runtime.webUrl, runtimeuni-cliUrl: runtime.uni-cliUrl, runtimeDirectory: runtime.runtimeDirectory,
+    runtimeWebUrl: runtime.webUrl, runtimeuniCliUrl: runtime.uniCliUrl, runtimeDirectory: runtime.runtimeDirectory,
   };
 }
 

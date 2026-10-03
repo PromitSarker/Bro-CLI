@@ -14,7 +14,7 @@ import { recipe, runRecipe } from "../../evals/packages/env/src/recipe.ts";
 export const LITELLM_WORLD_ORG = "LiteLLM Per-Member World";
 export const LITELLM_WORLD_PROVIDER = "uni-cli-litellm-per-member";
 export const LITELLM_WORLD_MODEL = "uni-cli-litellm-per-member-model";
-export const LITELLM_WORLD_PASSWORD = "Uni-CLIEval123!";
+export const LITELLM_WORLD_PASSWORD = "UniCliEval123!";
 
 const REPLY = "The database-backed per-member LiteLLM world is working.";
 

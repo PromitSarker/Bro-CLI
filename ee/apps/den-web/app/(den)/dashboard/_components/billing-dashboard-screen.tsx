@@ -17,7 +17,7 @@ import { getInferenceRoute, getMembersRoute, getOrgAccessFlags, getWebRoute } fr
 import { ORG_SCOPE_HEADER } from "../../_lib/org-scope";
 import { useDenFlow } from "../../_providers/den-flow-provider";
 import {
-  getUni-CLIWebQuantityDescription,
+  getUniCliWebQuantityDescription,
   UNICLI_WEB_QUANTITY_EXPLANATION,
   parseStripeWebBilling,
   type StripeWebBilling,
@@ -337,7 +337,7 @@ export function BillingDashboardScreen() {
   const aiConfigured = stripeBilling?.configured === true;
   const seatsConfigured = seatBilling?.configured === true;
   const webFeatureEnabled = runtimeConfigLoaded
-    && orgContext?.capabilities.uni-cliWeb === true;
+    && orgContext?.capabilities.uniCliWeb === true;
   const webConfigured = webBilling?.configured === true;
 
   const aiActive = stripeBilling?.hasActiveSubscription === true;
@@ -498,12 +498,12 @@ export function BillingDashboardScreen() {
                 !webBilling
                   ? "Billing details are unavailable · browser access remains locked"
                   : webComplimentary
-                    ? `${getUni-CLIWebQuantityDescription(webBilling.quantity)} covered · complimentary access`
+                    ? `${getUniCliWebQuantityDescription(webBilling.quantity)} covered · complimentary access`
                   : !webConfigured
                     ? "This deployment does not sell Uni-CLI Web access"
                     : webSubscribed
-                      ? `${getUni-CLIWebQuantityDescription(webBilling.quantity)} × ${webPrice} · ${formatSubscriptionStatus(webStatus ?? "unknown")}`
-                      : `${getUni-CLIWebQuantityDescription(webBilling.quantity)} · not subscribed`
+                      ? `${getUniCliWebQuantityDescription(webBilling.quantity)} × ${webPrice} · ${formatSubscriptionStatus(webStatus ?? "unknown")}`
+                      : `${getUniCliWebQuantityDescription(webBilling.quantity)} · not subscribed`
               }
               value={webComplimentary ? formatMoneyMinor(0, webBilling?.currency ?? "usd") : webCountsTowardTotal ? webChargeLabel ?? "" : formatMoneyMinor(0, webBilling?.currency ?? "usd")}
               valueCaption={webComplimentary ? "no charge" : `per ${webBilling?.interval ?? "month"}`}
@@ -618,8 +618,8 @@ export function BillingDashboardScreen() {
               <div className="mt-4 rounded-2xl border border-gray-200 bg-gray-50 p-4" data-testid="billing-uni-cli-web-price-breakdown">
                 <p className="text-[22px] font-semibold tracking-[-0.03em] text-gray-950">
                   {webComplimentary
-                    ? `${getUni-CLIWebQuantityDescription(webBilling.quantity)} covered`
-                    : `${getUni-CLIWebQuantityDescription(webBilling.quantity)} × ${webPrice}`}
+                    ? `${getUniCliWebQuantityDescription(webBilling.quantity)} covered`
+                    : `${getUniCliWebQuantityDescription(webBilling.quantity)} × ${webPrice}`}
                 </p>
                 <p className="mt-1 text-[14px] text-gray-600">
                   {webComplimentary ? "$0.00 monthly charge" : `${webChargeLabel} per ${webBilling.interval}`}
@@ -679,7 +679,7 @@ export function BillingDashboardScreen() {
                   />
                 ) : (
                   <DenActionRow
-                    description={`Purchase from the Uni-CLI Web page — ${getUni-CLIWebQuantityDescription(webBilling.quantity)} × ${webPrice} per ${webBilling.interval}.`}
+                    description={`Purchase from the Uni-CLI Web page — ${getUniCliWebQuantityDescription(webBilling.quantity)} × ${webPrice} per ${webBilling.interval}.`}
                     action={<DenButton onClick={() => router.push(getWebRoute(activeOrg?.slug))}>View Uni-CLI Web</DenButton>}
                   />
                 )}

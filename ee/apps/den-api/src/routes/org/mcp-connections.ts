@@ -899,7 +899,7 @@ function legacyExternalMcpConnectionIdsFromPayload(payload: Record<string, unkno
   const ids = new Set<string>()
   const collect = (value: unknown) => {
     if (!isRecord(value)) return
-    if (value.uni-cliManaged !== "den_external_mcp") return
+    if (value.uniCliManaged !== "den_external_mcp") return
     if (typeof value.externalMcpConnectionId === "string" && value.externalMcpConnectionId.trim()) {
       ids.add(value.externalMcpConnectionId.trim())
     }

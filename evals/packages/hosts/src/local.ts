@@ -9,9 +9,9 @@ import {
   desktopBootstrapPath,
   globalOpencodeConfigDir,
   opencodeDbCandidates,
-  uni-cliEnvStorePath,
-  uni-cliServerConfigPath,
-  uni-cliServerDataDir,
+  uniCliEnvStorePath,
+  uniCliServerConfigPath,
+  uniCliServerDataDir,
 } from "@uni-cli/paths";
 import { ensureDenStack } from "./den-stack.ts";
 import { selectedAppEnv } from "./app-env.ts";
@@ -597,14 +597,14 @@ export async function resolveInstalledProductionDesktopState(
   }
   const env = options.env ?? process.env;
   const homeDir = options.homeDir ?? homedir();
-  const dataDir = uni-cliServerDataDir({ env, homeDir, platform });
+  const dataDir = uniCliServerDataDir({ env, homeDir, platform });
   await requireInstalledPath(dataDir, "directory", "Installed production Uni-CLI data directory");
   const userDataDir = join(homeDir, "Library", "Application Support", "com.differentai.uni-cli");
   const workspaceStatePath = join(userDataDir, "uni-cli-workspaces.json");
   const serverTokenStorePath = join(userDataDir, "uni-cli-server-tokens.json");
   const serverStatePath = join(userDataDir, "uni-cli-server-state.json");
-  const serverConfigPath = uni-cliServerConfigPath({ env, homeDir, platform });
-  const envStorePath = uni-cliEnvStorePath({ env, homeDir, platform });
+  const serverConfigPath = uniCliServerConfigPath({ env, homeDir, platform });
+  const envStorePath = uniCliEnvStorePath({ env, homeDir, platform });
   const bootstrapPath = desktopBootstrapPath({ env, homeDir, platform, userDataDir });
   const opencodeConfigDir = globalOpencodeConfigDir({ env, homeDir, platform });
   for (const [path, label] of [

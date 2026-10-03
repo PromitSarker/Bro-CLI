@@ -12,7 +12,7 @@ type FeedbackUrlOptions = {
   deployment?: "desktop" | "web";
   appVersion?: string | null;
   buildSha?: string | null;
-  uni-cliServerVersion?: string | null;
+  uniCliServerVersion?: string | null;
   opencodeVersion?: string | null;
 };
 
@@ -102,7 +102,7 @@ export function buildFeedbackUrl(options: FeedbackUrlOptions): string {
   const entries = {
     deployment,
     appVersion,
-    uni-cliServerVersion: options.uni-cliServerVersion?.trim() ?? "",
+    uniCliServerVersion: options.uniCliServerVersion?.trim() ?? "",
     opencodeVersion: options.opencodeVersion?.trim() ?? "",
     osName: osContext.osName?.trim() ?? "",
     osVersion: osContext.osVersion?.trim() ?? "",

@@ -397,7 +397,7 @@ const promptEvidenceSchema = z.object({
 const agentEvidenceSchema = z.object({
   evidenceSource: z.enum(["effective-engine", "configured-intent"]),
   defaultAgent: safeTextSchema.max(160).nullable(),
-  configureduni-cliAgent: z.object({
+  configureduniCliAgent: z.object({
     state: z.enum(["present", "missing", "configured-disabled"]),
     mode: z.enum(["subagent", "primary", "all"]).nullable(),
     prompt: promptEvidenceSchema,

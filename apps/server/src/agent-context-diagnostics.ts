@@ -25,7 +25,7 @@ import {
 } from "./agent-context-engine-inspection.js";
 import {
   differentialCloudVerdict,
-  probeuni-cliCloudCatalog,
+  probeuniCliCloudCatalog,
   type CloudCatalogProbe,
 } from "./agent-context-cloud-probe.js";
 import { readActivatedEnterpriseDenOrigin } from "./enterprise-den-origin.js";
@@ -50,7 +50,7 @@ import {
   type McpInventoryInspection,
 } from "./mcp.js";
 import { resolveWorkspaceOpencodeConnection } from "./opencode-connection.js";
-import { builduni-cliRuntimeConfigObjectFromSnapshot } from "./uni-cli-runtime-config.js";
+import { builduniCliRuntimeConfigObjectFromSnapshot } from "./uni-cli-runtime-config.js";
 import {
   ENGINE_GLOBAL_RUNTIME_CONFIG_ID,
   inspectRuntimeOpencodeConfigState,
@@ -154,8 +154,8 @@ function assessEffectiveToolPolicy(
       unavailableReasons: ["effective_engine_snapshot_unavailable"],
     };
   }
-  const uni-cliAgent = snapshot.agents.find((agent) => agent.name === "uni-cli");
-  if (!uni-cliAgent) {
+  const uniCliAgent = snapshot.agents.find((agent) => agent.name === "uni-cli");
+  if (!uniCliAgent) {
     return {
       status: "unavailable",
       decisions: {},
@@ -165,8 +165,8 @@ function assessEffectiveToolPolicy(
   }
   if (
     snapshot.defaultAgent !== "uni-cli"
-    || uni-cliAgent.hidden
-    || (uni-cliAgent.mode !== "primary" && uni-cliAgent.mode !== "all")
+    || uniCliAgent.hidden
+    || (uniCliAgent.mode !== "primary" && uniCliAgent.mode !== "all")
   ) {
     return {
       status: "unavailable",
@@ -177,7 +177,7 @@ function assessEffectiveToolPolicy(
   }
   const decisions: Record<string, EffectiveToolPolicyDecision> = {};
   for (const toolId of REQUIRED_CLOUD_AGENT_TOOL_IDS) {
-    decisions[toolId] = effectiveToolDecision(uni-cliAgent.permission, toolId);
+    decisions[toolId] = effectiveToolDecision(uniCliAgent.permission, toolId);
   }
 
   const deniedToolIds = REQUIRED_CLOUD_AGENT_TOOL_IDS.filter(
@@ -1170,8 +1170,8 @@ function engineAgentCheck(
     details: {
       engineApiReadPerformed: true,
       effectiveAgentCount: snapshot.agents.length,
-      uni-cliAgentPresent: Boolean(agent),
-      uni-cliAgentHidden: agent?.hidden ?? null,
+      uniCliAgentPresent: Boolean(agent),
+      uniCliAgentHidden: agent?.hidden ?? null,
       permissionRuleCount: agent?.permission.length ?? null,
       rawPromptIncluded: false,
     },
@@ -1304,22 +1304,22 @@ export async function runAgentContextDiagnostics(input: {
   // The injected engine config file is rendered from the ENGINE_GLOBAL row
   // only; the merged per-workspace runtime row informs MCP inventory below
   // but is not part of the injected file.
-  const expectedRuntimeConfig = builduni-cliRuntimeConfigObjectFromSnapshot(globalRuntimeInspection.config);
+  const expectedRuntimeConfig = builduniCliRuntimeConfigObjectFromSnapshot(globalRuntimeInspection.config);
   const expectedAgents = isRecord(expectedRuntimeConfig.agent) ? expectedRuntimeConfig.agent : {};
   const expectedAgent = isRecord(expectedAgents.uni-cli) ? expectedAgents.uni-cli : null;
-  const effectiveuni-cliAgent = effectiveEngine?.agents.find((agent) => agent.name === "uni-cli") ?? null;
-  const effectiveAgentModeUsable = effectiveuni-cliAgent?.mode === "primary"
-    || effectiveuni-cliAgent?.mode === "all";
+  const effectiveuniCliAgent = effectiveEngine?.agents.find((agent) => agent.name === "uni-cli") ?? null;
+  const effectiveAgentModeUsable = effectiveuniCliAgent?.mode === "primary"
+    || effectiveuniCliAgent?.mode === "all";
   const effectiveAgentUsable = Boolean(
-    effectiveuni-cliAgent
+    effectiveuniCliAgent
     && effectiveEngine?.defaultAgent === "uni-cli"
-    && !effectiveuni-cliAgent.hidden
+    && !effectiveuniCliAgent.hidden
     && effectiveAgentModeUsable,
   );
   const agentEvidenceSource = effectiveEngine ? "effective-engine" as const : "configured-intent" as const;
   const reportedAgent = effectiveEngine
-    ? effectiveuni-cliAgent
-      ? { prompt: effectiveuni-cliAgent.prompt }
+    ? effectiveuniCliAgent
+      ? { prompt: effectiveuniCliAgent.prompt }
       : null
     : expectedAgent;
   const prompt = promptEvidence(reportedAgent);
@@ -1474,7 +1474,7 @@ export async function runAgentContextDiagnostics(input: {
   // Cached engine registration and agent tool policy are comparison inputs
   // for the differential verdict, never eligibility gates: the independent
   // runtime probe exists precisely to diagnose engine-side failures.
-  const cloudProbe = await probeuni-cliCloudCatalog({
+  const cloudProbe = await probeuniCliCloudCatalog({
     workspaceId: input.workspace.id,
     workspaceType: input.workspace.workspaceType,
     runtimeConfigAvailable: runtimeInspection.status === "available",
@@ -1610,11 +1610,11 @@ export async function runAgentContextDiagnostics(input: {
         ? "observed"
         : runtimeInspection.status === "available" ? "expected" : "unavailable",
       code: effectiveEngine
-        ? !effectiveuni-cliAgent
+        ? !effectiveuniCliAgent
           ? "effective_uni-cli_agent_missing"
           : effectiveEngine.defaultAgent !== "uni-cli"
             ? "effective_default_agent_mismatch"
-            : effectiveuni-cliAgent.hidden
+            : effectiveuniCliAgent.hidden
               ? "effective_uni-cli_agent_hidden"
               : !effectiveAgentModeUsable
                 ? "effective_uni-cli_agent_not_primary"
@@ -1623,11 +1623,11 @@ export async function runAgentContextDiagnostics(input: {
           ? "configured_agent_has_override_layers"
           : "runtime_agent_intent_only",
       message: effectiveEngine
-        ? !effectiveuni-cliAgent
+        ? !effectiveuniCliAgent
           ? "The effective engine configuration does not contain the Uni-CLI agent."
           : effectiveEngine.defaultAgent !== "uni-cli"
             ? "The effective engine default does not select the Uni-CLI agent."
-            : effectiveuni-cliAgent.hidden
+            : effectiveuniCliAgent.hidden
               ? "The effective Uni-CLI agent is hidden and cannot be used as the default agent."
               : !effectiveAgentModeUsable
                 ? "The effective Uni-CLI agent is subagent-only and cannot be used as the default agent."
@@ -1643,10 +1643,10 @@ export async function runAgentContextDiagnostics(input: {
           : "Check the selected workspace engine health and rerun diagnostics.",
       details: {
         configuredAgentPresent: Boolean(expectedAgent),
-        effectiveAgentPresent: effectiveEngine ? Boolean(effectiveuni-cliAgent) : null,
-        effectiveDefaultAgentIsuni-cli: effectiveEngine ? effectiveEngine.defaultAgent === "uni-cli" : null,
-        effectiveAgentHidden: effectiveuni-cliAgent?.hidden ?? null,
-        effectiveAgentMode: effectiveuni-cliAgent?.mode ?? null,
+        effectiveAgentPresent: effectiveEngine ? Boolean(effectiveuniCliAgent) : null,
+        effectiveDefaultAgentIsuniCli: effectiveEngine ? effectiveEngine.defaultAgent === "uni-cli" : null,
+        effectiveAgentHidden: effectiveuniCliAgent?.hidden ?? null,
+        effectiveAgentMode: effectiveuniCliAgent?.mode ?? null,
         effectiveAgentUsableAsDefault: effectiveEngine ? effectiveAgentUsable : null,
         projectLayersAvailable: projectAgent.available,
         projectDefaultAgentOverride: projectAgent.defaultAgentOverride,
@@ -1963,16 +1963,16 @@ export async function runAgentContextDiagnostics(input: {
         effectiveEngine ? effectiveEngine.defaultAgent : expectedRuntimeConfig.default_agent,
         160,
       ) || null,
-      configureduni-cliAgent: {
+      configureduniCliAgent: {
         state: effectiveEngine
-          ? effectiveuni-cliAgent ? "present" : "missing"
+          ? effectiveuniCliAgent ? "present" : "missing"
           : expectedAgent?.disable === true
             ? "configured-disabled"
             : expectedAgent
               ? "present"
               : "missing",
-        mode: effectiveuni-cliAgent
-          ? effectiveuni-cliAgent.mode
+        mode: effectiveuniCliAgent
+          ? effectiveuniCliAgent.mode
           : expectedAgent?.mode === "subagent" || expectedAgent?.mode === "primary" || expectedAgent?.mode === "all"
             ? expectedAgent.mode
             : null,

@@ -41,14 +41,14 @@ export type {
   OpencodeConfigFile,
   OpencodeExecutionEnvEntry,
   OpencodeExecutionSnapshot,
-  uni-cliDockerCleanupResult,
-  uni-cliServerInfo,
+  uniCliDockerCleanupResult,
+  uniCliServerInfo,
   UpdaterEnvironment,
   WorkspaceCreateInput,
   WorkspaceCreateRemoteInput,
   WorkspaceExportSummary,
   WorkspaceList,
-  Workspaceuni-cliConfig,
+  WorkspaceuniCliConfig,
   WorkspaceUpdateRemoteInput,
 } from "@uni-cli/types/desktop-ipc";
 

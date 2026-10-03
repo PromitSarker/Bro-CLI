@@ -21,7 +21,7 @@ function quote(value: string): string {
 
 async function configureModel(surface: App, workspaceId: string, modelUrl: string) {
   const configured = await evalIn(surface, browserScript(async (workspaceId, modelUrl, providerId, modelId) => {
-    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
     if (!info.baseUrl) throw new Error("The local desktop server is not running");
     const headers = { Authorization: `Bearer ${info.ownerToken}`, "Content-Type": "application/json" };
     const root = info.baseUrl.replace(/\/$/, "");
@@ -53,7 +53,7 @@ async function configureModel(surface: App, workspaceId: string, modelUrl: strin
 
 async function runtimePlugins(surface: App, workspaceId: string): Promise<string[]> {
   const result = await evalIn(surface, browserScript(async (workspaceId) => {
-    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
     if (!info.baseUrl) throw new Error("The local desktop server is not running");
     const response = await fetch(`${info.baseUrl.replace(/\/$/, "")}/workspace/${workspaceId}/opencode/config`, {
       headers: { Authorization: `Bearer ${info.ownerToken}` }, signal: AbortSignal.timeout(20_000),
@@ -126,7 +126,7 @@ test("an admitted signed-in desktop turn executes its next bash tool while Den r
   expect(beforeIdentity.authTokenPresent).toBe(true);
   expect(beforeIdentity.activeOrgId).toBeTruthy();
   const policyBaseline = await eventually(() => evalIn(desktop, async () => {
-    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
     if (!info.baseUrl) throw new Error("The local desktop server is not running");
     const response = await fetch(`${info.baseUrl.replace(/\/$/, "")}/managed-policy`, {
       headers: { Authorization: `Bearer ${info.ownerToken}` }, signal: AbortSignal.timeout(10_000),
@@ -175,7 +175,7 @@ test("an admitted signed-in desktop turn executes its next bash tool while Den r
     // Calibrate the actual desktop-server -> Den path, not just a synthetic proxy probe.
     // Explicit refresh still reads Den; assertions use the installed snapshot.
     const policyRefresh = await evalIn(desktop, async () => {
-      const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+      const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
       if (!info.baseUrl) throw new Error("The local desktop server is not running");
       const response = await fetch(`${info.baseUrl.replace(/\/$/, "")}/managed-policy`, {
         headers: { Authorization: `Bearer ${info.ownerToken}` }, signal: AbortSignal.timeout(15_000),

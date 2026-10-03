@@ -19,17 +19,17 @@ import { RemoteWorkspaceFields } from "./remote-workspace-fields";
 import type { CreateRemoteWorkspaceModalProps } from "./types";
 
 type RemoteWorkspaceFormState = {
-  uni-cliHostUrl: string;
-  uni-cliToken: string;
-  uni-cliTokenVisible: boolean;
+  uniCliHostUrl: string;
+  uniCliToken: string;
+  uniCliTokenVisible: boolean;
   directory: string;
   displayName: string;
 };
 
 const emptyRemoteWorkspaceForm: RemoteWorkspaceFormState = {
-  uni-cliHostUrl: "",
-  uni-cliToken: "",
-  uni-cliTokenVisible: false,
+  uniCliHostUrl: "",
+  uniCliToken: "",
+  uniCliTokenVisible: false,
   directory: "",
   displayName: "",
 };
@@ -40,7 +40,7 @@ export function CreateRemoteWorkspaceModal(
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [form, setForm] = useState<RemoteWorkspaceFormState>(emptyRemoteWorkspaceForm);
-  const { uni-cliHostUrl, uni-cliToken, uni-cliTokenVisible, directory, displayName } = form;
+  const { uniCliHostUrl, uniCliToken, uniCliTokenVisible, directory, displayName } = form;
 
   const showClose = props.showClose ?? true;
   const title = props.title ?? t("dashboard.create_remote_workspace_title");
@@ -52,8 +52,8 @@ export function CreateRemoteWorkspaceModal(
 
   const canSubmit = useMemo(() => {
     if (submitting) return false;
-    return uni-cliHostUrl.trim().length > 0;
-  }, [uni-cliHostUrl, submitting]);
+    return uniCliHostUrl.trim().length > 0;
+  }, [uniCliHostUrl, submitting]);
 
   useEffect(() => {
     if (!props.open) return;
@@ -65,9 +65,9 @@ export function CreateRemoteWorkspaceModal(
     if (!props.open) return;
     const defaults = props.initialValues ?? {};
     setForm({
-      uni-cliHostUrl: defaults.uni-cliHostUrl?.trim() ?? "",
-      uni-cliToken: defaults.uni-cliToken?.trim() ?? "",
-      uni-cliTokenVisible: false,
+      uniCliHostUrl: defaults.uniCliHostUrl?.trim() ?? "",
+      uniCliToken: defaults.uniCliToken?.trim() ?? "",
+      uniCliTokenVisible: false,
       directory: defaults.directory?.trim() ?? "",
       displayName: defaults.displayName?.trim() ?? "",
     });
@@ -91,13 +91,13 @@ export function CreateRemoteWorkspaceModal(
 
         <div className="min-h-0 flex-1 overflow-y-auto">
           <RemoteWorkspaceFields
-            hostUrl={uni-cliHostUrl}
-            onHostUrlInput={(value) => setForm((current) => ({ ...current, uni-cliHostUrl: value }))}
-            token={uni-cliToken}
-            tokenVisible={uni-cliTokenVisible}
-            onTokenInput={(value) => setForm((current) => ({ ...current, uni-cliToken: value }))}
+            hostUrl={uniCliHostUrl}
+            onHostUrlInput={(value) => setForm((current) => ({ ...current, uniCliHostUrl: value }))}
+            token={uniCliToken}
+            tokenVisible={uniCliTokenVisible}
+            onTokenInput={(value) => setForm((current) => ({ ...current, uniCliToken: value }))}
             onToggleTokenVisible={() =>
-              setForm((current) => ({ ...current, uni-cliTokenVisible: !current.uni-cliTokenVisible }))
+              setForm((current) => ({ ...current, uniCliTokenVisible: !current.uniCliTokenVisible }))
             }
             displayName={displayName}
             onDisplayNameInput={(value) => setForm((current) => ({ ...current, displayName: value }))}
@@ -128,15 +128,15 @@ export function CreateRemoteWorkspaceModal(
               type="button"
               onClick={() =>
                 props.onConfirm({
-                  uni-cliHostUrl: uni-cliHostUrl.trim(),
-                  uni-cliToken: uni-cliToken.trim(),
+                  uniCliHostUrl: uniCliHostUrl.trim(),
+                  uniCliToken: uniCliToken.trim(),
                   directory: directory.trim() ? directory.trim() : null,
                   displayName: displayName.trim() ? displayName.trim() : null,
                 })
               }
               disabled={!canSubmit}
               title={
-                !uni-cliHostUrl.trim()
+                !uniCliHostUrl.trim()
                   ? t("dashboard.remote_base_url_required")
                   : undefined
               }

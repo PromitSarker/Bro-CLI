@@ -4,12 +4,12 @@ import { MonitorSmartphone } from "lucide-react";
 import { surfaceCardClass } from "../workspace/modal-styles";
 import { registerExtensionConfig } from "./extension-registry";
 
-const uni-cliBrowserConfigFactory = () => <Uni-CLIBrowserConfig />;
+const uniCliBrowserConfigFactory = () => <UniCliBrowserConfig />;
 
-registerExtensionConfig("uni-cli.browser.settings", uni-cliBrowserConfigFactory);
-registerExtensionConfig("uni-cli-browser", uni-cliBrowserConfigFactory);
+registerExtensionConfig("uni-cli.browser.settings", uniCliBrowserConfigFactory);
+registerExtensionConfig("uni-cli-browser", uniCliBrowserConfigFactory);
 
-function Uni-CLIBrowserConfig() {
+function UniCliBrowserConfig() {
   return (
     <div className={`${surfaceCardClass} space-y-3 p-4`}>
       <div className="flex items-start gap-3">

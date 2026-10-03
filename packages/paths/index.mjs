@@ -87,7 +87,7 @@ function optionHomeDir(opts) {
   return fromEnv || homedir();
 }
 
-function defaultuni-cliConfigDir(opts) {
+function defaultuniCliConfigDir(opts) {
   const env = optionEnv(opts);
   const platform = optionPlatform(opts);
   const paths = pathApi(platform);
@@ -102,31 +102,31 @@ function defaultuni-cliConfigDir(opts) {
   return paths.join(root, "uni-cli");
 }
 
-export function uni-cliConfigDir(opts) {
+export function uniCliConfigDir(opts) {
   const env = optionEnv(opts);
   const platform = optionPlatform(opts);
   const paths = pathApi(platform);
   const override = envValue(env, "UNICLI_SERVER_CONFIG");
   if (override) return paths.dirname(paths.resolve(override));
-  return defaultuni-cliConfigDir(opts);
+  return defaultuniCliConfigDir(opts);
 }
 
-export function uni-cliServerConfigPath(opts) {
+export function uniCliServerConfigPath(opts) {
   const env = optionEnv(opts);
   const platform = optionPlatform(opts);
   const paths = pathApi(platform);
   const override = envValue(env, "UNICLI_SERVER_CONFIG");
   if (override) return paths.resolve(override);
-  return paths.join(defaultuni-cliConfigDir(opts), "server.json");
+  return paths.join(defaultuniCliConfigDir(opts), "server.json");
 }
 
-export function uni-cliEnvStorePath(opts) {
+export function uniCliEnvStorePath(opts) {
   const env = optionEnv(opts);
   const platform = optionPlatform(opts);
   const paths = pathApi(platform);
   const override = envValue(env, "UNICLI_ENV_STORE");
   if (override) return paths.resolve(override);
-  return paths.join(defaultuni-cliConfigDir(opts), "env.json");
+  return paths.join(defaultuniCliConfigDir(opts), "env.json");
 }
 
 function safeConfigRoot(value, paths) {
@@ -221,7 +221,7 @@ export function expandHomePath(value, opts) {
   return value;
 }
 
-export function uni-cliServerDataDir(opts) {
+export function uniCliServerDataDir(opts) {
   const env = optionEnv(opts);
   const platform = optionPlatform(opts);
   const paths = pathApi(platform);

@@ -1,5 +1,5 @@
 import type { DynamicToolUIPart } from "ai"
-import { uni-cliCloudMcpConnectionActionSchema } from "@uni-cli/types/den/mcp-connection-action"
+import { uniCliCloudMcpConnectionActionSchema } from "@uni-cli/types/den/mcp-connection-action"
 import { connectionActionPayloadSchema, type ConnectionActionPayload } from "@uni-cli/types/connection-action-app"
 
 export type ToolErrorAttribution = {
@@ -128,7 +128,7 @@ function chatConnectionTarget(toolName: string, result: unknown, input?: unknown
     if (("source" in candidate && candidate.source !== "uni-cli-cloud")
       || ("version" in candidate && candidate.version !== 1)
       || ("kind" in candidate && candidate.kind !== "connection_action")) return null
-    const legacy = uni-cliCloudMcpConnectionActionSchema.safeParse(candidate)
+    const legacy = uniCliCloudMcpConnectionActionSchema.safeParse(candidate)
     const payload = connectionActionPayloadSchema.safeParse(legacy.success && !("schemaVersion" in candidate)
       ? {
         ...legacy.data,

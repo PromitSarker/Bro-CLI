@@ -1,12 +1,12 @@
 import * as React from "react";
 
-import type { uni-cliServerClient } from "@/app/lib/uni-cli-server";
+import type { uniCliServerClient } from "@/app/lib/uni-cli-server";
 import type { Client } from "@/app/types";
 
 type WorkspaceContextValue = {
   client: Client | null;
   opencodeBaseUrl: string;
-  uni-cliServerClient: uni-cliServerClient | null;
+  uniCliServerClient: uniCliServerClient | null;
   workspaceId: string;
   selectedWorkspaceRoot: string;
 };
@@ -16,7 +16,7 @@ const WorkspaceContext = React.createContext<WorkspaceContextValue | null>(null)
 type WorkspaceProviderProps = {
   client: Client | null;
   opencodeBaseUrl?: string;
-  uni-cliServerClient?: uni-cliServerClient | null;
+  uniCliServerClient?: uniCliServerClient | null;
   workspaceId?: string;
   selectedWorkspaceRoot: string;
   children: React.ReactNode;
@@ -25,14 +25,14 @@ type WorkspaceProviderProps = {
 export function WorkspaceProvider({
   client,
   opencodeBaseUrl = "",
-  uni-cliServerClient = null,
+  uniCliServerClient = null,
   workspaceId = "",
   selectedWorkspaceRoot,
   children,
 }: WorkspaceProviderProps) {
   const value = React.useMemo(
-    () => ({ client, opencodeBaseUrl, uni-cliServerClient, workspaceId, selectedWorkspaceRoot }),
-    [client, opencodeBaseUrl, uni-cliServerClient, workspaceId, selectedWorkspaceRoot],
+    () => ({ client, opencodeBaseUrl, uniCliServerClient, workspaceId, selectedWorkspaceRoot }),
+    [client, opencodeBaseUrl, uniCliServerClient, workspaceId, selectedWorkspaceRoot],
   );
 
   return React.createElement(WorkspaceContext.Provider, { value }, children);

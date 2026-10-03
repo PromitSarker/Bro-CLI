@@ -3,18 +3,18 @@ import { connectionDiagnosticHistory } from "./connection-diagnostic-history";
 import {
   appBuildInfo,
   engineInfo,
-  uni-cliServerInfo,
+  uniCliServerInfo,
   type AppBuildInfo,
   type EngineInfo,
   type OpencodeExecutionSnapshot,
-  type uni-cliServerInfo,
+  type uniCliServerInfo,
 } from "./desktop";
 import { readPerfLogs, type PerfLogRecord } from "./perf-log";
 import { sanitizeCloudMcpHealthDiagnostic } from "./diagnostic-sanitizer";
 import {
-  readuni-cliServerSettings,
-  type uni-cliServerSettings,
-  type uni-cliServerStatus,
+  readuniCliServerSettings,
+  type uniCliServerSettings,
+  type uniCliServerStatus,
 } from "./uni-cli-server";
 import { isDesktopRuntime } from "../utils";
 
@@ -25,9 +25,9 @@ export type DiagnosticsBundleContext = {
   developerMode?: boolean;
   hostConnectUrl?: string;
   hostConnectUrlUsesMdns?: boolean;
-  hostInfo?: uni-cliServerInfo | null;
-  uni-cliServerStatus?: uni-cliServerStatus;
-  uni-cliServerUrl?: string;
+  hostInfo?: uniCliServerInfo | null;
+  uniCliServerStatus?: uniCliServerStatus;
+  uniCliServerUrl?: string;
   runtimeWorkspaceId?: string | null;
   cloudMcpHealth?: unknown;
 };
@@ -37,8 +37,8 @@ export type DiagnosticsBundleInputs = {
   desktopRuntime: boolean;
   appInfo: AppBuildInfo | null;
   engineInfo: EngineInfo | null;
-  uni-cliServerSettings: uni-cliServerSettings;
-  hostInfo: uni-cliServerInfo | null;
+  uniCliServerSettings: uniCliServerSettings;
+  hostInfo: uniCliServerInfo | null;
   developerLogs: DevLogRecord[];
   perfLogs: PerfLogRecord[];
   context?: DiagnosticsBundleContext;
@@ -62,7 +62,7 @@ function pickAppInfo(info: AppBuildInfo | null) {
     version: info.version,
     gitSha: info.gitSha ?? null,
     buildEpoch: info.buildEpoch ?? null,
-    uni-cliDevMode: info.uni-cliDevMode ?? null,
+    uniCliDevMode: info.uniCliDevMode ?? null,
   };
 }
 
@@ -99,7 +99,7 @@ function pickEngineInfo(info: EngineInfo | null) {
   };
 }
 
-function pickHostInfo(info: uni-cliServerInfo | null) {
+function pickHostInfo(info: uniCliServerInfo | null) {
   if (!info) return null;
   return {
     running: Boolean(info.running),
@@ -113,7 +113,7 @@ function pickHostInfo(info: uni-cliServerInfo | null) {
   };
 }
 
-function defaultHostConnectUrl(hostInfo: uni-cliServerInfo | null) {
+function defaultHostConnectUrl(hostInfo: uniCliServerInfo | null) {
   return hostInfo?.connectUrl ?? hostInfo?.mdnsUrl ?? hostInfo?.lanUrl ?? hostInfo?.baseUrl ?? "";
 }
 
@@ -125,8 +125,8 @@ function addSecretValue(secrets: string[], value: string | null | undefined) {
 
 function collectSecretValues(input: DiagnosticsBundleInputs) {
   const secrets: string[] = [];
-  addSecretValue(secrets, input.uni-cliServerSettings.token);
-  addSecretValue(secrets, input.uni-cliServerSettings.hostToken);
+  addSecretValue(secrets, input.uniCliServerSettings.token);
+  addSecretValue(secrets, input.uniCliServerSettings.hostToken);
   addSecretValue(secrets, input.hostInfo?.clientToken);
   addSecretValue(secrets, input.hostInfo?.ownerToken);
   addSecretValue(secrets, input.hostInfo?.hostToken);
@@ -144,8 +144,8 @@ function scrubKnownSecretValues(value: string, secrets: string[]) {
 
 export function composeDiagnosticsBundleJson(input: DiagnosticsBundleInputs): string {
   const context = input.context;
-  const urlOverride = input.uni-cliServerSettings.urlOverride?.trim() ?? "";
-  const token = input.uni-cliServerSettings.token?.trim() ?? "";
+  const urlOverride = input.uniCliServerSettings.urlOverride?.trim() ?? "";
+  const token = input.uniCliServerSettings.token?.trim() ?? "";
   const hostConnectUrl = context?.hostConnectUrl ?? defaultHostConnectUrl(input.hostInfo);
   const hostConnectUrlUsesMdns = context?.hostConnectUrlUsesMdns ?? hostConnectUrl.includes(".local");
   const clientConnected = context?.clientConnected === true;
@@ -163,9 +163,9 @@ export function composeDiagnosticsBundleJson(input: DiagnosticsBundleInputs): st
       clientConnected,
       anyActiveRuns: context?.anyActiveRuns === true,
     },
-    uni-cliServer: {
-      status: context?.uni-cliServerStatus ?? (clientConnected ? "connected" : "disconnected"),
-      url: context?.uni-cliServerUrl ?? "",
+    uniCliServer: {
+      status: context?.uniCliServerStatus ?? (clientConnected ? "connected" : "disconnected"),
+      url: context?.uniCliServerUrl ?? "",
       settings: {
         urlOverride: urlOverride || null,
         tokenPresent: Boolean(token),
@@ -213,7 +213,7 @@ async function readEngineInfo(desktopRuntime: boolean) {
 async function readHostInfo(desktopRuntime: boolean) {
   if (!desktopRuntime) return null;
   try {
-    return await uni-cliServerInfo();
+    return await uniCliServerInfo();
   } catch {
     return null;
   }
@@ -231,7 +231,7 @@ export async function buildDiagnosticsBundleJson(context?: DiagnosticsBundleCont
     desktopRuntime,
     appInfo,
     engineInfo: engine,
-    uni-cliServerSettings: readuni-cliServerSettings(),
+    uniCliServerSettings: readuniCliServerSettings(),
     hostInfo,
     developerLogs: readDevLogs(80),
     perfLogs: readPerfLogs(80),

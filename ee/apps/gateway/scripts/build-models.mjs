@@ -6,14 +6,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const appDir = path.resolve(__dirname, "..")
 const sourceDir = path.join(appDir, "src", "models")
 const outputPath = path.join(appDir, "models-site", "models", "api.json")
-const devuni-cliApi = "http://127.0.0.1:8791/api/v1"
-const produni-cliApi = "https://inference.uni-clilabs.com/api/v1"
+const devuniCliApi = "http://127.0.0.1:8791/api/v1"
+const produniCliApi = "https://inference.uni-clilabs.com/api/v1"
 
 async function readJson(filePath) {
   return JSON.parse(await readFile(filePath, "utf8"))
 }
 
-function uni-cliProvider(models, api) {
+function uniCliProvider(models, api) {
   return {
     uni-cli: {
       id: "uni-cli",
@@ -28,8 +28,8 @@ function uni-cliProvider(models, api) {
 
 const isDevMode = process.env.UNICLI_DEV_MODE === "1"
 const base = await readJson(path.join(sourceDir, "base.json"))
-const uni-cliModels = await readJson(path.join(sourceDir, "uni-cli-models.json"))
-const uni-cli = uni-cliProvider(uni-cliModels, isDevMode ? devuni-cliApi : produni-cliApi)
+const uniCliModels = await readJson(path.join(sourceDir, "uni-cli-models.json"))
+const uni-cli = uniCliProvider(uniCliModels, isDevMode ? devuniCliApi : produniCliApi)
 const models = { ...base, ...uni-cli }
 
 await mkdir(path.dirname(outputPath), { recursive: true })

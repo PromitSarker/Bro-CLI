@@ -7,7 +7,7 @@ import { ADVANCED_SETTINGS_SECTIONS } from "../advanced-sections";
 import { Separator } from "@/components/ui/separator";
 
 import type { OpencodeConnectStatus } from "@/app/types";
-import type { uni-cliServerClient, uni-cliCloudMcpHealth, uni-cliRuntimeConfigStatus, uni-cliServerStatus } from "@/app/lib/uni-cli-server";
+import type { uniCliServerClient, uniCliCloudMcpHealth, uniCliRuntimeConfigStatus, uniCliServerStatus } from "@/app/lib/uni-cli-server";
 import { t } from "@/i18n";
 import { LayoutStack } from "../settings-layout";
 import type { useDenSession } from "../cloud/use-den-session";
@@ -42,18 +42,18 @@ export type AdvancedViewProps = {
   busy: boolean;
   clientConnected: boolean;
   opencodeConnectStatus: OpencodeConnectStatus | null;
-  uni-cliServerStatus: uni-cliServerStatus;
+  uniCliServerStatus: uniCliServerStatus;
   developerMode: boolean;
   toggleDeveloperMode: () => void;
   opencodeDevModeEnabled: boolean;
   openDebugDeepLink: (rawUrl: string) => Promise<{ ok: boolean; message: string }>;
   canInspectRuntimeConfig: boolean;
-  getRuntimeConfigStatus: () => Promise<uni-cliRuntimeConfigStatus>;
+  getRuntimeConfigStatus: () => Promise<uniCliRuntimeConfigStatus>;
   organizationServer: AdvancedOrganizationServerSession;
   cloudMcpUrl: string | null;
-  cloudMcpHealth: uni-cliCloudMcpHealth | null;
-  refreshCloudMcpHealth: () => Promise<uni-cliCloudMcpHealth | null>;
-  engineClient: uni-cliServerClient | null;
+  cloudMcpHealth: uniCliCloudMcpHealth | null;
+  refreshCloudMcpHealth: () => Promise<uniCliCloudMcpHealth | null>;
+  engineClient: uniCliServerClient | null;
 };
 
 type AdvancedStatusTone = "ready" | "warning" | "error" | "neutral";
@@ -75,7 +75,7 @@ export function AdvancedView(props: AdvancedViewProps) {
     advancedLocalReducer,
     initialAdvancedLocalState,
   );
-  const [configStatus, setConfigStatus] = useState<uni-cliRuntimeConfigStatus | null>(null);
+  const [configStatus, setConfigStatus] = useState<uniCliRuntimeConfigStatus | null>(null);
   const [configStatusBusy, setConfigStatusBusy] = useState(false);
   const [configStatusError, setConfigStatusError] = useState<string | null>(null);
   const {
@@ -99,8 +99,8 @@ export function AdvancedView(props: AdvancedViewProps) {
     return props.clientConnected ? "ready" : "neutral";
   })();
 
-  const uni-cliStatusLabel = (() => {
-    switch (props.uni-cliServerStatus) {
+  const uniCliStatusLabel = (() => {
+    switch (props.uniCliServerStatus) {
       case "connected":
         return t("config.status_connected");
       case "limited":
@@ -110,8 +110,8 @@ export function AdvancedView(props: AdvancedViewProps) {
     }
   })();
 
-  const uni-cliTone: AdvancedStatusTone = (() => {
-    switch (props.uni-cliServerStatus) {
+  const uniCliTone: AdvancedStatusTone = (() => {
+    switch (props.uniCliServerStatus) {
       case "connected":
         return "ready";
       case "limited":
@@ -128,7 +128,7 @@ export function AdvancedView(props: AdvancedViewProps) {
         "Uni-CLI server config sources below can still be inspected.",
       ];
 
-  const uni-cliDetailLines = props.uni-cliServerStatus === "connected"
+  const uniCliDetailLines = props.uniCliServerStatus === "connected"
     ? ["Runtime DB, workspace config, and migration diagnostics are available."]
     : ["Runtime config diagnostics need the Uni-CLI server connection."];
 
@@ -194,9 +194,9 @@ export function AdvancedView(props: AdvancedViewProps) {
           clientStatusLabel={clientStatusLabel}
           clientTone={clientTone}
           clientDetailLines={clientDetailLines}
-          uni-cliStatusLabel={uni-cliStatusLabel}
-          uni-cliTone={uni-cliTone}
-          uni-cliDetailLines={uni-cliDetailLines}
+          uniCliStatusLabel={uniCliStatusLabel}
+          uniCliTone={uniCliTone}
+          uniCliDetailLines={uniCliDetailLines}
         />
 
         <AdvancedCloudMcpDiagnosticsSection

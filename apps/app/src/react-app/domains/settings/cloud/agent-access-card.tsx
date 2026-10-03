@@ -5,11 +5,11 @@ import { ArrowUpRight, ChevronDown, ChevronRight } from "lucide-react";
 import { mintCloudControlMcpToken, readDenSettings } from "@/app/lib/den";
 import { openDesktopUrl } from "@/app/lib/desktop";
 import type {
-  uni-cliCloudMcpEngineRefresh,
-  uni-cliCloudMcpHealth,
-  uni-cliCloudMcpProviderModelContext,
-  uni-cliConnectState,
-  uni-cliServerClient,
+  uniCliCloudMcpEngineRefresh,
+  uniCliCloudMcpHealth,
+  uniCliCloudMcpProviderModelContext,
+  uniCliConnectState,
+  uniCliServerClient,
 } from "@/app/lib/uni-cli-server";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,8 +22,8 @@ import {
   UNICLI_CLOUD_EXPECTED_TOOLS,
   clearCloudMcpDisabledIntent,
   cloudMcpDisplaySummary,
-  rununi-cliCloudMcpEngineRefresh,
-  rununi-cliCloudMcpReconciler,
+  rununiCliCloudMcpEngineRefresh,
+  rununiCliCloudMcpReconciler,
   type CloudMcpOperationContext,
 } from "@/react-app/domains/connections/cloud-mcp-reconciler";
 import {
@@ -33,7 +33,7 @@ import {
   cloudMcpProbeTraceLines,
 } from "@/react-app/domains/connections/cloud-mcp-diagnostics";
 import { readCloudMcpUserState } from "@/react-app/domains/connections/cloud-mcp-user-state";
-import { resolveUni-CLIConnectStateSummary } from "@/react-app/domains/connections/uni-cli-connect-status";
+import { resolveUniCliConnectStateSummary } from "@/react-app/domains/connections/uni-cli-connect-status";
 import { t } from "@/i18n";
 
 const CLOUD_MCP_REFRESH_MARGIN_MS = 24 * 60 * 60 * 1000;
@@ -57,9 +57,9 @@ function ManageInDenButton() {
 }
 
 function buildCloudMcpContext(input: {
-  client: uni-cliServerClient | null;
+  client: uniCliServerClient | null;
   workspaceId: string | null;
-  currentModel: uni-cliCloudMcpProviderModelContext | null;
+  currentModel: uniCliCloudMcpProviderModelContext | null;
 }): CloudMcpOperationContext | null {
   const workspaceId = input.workspaceId?.trim() ?? "";
   const serverBaseUrl = input.client?.baseUrl.trim() ?? "";
@@ -79,7 +79,7 @@ function buildCloudMcpContext(input: {
 }
 
 function missingCloudMcpContextMessage(input: {
-  client: uni-cliServerClient | null;
+  client: uniCliServerClient | null;
   workspaceId: string | null;
 }): string {
   if (!input.workspaceId?.trim()) return "Select a workspace before running agent access diagnostics.";
@@ -88,25 +88,25 @@ function missingCloudMcpContextMessage(input: {
   return "Agent access diagnostics are unavailable for the current workspace.";
 }
 
-export function readyCloudMcpToolIds(health: uni-cliCloudMcpHealth | null): string[] {
+export function readyCloudMcpToolIds(health: uniCliCloudMcpHealth | null): string[] {
   if (!health?.usable) return [];
   return health.tools.present.filter((tool) => UNICLI_CLOUD_EXPECTED_TOOLS.some((expected) => expected === tool));
 }
 
 export function AgentAccessCard(props: {
-  client: uni-cliServerClient | null;
+  client: uniCliServerClient | null;
   workspaceId: string | null;
-  currentModel: uni-cliCloudMcpProviderModelContext | null;
-  onHealthChange?: (health: uni-cliCloudMcpHealth | null) => void;
+  currentModel: uniCliCloudMcpProviderModelContext | null;
+  onHealthChange?: (health: uniCliCloudMcpHealth | null) => void;
 }) {
   const cloudSession = useCloudSession();
-  const [health, setHealth] = useState<uni-cliCloudMcpHealth | null>(null);
-  const [connectState, setConnectState] = useState<uni-cliConnectState | null>(null);
+  const [health, setHealth] = useState<uniCliCloudMcpHealth | null>(null);
+  const [connectState, setConnectState] = useState<uniCliConnectState | null>(null);
   const [busy, setBusy] = useState<"test" | "repair" | "refresh" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [copyStatus, setCopyStatus] = useState<string | null>(null);
-  const [lastEngineRefresh, setLastEngineRefresh] = useState<uni-cliCloudMcpEngineRefresh | null>(null);
+  const [lastEngineRefresh, setLastEngineRefresh] = useState<uniCliCloudMcpEngineRefresh | null>(null);
   const context = buildCloudMcpContext(props);
   const userState = context ? readCloudMcpUserState(context) : null;
   const signedIn = cloudSession.isSignedIn && Boolean(cloudSession.authToken.trim());
@@ -139,7 +139,7 @@ export function AgentAccessCard(props: {
           : null
     : null;
   const connectStateSummary = connectState && (connectState.status !== "available" || !connectState.connectEnabled)
-    ? resolveUni-CLIConnectStateSummary(connectState.status, connectState.connectEnabled)
+    ? resolveUniCliConnectStateSummary(connectState.status, connectState.connectEnabled)
     : null;
   const summary = missingContextSummary ?? connectStateSummary ?? cloudMcpDisplaySummary({
       signedIn,
@@ -149,7 +149,7 @@ export function AgentAccessCard(props: {
       health,
     });
 
-  const updateHealth = (next: uni-cliCloudMcpHealth | null) => {
+  const updateHealth = (next: uniCliCloudMcpHealth | null) => {
     setHealth(next);
     props.onHealthChange?.(next);
   };
@@ -165,7 +165,7 @@ export function AgentAccessCard(props: {
       // probe: verify the Cloud endpoint directly from the Uni-CLI server as
       // well, so a failure can be attributed to the endpoint, the network
       // path, or the engine — not just reported as the engine's cached state.
-      const result = await rununi-cliCloudMcpReconciler({
+      const result = await rununiCliCloudMcpReconciler({
         mode: "health",
         client: props.client,
         context: { ...context, trigger: "desktop-connect-test" },
@@ -189,7 +189,7 @@ export function AgentAccessCard(props: {
     setBusy("refresh");
     setError(null);
     try {
-      const result = await rununi-cliCloudMcpEngineRefresh({
+      const result = await rununiCliCloudMcpEngineRefresh({
         client: props.client,
         context: { ...context, trigger: "desktop-connect-engine-refresh" },
       });
@@ -238,7 +238,7 @@ export function AgentAccessCard(props: {
     setError(null);
     try {
       clearCloudMcpDisabledIntent(context);
-      const result = await rununi-cliCloudMcpReconciler({
+      const result = await rununiCliCloudMcpReconciler({
         mode: "repair",
         client: props.client,
         context: { ...context, trigger: "desktop-connect-repair" },
@@ -283,7 +283,7 @@ export function AgentAccessCard(props: {
     let cancelled = false;
     setBusy("test");
     setError(null);
-    void rununi-cliCloudMcpReconciler({
+    void rununiCliCloudMcpReconciler({
       mode: "health",
       client: props.client,
       context: { ...context, trigger: "desktop-connect-autocheck" },
@@ -310,7 +310,7 @@ export function AgentAccessCard(props: {
     let cancelled = false;
     const retryAfterReconnect = () => {
       if (window.navigator.onLine === false) return;
-      void rununi-cliCloudMcpReconciler({
+      void rununiCliCloudMcpReconciler({
         mode: "repair",
         client,
         context: { ...context, trigger: "desktop-connect-online-retry" },
@@ -434,8 +434,8 @@ export function AgentAccessCard(props: {
 }
 
 function AgentAccessAdvanced(props: {
-  health: uni-cliCloudMcpHealth | null;
-  engineRefresh: uni-cliCloudMcpEngineRefresh | null;
+  health: uniCliCloudMcpHealth | null;
+  engineRefresh: uniCliCloudMcpEngineRefresh | null;
   open: boolean;
   onToggle: () => void;
   busyLabel: "test" | "repair" | "refresh" | null;

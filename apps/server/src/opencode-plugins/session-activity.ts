@@ -1,10 +1,10 @@
-import type { uni-cliSessionActivityInventory } from "@uni-cli/types/uni-cli-affordance";
+import type { uniCliSessionActivityInventory } from "@uni-cli/types/uni-cli-affordance";
 import { z } from "zod";
 
 const engineSessionStatusesSchema = z.record(z.string(), z.object({ type: z.string() }).passthrough());
 const enginePendingRequestsSchema = z.array(z.object({ sessionID: z.string() }).passthrough());
 
-export type SessionActivity = uni-cliSessionActivityInventory & {
+export type SessionActivity = uniCliSessionActivityInventory & {
   status: "idle" | "busy" | "retry" | "waiting" | "error" | "compacting" | "thinking" | "responding" | "unknown";
 };
 

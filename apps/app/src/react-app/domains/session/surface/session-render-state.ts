@@ -1,6 +1,6 @@
 import type { UIMessage } from "ai";
 
-import type { uni-cliSessionHistory } from "../../../../app/lib/uni-cli-server";
+import type { uniCliSessionHistory } from "../../../../app/lib/uni-cli-server";
 import { mergeSnapshotAndLiveMessages } from "../sync/message-merge";
 import { applyRevertCursor, dropDuplicateTurnErrors } from "../sync/transcript-reconcile";
 import { snapshotToUIMessages } from "../sync/usechat-adapter";
@@ -9,8 +9,8 @@ import { parseSlashCommandInvocation } from "./composer/slash-command";
 
 export function resolveRenderedSessionSnapshot(input: {
   sessionId: string;
-  currentSnapshot: uni-cliSessionHistory | null | undefined;
-  cachedRendered: { sessionId: string; snapshot: uni-cliSessionHistory } | null | undefined;
+  currentSnapshot: uniCliSessionHistory | null | undefined;
+  cachedRendered: { sessionId: string; snapshot: uniCliSessionHistory } | null | undefined;
 }) {
   if (input.currentSnapshot?.session.id === input.sessionId) {
     return input.currentSnapshot;
@@ -29,9 +29,9 @@ export type LatestSessionHistory = {
   source: UIMessage[];
 };
 
-const historyProjections = new WeakMap<uni-cliSessionHistory["messages"], UIMessage[]>();
+const historyProjections = new WeakMap<uniCliSessionHistory["messages"], UIMessage[]>();
 
-export function projectHistoryRead(snapshot: uni-cliSessionHistory) {
+export function projectHistoryRead(snapshot: uniCliSessionHistory) {
   let projected = historyProjections.get(snapshot.messages);
   if (!projected) {
     const messages = snapshot.messages.every(({ info }) => Number.isFinite(info.time?.created))
@@ -161,7 +161,7 @@ export function applyHistorySourceChanges(history: LatestSessionHistory, source:
 
 export function deriveRenderedSessionMessages(input: {
   transcriptState: UIMessage[] | null | undefined;
-  snapshot: uni-cliSessionHistory | null | undefined;
+  snapshot: uniCliSessionHistory | null | undefined;
   historyComplete?: boolean;
   latestHistory?: LatestSessionHistory | null;
 }) {

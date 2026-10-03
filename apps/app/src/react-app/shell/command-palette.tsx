@@ -8,7 +8,7 @@ import {
 } from "react";
 import type { Agent } from "@opencode-ai/sdk/v2/client";
 
-import type { uni-cliServerClient } from "@/app/lib/uni-cli-server";
+import type { uniCliServerClient } from "@/app/lib/uni-cli-server";
 import { useOpencodeEngineControls } from "./opencode-engine-controls";
 import { t } from "@/i18n";
 import {
@@ -94,7 +94,7 @@ export type SessionGroupOption = {
 };
 
 export type CommandPaletteProps = {
-  engineClient?: uni-cliServerClient | null;
+  engineClient?: uniCliServerClient | null;
   open: boolean;
   onClose: () => void;
   developerMode: boolean;

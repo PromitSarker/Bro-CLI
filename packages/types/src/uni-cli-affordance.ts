@@ -2,61 +2,61 @@ import { z } from "zod"
 
 export const UNICLI_AFFORDANCE_SCHEMA_VERSION = 1
 
-export const uni-cliAffordanceKindSchema = z.enum(["query", "command", "guidance"])
-export type uni-cliAffordanceKind = z.infer<typeof uni-cliAffordanceKindSchema>
+export const uniCliAffordanceKindSchema = z.enum(["query", "command", "guidance"])
+export type uniCliAffordanceKind = z.infer<typeof uniCliAffordanceKindSchema>
 
-export const uni-cliProviderKindSchema = z.enum(["builtin", "extension", "mcp", "connect"])
-export type uni-cliProviderKind = z.infer<typeof uni-cliProviderKindSchema>
+export const uniCliProviderKindSchema = z.enum(["builtin", "extension", "mcp", "connect"])
+export type uniCliProviderKind = z.infer<typeof uniCliProviderKindSchema>
 
-export const uni-cliProviderRefSchema = z.object({
+export const uniCliProviderRefSchema = z.object({
   id: z.string().trim().min(1),
-  kind: uni-cliProviderKindSchema,
+  kind: uniCliProviderKindSchema,
 })
-export type uni-cliProviderRef = z.infer<typeof uni-cliProviderRefSchema>
+export type uniCliProviderRef = z.infer<typeof uniCliProviderRefSchema>
 
-export const uni-cliAffordanceArgumentSchema = z.object({
+export const uniCliAffordanceArgumentSchema = z.object({
   name: z.string().trim().min(1),
   type: z.enum(["string", "number", "boolean", "object", "array", "unknown"]),
   required: z.boolean(),
   description: z.string().trim().min(1).optional(),
 })
-export type uni-cliAffordanceArgument = z.infer<typeof uni-cliAffordanceArgumentSchema>
+export type uniCliAffordanceArgument = z.infer<typeof uniCliAffordanceArgumentSchema>
 
-export const uni-cliAffordanceEffectsSchema = z.object({
+export const uniCliAffordanceEffectsSchema = z.object({
   data: z.enum(["none", "read", "write"]),
   ui: z.enum(["none", "focus", "navigate", "layout", "dialog"]),
   external: z.boolean(),
 })
-export type uni-cliAffordanceEffects = z.infer<typeof uni-cliAffordanceEffectsSchema>
+export type uniCliAffordanceEffects = z.infer<typeof uniCliAffordanceEffectsSchema>
 
-export const uni-cliAffordanceAvailabilitySchema = z.object({
+export const uniCliAffordanceAvailabilitySchema = z.object({
   enabled: z.boolean(),
   reason: z.string().trim().min(1).optional(),
 })
-export type uni-cliAffordanceAvailability = z.infer<typeof uni-cliAffordanceAvailabilitySchema>
+export type uniCliAffordanceAvailability = z.infer<typeof uniCliAffordanceAvailabilitySchema>
 
-export const uni-cliAffordanceExecutorSchema = z.discriminatedUnion("kind", [
+export const uniCliAffordanceExecutorSchema = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("uni-cli") }),
   z.object({
     kind: z.literal("tool"),
     tool: z.string().trim().min(1),
   }),
 ])
-export type uni-cliAffordanceExecutor = z.infer<typeof uni-cliAffordanceExecutorSchema>
+export type uniCliAffordanceExecutor = z.infer<typeof uniCliAffordanceExecutorSchema>
 
-export const uni-cliAffordanceDescriptorSchema = z.object({
+export const uniCliAffordanceDescriptorSchema = z.object({
   id: z.string().trim().min(1),
-  kind: uni-cliAffordanceKindSchema,
+  kind: uniCliAffordanceKindSchema,
   title: z.string().trim().min(1),
   description: z.string().trim().min(1),
-  provider: uni-cliProviderRefSchema,
-  arguments: z.array(uni-cliAffordanceArgumentSchema),
-  effects: uni-cliAffordanceEffectsSchema,
+  provider: uniCliProviderRefSchema,
+  arguments: z.array(uniCliAffordanceArgumentSchema),
+  effects: uniCliAffordanceEffectsSchema,
   confirmation: z.enum(["never", "destructive", "always"]),
-  availability: uni-cliAffordanceAvailabilitySchema,
-  executor: uni-cliAffordanceExecutorSchema,
+  availability: uniCliAffordanceAvailabilitySchema,
+  executor: uniCliAffordanceExecutorSchema,
 })
-export type uni-cliAffordanceDescriptor = z.infer<typeof uni-cliAffordanceDescriptorSchema>
+export type uniCliAffordanceDescriptor = z.infer<typeof uniCliAffordanceDescriptorSchema>
 
 /**
  * The model a session is bound to, as agents pass it to `session.create`
@@ -68,21 +68,21 @@ export type uni-cliAffordanceDescriptor = z.infer<typeof uni-cliAffordanceDescri
  * Results carry null instead of the object before any model is bound, and
  * the engine's literal "default" variant reads back as null.
  */
-export const uni-cliSessionModelSchema = z.object({
+export const uniCliSessionModelSchema = z.object({
   providerId: z.string().trim().min(1),
   modelId: z.string().trim().min(1),
   variant: z.string().trim().min(1).max(60).nullable(),
   displayName: z.string().optional(),
   providerName: z.string().optional(),
 })
-export type uni-cliSessionModel = z.infer<typeof uni-cliSessionModelSchema>
+export type uniCliSessionModel = z.infer<typeof uniCliSessionModelSchema>
 
-export const uni-cliModelSelectorSchema = z.object({
-  providerId: uni-cliSessionModelSchema.shape.providerId.optional(),
-  modelId: uni-cliSessionModelSchema.shape.modelId.optional(),
+export const uniCliModelSelectorSchema = z.object({
+  providerId: uniCliSessionModelSchema.shape.providerId.optional(),
+  modelId: uniCliSessionModelSchema.shape.modelId.optional(),
   alias: z.string().trim().min(1).optional(),
   displayName: z.string().trim().min(1).optional(),
-  variant: uni-cliSessionModelSchema.shape.variant.optional(),
+  variant: uniCliSessionModelSchema.shape.variant.optional(),
 }).superRefine((value, context) => {
   const names = [value.alias, value.displayName].filter((name) => name !== undefined)
   if (value.alias && (value.displayName || value.modelId)) {
@@ -96,20 +96,20 @@ export const uni-cliModelSelectorSchema = z.object({
   }
 })
 
-export const uni-cliModelsListArgsSchema = z.object({ workspaceId: z.string().trim().min(1) })
-export const uni-cliModelsListResultSchema = z.object({
+export const uniCliModelsListArgsSchema = z.object({ workspaceId: z.string().trim().min(1) })
+export const uniCliModelsListResultSchema = z.object({
   ok: z.literal(true),
-  workspaceId: uni-cliModelsListArgsSchema.shape.workspaceId,
-  models: z.array(uni-cliSessionModelSchema.omit({ variant: true }).extend({
+  workspaceId: uniCliModelsListArgsSchema.shape.workspaceId,
+  models: z.array(uniCliSessionModelSchema.omit({ variant: true }).extend({
     displayName: z.string(), providerName: z.string(), available: z.literal(true),
   })),
 })
-export type uni-cliCatalogModel = Pick<uni-cliSessionModel, "providerId" | "modelId"> & {
+export type uniCliCatalogModel = Pick<uniCliSessionModel, "providerId" | "modelId"> & {
   displayName: string
   providerName: string
 }
 
-export const uni-cliEngineProviderCatalogSchema = z.object({
+export const uniCliEngineProviderCatalogSchema = z.object({
   connected: z.array(z.string()),
   all: z.array(z.object({
     id: z.string(),
@@ -118,7 +118,7 @@ export const uni-cliEngineProviderCatalogSchema = z.object({
   })),
 })
 
-export function uni-cliCatalogModels(value: z.infer<typeof uni-cliEngineProviderCatalogSchema>): uni-cliCatalogModel[] {
+export function uniCliCatalogModels(value: z.infer<typeof uniCliEngineProviderCatalogSchema>): uniCliCatalogModel[] {
   return value.all.filter((provider) => value.connected.includes(provider.id)).flatMap((provider) =>
     Object.entries(provider.models).map(([modelId, model]) => ({
       providerId: provider.id, modelId, displayName: model.name || modelId, providerName: provider.name,
@@ -126,13 +126,13 @@ export function uni-cliCatalogModels(value: z.infer<typeof uni-cliEngineProvider
   )
 }
 
-export function labeluni-cliSessionModel(model: uni-cliSessionModel | null, catalog: readonly uni-cliCatalogModel[]): uni-cliSessionModel | null {
+export function labeluniCliSessionModel(model: uniCliSessionModel | null, catalog: readonly uniCliCatalogModel[]): uniCliSessionModel | null {
   if (!model) return null
   const entry = catalog.find((entry) => entry.providerId === model.providerId && entry.modelId === model.modelId)
   return entry ? { ...model, displayName: entry.displayName, providerName: entry.providerName } : model
 }
 
-export function resolveuni-cliModel(selector: z.infer<typeof uni-cliModelSelectorSchema>, catalog: readonly uni-cliCatalogModel[]): uni-cliSessionModel {
+export function resolveuniCliModel(selector: z.infer<typeof uniCliModelSelectorSchema>, catalog: readonly uniCliCatalogModel[]): uniCliSessionModel {
   const name = selector.modelId ? undefined : selector.alias ?? selector.displayName
   const matches = catalog.filter((entry) => name !== undefined
     ? entry.displayName.toLowerCase() === name.toLowerCase() && (!selector.providerId || entry.providerId.toLowerCase() === selector.providerId.toLowerCase())
@@ -145,7 +145,7 @@ export function resolveuni-cliModel(selector: z.infer<typeof uni-cliModelSelecto
     variant: selector.variant && selector.variant !== "default" ? selector.variant : null }
 }
 
-export const uni-cliSessionActivityInventorySchema = z.object({
+export const uniCliSessionActivityInventorySchema = z.object({
   working: z.boolean(),
   descendantActivity: z.object({
     busy: z.number().int().nonnegative(),
@@ -154,7 +154,7 @@ export const uni-cliSessionActivityInventorySchema = z.object({
   }),
   inventoryComplete: z.boolean(),
 })
-export type uni-cliSessionActivityInventory = z.infer<typeof uni-cliSessionActivityInventorySchema>
+export type uniCliSessionActivityInventory = z.infer<typeof uniCliSessionActivityInventorySchema>
 
 /**
  * Where a request came from: the conversation (session) whose agent issued
@@ -162,27 +162,27 @@ export type uni-cliSessionActivityInventory = z.infer<typeof uni-cliSessionActiv
  * opening a browser tab can act for the requesting conversation instead of
  * whichever one happens to be on screen.
  */
-export const uni-cliAffordanceOriginSchema = z.object({
+export const uniCliAffordanceOriginSchema = z.object({
   sessionId: z.string().trim().min(1),
   workspaceId: z.string().trim().min(1).optional(),
 })
-export type uni-cliAffordanceOrigin = z.infer<typeof uni-cliAffordanceOriginSchema>
+export type uniCliAffordanceOrigin = z.infer<typeof uniCliAffordanceOriginSchema>
 
-export const uni-cliAffordanceRequestSchema = z.object({
+export const uniCliAffordanceRequestSchema = z.object({
   id: z.string().trim().min(1),
   args: z.record(z.string(), z.unknown()).optional(),
   expectedRevision: z.number().int().nonnegative().optional(),
   actor: z.string().trim().min(1).optional(),
-  origin: uni-cliAffordanceOriginSchema.optional(),
+  origin: uniCliAffordanceOriginSchema.optional(),
 })
-export type uni-cliAffordanceRequest = z.infer<typeof uni-cliAffordanceRequestSchema>
+export type uniCliAffordanceRequest = z.infer<typeof uniCliAffordanceRequestSchema>
 
-const uni-cliAffordanceSuccessSchema = z.object({
+const uniCliAffordanceSuccessSchema = z.object({
   ok: z.literal(true),
   id: z.string(),
   result: z.unknown().optional(),
   revision: z.number().int().nonnegative().optional(),
-  effects: uni-cliAffordanceEffectsSchema,
+  effects: uniCliAffordanceEffectsSchema,
 })
 
 /**
@@ -199,7 +199,7 @@ const uni-cliAffordanceSuccessSchema = z.object({
  * - `archive_outcome_unknown`: the archive mutation was sent but its outcome
  *   could not be confirmed; read the session before considering another attempt.
  */
-export const uni-cliAffordanceFailureCodeSchema = z.enum([
+export const uniCliAffordanceFailureCodeSchema = z.enum([
   "unavailable",
   "invalid-args",
   "conflict",
@@ -209,19 +209,19 @@ export const uni-cliAffordanceFailureCodeSchema = z.enum([
   "verification_failed",
   "archive_outcome_unknown",
 ])
-export type uni-cliAffordanceFailureCode = z.infer<typeof uni-cliAffordanceFailureCodeSchema>
+export type uniCliAffordanceFailureCode = z.infer<typeof uniCliAffordanceFailureCodeSchema>
 
-const uni-cliAffordanceFailureSchema = z.object({
+const uniCliAffordanceFailureSchema = z.object({
   ok: z.literal(false),
   id: z.string(),
   error: z.string(),
-  code: uni-cliAffordanceFailureCodeSchema,
+  code: uniCliAffordanceFailureCodeSchema,
   hint: z.string().optional(),
   revision: z.number().int().nonnegative().optional(),
 })
 
-export const uni-cliAffordanceResultSchema = z.discriminatedUnion("ok", [
-  uni-cliAffordanceSuccessSchema,
-  uni-cliAffordanceFailureSchema,
+export const uniCliAffordanceResultSchema = z.discriminatedUnion("ok", [
+  uniCliAffordanceSuccessSchema,
+  uniCliAffordanceFailureSchema,
 ])
-export type uni-cliAffordanceResult = z.infer<typeof uni-cliAffordanceResultSchema>
+export type uniCliAffordanceResult = z.infer<typeof uniCliAffordanceResultSchema>

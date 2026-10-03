@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CancelledError, hashKey, skipToken, useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query";
 import type { UIMessage } from "ai";
-import type { uni-cliSessionHistory } from "@/app/lib/uni-cli-server";
+import type { uniCliSessionHistory } from "@/app/lib/uni-cli-server";
 import { SYNTHETIC_SESSION_ERROR_MESSAGE_PREFIX } from "@/app/types";
 import { snapshotToUIMessages } from "../sync/usechat-adapter";
 import { applyRevertCursor } from "../sync/transcript-reconcile";
@@ -9,7 +9,7 @@ import { applyHistorySourceChanges, reconcileHistoryRead, type LatestSessionHist
 import type { OpeningHistoryWindow } from "./session-history";
 import { getSessionScrollState, useSessionScrollStore, type SessionHistoryPagePosition, type SessionScrollState } from "./scroll-store";
 
-type Page = uni-cliSessionHistory & { pagination: NonNullable<uni-cliSessionHistory["pagination"]> };
+type Page = uniCliSessionHistory & { pagination: NonNullable<uniCliSessionHistory["pagination"]> };
 type Direction = "older" | "newer" | "refresh" | "latest";
 type Pages = { pages: Page[]; bridge: Page[]; lineage: (string | null)[] };
 type PageHistory = LatestSessionHistory & { pageState?: {
@@ -29,7 +29,7 @@ type PageScope = {
   failed: Direction | null;
   state: Pages | null;
   baseline: Map<string, UIMessage>;
-  snapshot: uni-cliSessionHistory | null;
+  snapshot: uniCliSessionHistory | null;
   ids: Set<string>;
   positions: Map<string, SessionHistoryPagePosition>;
   restoreCancelled: boolean;
@@ -44,13 +44,13 @@ function nativeId(id: string) {
     ? messageId.slice(SYNTHETIC_SESSION_ERROR_MESSAGE_PREFIX.length) : messageId;
 }
 
-function isPage(snapshot: uni-cliSessionHistory | null): snapshot is Page {
+function isPage(snapshot: uniCliSessionHistory | null): snapshot is Page {
   return Boolean(snapshot?.pagination);
 }
 
-export function mergeSessionHistoryPages(pages: readonly Page[], keep: (id: string) => boolean): uni-cliSessionHistory {
+export function mergeSessionHistoryPages(pages: readonly Page[], keep: (id: string) => boolean): uniCliSessionHistory {
   const newest = pages[pages.length - 1];
-  const nodes = new Map<string, { message: uni-cliSessionHistory["messages"][number]; before: string | null; after: string | null }>();
+  const nodes = new Map<string, { message: uniCliSessionHistory["messages"][number]; before: string | null; after: string | null }>();
   let first: string | null = null;
   let last: string | null = null;
   for (const page of pages) {
@@ -73,7 +73,7 @@ export function mergeSessionHistoryPages(pages: readonly Page[], keep: (id: stri
       after = id;
     }
   }
-  const messages: uni-cliSessionHistory["messages"] = [];
+  const messages: uniCliSessionHistory["messages"] = [];
   for (let id = first; id !== null;) {
     const node = nodes.get(id);
     if (!node) break;
@@ -87,7 +87,7 @@ export async function readSessionHistoryPage(client: QueryClient, input: {
   queryKey: readonly unknown[];
   signal: AbortSignal;
   sessionId: string;
-  read: (signal: AbortSignal) => Promise<uni-cliSessionHistory>;
+  read: (signal: AbortSignal) => Promise<uniCliSessionHistory>;
 }) {
   input.signal.throwIfAborted();
   const cancel = () => { void client.cancelQueries({ queryKey: input.queryKey, exact: true }); };
@@ -112,7 +112,7 @@ export async function readSessionHistoryPage(client: QueryClient, input: {
       networkMode: "always",
     });
     input.signal.throwIfAborted();
-    if (client.getQueryData<{ snapshot?: uni-cliSessionHistory }>(input.queryKey)?.snapshot !== result.snapshot) throw new CancelledError();
+    if (client.getQueryData<{ snapshot?: uniCliSessionHistory }>(input.queryKey)?.snapshot !== result.snapshot) throw new CancelledError();
     return result.snapshot;
   } finally { input.signal.removeEventListener("abort", cancel); }
 }
@@ -124,10 +124,10 @@ export function useSessionHistoryPages(input: {
   snapshotQueryKey: readonly unknown[];
   transcriptQueryKey?: readonly unknown[];
   metadataQueryKey?: readonly unknown[];
-  initial: uni-cliSessionHistory | null;
+  initial: uniCliSessionHistory | null;
   initialBaseline?: UIMessage[];
   saved: SessionScrollState;
-  readSnapshot: (signal: AbortSignal, window?: OpeningHistoryWindow, options?: { desktopTransport: "main" }) => Promise<uni-cliSessionHistory>;
+  readSnapshot: (signal: AbortSignal, window?: OpeningHistoryWindow, options?: { desktopTransport: "main" }) => Promise<uniCliSessionHistory>;
   complete: boolean;
 }) {
   const client = useQueryClient();
@@ -157,7 +157,7 @@ export function useSessionHistoryPages(input: {
   const pageKey = useMemo(() => ["react-session-latest", ...input.snapshotQueryKey, input.owner, input.credential, "page-read"],
     [input.owner, input.credential, hashKey(input.snapshotQueryKey)]);
   const history = useQuery<PageHistory>({ queryKey: historyKey, queryFn: skipToken, gcTime: 0, structuralSharing: false });
-  const metadata = useQuery<Pick<uni-cliSessionHistory["session"], "revert">>({
+  const metadata = useQuery<Pick<uniCliSessionHistory["session"], "revert">>({
     queryKey: input.metadataQueryKey ?? ["react-session-metadata", input.owner, input.credential], queryFn: skipToken,
   });
   const sessionPatch = input.metadataQueryKey && (client.getQueryState(input.metadataQueryKey)?.dataUpdateCount ?? 0) > scope.metadataAt

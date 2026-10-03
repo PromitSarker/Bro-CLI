@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { createuni-cliServerClient, type uni-cliMcpAppResource } from "../../../apps/app/src/app/lib/uni-cli-server";
+import { createuniCliServerClient, type uniCliMcpAppResource } from "../../../apps/app/src/app/lib/uni-cli-server";
 import { McpAppFrame } from "../../../apps/app/src/components/chat/mcp-app-frame";
 import { setDenBootstrapConfig, writeDenSettings } from "../../../apps/app/src/app/lib/den";
 import { McpAppTile } from "../../../apps/app/src/react-app/domains/dashboard/mcp-app-tile";
@@ -13,9 +13,9 @@ type Configuration = {
 };
 // Only this loopback, test-owned page receives synthetic runtime credentials.
 const config: Configuration = await (await fetch("/fixture-config")).json();
-const client = createuni-cliServerClient({ baseUrl: `${location.origin}${config.baseUrl}`, token: config.token });
-client.mcpAppSandbox = createuni-cliServerClient({ baseUrl: config.directBaseUrl, token: config.token }).mcpAppSandbox;
-export function benchmarkWorkspace() { return { uni-cliServerClient: client, workspaceId: config.workspaceId }; }
+const client = createuniCliServerClient({ baseUrl: `${location.origin}${config.baseUrl}`, token: config.token });
+client.mcpAppSandbox = createuniCliServerClient({ baseUrl: config.directBaseUrl, token: config.token }).mcpAppSandbox;
+export function benchmarkWorkspace() { return { uniCliServerClient: client, workspaceId: config.workspaceId }; }
 const origin = { client, workspaceId: config.workspaceId, sessionId: config.sessionId, readOnly: false };
 await setDenBootstrapConfig({ baseUrl: config.directBaseUrl, apiBaseUrl: config.directBaseUrl });
 writeDenSettings({ baseUrl: config.directBaseUrl, apiBaseUrl: config.directBaseUrl,

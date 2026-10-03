@@ -5,7 +5,7 @@
  * - uni-cli-server (apps/server): `GET /workspaces` and friends — emits plain
  *   optionals (never null) plus the `opencode*` engine credential fields.
  * - desktop Electron IPC bridge (apps/desktop main.mjs): emits explicit nulls
- *   and the desktop-managed `uni-cliClientToken`/`uni-cliHostToken`.
+ *   and the desktop-managed `uniCliClientToken`/`uniCliHostToken`.
  *
  * Consumers (apps/app) must treat every optional field as possibly absent,
  * undefined, or null. Producer-side types assert assignability against this
@@ -26,13 +26,13 @@ export type WorkspaceWire = {
   baseUrl?: string | null;
   directory?: string | null;
   displayName?: string | null;
-  uni-cliHostUrl?: string | null;
-  uni-cliToken?: string | null;
+  uniCliHostUrl?: string | null;
+  uniCliToken?: string | null;
   /** Desktop IPC only: tokens for desktop-managed remote workspaces. */
-  uni-cliClientToken?: string | null;
-  uni-cliHostToken?: string | null;
-  uni-cliWorkspaceId?: string | null;
-  uni-cliWorkspaceName?: string | null;
+  uniCliClientToken?: string | null;
+  uniCliHostToken?: string | null;
+  uniCliWorkspaceId?: string | null;
+  uniCliWorkspaceName?: string | null;
   /**
    * Vocabulary differs per producer today ("docker" | "microsandbox" on the
    * desktop, "none" | "docker" | "container" in uni-cli-server), so the wire

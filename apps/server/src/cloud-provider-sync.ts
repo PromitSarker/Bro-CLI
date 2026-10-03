@@ -7,11 +7,11 @@ import { enginePoolForConfig, rolloverOutcomeApplied, type RolloverOutcome } fro
 import type { EnvService } from "./env-file.js";
 import { ApiError } from "./errors.js";
 import { selectPrimaryCredentialEnvName, syncManagedProviderAuth } from "./managed-provider-auth.js";
-import { writeuni-cliRuntimeConfigFile } from "./uni-cli-runtime-config.js";
+import { writeuniCliRuntimeConfigFile } from "./uni-cli-runtime-config.js";
 import {
-  hasuni-cliWorkspaceConfig,
-  readuni-cliWorkspaceConfig,
-  writeuni-cliWorkspaceConfig,
+  hasuniCliWorkspaceConfig,
+  readuniCliWorkspaceConfig,
+  writeuniCliWorkspaceConfig,
 } from "./uni-cli-workspace-config-store.js";
 import {
   mergeRuntimeProviderUpdate,
@@ -22,7 +22,7 @@ import {
   writeRuntimeOpencodeConfig,
 } from "./runtime-opencode-config-store.js";
 import type { ServerConfig } from "./types.js";
-import { uni-cliConfigPath } from "./workspace-files.js";
+import { uniCliConfigPath } from "./workspace-files.js";
 import { findManagedEngineWorkspace } from "./workspaces.js";
 
 type JsonRecord = Record<string, unknown>;
@@ -629,7 +629,7 @@ function upsertEnvEntry(entries: EnvEntry[], key: string, value: string): void {
   else entries.push({ key: trimmedKey, value: trimmedValue });
 }
 
-function readUni-CLIInferenceBaseUrl(providerConfig: JsonRecord): string | null {
+function readUniCliInferenceBaseUrl(providerConfig: JsonRecord): string | null {
   const options = providerConfig.options;
   if (isRecord(options)) {
     const baseUrl = readRequiredString(options.baseURL);
@@ -657,7 +657,7 @@ function providerEnvEntries(provider: DenProviderConnection): EnvEntry[] {
   const primaryCredential = provider.apiKey?.trim() || entries[0]?.value || "";
   if (provider.source === "uni-cli" && primaryCredential) {
     upsertEnvEntry(entries, "UNICLI_API_KEY", primaryCredential);
-    const baseUrl = readUni-CLIInferenceBaseUrl(provider.providerConfig);
+    const baseUrl = readUniCliInferenceBaseUrl(provider.providerConfig);
     if (baseUrl) upsertEnvEntry(entries, "UNICLI_INFERENCE_BASE_URL", baseUrl);
   }
   return entries;
@@ -831,7 +831,7 @@ function removeCloudProviderImportBaselines(uni-cli: JsonRecord): JsonRecord | n
   };
 }
 
-async function readLegacyuni-cliConfig(path: string): Promise<JsonRecord | null> {
+async function readLegacyuniCliConfig(path: string): Promise<JsonRecord | null> {
   try {
     const parsed: unknown = JSON.parse(await readFile(path, "utf8"));
     return isRecord(parsed) ? parsed : null;
@@ -1329,7 +1329,7 @@ export class CloudProviderSync {
     const workspaceCleanup = await this.cleanupWorkspaceTakeovers();
     const engineAvailable = this.engineAvailable();
     const runtimeFileChanged = engineAvailable
-      ? (await writeuni-cliRuntimeConfigFile(this.config)).changed
+      ? (await writeuniCliRuntimeConfigFile(this.config)).changed
       : false;
     // Deliver credentials before disposing the current provider instances.
     // OpenCode constructs and caches SDK clients from config + auth together;
@@ -1435,16 +1435,16 @@ export class CloudProviderSync {
         runtimeChanged = runtimeChanged || result.changed;
       }
 
-      const hasStoredConfig = await hasuni-cliWorkspaceConfig(this.config, workspace.id);
+      const hasStoredConfig = await hasuniCliWorkspaceConfig(this.config, workspace.id);
       const uni-cli = hasStoredConfig
-        ? await readuni-cliWorkspaceConfig(this.config, workspace.id)
+        ? await readuniCliWorkspaceConfig(this.config, workspace.id)
         : workspace.workspaceType !== "remote" && workspace.path.trim().length > 0
-          ? await readLegacyuni-cliConfig(uni-cliConfigPath(workspace.path))
+          ? await readLegacyuniCliConfig(uniCliConfigPath(workspace.path))
           : null;
       if (!uni-cli) continue;
       const next = removeCloudProviderImportBaselines(uni-cli);
       if (!next) continue;
-      await writeuni-cliWorkspaceConfig(this.config, workspace.id, () => next);
+      await writeuniCliWorkspaceConfig(this.config, workspace.id, () => next);
       changed = true;
     }
     return { changed, runtimeChanged };
@@ -1493,7 +1493,7 @@ export class CloudProviderSync {
     await this.cleanupWorkspaceTakeovers();
 
     if (this.engineAvailable()) {
-      const fileResult = await writeuni-cliRuntimeConfigFile(this.config);
+      const fileResult = await writeuniCliRuntimeConfigFile(this.config);
       this.reloadPending = this.reloadPending || providerChanged || fileResult.changed;
     }
     const authResult = await syncManagedProviderAuth({
@@ -1528,7 +1528,7 @@ export class CloudProviderSync {
   }
 
   private async persistOwnership(): Promise<void> {
-    await writeuni-cliWorkspaceConfig(this.config, "__cloud_provider_ownership__", () => ({
+    await writeuniCliWorkspaceConfig(this.config, "__cloud_provider_ownership__", () => ({
       envHashes: Object.fromEntries(this.ownedEnvKeys),
       providerIds: [...this.managedProviderIds],
       ...(this.managedProviderIds.size > 0 && this.materializationContextHash !== null
@@ -1538,7 +1538,7 @@ export class CloudProviderSync {
   }
 
   private async restoreOwnership(): Promise<void> {
-    const saved = await readuni-cliWorkspaceConfig(this.config, "__cloud_provider_ownership__");
+    const saved = await readuniCliWorkspaceConfig(this.config, "__cloud_provider_ownership__");
     this.materializationContextHash = typeof saved.materializationContextHash === "string"
       && /^[a-f0-9]{64}$/.test(saved.materializationContextHash)
       ? saved.materializationContextHash

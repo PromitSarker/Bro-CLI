@@ -19,7 +19,7 @@ const demoData = {
   ]
 };
 
-export function Uni-CLILogo(props: { size?: number; titleSize?: number }) {
+export function UniCliLogo(props: { size?: number; titleSize?: number }) {
   const size = props.size ?? 48;
   const titleSize = props.titleSize ?? 36;
 
@@ -57,7 +57,7 @@ export function OGImageContent() {
       }}
     >
       <div style={{ width: 500, display: "flex", flexDirection: "column", gap: 32, paddingLeft: 32 }}>
-        <Uni-CLILogo />
+        <UniCliLogo />
 
         <div
           style={{

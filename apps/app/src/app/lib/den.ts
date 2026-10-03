@@ -49,21 +49,21 @@ import {
 } from "./desktop";
 import { enterpriseActivationRequired } from "./enterprise-activation";
 import { observeDenRequest } from "./den-request-diagnostics";
-import { getuni-cliGatewayOrigin } from "./gateway-runtime";
+import { getuniCliGatewayOrigin } from "./gateway-runtime";
 import { clearDesktopSignInIntent, clearOrgSelectionPending } from "./den-sign-in-intent";
 import { clearDashboardTileCacheStorage } from "./dashboard-cache-storage";
 import { isDesktopRuntime } from "./runtime-env";
 import type { ReloadReason } from "../types";
 import type {
-  Uni-CLIExtensionContribution,
-  Uni-CLIExtensionContributionType,
-  Uni-CLIExtensionLifecycle,
-  Uni-CLIExtensionManifest,
-  Uni-CLIExtensionResource,
-  Uni-CLIExtensionResourceType,
-  Uni-CLIExtensionSetup,
-  Uni-CLIExtensionSource,
-  Uni-CLIExtensionSourceFormat,
+  UniCliExtensionContribution,
+  UniCliExtensionContributionType,
+  UniCliExtensionLifecycle,
+  UniCliExtensionManifest,
+  UniCliExtensionResource,
+  UniCliExtensionResourceType,
+  UniCliExtensionSetup,
+  UniCliExtensionSource,
+  UniCliExtensionSourceFormat,
 } from "../extensions";
 
 declare global {
@@ -297,7 +297,7 @@ export type DenWorkerTokens = {
   clientToken: string | null;
   ownerToken: string | null;
   hostToken: string | null;
-  uni-cliUrl: string | null;
+  uniCliUrl: string | null;
   workspaceId: string | null;
 };
 
@@ -474,11 +474,11 @@ export type DenBillingSummary = {
   benefitId: string | null;
 };
 
-export type DenUni-CLIWebAccessSource = "subscription" | "complimentary" | null;
+export type DenUniCliWebAccessSource = "subscription" | "complimentary" | null;
 
-export type DenUni-CLIWebAccess = {
+export type DenUniCliWebAccess = {
   hasAccess: boolean;
-  accessSource: DenUni-CLIWebAccessSource;
+  accessSource: DenUniCliWebAccessSource;
 };
 
 type DenAuthResult = {
@@ -867,7 +867,7 @@ export function resolveDenBaseUrls(input: { baseUrl?: string | null; apiBaseUrl?
   const rawBaseUrl = typeof input === "string" ? input : input?.baseUrl;
   const normalizedBaseUrl = normalizeDenBaseUrl(rawBaseUrl);
   const normalizedApiBaseUrl = typeof input === "string" ? null : normalizeDenBaseUrl(input?.apiBaseUrl);
-  const gatewayOrigin = getuni-cliGatewayOrigin();
+  const gatewayOrigin = getuniCliGatewayOrigin();
 
   if (gatewayOrigin) {
     const normalizedGatewayOrigin = normalizeDenBaseUrl(gatewayOrigin) ?? gatewayOrigin;
@@ -1226,7 +1226,7 @@ function shouldWithholdDenCredentials(bootstrapBaseUrl: string): boolean {
 }
 
 export function readDenBootstrapConfig(): DenBootstrapConfig {
-  const gatewayOrigin = getuni-cliGatewayOrigin();
+  const gatewayOrigin = getuniCliGatewayOrigin();
   if (gatewayOrigin) {
     if (
       gatewayBootstrapConfig &&
@@ -1255,7 +1255,7 @@ export async function initializeDenBootstrapConfig(): Promise<DenBootstrapConfig
   const generation = ++desktopBootstrapGeneration;
 
   if (!isDesktopRuntime()) {
-    const gatewayOrigin = getuni-cliGatewayOrigin();
+    const gatewayOrigin = getuniCliGatewayOrigin();
     // Forced env settings (headless/dev runs): stale stored base URLs from
     // earlier sessions must not override the launcher-provided control plane.
     if (readForceEnvDenSettings() && typeof window !== "undefined") {
@@ -1487,7 +1487,7 @@ export function readDenSettings(): DenSettings {
 
   const bootstrapConfig = readDenBootstrapConfig();
   const baseUrls = resolveDenBaseUrls(
-    isDesktopRuntime() || getuni-cliGatewayOrigin()
+    isDesktopRuntime() || getuniCliGatewayOrigin()
       ? bootstrapConfig
       : { baseUrl: window.localStorage.getItem(STORAGE_BASE_URL) ?? bootstrapConfig.baseUrl },
   );
@@ -2007,7 +2007,7 @@ function getWorkerTokens(payload: unknown): DenWorkerTokens | null {
     clientToken: typeof tokens.client === "string" ? tokens.client : null,
     ownerToken: typeof tokens.owner === "string" ? tokens.owner : null,
     hostToken: typeof tokens.host === "string" ? tokens.host : null,
-    uni-cliUrl: connect && typeof connect.uni-cliUrl === "string" ? connect.uni-cliUrl : null,
+    uniCliUrl: connect && typeof connect.uniCliUrl === "string" ? connect.uniCliUrl : null,
     workspaceId: connect && typeof connect.workspaceId === "string" ? connect.workspaceId : null,
   };
 }
@@ -2363,7 +2363,7 @@ function parsePluginConfigObject(value: unknown): DenPluginConfigObject | null {
   };
 }
 
-function parseExtensionSourceFormat(value: unknown): Uni-CLIExtensionSourceFormat | null {
+function parseExtensionSourceFormat(value: unknown): UniCliExtensionSourceFormat | null {
   switch (value) {
     case "agent-plugin":
     case "uni-cli-builtin":
@@ -2378,7 +2378,7 @@ function parseExtensionSourceFormat(value: unknown): Uni-CLIExtensionSourceForma
   }
 }
 
-function parseExtensionSourceOrigin(value: unknown): Uni-CLIExtensionSource["origin"] | undefined {
+function parseExtensionSourceOrigin(value: unknown): UniCliExtensionSource["origin"] | undefined {
   switch (value) {
     case "builtin":
     case "den":
@@ -2390,7 +2390,7 @@ function parseExtensionSourceOrigin(value: unknown): Uni-CLIExtensionSource["ori
   }
 }
 
-function parseExtensionSource(value: unknown): Uni-CLIExtensionSource | null {
+function parseExtensionSource(value: unknown): UniCliExtensionSource | null {
   if (!isRecord(value) || typeof value.trusted !== "boolean") return null;
   const format = parseExtensionSourceFormat(value.format);
   if (!format) return null;
@@ -2408,7 +2408,7 @@ function parseStringList(value: unknown): string[] | undefined {
   return value;
 }
 
-function parseExtensionResourceType(value: unknown): Uni-CLIExtensionResourceType | null {
+function parseExtensionResourceType(value: unknown): UniCliExtensionResourceType | null {
   switch (value) {
     case "skill":
     case "agent":
@@ -2429,7 +2429,7 @@ function parseExtensionResourceType(value: unknown): Uni-CLIExtensionResourceTyp
   }
 }
 
-function parseExtensionLocalCommandRef(value: unknown): Uni-CLIExtensionResource["localCommandRef"] | undefined {
+function parseExtensionLocalCommandRef(value: unknown): UniCliExtensionResource["localCommandRef"] | undefined {
   switch (value) {
     case "uni-cli.uiMcp":
       return value;
@@ -2438,7 +2438,7 @@ function parseExtensionLocalCommandRef(value: unknown): Uni-CLIExtensionResource
   }
 }
 
-function parseExtensionResource(value: unknown): Uni-CLIExtensionResource | null {
+function parseExtensionResource(value: unknown): UniCliExtensionResource | null {
   if (!isRecord(value) || typeof value.id !== "string") return null;
   const type = parseExtensionResourceType(value.type);
   if (!type) return null;
@@ -2460,7 +2460,7 @@ function parseExtensionResource(value: unknown): Uni-CLIExtensionResource | null
   };
 }
 
-function parseExtensionContributionType(value: unknown): Uni-CLIExtensionContributionType | null {
+function parseExtensionContributionType(value: unknown): UniCliExtensionContributionType | null {
   switch (value) {
     case "settings-panel":
     case "setup-instructions":
@@ -2477,7 +2477,7 @@ function parseExtensionContributionType(value: unknown): Uni-CLIExtensionContrib
   }
 }
 
-function parseExtensionContributionLocation(value: unknown): Uni-CLIExtensionContribution["location"] | undefined {
+function parseExtensionContributionLocation(value: unknown): UniCliExtensionContribution["location"] | undefined {
   switch (value) {
     case "settings-detail":
     case "composer":
@@ -2491,7 +2491,7 @@ function parseExtensionContributionLocation(value: unknown): Uni-CLIExtensionCon
   }
 }
 
-function parseExtensionContribution(value: unknown): Uni-CLIExtensionContribution | null {
+function parseExtensionContribution(value: unknown): UniCliExtensionContribution | null {
   if (!isRecord(value)) return null;
   const type = parseExtensionContributionType(value.type);
   if (!type) return null;
@@ -2506,7 +2506,7 @@ function parseExtensionContribution(value: unknown): Uni-CLIExtensionContributio
   };
 }
 
-function parseExtensionSetup(value: unknown): Uni-CLIExtensionSetup | undefined {
+function parseExtensionSetup(value: unknown): UniCliExtensionSetup | undefined {
   if (!isRecord(value)) return undefined;
   const requiredEnv = parseStringList(value.requiredEnv);
   return {
@@ -2541,7 +2541,7 @@ function parseReloadReasons(value: unknown): ReloadReason[] | undefined {
   return reasons.length === value.length ? reasons : undefined;
 }
 
-function parseExtensionLifecycle(value: unknown): Uni-CLIExtensionLifecycle | undefined {
+function parseExtensionLifecycle(value: unknown): UniCliExtensionLifecycle | undefined {
   if (!isRecord(value)) return undefined;
   const reload = parseReloadReasons(value.reload);
   const detection = parseStringList(value.detection);
@@ -2551,7 +2551,7 @@ function parseExtensionLifecycle(value: unknown): Uni-CLIExtensionLifecycle | un
   };
 }
 
-function parseExtensionPlatform(value: unknown): Uni-CLIExtensionManifest["platform"] | undefined {
+function parseExtensionPlatform(value: unknown): UniCliExtensionManifest["platform"] | undefined {
   if (!Array.isArray(value)) return undefined;
   const platforms = value.flatMap((item) => {
     switch (item) {
@@ -2567,7 +2567,7 @@ function parseExtensionPlatform(value: unknown): Uni-CLIExtensionManifest["platf
   return platforms.length === value.length ? platforms : undefined;
 }
 
-function parseUni-CLIExtensionManifest(value: unknown): Uni-CLIExtensionManifest | null {
+function parseUniCliExtensionManifest(value: unknown): UniCliExtensionManifest | null {
   if (
     !isRecord(value) ||
     value.schemaVersion !== 1 ||
@@ -2628,7 +2628,7 @@ function parseDenExtensionProjection(value: unknown): DenOrgExtensionProjection 
     name: value.name,
     description: typeof value.description === "string" ? value.description : null,
     sourceFormat,
-    manifest: parseUni-CLIExtensionManifest(value.manifest),
+    manifest: parseUniCliExtensionManifest(value.manifest),
   };
 }
 
@@ -2881,13 +2881,13 @@ function getBillingSummary(payload: unknown): DenBillingSummary | null {
   };
 }
 
-export function parseDenUni-CLIWebAccess(payload: unknown): DenUni-CLIWebAccess | null {
+export function parseDenUniCliWebAccess(payload: unknown): DenUniCliWebAccess | null {
   if (!isRecord(payload) || !isRecord(payload.billing)) return null;
   const stripe = payload.billing.stripe;
   if (!isRecord(stripe) || !isRecord(stripe.web)) return null;
 
   const web = stripe.web;
-  const accessSource: DenUni-CLIWebAccessSource | undefined =
+  const accessSource: DenUniCliWebAccessSource | undefined =
     web.accessSource === "subscription" || web.accessSource === "complimentary"
       ? web.accessSource
       : web.accessSource === null
@@ -3354,7 +3354,7 @@ export function createDenClient(options: {
       return instance;
     },
 
-    async getUni-CLIWebAccess(orgId: string): Promise<DenUni-CLIWebAccess> {
+    async getUniCliWebAccess(orgId: string): Promise<DenUniCliWebAccess> {
       const context = await requestJson<unknown>(baseUrls, "/v1/org", {
         method: "GET",
         token,
@@ -3366,7 +3366,7 @@ export function createDenClient(options: {
       // Missing means unsupported. This follows the established Den capability
       // negotiation pattern so a newer hosted client never calls the Web billing
       // route on an older Den deployment that does not advertise the contract.
-      if (capabilities?.uni-cliWeb !== true) {
+      if (capabilities?.uniCliWeb !== true) {
         return { hasAccess: false, accessSource: null };
       }
 
@@ -3375,7 +3375,7 @@ export function createDenClient(options: {
         token,
         organizationId: orgId,
       });
-      const access = parseDenUni-CLIWebAccess(payload);
+      const access = parseDenUniCliWebAccess(payload);
       if (!access) {
         throw new DenApiError(500, "invalid_uni-cli_web_access_payload", "Uni-CLI Web access response was invalid.");
       }

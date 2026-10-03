@@ -7,7 +7,7 @@ import { isAutomationCloudDefaultModel, type AutomationAction, type AutomationEr
 import { db } from "../db.js"
 import { env } from "../env.js"
 import {
-  getUni-CLIWebRuntimeAccess,
+  getUniCliWebRuntimeAccess,
   UNICLI_WEB_ACCESS_REQUIRED_CODE,
   UNICLI_WEB_ACCESS_REQUIRED_MESSAGE,
 } from "../uni-cli-web-runtime-access.js"
@@ -175,7 +175,7 @@ export async function cloudAgentRuntimeAvailable(scope: OwnerScope): Promise<boo
   )).limit(1)
   if (!members[0]) return false
   if (!cloudHostingAvailable({ orgMode: env.orgMode })) return false
-  const webAccess = await getUni-CLIWebRuntimeAccess(organizationId)
+  const webAccess = await getUniCliWebRuntimeAccess(organizationId)
   if (!webAccess.hasAccess) return false
   const worker = await ownerCloudWorker(scope)
   return worker !== null && worker.status !== "failed"
@@ -499,7 +499,7 @@ async function currentAgentAuthority(input: OwnerScope & { action: AgentAction }
       needsAttention: true,
     }
   }
-  const webAccess = await getUni-CLIWebRuntimeAccess(input.organizationId)
+  const webAccess = await getUniCliWebRuntimeAccess(input.organizationId)
   if (!webAccess.hasAccess) {
     return {
       ok: false,

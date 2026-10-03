@@ -281,9 +281,9 @@ async function waitForServerListening(child, logStream) {
   });
 }
 
-async function startuni-cliServer(paths, serverPort, opencodeBin) {
+async function startuniCliServer(paths, serverPort, opencodeBin) {
   await mkdir(paths.workspaceRoot, { recursive: true });
-  await mkdir(paths.xdguni-cli, { recursive: true });
+  await mkdir(paths.xdguniCli, { recursive: true });
   await mkdir(paths.home, { recursive: true });
   await mkdir(paths.logs, { recursive: true });
   const serverLog = join(paths.logs, "server.log");
@@ -297,7 +297,7 @@ async function startuni-cliServer(paths, serverPort, opencodeBin) {
       ...process.env,
       UNICLI_MANAGE_OPENCODE: "1",
       UNICLI_OPENCODE_BIN: opencodeBin,
-      UNICLI_SERVER_CONFIG: join(paths.xdguni-cli, "server.json"),
+      UNICLI_SERVER_CONFIG: join(paths.xdguniCli, "server.json"),
       XDG_CONFIG_HOME: paths.xdg,
       HOME: paths.home,
     },
@@ -428,11 +428,11 @@ async function main() {
   const activeWindowMs = windowMs();
   const serverPort = envPort("SERVER_PORT", 8790);
   const proxyPort = envPort("PROXY_PORT", 8791);
-  const paths = { workspaceRoot: join(reproDir, "ws"), xdg: join(reproDir, "xdg"), xdguni-cli: join(reproDir, "xdg", "uni-cli"), home: join(reproDir, "home"), logs: join(reproDir, "logs") };
+  const paths = { workspaceRoot: join(reproDir, "ws"), xdg: join(reproDir, "xdg"), xdguniCli: join(reproDir, "xdg", "uni-cli"), home: join(reproDir, "home"), logs: join(reproDir, "logs") };
 
   const den = await bootstrapDen(denApiUrl);
   const proxy = await startDelayProxy(denApiUrl, proxyPort);
-  const uni-cli = await startuni-cliServer(paths, serverPort, opencodeBin);
+  const uni-cli = await startuniCliServer(paths, serverPort, opencodeBin);
   const workspaces = await serverJson(uni-cli.baseUrl, "/workspaces");
   const workspaceId = firstWorkspaceId(workspaces);
   log(`Using workspace ${workspaceId}`);
@@ -485,7 +485,7 @@ async function main() {
   const checks = Array.isArray(own(diagnosticsReport, "checks")) ? own(diagnosticsReport, "checks") : [];
   const engineMcpSyncCheck = checks.find((check) => own(check, "id") === "engine-mcp-sync") ?? null;
   const mcps = Array.isArray(own(diagnosticsReport, "mcps")) ? own(diagnosticsReport, "mcps") : [];
-  const uni-cliCloudSyncStatuses = mcps.filter((mcp) => own(mcp, "name") === "uni-cli-cloud").map((mcp) => ({
+  const uniCliCloudSyncStatuses = mcps.filter((mcp) => own(mcp, "name") === "uni-cli-cloud").map((mcp) => ({
     name: own(mcp, "name"), source: own(mcp, "source"), type: own(mcp, "type"), enabled: own(mcp, "enabled"),
     syncStatus: own(mcp, "syncStatus"), liveEngineStatus: own(mcp, "liveEngineStatus"),
   }));
@@ -498,7 +498,7 @@ async function main() {
     phases: {
       seed: { reconcile: seedReconcile, mcp: seedMcp, health: seedHealth },
       healed: { mcp: healedMcp, health: healedHealth },
-      diagnostics: { engineMcpSyncCheck, uni-cliCloudSyncStatuses, firstFailedCheck: own(diagnosticsReport, "firstFailedCheck") ?? null, overall: own(diagnosticsReport, "overall") ?? null },
+      diagnostics: { engineMcpSyncCheck, uniCliCloudSyncStatuses, firstFailedCheck: own(diagnosticsReport, "firstFailedCheck") ?? null, overall: own(diagnosticsReport, "overall") ?? null },
     },
     proxyHolds: proxy.holds,
     contradictionReproduced,

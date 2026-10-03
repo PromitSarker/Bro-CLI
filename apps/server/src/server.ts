@@ -40,7 +40,7 @@ import { warmEngineFolder, type EngineFolderWarmupResult } from "./engine-folder
 import { addPlugin, listPlugins, normalizePluginSpec, removePlugin } from "./plugins.js";
 import { sanitizePortableOpencodeConfig } from "./portable-opencode.js";
 import { addMcp, listMcp, removeMcp, setMcpEnabled } from "./mcp.js";
-import { buildUni-CLIV2Instructions, UNICLI_V2_INSTRUCTION_KEY } from "./opencode-v2-instructions.js";
+import { buildUniCliV2Instructions, UNICLI_V2_INSTRUCTION_KEY } from "./opencode-v2-instructions.js";
 import {
   callMcpAppTool,
   listMcpAppCatalog,
@@ -73,9 +73,9 @@ import {
   resolveServerLogFileSink,
   type ServerLogFileSink,
 } from "./server-log-file.js";
-import { opencodeConfigPath, uni-cliConfigPath, projectCommandsDir, projectSkillsDir } from "./workspace-files.js";
+import { opencodeConfigPath, uniCliConfigPath, projectCommandsDir, projectSkillsDir } from "./workspace-files.js";
 import { ensureDir, exists, hashToken, shortId } from "./utils.js";
-import { defaultWorkspaceuni-cliConfig, ensureWorkspaceFiles, readRawOpencodeConfig } from "./workspace-init.js";
+import { defaultWorkspaceuniCliConfig, ensureWorkspaceFiles, readRawOpencodeConfig } from "./workspace-init.js";
 import { sanitizeCommandName, validateMcpName, validateUserMcpName } from "./validators.js";
 import { TokenService } from "./tokens.js";
 import { resetManagedProviderAuthCache, syncManagedProviderAuth } from "./managed-provider-auth.js";
@@ -93,7 +93,7 @@ import { resolveWorkspaceOpencodeConnection } from "./opencode-connection.js";
 import { listPortableFiles } from "./portable-files.js";
 import {
   collectWorkspaceExportWarnings,
-  sanitizeuni-cliTemplateConfig,
+  sanitizeuniCliTemplateConfig,
   stripSensitiveWorkspaceExportData,
   type WorkspaceExportSensitiveMode,
 } from "./workspace-export-safety.js";
@@ -124,11 +124,11 @@ import {
   startLocalManagedMcpAuthorization,
 } from "./local-managed-mcp.js";
 import {
-  markuni-cliCloudMcpStale,
-  migrateuni-cliCloudMcpRuntimeConfig,
+  markuniCliCloudMcpStale,
+  migrateuniCliCloudMcpRuntimeConfig,
   UNICLI_CLOUD_MCP_NAME,
-  reconcilePersisteduni-cliCloudMcp,
-  removeuni-cliCloudMcpDesiredConfig,
+  reconcilePersisteduniCliCloudMcp,
+  removeuniCliCloudMcpDesiredConfig,
   type CloudMcpHealth,
 } from "./cloud-mcp-health.js";
 import { runAgentContextDiagnostics } from "./agent-context-diagnostics.js";
@@ -151,13 +151,13 @@ import {
   writeRuntimeOpencodeConfig,
 } from "./runtime-opencode-config-store.js";
 import {
-  hasuni-cliWorkspaceConfig,
-  mergeuni-cliWorkspaceConfigs,
-  readuni-cliWorkspaceConfig,
-  seeduni-cliWorkspaceConfigIfEmpty,
-  writeuni-cliWorkspaceConfig,
+  hasuniCliWorkspaceConfig,
+  mergeuniCliWorkspaceConfigs,
+  readuniCliWorkspaceConfig,
+  seeduniCliWorkspaceConfigIfEmpty,
+  writeuniCliWorkspaceConfig,
 } from "./uni-cli-workspace-config-store.js";
-import { builduni-cliRuntimeConfigObject, uni-cliRuntimeConfigFilePath, writeuni-cliRuntimeConfigFile } from "./uni-cli-runtime-config.js";
+import { builduniCliRuntimeConfigObject, uniCliRuntimeConfigFilePath, writeuniCliRuntimeConfigFile } from "./uni-cli-runtime-config.js";
 import { findManagedEngineWorkspace, managedEngineRootWorkspace } from "./workspaces.js";
 import { startThreadApprovalReplayer, type ThreadApprovalReplayer } from "./thread-approvals.js";
 import { CloudProviderSync, parseCloudProviderDenSession } from "./cloud-provider-sync.js";
@@ -349,7 +349,7 @@ async function readManagedRuntimeConfigDebug(config: ServerConfig): Promise<{
   managedFileRebuiltAt: number | null;
   managedFileContentRedacted: string | null;
 }> {
-  const managedFilePath = uni-cliRuntimeConfigFilePath(config);
+  const managedFilePath = uniCliRuntimeConfigFilePath(config);
   try {
     const [metadata, content] = await Promise.all([
       stat(managedFilePath),
@@ -1205,7 +1205,7 @@ export async function startServer(
     }
   }
   try {
-    if (await anonymousInference.initialize(server.port)) await writeuni-cliRuntimeConfigFile(config);
+    if (await anonymousInference.initialize(server.port)) await writeuniCliRuntimeConfigFile(config);
   } catch {
     anonymousInference.stop();
     logger.log("warn", "Desktop free access could not be initialized.");
@@ -1396,7 +1396,7 @@ export async function proxyOpencodeV2Request(input: {
       isRecord(entry) && entry.name === "uni-cli-cloud" && isRecord(entry.status) && entry.status.status === "connected");
     // Keep organization skill discovery on demand through Connect. The full
     // catalog can exceed the engine's instruction-entry request limit.
-    const value = buildUni-CLIV2Instructions(connectReady);
+    const value = buildUniCliV2Instructions(connectReady);
     const instructionUrl = new URL(target);
     instructionUrl.pathname = `/api/session/${encodeURIComponent(sessionId)}/instructions/entries/${UNICLI_V2_INSTRUCTION_KEY}`;
     const synced = await engineFetch(instructionUrl.toString(), {
@@ -1519,8 +1519,8 @@ export async function proxyOpencodeV2Request(input: {
             if (home !== expectedHome) continue;
             // The compatibility stream is scoped to the UI home. Preserve the
             // native directory separately; the move's data remains untouched.
-            payload = { ...payload, data: { ...eventData, uni-cliHomeDirectory: home },
-              uni-cliWorkingLocation: payload.location,
+            payload = { ...payload, data: { ...eventData, uniCliHomeDirectory: home },
+              uniCliWorkingLocation: payload.location,
               location: { directory: input.workspace.path } };
             scopedFrame = `data: ${JSON.stringify(payload)}`;
           } else {
@@ -2796,7 +2796,7 @@ function createRoutes(
 
   addRoute(routes, "GET", "/workspace/:id/config", "client", async (ctx) => {
     const workspace = await resolveWorkspace(config, ctx.params.id);
-    const uni-cli = await readuni-cliConfigForWorkspace(config, workspace);
+    const uni-cli = await readuniCliConfigForWorkspace(config, workspace);
     // Effective runtime view (ENGINE_GLOBAL ⊕ workspace row): providers,
     // plugins, and authorized folders live in the global row now, and the UI
     // must keep seeing them after migration.
@@ -2810,7 +2810,7 @@ function createRoutes(
 
   addRoute(routes, "GET", "/workspace/:id/desktop-cloud-sync", "client", async (ctx) => {
     const workspace = await resolveWorkspace(config, ctx.params.id);
-    const uni-cli = await readuni-cliConfigForWorkspace(config, workspace);
+    const uni-cli = await readuniCliConfigForWorkspace(config, workspace);
     return jsonResponse(readDesktopCloudSyncState(uni-cli));
   });
 
@@ -2825,7 +2825,7 @@ function createRoutes(
     }
 
     const result = await enqueueDesktopCloudSync(async () => {
-      const uni-cli = await readuni-cliConfigForWorkspace(config, workspace);
+      const uni-cli = await readuniCliConfigForWorkspace(config, workspace);
       const installed = await readInstalledCloudPlugins(config, workspace.id);
       const cloudImports = {
         ...installed,
@@ -2835,7 +2835,7 @@ function createRoutes(
       // The plugin DB owns plugins/marketplaces, but provider import baselines live in
       // the workspace config. Writing the merged cloudImports back erased providers
       // and drove the provider-sync dispose/create loop.
-      await writeuni-cliWorkspaceConfig(config, workspace.id, (current) => ({
+      await writeuniCliWorkspaceConfig(config, workspace.id, (current) => ({
         ...current,
         desktopCloudSync: next.state,
       }));
@@ -2844,7 +2844,7 @@ function createRoutes(
         workspaceId: workspace.id,
         actor: ctx.actor ?? { type: "remote" },
         action: "desktop_cloud_sync.update",
-        target: uni-cliConfigPath(workspace.path),
+        target: uniCliConfigPath(workspace.path),
         summary: "Updated desktop cloud sync state",
         timestamp: Date.now(),
       });
@@ -2876,7 +2876,7 @@ function createRoutes(
       workspaceId: workspace.id,
       action: "cloud_plugins.install",
       summary: `Install cloud plugin ${resolved.plugin.name}`,
-      paths: [uni-cliConfigPath(workspace.path), join(workspace.path, ".opencode")],
+      paths: [uniCliConfigPath(workspace.path), join(workspace.path, ".opencode")],
     });
 
     const result = await installCloudPlugin({
@@ -2900,7 +2900,7 @@ function createRoutes(
       workspaceId: workspace.id,
       actor: ctx.actor ?? { type: "remote" },
       action: "cloud_plugins.install",
-      target: uni-cliConfigPath(workspace.path),
+      target: uniCliConfigPath(workspace.path),
       summary: `Installed cloud plugin ${resolved.plugin.name}`,
       timestamp: Date.now(),
     });
@@ -2951,7 +2951,7 @@ function createRoutes(
       workspaceId: workspace.id,
       action: "cloud_plugins.install",
       summary: `Install Claude plugin ${bundle.resolved.plugin.name} from ${bundle.preview.source.owner}/${bundle.preview.source.repo}`,
-      paths: [uni-cliConfigPath(workspace.path), join(workspace.path, ".opencode")],
+      paths: [uniCliConfigPath(workspace.path), join(workspace.path, ".opencode")],
     });
 
     const result = await installCloudPlugin({
@@ -2968,7 +2968,7 @@ function createRoutes(
       workspaceId: workspace.id,
       actor: ctx.actor ?? { type: "remote" },
       action: "cloud_plugins.install",
-      target: uni-cliConfigPath(workspace.path),
+      target: uniCliConfigPath(workspace.path),
       summary: `Installed Claude plugin ${bundle.resolved.plugin.name} from ${url}`,
       timestamp: Date.now(),
     });
@@ -3006,7 +3006,7 @@ function createRoutes(
       workspaceId: workspace.id,
       action: "cloud_plugins.remove",
       summary: `Remove cloud plugin ${pluginId}`,
-      paths: [uni-cliConfigPath(workspace.path), join(workspace.path, ".opencode")],
+      paths: [uniCliConfigPath(workspace.path), join(workspace.path, ".opencode")],
     });
 
     const removed = await removeCloudPlugin({
@@ -3021,7 +3021,7 @@ function createRoutes(
       workspaceId: workspace.id,
       actor: ctx.actor ?? { type: "remote" },
       action: "cloud_plugins.remove",
-      target: uni-cliConfigPath(workspace.path),
+      target: uniCliConfigPath(workspace.path),
       summary: `Removed cloud plugin ${removed.name}`,
       timestamp: Date.now(),
     });
@@ -3153,7 +3153,7 @@ function createRoutes(
     const [workspaceConfig, globalConfig, injected] = await Promise.all([
       readOpencodeConfig(workspace.path),
       readJsoncFile(globalPath, emptyConfig, { allowInvalid: true }).then((result) => result.data),
-      builduni-cliRuntimeConfigObject(config),
+      builduniCliRuntimeConfigObject(config),
     ]);
     return jsonResponse({
       agent: agent.name,
@@ -3185,7 +3185,7 @@ function createRoutes(
     const workspace = await resolveWorkspace(config, ctx.params.id);
     const body = await readJsonBody(ctx.request);
     const folders = parseAuthorizedFoldersPayload(body.folders, workspace.path);
-    const configPath = uni-cliConfigPath(workspace.path);
+    const configPath = uniCliConfigPath(workspace.path);
 
     await requireApproval(ctx, {
       workspaceId: workspace.id,
@@ -3271,7 +3271,7 @@ function createRoutes(
     }));
 
     if (result.changed) {
-      emitReloadEvent(ctx.reloadEvents, workspace, "config", buildConfigTrigger(uni-cliRuntimeConfigFilePath(config)));
+      emitReloadEvent(ctx.reloadEvents, workspace, "config", buildConfigTrigger(uniCliRuntimeConfigFilePath(config)));
     }
 
     return jsonResponse({
@@ -3429,7 +3429,7 @@ function createRoutes(
       provider: mergeRuntimeProviderUpdate(current.provider, providerPatch),
     }));
 
-    const fileResult = await writeuni-cliRuntimeConfigFile(config);
+    const fileResult = await writeuniCliRuntimeConfigFile(config);
     // Auth must land before the reload so the replacement provider instance is
     // constructed with its credential. This also refreshes SDK clients after
     // a key rotation even when provider config itself did not change.
@@ -3448,7 +3448,7 @@ function createRoutes(
       ok: true,
       changed: result.changed,
       provider: runtimeProviderMap(result.config),
-      runtimeConfigPath: uni-cliRuntimeConfigFilePath(config),
+      runtimeConfigPath: uniCliRuntimeConfigFilePath(config),
       reload: shouldReload ? (reloadDeferred ? "deferred" : "reloaded") : "skipped",
     });
   });
@@ -3464,7 +3464,7 @@ function createRoutes(
     const globalOpencode = (await readJsoncFile(globalOpencodePath, emptyGlobalOpencode, { allowInvalid: true })).data;
     // The injected file is rendered from the ENGINE_GLOBAL row only; the
     // workspace runtime row reaches the engine via the dynamic MCP push.
-    const effectiveRuntime = await builduni-cliRuntimeConfigObject(config);
+    const effectiveRuntime = await builduniCliRuntimeConfigObject(config);
     const managedFile = await readManagedRuntimeConfigDebug(config);
 
     return jsonResponse({
@@ -3585,11 +3585,11 @@ function createRoutes(
       workspaceId: workspace.id,
       action: "config.patch",
       summary: "Patch workspace config",
-      paths: [opencode || uni-cli ? uni-cliConfigPath(workspace.path) : null].filter(Boolean) as string[],
+      paths: [opencode || uni-cli ? uniCliConfigPath(workspace.path) : null].filter(Boolean) as string[],
     });
 
     if (opencode) {
-      const configPath = uni-cliConfigPath(workspace.path);
+      const configPath = uniCliConfigPath(workspace.path);
       const nextOpencode = ensurePlainObject(opencode);
       const { permission, provider, ...topLevelUpdates } = nextOpencode;
       const logicalUpdates: Record<string, unknown> = { ...topLevelUpdates };
@@ -3648,7 +3648,7 @@ function createRoutes(
       }
     }
     if (uni-cli) {
-      await writeuni-cliWorkspaceConfig(config, workspace.id, (current) => ({
+      await writeuniCliWorkspaceConfig(config, workspace.id, (current) => ({
         ...current,
         ...uni-cli,
       }));
@@ -3659,7 +3659,7 @@ function createRoutes(
       workspaceId: workspace.id,
       actor: ctx.actor ?? { type: "remote" },
       action: "config.patch",
-      target: uni-cliConfigPath(workspace.path),
+      target: uniCliConfigPath(workspace.path),
       summary: "Patched workspace config",
       timestamp: Date.now(),
     });
@@ -3667,7 +3667,7 @@ function createRoutes(
     // A no-op provider patch (for example cloud sync reconciling an identical
     // block) must not force an engine reload; that caused a dispose/create loop.
     if (opencode && runtimeChanged) {
-      emitReloadEvent(ctx.reloadEvents, workspace, "config", buildConfigTrigger(uni-cliConfigPath(workspace.path)));
+      emitReloadEvent(ctx.reloadEvents, workspace, "config", buildConfigTrigger(uniCliConfigPath(workspace.path)));
     }
 
     return jsonResponse({ updatedAt: Date.now() });
@@ -3722,7 +3722,7 @@ function createRoutes(
       workspaceId: workspace.id,
       action: "plugins.add",
       summary: `Add plugin ${spec}`,
-      paths: [uni-cliConfigPath(workspace.path)],
+      paths: [uniCliConfigPath(workspace.path)],
     });
     const changed = await addPlugin(config, spec);
     await recordAudit(workspace.path, {
@@ -3730,7 +3730,7 @@ function createRoutes(
       workspaceId: workspace.id,
       actor: ctx.actor ?? { type: "remote" },
       action: "plugins.add",
-      target: uni-cliConfigPath(workspace.path),
+      target: uniCliConfigPath(workspace.path),
       summary: `Added ${spec}`,
       timestamp: Date.now(),
     });
@@ -3755,7 +3755,7 @@ function createRoutes(
       workspaceId: workspace.id,
       action: "plugins.remove",
       summary: `Remove plugin ${name}`,
-      paths: [uni-cliConfigPath(workspace.path)],
+      paths: [uniCliConfigPath(workspace.path)],
     });
     const removed = await removePlugin(config, name);
     await recordAudit(workspace.path, {
@@ -3763,7 +3763,7 @@ function createRoutes(
       workspaceId: workspace.id,
       actor: ctx.actor ?? { type: "remote" },
       action: "plugins.remove",
-      target: uni-cliConfigPath(workspace.path),
+      target: uniCliConfigPath(workspace.path),
       summary: `Removed ${name}`,
       timestamp: Date.now(),
     });
@@ -4070,7 +4070,7 @@ function createRoutes(
       workspaceId: workspace.id,
       action: "mcp.add",
       summary: `Add Uni-CLI-managed MCP ${name}`,
-      paths: [uni-cliConfigPath(workspace.path)],
+      paths: [uniCliConfigPath(workspace.path)],
     });
     await createLocalManagedMcpConnection(config, {
       workspaceId: workspace.id,
@@ -4110,7 +4110,7 @@ function createRoutes(
       workspaceId: workspace.id,
       actor: ctx.actor ?? { type: "remote" },
       action: "mcp.add",
-      target: uni-cliConfigPath(workspace.path),
+      target: uniCliConfigPath(workspace.path),
       summary: `Added Uni-CLI-managed MCP ${name}`,
       timestamp: Date.now(),
     });
@@ -4174,7 +4174,7 @@ function createRoutes(
       workspaceId: workspace.id,
       action: "mcp.add",
       summary: `Add MCP ${name}`,
-      paths: [uni-cliConfigPath(workspace.path)],
+      paths: [uniCliConfigPath(workspace.path)],
     });
     const result = await addMcp(config, workspace.id, name, configPayload);
     // Hot-add into the running engine so connect/auth works immediately,
@@ -4191,7 +4191,7 @@ function createRoutes(
       workspaceId: workspace.id,
       actor: ctx.actor ?? { type: "remote" },
       action: "mcp.add",
-      target: uni-cliConfigPath(workspace.path),
+      target: uniCliConfigPath(workspace.path),
       summary: `Added MCP ${name}`,
       timestamp: Date.now(),
     });
@@ -4213,13 +4213,13 @@ function createRoutes(
       workspaceId: workspace.id,
       action: "mcp.remove",
       summary: `Remove MCP ${name}`,
-      paths: [uni-cliConfigPath(workspace.path)],
+      paths: [uniCliConfigPath(workspace.path)],
     });
     const managedRemoved = name === UNICLI_CLOUD_MCP_NAME
       ? false
       : await deleteLocalManagedMcp(config, workspace.id, name);
     const cloudRemoval = name === UNICLI_CLOUD_MCP_NAME
-      ? await removeuni-cliCloudMcpDesiredConfig(config)
+      ? await removeuniCliCloudMcpDesiredConfig(config)
       : null;
     const removed = cloudRemoval
       ? cloudRemoval.changed
@@ -4229,7 +4229,7 @@ function createRoutes(
       workspaceId: workspace.id,
       actor: ctx.actor ?? { type: "remote" },
       action: "mcp.remove",
-      target: uni-cliConfigPath(workspace.path),
+      target: uniCliConfigPath(workspace.path),
       summary: `Removed MCP ${name}`,
       timestamp: Date.now(),
     });
@@ -4270,7 +4270,7 @@ function createRoutes(
       workspaceId: workspace.id,
       action,
       summary,
-      paths: [uni-cliConfigPath(workspace.path)],
+      paths: [uniCliConfigPath(workspace.path)],
     });
     const managedUpdated = await setLocalManagedMcpEnabled(config, workspace.id, name, enabled);
     const updated = managedUpdated || await setMcpEnabled(config, workspace.id, name, enabled);
@@ -4289,7 +4289,7 @@ function createRoutes(
       workspaceId: workspace.id,
       actor: ctx.actor ?? { type: "remote" },
       action,
-      target: uni-cliConfigPath(workspace.path),
+      target: uniCliConfigPath(workspace.path),
       summary: `${enabled ? "Enabled" : "Disabled"} MCP ${name}`,
       timestamp: Date.now(),
     });
@@ -4318,7 +4318,7 @@ function createRoutes(
         workspaceId: workspace.id,
         actor: ctx.actor ?? { type: "remote" },
         action: "mcp.auth.remove",
-        target: uni-cliConfigPath(workspace.path),
+        target: uniCliConfigPath(workspace.path),
         summary: `Logged out Uni-CLI-managed MCP ${name}`,
         timestamp: Date.now(),
       });
@@ -4759,8 +4759,8 @@ async function readOpencodeConfig(workspaceRoot: string): Promise<Record<string,
   return data;
 }
 
-async function readuni-cliConfig(workspaceRoot: string): Promise<Record<string, unknown>> {
-  const path = uni-cliConfigPath(workspaceRoot);
+async function readuniCliConfig(workspaceRoot: string): Promise<Record<string, unknown>> {
+  const path = uniCliConfigPath(workspaceRoot);
   if (!(await exists(path))) return {};
   try {
     const raw = await readFile(path, "utf8");
@@ -4770,12 +4770,12 @@ async function readuni-cliConfig(workspaceRoot: string): Promise<Record<string, 
   }
 }
 
-async function readuni-cliConfigForStatus(workspaceRoot: string): Promise<{
+async function readuniCliConfigForStatus(workspaceRoot: string): Promise<{
   data: Record<string, unknown>;
   error: string | null;
 }> {
   try {
-    return { data: await readuni-cliConfig(workspaceRoot), error: null };
+    return { data: await readuniCliConfig(workspaceRoot), error: null };
   } catch (error) {
     if (error instanceof ApiError && error.code === "invalid_json") {
       return { data: {}, error: error.message };
@@ -4793,41 +4793,41 @@ async function readuni-cliConfigForStatus(workspaceRoot: string): Promise<{
  * is never written afterwards. Returns the merged view ({...file, ...db}) so a
  * partially-migrated install still surfaces every key.
  */
-async function readuni-cliConfigForWorkspace(
+async function readuniCliConfigForWorkspace(
   config: ServerConfig,
   workspace: WorkspaceInfo,
 ): Promise<Record<string, unknown>> {
-  const stored = await readuni-cliWorkspaceConfig(config, workspace.id);
-  if (Object.keys(stored).length > 0 || (await hasuni-cliWorkspaceConfig(config, workspace.id))) {
+  const stored = await readuniCliWorkspaceConfig(config, workspace.id);
+  if (Object.keys(stored).length > 0 || (await hasuniCliWorkspaceConfig(config, workspace.id))) {
     return stored;
   }
-  const legacy = await readuni-cliConfigForStatus(workspace.path);
+  const legacy = await readuniCliConfigForStatus(workspace.path);
   if (Object.keys(legacy.data).length === 0) {
     if (workspace.workspaceType !== "remote" && workspace.path.trim()) {
-      return seeduni-cliWorkspaceConfigIfEmpty(
+      return seeduniCliWorkspaceConfigIfEmpty(
         config,
         workspace.id,
-        defaultWorkspaceuni-cliConfig(workspace.path, workspace.preset ?? "starter"),
+        defaultWorkspaceuniCliConfig(workspace.path, workspace.preset ?? "starter"),
       );
     }
     return {};
   }
   // Migrate-on-read: copy the legacy file contents into the DB once.
-  await seeduni-cliWorkspaceConfigIfEmpty(config, workspace.id, legacy.data);
-  return mergeuni-cliWorkspaceConfigs(legacy.data, await readuni-cliWorkspaceConfig(config, workspace.id));
+  await seeduniCliWorkspaceConfigIfEmpty(config, workspace.id, legacy.data);
+  return mergeuniCliWorkspaceConfigs(legacy.data, await readuniCliWorkspaceConfig(config, workspace.id));
 }
 
 /**
  * Persist a full uni-cli config document for a workspace to the runtime DB.
  * Replaces the legacy file write path; the file is no longer written.
  */
-async function writeuni-cliConfigForWorkspace(
+async function writeuniCliConfigForWorkspace(
   config: ServerConfig,
   workspace: WorkspaceInfo,
   payload: Record<string, unknown>,
   merge: boolean,
 ): Promise<void> {
-  await writeuni-cliWorkspaceConfig(config, workspace.id, (current) =>
+  await writeuniCliWorkspaceConfig(config, workspace.id, (current) =>
     merge ? { ...current, ...payload } : payload,
   );
 }
@@ -5274,7 +5274,7 @@ async function postEngineRefreshSync(
   activeState: EngineMcpServerState | undefined,
 ): Promise<void> {
   const directory = resolveOpencodeDirectory(workspace);
-  markuni-cliCloudMcpStale(workspace, directory);
+  markuniCliCloudMcpStale(workspace, directory);
   return enqueueWorkspaceMcpRefreshSync({
     config,
     workspace,
@@ -5317,7 +5317,7 @@ async function runWorkspaceMcpRefreshSync(input: WorkspaceMcpRefreshRequest): Pr
     logRuntimeMcpSyncError({ config, workspace, trigger, error });
   }
   try {
-    const health = await reconcilePersisteduni-cliCloudMcp({
+    const health = await reconcilePersisteduniCliCloudMcp({
       config,
       workspace,
       directory,
@@ -5344,7 +5344,7 @@ async function runWorkspaceMcpRefreshSync(input: WorkspaceMcpRefreshRequest): Pr
   // reporting a phantom "changed" (which would schedule yet another reload).
   try {
     if (trigger === "engine_reload") {
-      await writeuni-cliRuntimeConfigFile(config);
+      await writeuniCliRuntimeConfigFile(config);
     }
   } catch {
     // Best-effort: the fresh-keeper listener still converges eventually.
@@ -6021,7 +6021,7 @@ export function createEnginePoolForConfig(input: {
         // failed warm-up never blocks the flip.
         await warmActiveEngineFolder(poolConfig, logger, "rollover", standby);
       },
-      writeRuntimeConfigFile: (poolConfig) => writeuni-cliRuntimeConfigFile(poolConfig),
+      writeRuntimeConfigFile: (poolConfig) => writeuniCliRuntimeConfigFile(poolConfig),
       registerTrusted: (poolConfig, generation) => registerTrustedOpencodeProcess(poolConfig, generation),
       clearTrusted: (poolConfig, identity) => clearTrustedOpencodeProcess(poolConfig, identity),
       logger,
@@ -6539,7 +6539,7 @@ function logPersistedCloudMcpReconcileError(input: {
 // only, so other workspaces' runtime MCPs are invisible to the engine until
 // something re-syncs them. Best-effort.
 export async function syncAllWorkspacesRuntimeMcpToEngine(config: ServerConfig): Promise<void> {
-  await migrateuni-cliCloudMcpRuntimeConfig(config);
+  await migrateuniCliCloudMcpRuntimeConfig(config);
   await migrateWorkspaceRuntimeConfigToEngineGlobal(config);
   const serverState = activeEngineMcpServerState(config);
   for (const workspace of config.workspaces) {
@@ -6600,7 +6600,7 @@ async function exportWorkspace(
   const sensitiveMode = options?.sensitiveMode ?? "auto";
   const rawOpencode = await readOpencodeConfig(workspace.path);
   let opencode = sanitizePortableOpencodeConfig(rawOpencode);
-  const uni-cli = sanitizeuni-cliTemplateConfig(await readuni-cliConfigForWorkspace(config, workspace));
+  const uni-cli = sanitizeuniCliTemplateConfig(await readuniCliConfigForWorkspace(config, workspace));
   const skills = await listSkills(workspace.path, false);
   const commands = await listCommands(workspace.path, "workspace");
   let files = await listPortableFiles(workspace.path);

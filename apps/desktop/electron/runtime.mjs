@@ -11,8 +11,8 @@ import { pathToFileURL } from "node:url";
 import {
   desktopBootstrapPath,
   normalizeWorkspaceRootPath,
-  uni-cliEnvStorePath,
-  uni-cliServerConfigPath,
+  uniCliEnvStorePath,
+  uniCliServerConfigPath,
   resolveWorkspaceOpencodeConfigPath,
 } from "@uni-cli/paths";
 import {
@@ -182,7 +182,7 @@ function normalizeServerCredentials(value) {
   };
 }
 
-export function migrateuni-cliServerTokenStore(value) {
+export function migrateuniCliServerTokenStore(value) {
   const source = value && typeof value === "object" && !Array.isArray(value) ? value : {};
   const sourceWorkspaces = source.workspaces && typeof source.workspaces === "object" && !Array.isArray(source.workspaces)
     ? source.workspaces
@@ -255,15 +255,15 @@ export async function prepareRuntimeWorkspaceRoot(projectDir, options = {}) {
   }
 }
 
-export function resolveuni-cliServerConfigPath(env = process.env) {
-  return uni-cliServerConfigPath({ env });
+export function resolveuniCliServerConfigPath(env = process.env) {
+  return uniCliServerConfigPath({ env });
 }
 
 export function seedWorkspacePathsForEmbeddedServer(workspacePaths, serverConfigExists) {
   return serverConfigExists ? [] : workspacePaths;
 }
 
-export function selectStickyuni-cliPortWorkspace(requestedWorkspacePaths = [], serverWorkspacePaths = []) {
+export function selectStickyuniCliPortWorkspace(requestedWorkspacePaths = [], serverWorkspacePaths = []) {
   for (const value of [...requestedWorkspacePaths, ...serverWorkspacePaths]) {
     const workspacePath = String(value ?? "").trim();
     if (workspacePath) return workspacePath;
@@ -406,19 +406,19 @@ export function snapshotEngineState(state) {
  * apps have no visible stdout, so without this file every engine rollover
  * reason and reload trigger is lost. An explicit UNICLI_SERVER_LOG_FILE wins.
  */
-export function resolveuni-cliServerLogFile(userDataDir, env = process.env) {
+export function resolveuniCliServerLogFile(userDataDir, env = process.env) {
   const explicit = String(env.UNICLI_SERVER_LOG_FILE ?? "").trim();
   if (explicit) return explicit;
   return path.join(userDataDir, "logs", "uni-cli-server.log");
 }
 
-function createuni-cliServerState() {
+function createuniCliServerState() {
   return {
     child: null,
     childExited: true,
     inProcess: false,
     logFilePath: null,
-    // Monotonic per-start identity assigned by startuni-cliServerInner.
+    // Monotonic per-start identity assigned by startuniCliServerInner.
     // Sticky ports and persisted tokens make the connection details identical
     // across restarts, so clients need this to observe a new server lifetime.
     generation: null,
@@ -440,7 +440,7 @@ function createuni-cliServerState() {
   };
 }
 
-export function snapshotuni-cliServerState(state) {
+export function snapshotuniCliServerState(state) {
   const child = state.childExited ? null : state.child;
   const running = state.inProcess || Boolean(child && child.exitCode === null && !child.killed);
   return {
@@ -476,7 +476,7 @@ export function snapshotuni-cliServerState(state) {
  * explicit forceRestart or a host rebind (remote access change) gives up the
  * running server.
  */
-export function resolveuni-cliServerReuse({
+export function resolveuniCliServerReuse({
   forceRestart,
   inProcess,
   lifecycleState,
@@ -496,19 +496,19 @@ export function resolveuni-cliServerReuse({
 
 /**
  * A failed server start must not leave the state objects describing the
- * runtime it already stopped: snapshotuni-cliServerState would report
- * running:true with a dead baseUrl and assertuni-cliServerReady would pass
+ * runtime it already stopped: snapshotuniCliServerState would report
+ * running:true with a dead baseUrl and assertuniCliServerReady would pass
  * against it. Keeps accumulated output for diagnostics and the project dir so
  * a retry via engineRestart still knows its workspace. The engine state only
  * resets when this start owned the engine (manageOpencode) — an external
  * engine keeps running regardless of the server's fate.
  */
-export function resetRuntimeStatesAfterFailedServerStart(uni-cliServerStateRef, engineStateRef, options = {}) {
-  const serverStdout = uni-cliServerStateRef.lastStdout;
-  const serverStderr = uni-cliServerStateRef.lastStderr;
-  Object.assign(uni-cliServerStateRef, createuni-cliServerState());
-  uni-cliServerStateRef.lastStdout = serverStdout;
-  uni-cliServerStateRef.lastStderr = serverStderr;
+export function resetRuntimeStatesAfterFailedServerStart(uniCliServerStateRef, engineStateRef, options = {}) {
+  const serverStdout = uniCliServerStateRef.lastStdout;
+  const serverStderr = uniCliServerStateRef.lastStderr;
+  Object.assign(uniCliServerStateRef, createuniCliServerState());
+  uniCliServerStateRef.lastStdout = serverStdout;
+  uniCliServerStateRef.lastStderr = serverStderr;
   if (options.manageOpencode === true) {
     const engineStdout = engineStateRef.lastStdout;
     const engineStderr = engineStateRef.lastStderr;
@@ -520,7 +520,7 @@ export function resetRuntimeStatesAfterFailedServerStart(uni-cliServerStateRef, 
   }
 }
 
-function assertuni-cliServerReady(snapshot) {
+function assertuniCliServerReady(snapshot) {
   if (!snapshot?.running) {
     throw new Error("Uni-CLI server did not stay running after startup.");
   }
@@ -744,7 +744,7 @@ async function fetchJson(url, options = {}, timeoutMs = 3000) {
 }
 
 export function resolveUserEnvFilePath(env = process.env) {
-  return uni-cliEnvStorePath({ env });
+  return uniCliEnvStorePath({ env });
 }
 
 const USER_ENV_KEY_PATTERN = /^[A-Za-z_][A-Za-z0-9_]*$/;
@@ -1404,11 +1404,11 @@ export function createRuntimeManager({
   const inheritedProcessEnv = { ...process.env };
   let injectedUserEnvKeys = new Set();
   const engineState = createEngineState();
-  const uni-cliServerState = createuni-cliServerState();
+  const uniCliServerState = createuniCliServerState();
   // Monotonic across this Electron process. Never reset with the server
   // state: each successful server start must be observable as a new
   // generation even when ports and tokens are reused.
-  let uni-cliServerGenerationCounter = 0;
+  let uniCliServerGenerationCounter = 0;
 
   // Serialize engine lifecycle operations. Without this, concurrent renderer
   // invocations of engineStart/engineStop/engineRestart race: each call's
@@ -1448,13 +1448,13 @@ export function createRuntimeManager({
     return systemCaPromise;
   }
 
-  function uni-cliServerTokenStorePath() {
+  function uniCliServerTokenStorePath() {
     const override = process.env.UNICLI_SERVER_TOKEN_STORE_PATH?.trim();
     if (override) return path.resolve(override);
     return path.join(userDataDir, "uni-cli-server-tokens.json");
   }
 
-  function uni-cliServerStatePath() {
+  function uniCliServerStatePath() {
     const override = process.env.UNICLI_SERVER_STATE_PATH?.trim();
     if (override) return path.resolve(override);
     return path.join(userDataDir, "uni-cli-server-state.json");
@@ -1465,8 +1465,8 @@ export function createRuntimeManager({
   }
 
   async function loadTokenStore() {
-    const stored = await readJsonFile(uni-cliServerTokenStorePath(), { version: 1, workspaces: {} });
-    const migrated = migrateuni-cliServerTokenStore(stored);
+    const stored = await readJsonFile(uniCliServerTokenStorePath(), { version: 1, workspaces: {} });
+    const migrated = migrateuniCliServerTokenStore(stored);
     if (JSON.stringify(stored) !== JSON.stringify(migrated)) {
       await saveTokenStore(migrated);
     }
@@ -1474,13 +1474,13 @@ export function createRuntimeManager({
   }
 
   async function saveTokenStore(store) {
-    const filePath = uni-cliServerTokenStorePath();
+    const filePath = uniCliServerTokenStorePath();
     await mkdir(path.dirname(filePath), { recursive: true });
     await writeFile(filePath, `${JSON.stringify(store, null, 2)}\n`, "utf8");
   }
 
   async function loadPortState() {
-    return readJsonFile(uni-cliServerStatePath(), {
+    return readJsonFile(uniCliServerStatePath(), {
       version: 4,
       workspacePorts: {},
       preferredPort: null,
@@ -1488,7 +1488,7 @@ export function createRuntimeManager({
   }
 
   async function savePortState(state) {
-    const filePath = uni-cliServerStatePath();
+    const filePath = uniCliServerStatePath();
     await mkdir(path.dirname(filePath), { recursive: true });
     await writeFile(filePath, `${JSON.stringify(state, null, 2)}\n`, "utf8");
   }
@@ -1505,7 +1505,7 @@ export function createRuntimeManager({
     await saveTokenStore(store);
   }
 
-  async function readPreferreduni-cliPort(workspaceKey) {
+  async function readPreferreduniCliPort(workspaceKey) {
     const state = await loadPortState();
     const normalized = normalizeWorkspaceKey(workspaceKey, workspacePlatform);
     if (normalized && state.workspacePorts?.[normalized]) {
@@ -1514,7 +1514,7 @@ export function createRuntimeManager({
     return state.preferredPort ?? null;
   }
 
-  async function persistPreferreduni-cliPort(workspaceKey, port) {
+  async function persistPreferreduniCliPort(workspaceKey, port) {
     const state = await loadPortState();
     const normalized = normalizeWorkspaceKey(workspaceKey, workspacePlatform);
     state.version = 4;
@@ -1537,8 +1537,8 @@ export function createRuntimeManager({
     return portAvailable(host, port);
   }
 
-  async function resolveuni-cliPort(host, workspaceKey, currentPort = null) {
-    const preferredPort = await readPreferreduni-cliPort(workspaceKey);
+  async function resolveuniCliPort(host, workspaceKey, currentPort = null) {
+    const preferredPort = await readPreferreduniCliPort(workspaceKey);
     if (currentPort && (await waitForPortAvailable(host, currentPort))) {
       return { port: currentPort, preferredPort };
     }
@@ -1729,9 +1729,9 @@ export function createRuntimeManager({
     );
   }
 
-  const legacyuni-cliContainerPrefix = `${["uni-cli", "orchestrator"].join("-")}-`;
+  const legacyuniCliContainerPrefix = `${["uni-cli", "orchestrator"].join("-")}-`;
 
-  async function listuni-cliManagedContainers() {
+  async function listuniCliManagedContainers() {
     const result = runDockerCommandDetailed(["ps", "-a", "--format", "{{.Names}}"], 8000);
     if (result.status !== 0) {
       const combined = `${result.stdout.trim()}\n${result.stderr.trim()}`.trim();
@@ -1740,7 +1740,7 @@ export function createRuntimeManager({
     return result.stdout
       .split(/\r?\n/)
       .map((line) => line.trim())
-      .filter((name) => name && (name.startsWith(legacyuni-cliContainerPrefix) || name.startsWith("uni-cli-dev-") || name.startsWith("openwrk-")))
+      .filter((name) => name && (name.startsWith(legacyuniCliContainerPrefix) || name.startsWith("uni-cli-dev-") || name.startsWith("openwrk-")))
       .sort();
   }
 
@@ -1902,35 +1902,35 @@ export function createRuntimeManager({
   // In-process server handle. Kept alive across restarts so we can stop it.
   let inProcessServer = null;
 
-  async function startuni-cliServer(options) {
+  async function startuniCliServer(options) {
     // The inner start stops any previous runtime before mutating state, so a
     // throw below always happens with nothing left running.
     try {
-      return await startuni-cliServerInner(options);
+      return await startuniCliServerInner(options);
     } catch (error) {
-      resetRuntimeStatesAfterFailedServerStart(uni-cliServerState, engineState, options);
+      resetRuntimeStatesAfterFailedServerStart(uniCliServerState, engineState, options);
       throw error;
     }
   }
 
-  async function startuni-cliServerInner(options) {
+  async function startuniCliServerInner(options) {
     const evalDelayMs = resolveEvalLocalServerDelayMs();
     if (evalDelayMs > 0) {
       await new Promise((resolve) => setTimeout(resolve, evalDelayMs));
     }
-    const currentPort = uni-cliServerState.port;
+    const currentPort = uniCliServerState.port;
     // Stop any previously running in-process server
     if (inProcessServer) {
       try { await inProcessServer.stop(); } catch { /* ignore */ }
       inProcessServer = null;
     }
-    await stopChild(uni-cliServerState);
+    await stopChild(uniCliServerState);
 
     const host = options.remoteAccessEnabled ? "0.0.0.0" : "127.0.0.1";
 
     const managedOpencode = options.manageOpencode ? resolveOpencodeBinary(options.opencodeBinPath) : null;
-    uni-cliServerState.managedOpencodeBinPath = managedOpencode?.path ?? null;
-    uni-cliServerState.managedOpencodeBinSource = managedOpencode?.source ?? null;
+    uniCliServerState.managedOpencodeBinPath = managedOpencode?.path ?? null;
+    uniCliServerState.managedOpencodeBinSource = managedOpencode?.source ?? null;
     if (options.manageOpencode) {
       engineState.opencodeBinPath = managedOpencode?.path ?? null;
       engineState.opencodeBinSource = managedOpencode?.source ?? null;
@@ -1944,7 +1944,7 @@ export function createRuntimeManager({
     // truth. Do not pass Electron's legacy workspace list as CLI workspaces or
     // the server config loader will ignore server.json and lose server-created
     // workspaces after restart.
-    const serverConfigPath = resolveuni-cliServerConfigPath(process.env);
+    const serverConfigPath = resolveuniCliServerConfigPath(process.env);
     const requestedWorkspacePaths = prioritizeWorkspacePaths("", options.workspacePaths, {
       platform: workspacePlatform,
     });
@@ -1952,8 +1952,8 @@ export function createRuntimeManager({
       requestedWorkspacePaths,
       existsSync(serverConfigPath),
     );
-    const activeWorkspace = selectStickyuni-cliPortWorkspace(requestedWorkspacePaths, workspacePaths);
-    const portSelection = await resolveuni-cliPort(host, activeWorkspace, currentPort);
+    const activeWorkspace = selectStickyuniCliPortWorkspace(requestedWorkspacePaths, workspacePaths);
+    const portSelection = await resolveuniCliPort(host, activeWorkspace, currentPort);
     const tokens = await loadServerCredentials();
 
     // One call: resolve config, spawn managed OpenCode, start HTTP server.
@@ -1973,9 +1973,9 @@ export function createRuntimeManager({
     }
     // Must be set before the bundle loads: the server memoizes its file sink
     // from process.env the first time it creates a logger.
-    const logFilePath = resolveuni-cliServerLogFile(userDataDir);
+    const logFilePath = resolveuniCliServerLogFile(userDataDir);
     process.env.UNICLI_SERVER_LOG_FILE = logFilePath;
-    uni-cliServerState.logFilePath = logFilePath;
+    uniCliServerState.logFilePath = logFilePath;
     const { startEmbeddedServer } = await import(embeddedServerImportUrl(embeddedPath));
     // startEmbeddedServer falls back to an OS-assigned port if `port` races
     // into EADDRINUSE (see apps/server/src/serve-node.ts), so the bound port
@@ -1999,7 +1999,7 @@ export function createRuntimeManager({
       anonymousInference,
     });
     inProcessServer = handle;
-    uni-cliServerState.managedOpencodeExecution = handle.managedOpencodeExecution ?? null;
+    uniCliServerState.managedOpencodeExecution = handle.managedOpencodeExecution ?? null;
     engineState.managedByServer = Boolean(handle.managedOpencode);
     engineState.managedPid = handle.managedOpencode?.pid ?? null;
     engineState.managedIsAlive = handle.managedOpencode?.isAlive ?? null;
@@ -2007,20 +2007,20 @@ export function createRuntimeManager({
     const boundPort = handle.port;
     const baseUrl = handle.url;
 
-    uni-cliServerState.inProcess = true;
-    uni-cliServerGenerationCounter += 1;
-    uni-cliServerState.generation = uni-cliServerGenerationCounter;
-    uni-cliServerState.remoteAccessEnabled = options.remoteAccessEnabled;
-    uni-cliServerState.host = host;
-    uni-cliServerState.port = boundPort;
-    uni-cliServerState.baseUrl = baseUrl;
-    uni-cliServerState.clientToken = tokens.clientToken;
-    uni-cliServerState.hostToken = tokens.hostToken;
+    uniCliServerState.inProcess = true;
+    uniCliServerGenerationCounter += 1;
+    uniCliServerState.generation = uniCliServerGenerationCounter;
+    uniCliServerState.remoteAccessEnabled = options.remoteAccessEnabled;
+    uniCliServerState.host = host;
+    uniCliServerState.port = boundPort;
+    uniCliServerState.baseUrl = baseUrl;
+    uniCliServerState.clientToken = tokens.clientToken;
+    uniCliServerState.hostToken = tokens.hostToken;
 
     const connectUrls = options.remoteAccessEnabled ? buildConnectUrls(boundPort) : { connectUrl: null, mdnsUrl: null, lanUrl: null };
-    uni-cliServerState.connectUrl = connectUrls.connectUrl;
-    uni-cliServerState.mdnsUrl = connectUrls.mdnsUrl;
-    uni-cliServerState.lanUrl = connectUrls.lanUrl;
+    uniCliServerState.connectUrl = connectUrls.connectUrl;
+    uniCliServerState.mdnsUrl = connectUrls.mdnsUrl;
+    uniCliServerState.lanUrl = connectUrls.lanUrl;
 
     // No health check needed -- startServer() resolves only after the listener is bound.
     let workspaceList = null;
@@ -2035,7 +2035,7 @@ export function createRuntimeManager({
       }
     }
     ownerToken ||= await issueOwnerToken(baseUrl, tokens.hostToken);
-    uni-cliServerState.ownerToken = ownerToken;
+    uniCliServerState.ownerToken = ownerToken;
     if (ownerToken) {
       await persistServerOwnerToken(ownerToken);
     }
@@ -2059,13 +2059,13 @@ export function createRuntimeManager({
           engineState.childExited = false;
         }
       } catch (error) {
-        appendOutput(uni-cliServerState, "lastStderr", `Uni-CLI server workspace probe: ${error instanceof Error ? error.message : String(error)}\n`);
+        appendOutput(uniCliServerState, "lastStderr", `Uni-CLI server workspace probe: ${error instanceof Error ? error.message : String(error)}\n`);
       }
     }
     if (!portSelection.preferredPort || boundPort === portSelection.preferredPort) {
-      await persistPreferreduni-cliPort(activeWorkspace, boundPort);
+      await persistPreferreduniCliPort(activeWorkspace, boundPort);
     }
-    return snapshotuni-cliServerState(uni-cliServerState);
+    return snapshotuniCliServerState(uniCliServerState);
   }
 
   async function stopAllRuntimeChildren() {
@@ -2074,11 +2074,11 @@ export function createRuntimeManager({
       try { await inProcessServer.stop(); } catch { /* ignore */ }
       inProcessServer = null;
     }
-    await stopChild(uni-cliServerState);
+    await stopChild(uniCliServerState);
     await stopChild(engineState);
 
     Object.assign(engineState, createEngineState());
-    Object.assign(uni-cliServerState, createuni-cliServerState());
+    Object.assign(uniCliServerState, createuniCliServerState());
   }
 
   async function prepareFreshRuntime() {
@@ -2089,19 +2089,19 @@ export function createRuntimeManager({
   }
 
   function settleAfterWorkspacePreparationFailure() {
-    if (snapshotuni-cliServerState(uni-cliServerState).running) {
+    if (snapshotuniCliServerState(uniCliServerState).running) {
       lifecycleState = "healthy";
       return;
     }
     Object.assign(engineState, createEngineState());
-    Object.assign(uni-cliServerState, createuni-cliServerState());
+    Object.assign(uniCliServerState, createuniCliServerState());
     lifecycleState = "idle";
   }
 
-  async function ensureuni-cli(options) {
-    let uni-cliServer;
+  async function ensureuniCli(options) {
+    let uniCliServer;
     try {
-      uni-cliServer = await startuni-cliServer({
+      uniCliServer = await startuniCliServer({
         workspacePaths: options.workspacePaths,
         opencodeBaseUrl: engineState.baseUrl,
         opencodeUsername: engineState.opencodeUsername,
@@ -2115,7 +2115,7 @@ export function createRuntimeManager({
       throw error;
     }
 
-    assertuni-cliServerReady(uni-cliServer);
+    assertuniCliServerReady(uniCliServer);
   }
 
   function adoptManagedEngineConnection() {
@@ -2149,26 +2149,26 @@ export function createRuntimeManager({
 
     // Reuse a healthy server instead of tearing it down. During boot the
     // main process kicks off bootRuntimeForSelectedWorkspace while renderer
-    // routes independently call ensureDesktopLocaluni-cliConnection. Both go
+    // routes independently call ensureDesktopLocaluniCliConnection. Both go
     // through this serialized path; without this guard the second call runs
     // prepareFreshRuntime (killing the freshly bound server) and then rebinds
     // the sticky preferred port, racing the not-yet-released socket into
     // EADDRINUSE and leaving the runtime in error -> boot screen.
-    // resolveuni-cliServerReuse also spans workspace switches: requesting a
+    // resolveuniCliServerReuse also spans workspace switches: requesting a
     // different projectDir retargets the running runtime instead of killing
     // the process and every in-flight run with it.
-    const reuseDecision = resolveuni-cliServerReuse({
+    const reuseDecision = resolveuniCliServerReuse({
       forceRestart: options.forceRestart,
-      inProcess: uni-cliServerState.inProcess,
+      inProcess: uniCliServerState.inProcess,
       lifecycleState,
-      remoteAccessEnabled: uni-cliServerState.remoteAccessEnabled,
-      requestedRemoteAccess: options.uni-cliRemoteAccess,
+      remoteAccessEnabled: uniCliServerState.remoteAccessEnabled,
+      requestedRemoteAccess: options.uniCliRemoteAccess,
       currentProjectDir: engineState.projectDir,
       requestedProjectDir: safeProjectDir,
       platform: workspacePlatform,
     });
     if (reuseDecision.reuse) {
-      const existing = snapshotuni-cliServerState(uni-cliServerState);
+      const existing = snapshotuniCliServerState(uniCliServerState);
       if (existing.running && existing.baseUrl && (existing.ownerToken || existing.clientToken)) {
         if (reuseDecision.retarget) {
           try {
@@ -2182,7 +2182,7 @@ export function createRuntimeManager({
             throw error;
           }
           engineState.projectDir = safeProjectDir;
-          await persistPreferreduni-cliPort(safeProjectDir, uni-cliServerState.port);
+          await persistPreferreduniCliPort(safeProjectDir, uniCliServerState.port);
         }
         // A server started before any workspace existed never learned its
         // engine connection from a workspace; adopt it from the server.
@@ -2216,10 +2216,10 @@ export function createRuntimeManager({
       engineState.child = null;
       engineState.childExited = true;
 
-      await ensureuni-cli({
+      await ensureuniCli({
         projectDir: safeProjectDir,
         workspacePaths,
-        remoteAccessEnabled: options.uni-cliRemoteAccess === true,
+        remoteAccessEnabled: options.uniCliRemoteAccess === true,
         manageOpencode: true,
         opencodeBinPath: options.opencodeBinPath,
       });
@@ -2244,14 +2244,14 @@ export function createRuntimeManager({
     if (!projectDir) {
       throw new Error("OpenCode is not configured for a local workspace");
     }
-    const uni-cliRemoteAccess = typeof options.uni-cliRemoteAccess === "boolean"
-      ? options.uni-cliRemoteAccess
-      : uni-cliServerState.remoteAccessEnabled;
+    const uniCliRemoteAccess = typeof options.uniCliRemoteAccess === "boolean"
+      ? options.uniCliRemoteAccess
+      : uniCliServerState.remoteAccessEnabled;
     return engineStart(projectDir, {
       runtime: engineState.runtime,
       workspacePaths: [projectDir],
       opencodeEnableExa: options.opencodeEnableExa,
-      uni-cliRemoteAccess,
+      uniCliRemoteAccess,
       forceRestart: true,
     });
   }
@@ -2268,29 +2268,29 @@ export function createRuntimeManager({
       lifecycleState,
       engine: await engineInfo(),
       enginePool: inProcessServer?.managedOpencodePool?.() ?? null,
-      uni-cliServer: snapshotuni-cliServerState(uni-cliServerState),
+      uniCliServer: snapshotuniCliServerState(uniCliServerState),
     };
   }
 
-  async function uni-cliServerInfo() {
-    return snapshotuni-cliServerState(uni-cliServerState);
+  async function uniCliServerInfo() {
+    return snapshotuniCliServerState(uniCliServerState);
   }
 
-  async function uni-cliServerRestart(options = {}) {
+  async function uniCliServerRestart(options = {}) {
     const workspacePaths = prioritizeWorkspacePaths(engineState.projectDir, await listLocalWorkspacePaths(), {
       platform: workspacePlatform,
     });
     const shouldManageOpencode = Boolean(
-      uni-cliServerState.managedOpencodeBinPath || engineState.opencodeBinPath || !engineState.baseUrl,
+      uniCliServerState.managedOpencodeBinPath || engineState.opencodeBinPath || !engineState.baseUrl,
     );
-    const info = await startuni-cliServer({
+    const info = await startuniCliServer({
       workspacePaths,
       opencodeBaseUrl: shouldManageOpencode ? null : engineState.baseUrl,
       opencodeUsername: shouldManageOpencode ? null : engineState.opencodeUsername,
       opencodePassword: shouldManageOpencode ? null : engineState.opencodePassword,
       remoteAccessEnabled: options.remoteAccessEnabled === true,
       manageOpencode: shouldManageOpencode,
-      opencodeBinPath: engineState.opencodeBinPath ?? uni-cliServerState.managedOpencodeBinPath,
+      opencodeBinPath: engineState.opencodeBinPath ?? uniCliServerState.managedOpencodeBinPath,
     });
     // The server now runs its managed engine even before the first
     // workspace exists. Report that runtime as healthy so a later
@@ -2353,8 +2353,8 @@ export function createRuntimeManager({
     };
   }
 
-  async function sandboxCleanupuni-cliContainers() {
-    const candidates = await listuni-cliManagedContainers().catch((error) => {
+  async function sandboxCleanupuniCliContainers() {
+    const candidates = await listuniCliManagedContainers().catch((error) => {
       throw error;
     });
     const removed = [];
@@ -2387,9 +2387,9 @@ export function createRuntimeManager({
     engineInfo,
     engineDoctor,
     engineInstall,
-    uni-cliServerInfo,
-    uni-cliServerRestart: (options) => withRuntimeLifecycle(() => uni-cliServerRestart(options)),
+    uniCliServerInfo,
+    uniCliServerRestart: (options) => withRuntimeLifecycle(() => uniCliServerRestart(options)),
     opencodeMcpAuth,
-    sandboxCleanupuni-cliContainers,
+    sandboxCleanupuniCliContainers,
   };
 }

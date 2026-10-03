@@ -285,7 +285,7 @@ async function createGmailDraftWithAttachments(
   return postDirectUpload(config, "/v1/direct-uploads/google-workspace/gmail-drafts", form, dependencies, dependencies.signal);
 }
 
-export async function callUni-CLICloudUploadAction(
+export async function callUniCliCloudUploadAction(
   config: ServerConfig,
   action: string,
   args: Record<string, unknown>,

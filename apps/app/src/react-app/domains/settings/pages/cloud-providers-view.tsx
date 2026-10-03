@@ -83,7 +83,7 @@ export type CloudProvidersViewProps = {
   importedCloudProviders: Record<string, CloudImportedProvider>;
   importsUnavailable: boolean;
   lastSyncError: Record<string, CloudProviderSyncError>;
-  uni-cliServerAvailable: boolean;
+  uniCliServerAvailable: boolean;
   onOpenAccount: () => void;
   refreshCloudOrgProviders: (options?: { force?: boolean }) => Promise<DenOrgLlmProvider[]>;
   runCloudProviderSync: (reason: "manual") => Promise<unknown>;
@@ -104,7 +104,7 @@ export function CloudProvidersView({
   importedCloudProviders,
   importsUnavailable,
   lastSyncError,
-  uni-cliServerAvailable,
+  uniCliServerAvailable,
   onOpenAccount,
   refreshCloudOrgProviders,
   runCloudProviderSync,
@@ -141,7 +141,7 @@ export function CloudProvidersView({
         allowed,
         importsUnavailable,
         needsCredential: serverSync === null && !provider.hasApiKey && env.length > 0,
-        needsServer: serverSync === null && provider.hasApiKey && env.length > 1 && !uni-cliServerAvailable,
+        needsServer: serverSync === null && provider.hasApiKey && env.length > 1 && !uniCliServerAvailable,
         syncError,
         skippedByServer: Boolean(serverSync?.skippedProviders[provider.id]),
         reloadPending: serverSync?.reloadPending === true,
@@ -188,7 +188,7 @@ export function CloudProvidersView({
     importedCloudProviders,
     importsUnavailable,
     lastSyncError,
-    uni-cliServerAvailable,
+    uniCliServerAvailable,
     serverSync,
   ]);
 

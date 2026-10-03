@@ -23,22 +23,22 @@ import { AttributionStep, type AttributionSource } from "../domains/onboarding/a
 import { CreateWorkspaceModal } from "../domains/workspace/create-workspace-modal";
 import type { CreateWorkspaceOptions } from "../domains/workspace/types";
 import {
-  getUni-CLIModelsActionUrl,
-  hideUni-CLIModelsPromo,
-  useUni-CLIModelsPromoEligibility,
-  markUni-CLIModelsStartupPromoShown,
+  getUniCliModelsActionUrl,
+  hideUniCliModelsPromo,
+  useUniCliModelsPromoEligibility,
+  markUniCliModelsStartupPromoShown,
 } from "../domains/cloud/uni-cli-models-promo";
 import { useDenAuth } from "../domains/cloud/den-auth-provider";
 import { JoinOrganizationDialog } from "../domains/cloud/join-organization-dialog";
-import { resolveuni-cliConnection } from "./uni-cli-connection";
+import { resolveuniCliConnection } from "./uni-cli-connection";
 import { captureAnalyticsEvent } from "../../app/lib/analytics";
-import { builduni-cliWorkspaceBaseUrl, createuni-cliServerClient } from "../../app/lib/uni-cli-server";
+import { builduniCliWorkspaceBaseUrl, createuniCliServerClient } from "../../app/lib/uni-cli-server";
 import { buildDenAuthUrl, DEFAULT_DEN_BASE_URL, readDenSettings } from "../../app/lib/den";
 import { markDesktopSignInInitiated } from "../../app/lib/den-sign-in-intent";
 import { denSettingsChangedEvent } from "../../app/lib/den-session-events";
 import { writeActiveWorkspaceId, writeLastSessionFor, writeWorkspaceProjectDimension } from "./session-memory";
 import { workspaceSessionRoute } from "./workspace-routes";
-import { ensureDesktopLocaluni-cliConnection } from "./desktop-local-uni-cli";
+import { ensureDesktopLocaluniCliConnection } from "./desktop-local-uni-cli";
 import { shouldHoldWelcomeForDenSession } from "./welcome-den-session";
 
 function subscribeToDenSettings(onStoreChange: () => void) {
@@ -142,7 +142,7 @@ export function WelcomeRoute() {
   const [state, dispatch] = useReducer(welcomeReducer, initialWelcomeState);
   const [manualFolder, setManualFolder] = useState("");
   const [joinOrganizationOpen, setJoinOrganizationOpen] = useState(false);
-  const showUni-CLIModelsPromo = useUni-CLIModelsPromoEligibility();
+  const showUniCliModelsPromo = useUniCliModelsPromoEligibility();
   const denAuthTokenSnapshot = useSyncExternalStore(
     subscribeToDenSettings,
     readDenAuthTokenSnapshot,
@@ -183,14 +183,14 @@ export function WelcomeRoute() {
         let sessionToken = "";
         try {
           const { normalizedBaseUrl, resolvedToken, resolvedHostToken } =
-            await resolveuni-cliConnection();
+            await resolveuniCliConnection();
           if (normalizedBaseUrl && (resolvedToken || resolvedHostToken)) {
-            const uni-cliClient = createuni-cliServerClient({
+            const uniCliClient = createuniCliServerClient({
               baseUrl: normalizedBaseUrl,
               token: resolvedToken || undefined,
               hostToken: resolvedHostToken || undefined,
             });
-            list = await uni-cliClient.createLocalWorkspace({
+            list = await uniCliClient.createLocalWorkspace({
               folderPath: folder,
               name: workspaceName,
               preset: "starter",
@@ -217,12 +217,12 @@ export function WelcomeRoute() {
           writeActiveWorkspaceId(createdId);
         }
         if (targetWorkspace) {
-          await ensureDesktopLocaluni-cliConnection({
+          await ensureDesktopLocaluniCliConnection({
             route: "session",
             workspace: targetWorkspace,
             allWorkspaces: list.workspaces,
           }).catch(() => undefined);
-          const fresh = await resolveuni-cliConnection().catch(() => null);
+          const fresh = await resolveuniCliConnection().catch(() => null);
           if (fresh?.normalizedBaseUrl && fresh.resolvedToken) {
             sessionBaseUrl = fresh.normalizedBaseUrl;
             sessionToken = fresh.resolvedToken;
@@ -232,7 +232,7 @@ export function WelcomeRoute() {
           try {
             const workspacePath = targetWorkspace?.path?.trim() || folder;
             const session = unwrap(await createClient(
-              `${(builduni-cliWorkspaceBaseUrl(sessionBaseUrl, targetWorkspaceId) ?? sessionBaseUrl).replace(/\/+$/, "")}/opencode`,
+              `${(builduniCliWorkspaceBaseUrl(sessionBaseUrl, targetWorkspaceId) ?? sessionBaseUrl).replace(/\/+$/, "")}/opencode`,
               workspacePath || undefined,
               { token: sessionToken, mode: "uni-cli" },
             ).session.create({ directory: workspacePath || undefined }));
@@ -269,20 +269,20 @@ export function WelcomeRoute() {
 
   const handleCreateRemote = useCallback(
     async (input: {
-      uni-cliHostUrl?: string | null;
-      uni-cliToken?: string | null;
+      uniCliHostUrl?: string | null;
+      uniCliToken?: string | null;
       directory?: string | null;
       displayName?: string | null;
     }) => {
-      const baseUrlValue = input.uni-cliHostUrl?.trim() ?? "";
+      const baseUrlValue = input.uniCliHostUrl?.trim() ?? "";
       if (!baseUrlValue) return false;
       dispatch({ type: "remote:start" });
       try {
         const remoteType: "uni-cli" = "uni-cli";
         const payload = {
           baseUrl: baseUrlValue,
-          uni-cliHostUrl: baseUrlValue,
-          uni-cliToken: input.uni-cliToken?.trim() || null,
+          uniCliHostUrl: baseUrlValue,
+          uniCliToken: input.uniCliToken?.trim() || null,
           displayName: input.displayName?.trim() || null,
           directory: input.directory?.trim() || null,
           remoteType,
@@ -293,9 +293,9 @@ export function WelcomeRoute() {
         } else {
           try {
             const { normalizedBaseUrl, resolvedToken, resolvedHostToken } =
-              await resolveuni-cliConnection();
+              await resolveuniCliConnection();
             if (normalizedBaseUrl && (resolvedToken || resolvedHostToken)) {
-              list = await createuni-cliServerClient({
+              list = await createuniCliServerClient({
                 baseUrl: normalizedBaseUrl,
                 token: resolvedToken || undefined,
                 hostToken: resolvedHostToken || undefined,
@@ -433,20 +433,20 @@ export function WelcomeRoute() {
       />
       {state.providerStep ? (
         <ProviderSelectionStep
-          showUni-CLIModels={showUni-CLIModelsPromo}
-          onUni-CLIModels={() => {
+          showUniCliModels={showUniCliModelsPromo}
+          onUniCliModels={() => {
             // Land on the Uni-CLI Models value-prop page when already
             // signed in to Den; otherwise start sign-up. Previously this
             // always opened a bare sign-up page — payment before value.
-            platform.openLink(getUni-CLIModelsActionUrl(denAuth.isSignedIn, "sign-up"));
+            platform.openLink(getUniCliModelsActionUrl(denAuth.isSignedIn, "sign-up"));
             const route = state.pendingWorkspaceId
               ? workspaceSessionRoute(state.pendingWorkspaceId, state.pendingSessionId)
               : "/session";
             dispatch({ type: "attribution-step", route });
           }}
           onBringYourOwn={() => {
-            markUni-CLIModelsStartupPromoShown();
-            hideUni-CLIModelsPromo();
+            markUniCliModelsStartupPromoShown();
+            hideUniCliModelsPromo();
             const route = state.pendingWorkspaceId
               ? workspaceSessionRoute(state.pendingWorkspaceId, state.pendingSessionId)
               : "/session";

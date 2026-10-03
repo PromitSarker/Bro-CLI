@@ -7,8 +7,8 @@ import {
   writeConnectState,
 } from "../connect-state.js";
 import type { CloudMcpLiveStatusObserver } from "../cloud-mcp-health.js";
-import { readUni-CLIConnectSkillCatalog, renderUni-CLIConnectSkillInstruction } from "../connect-skill-catalog.js";
-import { readUni-CLIAutomationCatalog, renderUni-CLIAutomationInstruction } from "../connect-automation-catalog.js";
+import { readUniCliConnectSkillCatalog, renderUniCliConnectSkillInstruction } from "../connect-skill-catalog.js";
+import { readUniCliAutomationCatalog, renderUniCliAutomationInstruction } from "../connect-automation-catalog.js";
 import { EnvStoreReadError, InvalidEnvKeyError, isValidEnvKey, type EnvService } from "../env-file.js";
 import { syncManagedProviderAuth, type ManagedProviderAuthResult } from "../managed-provider-auth.js";
 import { ApiError } from "../errors.js";
@@ -297,23 +297,23 @@ export function registerCoreRoutes(options: RegisterCoreRoutesOptions): void {
 
   addRoute(routes, "GET", "/experimental/connect/skills", "client", async (_ctx) => {
     // Connect skills are server/account-scoped (uni-cli-cloud on the host), not per-workspace.
-    const skills = await readUni-CLIConnectSkillCatalog(config);
+    const skills = await readUniCliConnectSkillCatalog(config);
     return jsonResponse({
       ok: true,
       schemaVersion: 1,
       skills,
-      instruction: renderUni-CLIConnectSkillInstruction(skills),
+      instruction: renderUniCliConnectSkillInstruction(skills),
     });
   });
 
   addRoute(routes, "GET", "/experimental/connect/automations", "client", async (_ctx) => {
     // Owner-scoped through the same uni-cli-cloud connection as skills.
-    const index = await readUni-CLIAutomationCatalog(config);
+    const index = await readUniCliAutomationCatalog(config);
     return jsonResponse({
       ok: true,
       schemaVersion: 1,
       index,
-      instruction: renderUni-CLIAutomationInstruction(index),
+      instruction: renderUniCliAutomationInstruction(index),
     });
   });
 

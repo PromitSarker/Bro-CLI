@@ -92,7 +92,7 @@ export function MarketplaceOnboardingScreen() {
             <p className="mt-2 text-sm leading-6 text-[var(--dls-text-secondary)]">No model selection is required to complete setup.</p>
           </div>
           {authError ? <p role="alert" className="text-sm text-rose-600">{authError}</p> : null}
-          {desktopRedirectUrl ? <DesktopHandoffAction uni-cliUrl={desktopRedirectUrl} grant={getDesktopGrant(desktopRedirectUrl)} organizationName={activeOrg?.name ?? null} showCopyLinkByDefault /> : (
+          {desktopRedirectUrl ? <DesktopHandoffAction uniCliUrl={desktopRedirectUrl} grant={getDesktopGrant(desktopRedirectUrl)} organizationName={activeOrg?.name ?? null} showCopyLinkByDefault /> : (
             <button type="button" onClick={() => void finish()} disabled={!orgId || completing} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-neutral-950 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-neutral-800 disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2">
               {completing ? "Completing..." : desktopAuthRequested ? "Complete and open the app" : "Complete setup"}<ArrowRight className="size-4" aria-hidden />
             </button>

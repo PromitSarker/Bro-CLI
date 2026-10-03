@@ -2,9 +2,9 @@
 
 import * as React from "react";
 import { formatCrashDiagnostic } from "@/app/lib/crash-diagnostics";
-import { uni-cliServerInfo, readDesktopDistributionInfo, revealDesktopItemInDir } from "@/app/lib/desktop";
+import { uniCliServerInfo, readDesktopDistributionInfo, revealDesktopItemInDir } from "@/app/lib/desktop";
 import { reportCaughtWebError } from "@/app/lib/error-monitoring";
-import { getUni-CLIDeployment } from "@/app/lib/uni-cli-deployment";
+import { getUniCliDeployment } from "@/app/lib/uni-cli-deployment";
 
 const APP_VERSION = String(import.meta.env.VITE_UNICLI_APP_VERSION ?? "").trim();
 
@@ -40,7 +40,7 @@ export function buildCrashReport(crash: CrashDetails, context: CrashContext): st
 function readCrashContext(): CrashContext {
   return {
     version: APP_VERSION,
-    deployment: getUni-CLIDeployment(),
+    deployment: getUniCliDeployment(),
     flavor: readDesktopDistributionInfo().flavor,
   };
 }
@@ -52,7 +52,7 @@ function readCrashContext(): CrashContext {
  */
 async function resolveLogFilePath(): Promise<string | null> {
   try {
-    return (await uni-cliServerInfo()).logFilePath;
+    return (await uniCliServerInfo()).logFilePath;
   } catch {
     return null;
   }

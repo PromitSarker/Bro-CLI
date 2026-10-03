@@ -1,4 +1,4 @@
-import type { uni-cliServerClient } from "@/app/lib/uni-cli-server";
+import type { uniCliServerClient } from "@/app/lib/uni-cli-server";
 
 import { classifyOpenTarget, isOpenableFileTarget, openTargetFromUrl, type OpenTarget } from "./open-target";
 
@@ -23,7 +23,7 @@ export function openTargetForHref(href: string, targets: OpenTarget[], root?: st
   };
 }
 
-type ArtifactTargetResolver = Pick<uni-cliServerClient, "resolveArtifacts">;
+type ArtifactTargetResolver = Pick<uniCliServerClient, "resolveArtifacts">;
 
 export function isWorkspaceContainedArtifactTarget(target: OpenTarget) {
   if (!isOpenableFileTarget(target)) return false;

@@ -7,7 +7,7 @@ import { opencodeConfigPath } from "./workspace-files.js";
 import { readJsoncFile } from "./jsonc.js";
 import type { ReloadReason, WorkspaceInfo } from "./types.js";
 
-type Workspaceuni-cliConfig = {
+type WorkspaceuniCliConfig = {
   version: number;
   workspace?: {
     name?: string | null;
@@ -41,11 +41,11 @@ function errorStringField(error: unknown, field: "code" | "path" | "syscall"): s
 /**
  * Build the default per-workspace uni-cli config metadata. The uni-cli
  * config is now stored in the runtime DB (see
- * `seeduni-cliWorkspaceConfigIfEmpty`), not in `.opencode/uni-cli.json`, so
+ * `seeduniCliWorkspaceConfigIfEmpty`), not in `.opencode/uni-cli.json`, so
  * this no longer writes a file. Exposed so the workspace-creation route can
  * seed the DB row with the same defaults.
  */
-export function defaultWorkspaceuni-cliConfig(workspaceRoot: string, preset: string): Workspaceuni-cliConfig {
+export function defaultWorkspaceuniCliConfig(workspaceRoot: string, preset: string): WorkspaceuniCliConfig {
   return {
     version: 1,
     workspace: {

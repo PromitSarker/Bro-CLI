@@ -4,7 +4,7 @@ import type { Agent } from "@opencode-ai/sdk/v2/client";
 
 import type { CloudImportedPlugin } from "@/app/cloud/import-state";
 import { createDenClient, readDenSettings } from "@/app/lib/den";
-import type { uni-cliServerClient } from "@/app/lib/uni-cli-server";
+import type { uniCliServerClient } from "@/app/lib/uni-cli-server";
 import type { ComposerAttachment, McpServerEntry, McpStatusMap, ModelOption, ModelRef, SkillCard, SlashCommandOption } from "@/app/types";
 import { t } from "@/i18n";
 import { TaskRecovery } from "@/components/chat/task-recovery";
@@ -48,7 +48,7 @@ export type NewTaskComposerContext = {
   draftSessionId?: string;
   workspaceOptions?: { id: string; label: string }[];
   onChangeDestination?: (source: NewSessionDestination, destination: NewSessionDestination, state: ComposerSessionState) => void;
-  client: uni-cliServerClient | null;
+  client: uniCliServerClient | null;
   workspaceId: string | null;
   /** Stable identity for draft ownership across workspace, group, pane, and account changes. */
   draftOwnerKey?: string;
@@ -63,8 +63,8 @@ export type NewTaskComposerContext = {
   modelPickerOpen: boolean;
   onModelPickerOpenChange: (open: boolean) => void;
   onModelChange: (model: ModelRef, variant?: string | null) => void;
-  uni-cliModelsEntitled?: boolean;
-  uni-cliModelsSyncing?: boolean;
+  uniCliModelsEntitled?: boolean;
+  uniCliModelsSyncing?: boolean;
   modelVariantLabel: string;
   modelVariant: string | null;
   modelBehaviorOptions?: { value: string | null; label: string }[];
@@ -535,8 +535,8 @@ export function NewTaskComposer(props: NewTaskComposerProps) {
       modelPickerOpen={context?.modelPickerOpen ?? false}
       selectedModel={context?.selectedModel ?? FALLBACK_MODEL}
       modelOptions={context?.modelOptions}
-      uni-cliModelsEntitled={context?.uni-cliModelsEntitled}
-      uni-cliModelsSyncing={context?.uni-cliModelsSyncing}
+      uniCliModelsEntitled={context?.uniCliModelsEntitled}
+      uniCliModelsSyncing={context?.uniCliModelsSyncing}
       onRefreshOrganizationModels={context?.onRefreshOrganizationModels}
       onModelPickerOpenChange={context?.onModelPickerOpenChange ?? noop}
       onModelChange={context?.onModelChange ?? noop}

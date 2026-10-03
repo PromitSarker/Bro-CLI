@@ -85,7 +85,7 @@ const oauthDiscoveryStateSchema = z.object({
   authorizationServerMetadata: OAuthMetadataSchema.or(OpenIdProviderMetadataSchema).optional(),
   resourceMetadata: OAuthProtectedResourceMetadataSchema.optional(),
   resourceMetadataUrl: z.string().url().optional(),
-  uni-cliMetadataVerification: z.object({
+  uniCliMetadataVerification: z.object({
     version: z.literal(1),
     issuer: z.string().url(),
   }).optional(),

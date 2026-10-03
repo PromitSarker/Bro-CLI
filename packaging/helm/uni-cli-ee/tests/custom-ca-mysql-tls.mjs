@@ -188,7 +188,7 @@ function childEnv(extra = {}) {
   return env;
 }
 
-function runUni-CLIMysqlQuery(databaseUrl, query, extraEnv = {}) {
+function runUniCliMysqlQuery(databaseUrl, query, extraEnv = {}) {
   const source = `
 import { createRequire } from "node:module";
 const mysql = createRequire(process.argv[1])("mysql2/promise");
@@ -237,7 +237,7 @@ try {
   const databaseUrl = strictDatabaseUrl(port);
   console.log(`TLS MySQL endpoint ready at ${redactedDatabaseUrl(port)}`);
 
-  const withoutCa = runUni-CLIMysqlQuery(databaseUrl, "select 1 as ok");
+  const withoutCa = runUniCliMysqlQuery(databaseUrl, "select 1 as ok");
   if (withoutCa.status === 0) {
     throw new Error("Strict Uni-CLI/mysql2 unexpectedly connected without NODE_EXTRA_CA_CERTS");
   }
@@ -253,7 +253,7 @@ try {
   console.log("Uni-CLI migration bootstrap completed with NODE_EXTRA_CA_CERTS and strict DATABASE_URL");
   console.log(bootstrap.stdout.trim());
 
-  const query = runUni-CLIMysqlQuery(
+  const query = runUniCliMysqlQuery(
     databaseUrl,
     "select (select count(*) from information_schema.tables where table_schema = database()) as table_count, (select count(*) from `__drizzle_migrations`) as migration_count",
     { NODE_EXTRA_CA_CERTS: caCert },

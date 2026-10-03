@@ -45,7 +45,7 @@ export interface SeedAppWebOptions {
 /** A test-owned real app-web stack. This is distinct from seed.web(), which drives Den. */
 export interface AppWeb extends AttachedSurface {
   webUrl: string;
-  uni-cliUrl: string;
+  uniCliUrl: string;
   workspaceRoot: string;
   mocks: Record<string, MockHandle>;
   actualSourceSha: string | null;
@@ -58,7 +58,7 @@ function safeWorldSegment(value: string): string {
 
 function attachAppWebMetadata(
   surface: AttachedSurface,
-  metadata: Pick<AppWeb, "webUrl" | "uni-cliUrl" | "workspaceRoot" | "mocks" | "actualSourceSha" | "source">,
+  metadata: Pick<AppWeb, "webUrl" | "uniCliUrl" | "workspaceRoot" | "mocks" | "actualSourceSha" | "source">,
   stop: () => Promise<void>,
 ): asserts surface is AppWeb {
   Object.assign(surface, metadata);
@@ -343,7 +343,7 @@ export async function appWeb(options: SeedAppWebOptions & { place: Place }): Pro
     };
     attachAppWebMetadata(browser, {
       webUrl: runtime.webUrl,
-      uni-cliUrl: runtime.uni-cliUrl,
+      uniCliUrl: runtime.uniCliUrl,
       workspaceRoot,
       mocks,
       actualSourceSha: runtime.source?.actualSha ?? localSourceSha,

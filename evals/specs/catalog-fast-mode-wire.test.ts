@@ -8,7 +8,7 @@ import { eventually, test } from "@uni-cli/testkit";
 import { expect } from "vitest";
 import { CATALOG_FAST_VARIANT, FAST_VARIANT_PREFIX, fastVariantId } from "@uni-cli/types/cloud-model-fast";
 import { buildCloudProviderConfig } from "../../apps/app/src/react-app/domains/connections/provider-auth/cloud-provider-config";
-import { builduni-cliRuntimeConfigObjectFromSnapshot } from "../../apps/server/src/uni-cli-runtime-config";
+import { builduniCliRuntimeConfigObjectFromSnapshot } from "../../apps/server/src/uni-cli-runtime-config";
 
 import versions from "../../constants.json";
 import { createManagedOpencodeServer } from "../../apps/server/src/managed-opencode";
@@ -83,7 +83,7 @@ for (const engine of ["v1", "v2"]) {
       ],
     });
     const models = provider.models ?? {};
-    const runtime = builduni-cliRuntimeConfigObjectFromSnapshot({ provider: { witness: { ...provider } } });
+    const runtime = builduniCliRuntimeConfigObjectFromSnapshot({ provider: { witness: { ...provider } } });
     // Isolate provider dispatch from unrelated Uni-CLI plugins in this test.
     await writeFile(configPath, JSON.stringify(engine === "v1" ? { provider: runtime.provider } : {}));
     const env = {

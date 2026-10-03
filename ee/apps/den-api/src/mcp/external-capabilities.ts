@@ -33,7 +33,7 @@ import {
 import { cache } from "../cache.js"
 import { db } from "../db.js"
 import { listTeamsForMember } from "../orgs.js"
-import { uni-cliOrganizationConnectionsUrl, uni-cliYourConnectionsUrl } from "./connection-navigation.js"
+import { uniCliOrganizationConnectionsUrl, uniCliYourConnectionsUrl } from "./connection-navigation.js"
 import {
   externalMcpToolSchemaDigest,
   validateExternalMcpToolArguments,
@@ -380,8 +380,8 @@ function actionNavigationUrl(input: {
   connectionId: string
   surface: ExternalConnectionStatus["action"]["surface"]
 }) {
-  if (input.surface === "uni-cli_your_connections") return uni-cliYourConnectionsUrl(input.connectionId)
-  if (input.surface === "uni-cli_organization_connections") return uni-cliOrganizationConnectionsUrl()
+  if (input.surface === "uni-cli_your_connections") return uniCliYourConnectionsUrl(input.connectionId)
+  if (input.surface === "uni-cli_organization_connections") return uniCliOrganizationConnectionsUrl()
   return undefined
 }
 

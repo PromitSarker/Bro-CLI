@@ -467,7 +467,7 @@ desktopTest("desktop-origin signup completes the questions before issuing a fres
       });
       expect(rejected.response.status).toBe(400);
       expect(rejected.body).not.toHaveProperty("grant");
-      expect(rejected.body).not.toHaveProperty("uni-cliUrl");
+      expect(rejected.body).not.toHaveProperty("uniCliUrl");
     }
     evidence.recordAssertionEvidence("Untrusted desktop schemes cannot obtain a grant or return URL", "Direct authenticated grant requests for an arbitrary app, HTTPS, and an Uni-CLI lookalike scheme all returned 400 without a grant or URL. The browser also began with an untrusted scheme query parameter; normal completion below must still dispatch only to uni-cli.", true);
   });

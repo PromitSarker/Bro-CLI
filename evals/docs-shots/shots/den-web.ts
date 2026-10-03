@@ -25,7 +25,7 @@ export const denSkillEditor = shot("den-skill-editor", {
   out: "packages/docs/images/cloud-skill-editor.png",
 });
 
-export const denuni-cliWeb = shot("den-uni-cli-web", {
+export const denuniCliWeb = shot("den-uni-cli-web", {
   use: browser,
   at: "/dashboard/web",
   expect: ["Uni-CLI Web", "Open Uni-CLI Web"],

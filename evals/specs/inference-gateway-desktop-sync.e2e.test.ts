@@ -158,7 +158,7 @@ async function readLocalServer(desktopApp: Parameters<typeof evalIn>[0], iprId: 
     function record(value: unknown): Record<string, unknown> | null {
       return typeof value === "object" && value !== null && !Array.isArray(value) ? Object.fromEntries(Object.entries(value)) : null;
     }
-    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
     if (!info || info.running !== true) return { error: "local server not running" };
     const baseUrl = String(info.baseUrl ?? "").replace(/\/+$/, "");
     const hostHeaders = { "x-uni-cli-host-token": String(info.hostToken ?? "") };

@@ -2,16 +2,16 @@ export const UNICLI_WEB_ACCESS_REQUIRED_CODE = "uni-cli_web_access_required" as 
 export const UNICLI_WEB_ACCESS_REQUIRED_MESSAGE =
   "An active Uni-CLI Web subscription or complimentary access is required to use Uni-CLI Cloud."
 
-export class Uni-CLIWebAccessRequiredError extends Error {
+export class UniCliWebAccessRequiredError extends Error {
   readonly code = UNICLI_WEB_ACCESS_REQUIRED_CODE
 
   constructor() {
     super(UNICLI_WEB_ACCESS_REQUIRED_MESSAGE)
-    this.name = "Uni-CLIWebAccessRequiredError"
+    this.name = "UniCliWebAccessRequiredError"
   }
 }
 
-export function uni-cliWebAccessRequiredPayload() {
+export function uniCliWebAccessRequiredPayload() {
   return {
     error: UNICLI_WEB_ACCESS_REQUIRED_CODE,
     message: UNICLI_WEB_ACCESS_REQUIRED_MESSAGE,

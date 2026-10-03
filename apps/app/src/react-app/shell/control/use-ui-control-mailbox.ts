@@ -1,15 +1,15 @@
 import { useEffect, type RefObject } from "react";
-import type { uni-cliAffordanceRequest } from "@uni-cli/types/uni-cli-affordance";
+import type { uniCliAffordanceRequest } from "@uni-cli/types/uni-cli-affordance";
 import {
-  createuni-cliServerClient,
-  type uni-cliUiControlRequest,
+  createuniCliServerClient,
+  type uniCliUiControlRequest,
 } from "../../../app/lib/uni-cli-server";
-import { resolveuni-cliConnection } from "../uni-cli-connection";
-import type { uni-cliControlAPI } from "./control-provider";
+import { resolveuniCliConnection } from "../uni-cli-connection";
+import type { uniCliControlAPI } from "./control-provider";
 
 const wait = (ms: number) => new Promise<void>((resolve) => window.setTimeout(resolve, ms));
 
-function hasAffordanceId(input: unknown): input is uni-cliAffordanceRequest {
+function hasAffordanceId(input: unknown): input is uniCliAffordanceRequest {
   return input !== null
     && typeof input === "object"
     && "id" in input
@@ -17,7 +17,7 @@ function hasAffordanceId(input: unknown): input is uni-cliAffordanceRequest {
     && input.id.trim().length > 0;
 }
 
-async function handleRequest(item: uni-cliUiControlRequest, api: uni-cliControlAPI): Promise<unknown> {
+async function handleRequest(item: uniCliUiControlRequest, api: uniCliControlAPI): Promise<unknown> {
   if (item.kind === "context") return { ok: true, context: api.context() };
   if (!hasAffordanceId(item.input)) {
     return { ok: false, error: "Missing Uni-CLI affordance id." };
@@ -26,7 +26,7 @@ async function handleRequest(item: uni-cliUiControlRequest, api: uni-cliControlA
   return api.command(item.input);
 }
 
-export function useUiControlMailbox(apiRef: RefObject<uni-cliControlAPI | null>): void {
+export function useUiControlMailbox(apiRef: RefObject<uniCliControlAPI | null>): void {
   useEffect(() => {
     if (import.meta.env.MODE === "test") return;
 
@@ -38,13 +38,13 @@ export function useUiControlMailbox(apiRef: RefObject<uni-cliControlAPI | null>)
         try {
           // Resolve again after each poll so switching servers or signing in
           // cannot leave this window answering a previous server's mailbox.
-          const connection = await resolveuni-cliConnection();
+          const connection = await resolveuniCliConnection();
           if (!mounted) return;
           if (!connection.normalizedBaseUrl || !connection.resolvedToken) {
             await wait(3_000);
             continue;
           }
-          const client = createuni-cliServerClient({
+          const client = createuniCliServerClient({
             baseUrl: connection.normalizedBaseUrl,
             token: connection.resolvedToken,
             hostToken: connection.resolvedHostToken,

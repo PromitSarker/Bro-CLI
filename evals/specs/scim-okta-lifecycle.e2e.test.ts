@@ -82,7 +82,7 @@ test(title, { timeout: 1_800_000 }, async ({ evidence, place }) => {
   const orgName = `Okta SCIM Lifecycle ${runId}`;
   const managedDomain = "okta-scim.test";
   const managedEmail = `avery.${runId}@${managedDomain}`;
-  const controlPassword = "Uni-CLIEval123!";
+  const controlPassword = "UniCliEval123!";
 
   await using den = await server({
     place,

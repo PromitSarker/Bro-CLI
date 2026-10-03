@@ -1,7 +1,7 @@
 export const MCP_SERVER_URL = "https://api.uni-clilabs.com/mcp/agent";
 export const CODEX_CONNECTIONS_DEEPLINK = "codex://settings/connections";
 export const CHATGPT_SETTINGS_URL = "https://chatgpt.com/#settings/Connectors";
-export type Uni-CLIConnectClientId =
+export type UniCliConnectClientId =
   | "cursor"
   | "codex"
   | "chatgpt-desktop"
@@ -9,9 +9,9 @@ export type Uni-CLIConnectClientId =
   | "opencode"
   | "vs-code"
   | "any-client";
-export type Uni-CLIConnectSupportStatus = "Verified" | "Setup only";
-export type Uni-CLIConnectClientSupport = {
-  status: Uni-CLIConnectSupportStatus;
+export type UniCliConnectSupportStatus = "Verified" | "Setup only";
+export type UniCliConnectClientSupport = {
+  status: UniCliConnectSupportStatus;
   explanation: string;
 };
 
@@ -40,7 +40,7 @@ export const OPENCODE_AUTH_COMMAND = `opencode mcp auth uni-cli`;
 export const OPENCODE_RECONNECT_COMMAND = `opencode mcp logout uni-cli
 opencode mcp auth uni-cli`;
 
-export const CONNECT_CLIENT_SUPPORT: Record<Uni-CLIConnectClientId, Uni-CLIConnectClientSupport> = {
+export const CONNECT_CLIENT_SUPPORT: Record<UniCliConnectClientId, UniCliConnectClientSupport> = {
   "cursor": {
     status: "Setup only",
     explanation: "Setup guide only: paste the server URL into Cursor and start OAuth. Cursor Desktop's cursor://anysphere.cursor-mcp/oauth/callback callback is accepted through an exact allowlist with PKCE S256 enforced. Native proof is not complete."
@@ -71,7 +71,7 @@ export const CONNECT_CLIENT_SUPPORT: Record<Uni-CLIConnectClientId, Uni-CLIConne
   }
 };
 
-export const CONNECT_CLIENTS: Uni-CLIConnectClientId[] = [
+export const CONNECT_CLIENTS: UniCliConnectClientId[] = [
   "cursor",
   "codex",
   "chatgpt-desktop",

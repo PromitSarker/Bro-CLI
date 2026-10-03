@@ -8,7 +8,7 @@ import type { Session } from "@opencode-ai/sdk/v2/client";
 import { createClient, unwrap } from "@/app/lib/opencode";
 import { createClientV2, isOpencodeV2BaseUrl } from "@/app/lib/opencode-v2-adapter";
 import { deleteNativeSession } from "@/app/lib/opencode-session-native";
-import { uni-cliServerError, type uni-cliWorkspaceInfo } from "@/app/lib/uni-cli-server";
+import { uniCliServerError, type uniCliWorkspaceInfo } from "@/app/lib/uni-cli-server";
 import type { ResolvedWorkspaceEndpoint } from "@/app/lib/workspace-endpoint";
 import type { WorkspaceInfo } from "@/app/lib/desktop-types";
 import type { WorkspaceSessionGroup } from "@/app/types";
@@ -19,7 +19,7 @@ import {
 } from "@/app/utils";
 import { t } from "@/i18n";
 
-export type RouteWorkspace = uni-cliWorkspaceInfo & {
+export type RouteWorkspace = uniCliWorkspaceInfo & {
   displayNameResolved: string;
 };
 
@@ -61,7 +61,7 @@ export const v2RouteSessionList: RouteSessionListTransport = async ({ endpoint, 
 export async function routeSessionEndpoint(endpoint: ResolvedWorkspaceEndpoint): Promise<ResolvedWorkspaceEndpoint> {
   const status = await endpoint.client.getEngineV2PreviewStatus().catch((error: unknown) => {
     // Servers predating the preview endpoint still use v1.
-    if (error instanceof uni-cliServerError && error.status === 404) return null;
+    if (error instanceof uniCliServerError && error.status === 404) return null;
     throw error;
   });
   return status?.enabled && status.chatRouting
@@ -146,17 +146,17 @@ export function mapDesktopWorkspace(workspace: WorkspaceInfo): RouteWorkspace {
   };
 }
 
-export function workspaceLabel(workspace: uni-cliWorkspaceInfo) {
+export function workspaceLabel(workspace: uniCliWorkspaceInfo) {
   return (
     workspace.displayName?.trim() ||
-    workspace.uni-cliWorkspaceName?.trim() ||
+    workspace.uniCliWorkspaceName?.trim() ||
     workspace.name?.trim() ||
     workspace.path?.trim() ||
     t("session.workspace_fallback")
   );
 }
 
-export function workspaceExportFilename(workspace: uni-cliWorkspaceInfo) {
+export function workspaceExportFilename(workspace: uniCliWorkspaceInfo) {
   const slug = workspaceLabel(workspace).replace(/[^A-Za-z0-9._-]+/g, "-").replace(/^-+|-+$/g, "");
   return `${slug || "workspace"}-uni-cli-export.json`;
 }
@@ -305,7 +305,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
 
-function isuni-cliWorkspaceArray(value: unknown): value is uni-cliWorkspaceInfo[] {
+function isuniCliWorkspaceArray(value: unknown): value is uniCliWorkspaceInfo[] {
   return Array.isArray(value);
 }
 
@@ -327,7 +327,7 @@ export function resolveRouteWorkspaceListState(input: {
   previousWorkspaces: RouteWorkspace[];
   orderIds: string[];
 }): RouteWorkspaceListState {
-  const serverItems = isRecord(input.list) && isuni-cliWorkspaceArray(input.list.items) ? input.list.items : null;
+  const serverItems = isRecord(input.list) && isuniCliWorkspaceArray(input.list.items) ? input.list.items : null;
   const workspaces = serverItems
     ? mergeRouteWorkspaces(serverItems, input.desktopWorkspaces)
     : input.previousWorkspaces.length > 0
@@ -390,7 +390,7 @@ export function describeWorkspaceCreateError(error: unknown) {
     lower.includes("os error 60") ||
     lower.includes("etimedout")
   ) {
-    return `${message}\n\nUni-CLI could not read the workspace config before the filesystem timed out. This often happens when the folder is still syncing from iCloud Drive or another remote folder. Wait for the folder to finish downloading, move the workspace to a local folder, or try again.`;
+    return `${message}\n\nUniCli could not read the workspace config before the filesystem timed out. This often happens when the folder is still syncing from iCloud Drive or another remote folder. Wait for the folder to finish downloading, move the workspace to a local folder, or try again.`;
   }
   return message;
 }
@@ -399,7 +399,7 @@ export function mergeRouteWorkspaces(
   serverWorkspaces: unknown,
   desktopWorkspaces: RouteWorkspace[],
 ): RouteWorkspace[] {
-  const serverWorkspaceList = isuni-cliWorkspaceArray(serverWorkspaces) ? serverWorkspaces : [];
+  const serverWorkspaceList = isuniCliWorkspaceArray(serverWorkspaces) ? serverWorkspaces : [];
   const desktopById = new Map(desktopWorkspaces.map((workspace) => [workspace.id, workspace]));
   const desktopByPath = new Map(
     desktopWorkspaces.flatMap((workspace) => {

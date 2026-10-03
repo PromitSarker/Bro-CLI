@@ -11,11 +11,11 @@ import { recordInspectorEvent } from "../../../app/lib/app-inspector";
 import { denSettingsChangedEvent } from "../../../app/lib/den-session-events";
 import type { DenAuthStatus } from "../cloud/den-auth-provider";
 import {
-  uni-cliServerError,
-  type uni-cliCloudMcpFailure,
-  type uni-cliCloudMcpHealth,
-  type uni-cliCloudMcpProviderModelContext,
-  type uni-cliServerClient,
+  uniCliServerError,
+  type uniCliCloudMcpFailure,
+  type uniCliCloudMcpHealth,
+  type uniCliCloudMcpProviderModelContext,
+  type uniCliServerClient,
 } from "../../../app/lib/uni-cli-server";
 import { unwrap } from "../../../app/lib/opencode";
 import type { Client, McpServerEntry, McpStatusMap } from "../../../app/types";
@@ -26,7 +26,7 @@ import {
   readCloudMcpUserState,
 } from "./cloud-mcp-user-state";
 import {
-  rununi-cliCloudMcpReconciler,
+  rununiCliCloudMcpReconciler,
   type CloudMcpClient,
 } from "./cloud-mcp-reconciler";
 import { CLOUD_INVENTORY_CHANGED_EVENT } from "./cloud-inventory-cache";
@@ -38,12 +38,12 @@ export const CLOUD_MCP_REFRESH_MARGIN_MS = 24 * 60 * 60 * 1000;
 // waiting for navigation or the ordinary five-minute maintenance interval.
 export const CLOUD_MCP_MAINTENANCE_RETRY_DELAYS_MS = [1_000, 3_000, 10_000, 30_000, 60_000];
 
-type CloudMcpMaintenanceClient = CloudMcpClient & Pick<uni-cliServerClient, "listMcp">;
+type CloudMcpMaintenanceClient = CloudMcpClient & Pick<uniCliServerClient, "listMcp">;
 
 const maintenanceInFlight = new Map<string, symbol>();
 
 export type CloudMcpMaintenanceIssue = Pick<
-  uni-cliCloudMcpFailure,
+  uniCliCloudMcpFailure,
   "code" | "stage" | "retryable" | "recommendedAction" | "message"
 >;
 
@@ -51,7 +51,7 @@ export type CloudMcpBackgroundSyncResult =
   | {
       outcome: "ready";
       status: "synced" | "unchanged";
-      health: uni-cliCloudMcpHealth;
+      health: uniCliCloudMcpHealth;
     }
   | {
       outcome: "skipped";
@@ -63,7 +63,7 @@ export type CloudMcpBackgroundSyncResult =
       outcome: "failed";
       status: "failed";
       issue: CloudMcpMaintenanceIssue;
-      health: uni-cliCloudMcpHealth | null;
+      health: uniCliCloudMcpHealth | null;
     };
 
 export type SessionCloudMcpMaintenanceState = {
@@ -95,7 +95,7 @@ function genericCloudMcpMaintenanceIssue(input?: {
 }
 
 function failedCloudMcpBackgroundSync(input: {
-  health: uni-cliCloudMcpHealth | null;
+  health: uniCliCloudMcpHealth | null;
   issue?: CloudMcpMaintenanceIssue;
   code?: string;
   message?: string;
@@ -111,7 +111,7 @@ function failedCloudMcpBackgroundSync(input: {
 function cloudMcpMaintenanceFailure(error: unknown): CloudMcpBackgroundSyncResult {
   return failedCloudMcpBackgroundSync({
     health: null,
-    issue: error instanceof uni-cliServerError || error instanceof DenApiError
+    issue: error instanceof uniCliServerError || error instanceof DenApiError
       ? genericCloudMcpMaintenanceIssue({
           code: error.code,
           message: error.message,
@@ -140,12 +140,12 @@ export function waitForCloudMcpRetry(delayMs: number, signal?: AbortSignal, onli
 }
 
 export function getSessionMcpMaintenanceTargetKey(input: {
-  client: Pick<uni-cliServerClient, "baseUrl">;
+  client: Pick<uniCliServerClient, "baseUrl">;
   cloudSignedIn: boolean;
   denBaseUrl?: string | null;
   orgId?: string | null;
   workspaceId: string;
-  providerModel?: uni-cliCloudMcpProviderModelContext;
+  providerModel?: uniCliCloudMcpProviderModelContext;
 }): string {
   return JSON.stringify([
     input.denBaseUrl?.trim().replace(/\/+$/, "") ?? "",
@@ -222,7 +222,7 @@ export async function syncCloudControlMcpInBackground(input: {
   now?: number;
   settings?: DenSettings;
   mintToken?: () => Promise<DenMcpToken | null>;
-  providerModel?: uni-cliCloudMcpProviderModelContext;
+  providerModel?: uniCliCloudMcpProviderModelContext;
   isCurrent?: () => boolean;
 }): Promise<CloudMcpBackgroundSyncResult> {
   // Fence every asynchronous boundary, not just React state updates. A late
@@ -278,14 +278,14 @@ export async function syncCloudControlMcpInBackground(input: {
   }
   const configuredUrl = typeof configured?.config.url === "string" ? configured.config.url : null;
 
-  const refreshCatalog = input.client.refreshuni-cliCloudMcpCatalog;
-  const result = await rununi-cliCloudMcpReconciler({
+  const refreshCatalog = input.client.refreshuniCliCloudMcpCatalog;
+  const result = await rununiCliCloudMcpReconciler({
     mode: "repair",
     client: {
       baseUrl: input.client.baseUrl,
-      getuni-cliCloudMcpHealth: (...args) => guarded(() => input.client.getuni-cliCloudMcpHealth(...args)),
-      reconcileuni-cliCloudMcp: (...args) => guarded(() => input.client.reconcileuni-cliCloudMcp(...args)),
-      ...(refreshCatalog ? { refreshuni-cliCloudMcpCatalog: (...args: Parameters<typeof refreshCatalog>) => guarded(() => refreshCatalog(...args)) } : {}),
+      getuniCliCloudMcpHealth: (...args) => guarded(() => input.client.getuniCliCloudMcpHealth(...args)),
+      reconcileuniCliCloudMcp: (...args) => guarded(() => input.client.reconcileuniCliCloudMcp(...args)),
+      ...(refreshCatalog ? { refreshuniCliCloudMcpCatalog: (...args: Parameters<typeof refreshCatalog>) => guarded(() => refreshCatalog(...args)) } : {}),
     },
     context: {
       ...scope,
@@ -414,12 +414,12 @@ export async function healWorkspaceMcpInBackground(input: {
 export function useSessionMcpMaintenance(input: {
   cloudSignedIn: boolean;
   cloudAuthStatus?: DenAuthStatus;
-  client: uni-cliServerClient | null;
+  client: uniCliServerClient | null;
   workspaceId: string | null;
   opencodeClient: Client | null;
   directory: string;
   engineReloadBusy?: boolean;
-  providerModel?: uni-cliCloudMcpProviderModelContext;
+  providerModel?: uniCliCloudMcpProviderModelContext;
 }): SessionCloudMcpMaintenanceState {
   const [cloudMcpState, setCloudMcpState] = useState<SessionCloudMcpMaintenanceState>(
     IDLE_CLOUD_MCP_MAINTENANCE_STATE,

@@ -1,11 +1,11 @@
-import type { uni-cliSessionRef } from "@uni-cli/types/uni-cli-context";
+import type { uniCliSessionRef } from "@uni-cli/types/uni-cli-context";
 import { useEffect, useMemo } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { NewSessionDestination } from "./new-session-destination";
 
 export type WorkbenchPane = "primary" | "secondary";
-export type WorkbenchSessionTab = uni-cliSessionRef & {
+export type WorkbenchSessionTab = uniCliSessionRef & {
   workspaceTitle?: string;
   draftDestination?: NewSessionDestination;
   pendingConversationId?: string;
@@ -24,7 +24,7 @@ export type SyncWorkbenchInput = {
   workspaceId: string;
   workspaceTitle?: string;
   primarySessionId: string | null;
-  sessions: uni-cliSessionRef[];
+  sessions: uniCliSessionRef[];
   sessionsKnown: boolean;
   /** Explicit archive metadata for this workspace, not sessions missing from its engine index. */
   archivedSessionIds?: string[];
@@ -40,13 +40,13 @@ const initialWorkbenchSnapshot: WorkbenchSnapshot = {
 };
 
 export function isSameWorkbenchSession(
-  left: Pick<uni-cliSessionRef, "workspaceId" | "sessionId"> | null | undefined,
-  right: Pick<uni-cliSessionRef, "workspaceId" | "sessionId"> | null | undefined,
+  left: Pick<uniCliSessionRef, "workspaceId" | "sessionId"> | null | undefined,
+  right: Pick<uniCliSessionRef, "workspaceId" | "sessionId"> | null | undefined,
 ) {
   return Boolean(left && right && left.workspaceId === right.workspaceId && left.sessionId === right.sessionId);
 }
 
-export function workbenchSessionKey(session: Pick<uni-cliSessionRef, "workspaceId" | "sessionId">) {
+export function workbenchSessionKey(session: Pick<uniCliSessionRef, "workspaceId" | "sessionId">) {
   return JSON.stringify([session.workspaceId, session.sessionId]);
 }
 
@@ -87,7 +87,7 @@ function withRevision(current: WorkbenchSnapshot, next: Omit<WorkbenchSnapshot, 
   return { ...next, revision: current.revision + 1 };
 }
 
-function findTab(tabs: WorkbenchSessionTab[], session: Pick<uni-cliSessionRef, "workspaceId" | "sessionId">) {
+function findTab(tabs: WorkbenchSessionTab[], session: Pick<uniCliSessionRef, "workspaceId" | "sessionId">) {
   return tabs.find((tab) => isSameWorkbenchSession(tab, session));
 }
 
@@ -170,7 +170,7 @@ export function uni-clibenchTab(
 
 export function closeWorkbenchTab(
   current: WorkbenchSnapshot,
-  tab: Pick<uni-cliSessionRef, "workspaceId" | "sessionId">,
+  tab: Pick<uniCliSessionRef, "workspaceId" | "sessionId">,
   promoteSecondary = true,
 ): WorkbenchSnapshot {
   const tabs = current.tabs.filter((entry) => !isSameWorkbenchSession(entry, tab));
@@ -190,7 +190,7 @@ export function closeWorkbenchTab(
 
 export function setWorkbenchSplit(
   current: WorkbenchSnapshot,
-  session: Pick<uni-cliSessionRef, "workspaceId" | "sessionId"> | null,
+  session: Pick<uniCliSessionRef, "workspaceId" | "sessionId"> | null,
 ): WorkbenchSnapshot {
   if (!current.primary) return current;
   return setWorkbenchSideChat(current, current.primary, session);
@@ -198,8 +198,8 @@ export function setWorkbenchSplit(
 
 export function setWorkbenchSideChat(
   current: WorkbenchSnapshot,
-  owner: Pick<uni-cliSessionRef, "workspaceId" | "sessionId">,
-  session: Pick<uni-cliSessionRef, "workspaceId" | "sessionId"> | null,
+  owner: Pick<uniCliSessionRef, "workspaceId" | "sessionId">,
+  session: Pick<uniCliSessionRef, "workspaceId" | "sessionId"> | null,
 ): WorkbenchSnapshot {
   if (!findTab(current.tabs, owner)) return current;
   const chat = session && !isSameWorkbenchSession(session, owner)
@@ -241,9 +241,9 @@ export function focusWorkbenchPane(
 type WorkbenchStore = WorkbenchSnapshot & {
   sync: (input: SyncWorkbenchInput) => void;
   openTab: (tab: WorkbenchSessionTab) => void;
-  closeTab: (tab: Pick<uni-cliSessionRef, "workspaceId" | "sessionId">) => void;
-  archiveTab: (tab: Pick<uni-cliSessionRef, "workspaceId" | "sessionId">) => void;
-  setSplit: (session: Pick<uni-cliSessionRef, "workspaceId" | "sessionId"> | null) => void;
+  closeTab: (tab: Pick<uniCliSessionRef, "workspaceId" | "sessionId">) => void;
+  archiveTab: (tab: Pick<uniCliSessionRef, "workspaceId" | "sessionId">) => void;
+  setSplit: (session: Pick<uniCliSessionRef, "workspaceId" | "sessionId"> | null) => void;
   setSideChat: (owner: WorkbenchSessionTab, session: WorkbenchSessionTab) => void;
   focusPane: (pane: WorkbenchPane) => void;
 };

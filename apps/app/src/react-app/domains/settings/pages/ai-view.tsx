@@ -50,9 +50,9 @@ export type AiSettingsViewProps = {
   connectingGatewayProviderId?: string | null;
   onConnectGatewayProvider?: (provider: GatewayConnectProvider) => void | Promise<void>;
   onCancelGatewayConnect?: () => void;
-  showUni-CLIModelsConnect?: boolean;
-  showUni-CLIModelsSyncing?: boolean;
-  onDismissUni-CLIModels?: () => void | Promise<void>;
+  showUniCliModelsConnect?: boolean;
+  showUniCliModelsSyncing?: boolean;
+  onDismissUniCliModels?: () => void | Promise<void>;
   cloudProvidersView?: ReactNode;
   autoPreferences?: DesktopFreePreferences | null;
   autoBusy?: boolean;

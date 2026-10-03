@@ -121,7 +121,7 @@ function installAnthropicFetchPatch(): void {
 
 // Single export: the OpenCode plugin loader treats every export of a plugin
 // module as a plugin factory, so helpers must stay module-private.
-export const Uni-CLIAnthropicToolSchema = async () => {
+export const UniCliAnthropicToolSchema = async () => {
   installAnthropicFetchPatch();
   return {};
 };

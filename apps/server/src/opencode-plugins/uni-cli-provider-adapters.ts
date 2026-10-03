@@ -1,14 +1,14 @@
 import {
-  uni-cliModelSelectorSchema,
-  uni-cliModelsListArgsSchema,
-  type uni-cliAffordanceArgument,
-  type uni-cliAffordanceDescriptor,
-  type uni-cliAffordanceEffects,
-  type uni-cliProviderRef,
+  uniCliModelSelectorSchema,
+  uniCliModelsListArgsSchema,
+  type uniCliAffordanceArgument,
+  type uniCliAffordanceDescriptor,
+  type uniCliAffordanceEffects,
+  type uniCliProviderRef,
 } from "@uni-cli/types/uni-cli-affordance";
 import type {
-  uni-cliFeatureContribution,
-  uni-cliGuidanceDescriptor,
+  uniCliFeatureContribution,
+  uniCliGuidanceDescriptor,
 } from "@uni-cli/types/uni-cli-provider";
 import { z } from "zod";
 
@@ -42,7 +42,7 @@ export const sessionReadArgsSchema = z.object({
   summary: z.boolean().optional().describe("When true, return only the first user message and the last assistant message plus session metadata."),
 });
 
-export const sessionModelArgSchema = uni-cliModelSelectorSchema;
+export const sessionModelArgSchema = uniCliModelSelectorSchema;
 
 export const sessionCreateArgsSchema = z.object({
   sessions: z.array(z.object({
@@ -63,7 +63,7 @@ export const sessionSendArgsSchema = z.object({
 
 /** Argument schemas by affordance id; sessionContribution must advertise exactly these keys. */
 export const sessionAffordanceArgsSchemas = {
-  "models.list": uni-cliModelsListArgsSchema,
+  "models.list": uniCliModelsListArgsSchema,
   "session.search": sessionSearchArgsSchema,
   "session.read": sessionReadArgsSchema,
   "session.create": sessionCreateArgsSchema,
@@ -82,17 +82,17 @@ export type EngineMcpDescriptor = {
   status?: string;
 };
 
-const noEffects: uni-cliAffordanceEffects = {
+const noEffects: uniCliAffordanceEffects = {
   data: "none",
   ui: "none",
   external: false,
 };
-const readEffects: uni-cliAffordanceEffects = {
+const readEffects: uniCliAffordanceEffects = {
   data: "read",
   ui: "none",
   external: false,
 };
-const writeEffects: uni-cliAffordanceEffects = {
+const writeEffects: uniCliAffordanceEffects = {
   data: "write",
   ui: "none",
   external: false,
@@ -100,10 +100,10 @@ const writeEffects: uni-cliAffordanceEffects = {
 
 function argument(
   name: string,
-  type: uni-cliAffordanceArgument["type"],
+  type: uniCliAffordanceArgument["type"],
   required: boolean,
   description: string,
-): uni-cliAffordanceArgument {
+): uniCliAffordanceArgument {
   return { name, type, required, description };
 }
 
@@ -112,11 +112,11 @@ function affordance(input: {
   kind: "query" | "command";
   title: string;
   description: string;
-  provider: uni-cliProviderRef;
-  arguments?: uni-cliAffordanceArgument[];
-  effects?: uni-cliAffordanceEffects;
+  provider: uniCliProviderRef;
+  arguments?: uniCliAffordanceArgument[];
+  effects?: uniCliAffordanceEffects;
   tool?: string;
-}): uni-cliAffordanceDescriptor {
+}): uniCliAffordanceDescriptor {
   return {
     id: input.id,
     kind: input.kind,
@@ -133,8 +133,8 @@ function affordance(input: {
   };
 }
 
-function sessionContribution(): uni-cliFeatureContribution {
-  const provider: uni-cliProviderRef = { id: "uni-cli-server", kind: "builtin" };
+function sessionContribution(): uniCliFeatureContribution {
+  const provider: uniCliProviderRef = { id: "uni-cli-server", kind: "builtin" };
   return {
     featureId: "sessions",
     provider,
@@ -214,8 +214,8 @@ function sessionContribution(): uni-cliFeatureContribution {
   };
 }
 
-function automationContribution(): uni-cliFeatureContribution {
-  const provider: uni-cliProviderRef = { id: "uni-cli-automations", kind: "builtin" };
+function automationContribution(): uniCliFeatureContribution {
+  const provider: uniCliProviderRef = { id: "uni-cli-automations", kind: "builtin" };
   return {
     featureId: "automations",
     provider,
@@ -239,8 +239,8 @@ function automationContribution(): uni-cliFeatureContribution {
   };
 }
 
-function extensionContribution(): uni-cliFeatureContribution {
-  const provider: uni-cliProviderRef = { id: "uni-cli-extensions", kind: "extension" };
+function extensionContribution(): uniCliFeatureContribution {
+  const provider: uniCliProviderRef = { id: "uni-cli-extensions", kind: "extension" };
   return {
     featureId: "extensions",
     provider,
@@ -275,10 +275,10 @@ function extensionContribution(): uni-cliFeatureContribution {
 function connectContribution(
   skills: ConnectSkillDescriptor[],
   cloudMcp: EngineMcpDescriptor | undefined,
-): uni-cliFeatureContribution | null {
+): uniCliFeatureContribution | null {
   if (skills.length === 0 && !cloudMcp) return null;
-  const provider: uni-cliProviderRef = { id: "uni-cli-cloud", kind: "connect" };
-  const guidance: uni-cliGuidanceDescriptor[] = skills.map((skill) => ({
+  const provider: uniCliProviderRef = { id: "uni-cli-cloud", kind: "connect" };
+  const guidance: uniCliGuidanceDescriptor[] = skills.map((skill) => ({
     ref: skill.capability,
     title: skill.title?.trim() || skill.name,
     description: skill.description,
@@ -324,7 +324,7 @@ function connectContribution(
   };
 }
 
-function mcpContribution(mcp: EngineMcpDescriptor): uni-cliFeatureContribution {
+function mcpContribution(mcp: EngineMcpDescriptor): uniCliFeatureContribution {
   return {
     featureId: `mcp:${mcp.name}`,
     provider: { id: mcp.name, kind: "mcp" },
@@ -333,10 +333,10 @@ function mcpContribution(mcp: EngineMcpDescriptor): uni-cliFeatureContribution {
   };
 }
 
-export function builduni-cliProviderContributions(
+export function builduniCliProviderContributions(
   skills: ConnectSkillDescriptor[],
   mcps: EngineMcpDescriptor[] = [],
-): uni-cliFeatureContribution[] {
+): uniCliFeatureContribution[] {
   const cloudMcp = mcps.find((mcp) => mcp.name === "uni-cli-cloud");
   const connect = connectContribution(skills, cloudMcp);
   return [

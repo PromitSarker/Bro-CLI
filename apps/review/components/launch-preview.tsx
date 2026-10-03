@@ -119,7 +119,7 @@ export function LaunchPreview({ id, connected }: { id: string; connected: boolea
 
   const services: [string, { value: string }][] = session ? Object.entries(session.outputs).filter(([, entry]) => entry.group === "Services") : [];
   if (session && !services.length) services.push(["webUrl", { value: session.url }]);
-  const serviceNames: Record<string, string> = { webUrl: "Uni-CLI", denWeb: "Den dashboard", denApi: "Den API", uni-cliUrl: "Uni-CLI engine", gatewayUrl: "AI Gateway", desktopUrl: "Desktop app" };
+  const serviceNames: Record<string, string> = { webUrl: "Uni-CLI", denWeb: "Den dashboard", denApi: "Den API", uniCliUrl: "Uni-CLI engine", gatewayUrl: "AI Gateway", desktopUrl: "Desktop app" };
   function field(key: string, label: string, value: string, secret = false) {
     return <div className="connection-field" key={key}>
       <div className="preview-launch-row"><strong>{label}</strong><CopyButton label={`Copy ${label}`} value={value} /></div>

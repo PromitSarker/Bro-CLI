@@ -8,7 +8,7 @@ import { db } from "../../db.js"
 import { nextCursorSchema } from "../../list-pagination.js"
 import { jsonValidator, orgMemberRoute, paramValidator, queryValidator } from "../../middleware/index.js"
 import { denTypeIdSchema, emptyResponse, forbiddenSchema, invalidRequestSchema, jsonResponse, notFoundSchema, unauthorizedSchema } from "../../openapi.js"
-import { getUni-CLIWebRuntimeAccess, uni-cliWebAccessRequiredPayload } from "../../uni-cli-web-runtime-access.js"
+import { getUniCliWebRuntimeAccess, uniCliWebAccessRequiredPayload } from "../../uni-cli-web-runtime-access.js"
 import { getOrganizationLimitStatus } from "../../organization-limits.js"
 import { getRequiredUserEmail } from "../../user.js"
 import { listWorkersPage } from "../../workers/list.js"
@@ -96,12 +96,12 @@ const workerTokensResponseSchema = z.object({
     client: z.string(),
   }),
   connect: z.object({
-    uni-cliUrl: z.string().nullable(),
+    uniCliUrl: z.string().nullable(),
     workspaceId: z.string().nullable(),
   }).nullable(),
   directPreview: z.object({
     version: z.literal(1),
-    uni-cliUrl: z.string(),
+    uniCliUrl: z.string(),
     workspaceId: z.string().nullable(),
     expiresAt: z.string().datetime(),
   }).nullable().optional(),
@@ -110,7 +110,7 @@ const workerTokensResponseSchema = z.object({
 const workerTokensRequestSchema = z.object({
   // Legacy/published clients do not understand signed-preview expiry. They
   // receive only stable tokens. New Web flows opt in and own refresh/polling.
-  includeExpiringuni-cliUrl: z.boolean().optional(),
+  includeExpiringuniCliUrl: z.boolean().optional(),
 }).meta({ ref: "WorkerTokensRequest" })
 
 const organizationUnavailableSchema = z.object({
@@ -134,10 +134,10 @@ const paymentRequiredSchema = z.object({
   message: z.string(),
 }).meta({ ref: "WorkerPaymentRequiredError" })
 
-const uni-cliWebAccessRequiredSchema = z.object({
+const uniCliWebAccessRequiredSchema = z.object({
   error: z.literal("uni-cli_web_access_required"),
   message: z.string(),
-}).meta({ ref: "WorkerUni-CLIWebAccessRequiredError" })
+}).meta({ ref: "WorkerUniCliWebAccessRequiredError" })
 
 const userEmailRequiredSchema = z.object({
   error: z.literal("user_email_required"),
@@ -204,7 +204,7 @@ export function registerWorkerCoreRoutes<T extends { Variables: WorkerRouteVaria
         400: jsonResponse("The worker creation payload was invalid.", z.union([invalidRequestSchema, organizationUnavailableSchema, workspacePathRequiredSchema, userEmailRequiredSchema])),
         401: jsonResponse("The caller must be signed in to create workers.", unauthorizedSchema),
         402: jsonResponse("The caller needs an active cloud plan before launching a cloud worker.", paymentRequiredSchema),
-        403: jsonResponse("Uni-CLI Web access is required to launch a cloud worker.", uni-cliWebAccessRequiredSchema),
+        403: jsonResponse("Uni-CLI Web access is required to launch a cloud worker.", uniCliWebAccessRequiredSchema),
         409: jsonResponse("The organization has reached its worker limit.", orgLimitReachedSchema),
       },
     }),
@@ -224,9 +224,9 @@ export function registerWorkerCoreRoutes<T extends { Variables: WorkerRouteVaria
     }
 
     if (input.destination === "cloud") {
-      const webAccess = await getUni-CLIWebRuntimeAccess(orgId)
+      const webAccess = await getUniCliWebRuntimeAccess(orgId)
       if (!webAccess.hasAccess) {
-        return c.json(uni-cliWebAccessRequiredPayload(), 403)
+        return c.json(uniCliWebAccessRequiredPayload(), 403)
       }
       const email = getRequiredUserEmail(user)
       if (!email) {
@@ -461,7 +461,7 @@ export function registerWorkerCoreRoutes<T extends { Variables: WorkerRouteVaria
         200: jsonResponse("Worker connection tokens returned successfully.", workerTokensResponseSchema),
         400: jsonResponse("The worker token path parameters were invalid.", invalidRequestSchema),
         401: jsonResponse("The caller must be signed in to request worker tokens.", unauthorizedSchema),
-        403: jsonResponse("Cloud worker tokens require the worker owner and Uni-CLI Web access.", z.union([forbiddenSchema, uni-cliWebAccessRequiredSchema])),
+        403: jsonResponse("Cloud worker tokens require the worker owner and Uni-CLI Web access.", z.union([forbiddenSchema, uniCliWebAccessRequiredSchema])),
         404: jsonResponse("The worker could not be found.", notFoundSchema),
         409: jsonResponse("The worker is not ready to return connection tokens yet.", workerRuntimeUnavailableSchema),
       },
@@ -494,7 +494,7 @@ export function registerWorkerCoreRoutes<T extends { Variables: WorkerRouteVaria
 
     const requestBody = workerTokensRequestSchema.safeParse(await c.req.json().catch(() => ({})))
     const resolved = await getWorkerTokensAndConnect(worker, {
-      includeExpiringuni-cliUrl: requestBody.success && requestBody.data.includeExpiringuni-cliUrl === true,
+      includeExpiringuniCliUrl: requestBody.success && requestBody.data.includeExpiringuniCliUrl === true,
     })
     if ("error" in resolved && resolved.error) {
       return new Response(JSON.stringify(resolved.error.body), {

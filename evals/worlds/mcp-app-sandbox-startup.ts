@@ -174,7 +174,7 @@ export async function sandboxStartupFixture(hostedResources?: HostedSandboxResou
   resources.defer(async () => {
     await writeFile(resolve(resultsDir, "summary.json"), JSON.stringify({
       scope: hostedResources ? "Hosted read-only demo component integration, not full dashboard or installed Electron" : "Component integration, not a full dashboard or provider test",
-      realModules: ["McpAppSandboxView", "AppBridge", "createuni-cliServerClient", "mcp-app-sandbox proxy exports"],
+      realModules: ["McpAppSandboxView", "AppBridge", "createuniCliServerClient", "mcp-app-sandbox proxy exports"],
       excludedChatSurfaces: ["ConnectorCatalogCard", "ConnectionCard", "useMessageList", "AppChatArtifact", "chat result attribution"],
       ...(hostedResources ? { receiptScope: "Capture-phase inbound MessageEvent in actual opaque srcdoc; exact input/result comparison, not host outbound. Browser/tab/page/OOPIF instrumentation can affect timing; provider HTML is unchanged." } : {}),
       loads,

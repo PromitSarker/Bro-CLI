@@ -4,23 +4,23 @@ import { createElement, useEffect } from "react";
 import {
   engineInfo,
   engineStart,
-  uni-cliServerInfo,
-  uni-cliServerRestart,
+  uniCliServerInfo,
+  uniCliServerRestart,
   resolveWorkspaceListSelectedId,
   runtimeBootstrap,
   workspaceBootstrap,
   workspaceSetRuntimeActive,
   workspaceSetSelected,
   type EngineInfo,
-  type uni-cliServerInfo,
+  type uniCliServerInfo,
   type WorkspaceInfo,
   type WorkspaceList,
 } from "../../app/lib/desktop";
 import { ingestMigrationSnapshotOnElectronBoot } from "../../app/lib/migration";
 import {
-  hydrateuni-cliServerSettingsFromEnv,
-  readuni-cliServerSettings,
-  writeuni-cliServerSettings,
+  hydrateuniCliServerSettingsFromEnv,
+  readuniCliServerSettings,
+  writeuniCliServerSettings,
 } from "../../app/lib/uni-cli-server";
 import { isDesktopRuntime, isElectronRuntime, safeStringify } from "../../app/utils";
 import { useEnterpriseActivationRequired } from "../domains/cloud/enterprise-activation-gate";
@@ -32,7 +32,7 @@ import { useBootState } from "./boot-state";
 // keeps running across the transient unmount.
 let BOOT_STARTED = false;
 
-type Bootuni-cliServerInfo = {
+type BootuniCliServerInfo = {
   running?: boolean | null;
   baseUrl?: string | null;
   ownerToken?: string | null;
@@ -42,11 +42,11 @@ type Bootuni-cliServerInfo = {
   remoteAccessEnabled?: boolean;
 };
 
-function isuni-cliServerInfoLike(info: unknown): info is Bootuni-cliServerInfo {
+function isuniCliServerInfoLike(info: unknown): info is BootuniCliServerInfo {
   return typeof info === "object" && info !== null;
 }
 
-function isuni-cliServerReady(info?: Bootuni-cliServerInfo) {
+function isuniCliServerReady(info?: BootuniCliServerInfo) {
   return Boolean(
     info?.running === true &&
       info.baseUrl?.trim() &&
@@ -95,12 +95,12 @@ export function useDesktopRuntimeBoot() {
             console.info(`[migration] hydrated ${hydrated} localStorage keys from Tauri snapshot`);
           }
         }
-        hydrateuni-cliServerSettingsFromEnv();
-        const preferredRemoteAccess = readuni-cliServerSettings().remoteAccessEnabled === true;
+        hydrateuniCliServerSettingsFromEnv();
+        const preferredRemoteAccess = readuniCliServerSettings().remoteAccessEnabled === true;
 
-        const publishuni-cliServerInfo = (serverInfo: Bootuni-cliServerInfo | null | undefined) => {
+        const publishuniCliServerInfo = (serverInfo: BootuniCliServerInfo | null | undefined) => {
           if (!serverInfo?.baseUrl) return;
-          writeuni-cliServerSettings({
+          writeuniCliServerSettings({
             urlOverride: serverInfo.baseUrl,
             token:
               serverInfo.ownerToken?.trim() ||
@@ -122,27 +122,27 @@ export function useDesktopRuntimeBoot() {
           // exists in the server registry (workspaces created from the app are
           // server-owned). The server is already serving it: restarting would
           // kill the engine and every in-flight run for nothing.
-          const running = await uni-cliServerInfo().catch(() => null);
+          const running = await uniCliServerInfo().catch(() => null);
           if (
-            isuni-cliServerInfoLike(running)
-            && isuni-cliServerReady(running)
+            isuniCliServerInfoLike(running)
+            && isuniCliServerReady(running)
             && (running.remoteAccessEnabled === true) === preferredRemoteAccess
           ) {
-            publishuni-cliServerInfo(running);
+            publishuniCliServerInfo(running);
             await window.__UNICLI_ELECTRON__?.recovery?.recordHealthy?.().catch(() => undefined);
             markReady();
             return;
           }
           setPhase("starting-engine", "Starting Uni-CLI server");
-          const serverInfo = await uni-cliServerRestart({ remoteAccessEnabled: preferredRemoteAccess }).catch((error) => {
-            console.warn("[desktop-boot] uni-cliServerRestart failed:", error);
+          const serverInfo = await uniCliServerRestart({ remoteAccessEnabled: preferredRemoteAccess }).catch((error) => {
+            console.warn("[desktop-boot] uniCliServerRestart failed:", error);
             return null;
           });
-          if (!isuni-cliServerInfoLike(serverInfo) || !isuni-cliServerReady(serverInfo)) {
+          if (!isuniCliServerInfoLike(serverInfo) || !isuniCliServerReady(serverInfo)) {
             setError("Uni-CLI server did not finish starting. Please restart Uni-CLI.");
             return;
           }
-          publishuni-cliServerInfo(serverInfo);
+          publishuniCliServerInfo(serverInfo);
           await window.__UNICLI_ELECTRON__?.recovery?.recordHealthy?.().catch(() => undefined);
           markReady();
         };
@@ -179,7 +179,7 @@ export function useDesktopRuntimeBoot() {
             skipped?: boolean;
             error?: string;
             engine?: { baseUrl?: string | null };
-            uni-cliServer?: Bootuni-cliServerInfo;
+            uniCliServer?: BootuniCliServerInfo;
           };
 
           if (boot.ok === false) {
@@ -187,7 +187,7 @@ export function useDesktopRuntimeBoot() {
             return;
           }
 
-          if (!boot.skipped && !isuni-cliServerReady(boot.uni-cliServer)) {
+          if (!boot.skipped && !isuniCliServerReady(boot.uniCliServer)) {
             setError("Uni-CLI server did not finish starting. Please restart Uni-CLI.");
             return;
           }
@@ -195,15 +195,15 @@ export function useDesktopRuntimeBoot() {
           if (boot.engine?.baseUrl) {
             setActive(boot.engine.baseUrl);
           }
-          let serverInfo = boot.uni-cliServer;
+          let serverInfo = boot.uniCliServer;
           if (preferredRemoteAccess && serverInfo?.remoteAccessEnabled !== true) {
-            const restarted = await uni-cliServerRestart({ remoteAccessEnabled: true }).catch((error) => {
-              console.warn("[desktop-boot] uni-cliServerRestart failed:", error);
+            const restarted = await uniCliServerRestart({ remoteAccessEnabled: true }).catch((error) => {
+              console.warn("[desktop-boot] uniCliServerRestart failed:", error);
               return null;
             });
-            if (isuni-cliServerInfoLike(restarted)) serverInfo = restarted;
+            if (isuniCliServerInfoLike(restarted)) serverInfo = restarted;
           }
-          publishuni-cliServerInfo(serverInfo);
+          publishuniCliServerInfo(serverInfo);
           await window.__UNICLI_ELECTRON__?.recovery?.recordHealthy?.().catch(() => undefined);
           markReady();
           return;
@@ -218,9 +218,9 @@ export function useDesktopRuntimeBoot() {
           const engine = await engineInfo() as EngineInfo | null;
           if (engine?.running && engine.baseUrl) {
             setActive(engine.baseUrl);
-            const fresh = await uni-cliServerInfo().catch(() => null) as uni-cliServerInfo | null;
+            const fresh = await uniCliServerInfo().catch(() => null) as uniCliServerInfo | null;
             if (fresh?.baseUrl) {
-              writeuni-cliServerSettings({
+              writeuniCliServerSettings({
                 urlOverride: fresh.baseUrl,
                 token:
                   fresh.ownerToken?.trim() ||
@@ -267,7 +267,7 @@ export function useDesktopRuntimeBoot() {
         let engineStartResult = await engineStart(workspaceRoot, {
           runtime: "direct",
           workspacePaths: workspacePathsFor(workspaceRoot),
-          uni-cliRemoteAccess: readuni-cliServerSettings().remoteAccessEnabled === true,
+          uniCliRemoteAccess: readuniCliServerSettings().remoteAccessEnabled === true,
         }).catch((error) => {
           console.warn("[desktop-boot] engineStart failed:", error);
           return null;
@@ -288,7 +288,7 @@ export function useDesktopRuntimeBoot() {
             engineStartResult = await engineStart(fallbackRoot, {
               runtime: "direct",
               workspacePaths: workspacePathsFor(fallbackRoot).filter((path) => path !== workspaceRoot),
-              uni-cliRemoteAccess: readuni-cliServerSettings().remoteAccessEnabled === true,
+              uniCliRemoteAccess: readuniCliServerSettings().remoteAccessEnabled === true,
             }).catch((error) => {
               console.warn("[desktop-boot] fallback engineStart failed:", error);
               setError(error instanceof Error ? error.message : safeStringify(error));
@@ -308,9 +308,9 @@ export function useDesktopRuntimeBoot() {
             setActive(engineStartResult.baseUrl);
           }
           try {
-            const freshInfo = await uni-cliServerInfo() as uni-cliServerInfo | null;
+            const freshInfo = await uniCliServerInfo() as uniCliServerInfo | null;
             if (freshInfo?.baseUrl) {
-              writeuni-cliServerSettings({
+              writeuniCliServerSettings({
                 urlOverride: freshInfo.baseUrl,
                 token:
                   freshInfo.ownerToken?.trim() ||
@@ -327,7 +327,7 @@ export function useDesktopRuntimeBoot() {
               }
             }
           } catch (error) {
-            console.warn("[desktop-boot] post-engineStart uni-cliServerInfo failed:", error);
+            console.warn("[desktop-boot] post-engineStart uniCliServerInfo failed:", error);
           }
         }
 

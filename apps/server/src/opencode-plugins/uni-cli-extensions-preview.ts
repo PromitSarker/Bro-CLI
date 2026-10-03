@@ -1,4 +1,4 @@
-import { uni-cliReadTransport, type uni-cliEngine, type uni-cliEngineReader } from "./uni-cli-read-transport.js";
+import { uniCliReadTransport, type uniCliEngine, type uniCliEngineReader } from "./uni-cli-read-transport.js";
 import { createV2ReadAdapter, readV2SessionActivity } from "../opencode-v2-read-adapter.js";
 import { randomUUID } from "node:crypto";
 import { realpath } from "node:fs/promises";
@@ -8,16 +8,16 @@ import { createGmailAttachmentFulfillment, type GmailAttachmentDependencies } fr
 import { z } from "zod";
 import { sessionActivityFrom, type SessionActivity } from "./session-activity.js";
 import {
-  uni-cliSessionModelSchema,
-  uni-cliAffordanceResultSchema,
-  uni-cliModelsListResultSchema,
-  uni-cliEngineProviderCatalogSchema,
-  uni-cliCatalogModels,
-  labeluni-cliSessionModel,
-  resolveuni-cliModel,
-  type uni-cliCatalogModel,
-  type uni-cliAffordanceEffects,
-  type uni-cliSessionModel,
+  uniCliSessionModelSchema,
+  uniCliAffordanceResultSchema,
+  uniCliModelsListResultSchema,
+  uniCliEngineProviderCatalogSchema,
+  uniCliCatalogModels,
+  labeluniCliSessionModel,
+  resolveuniCliModel,
+  type uniCliCatalogModel,
+  type uniCliAffordanceEffects,
+  type uniCliSessionModel,
 } from "@uni-cli/types/uni-cli-affordance";
 import { automationProposalSchema } from "@uni-cli/types/automations";
 import {
@@ -27,14 +27,14 @@ import {
 import {
   UNICLI_EXTENSION_DISCOVERY_INSTRUCTION,
   UNICLI_ON_DEMAND_DISCOVERY_INSTRUCTION,
-  resolveUni-CLIAutomationInstruction,
-  resolveUni-CLIConnectSkillInstruction,
-  resolveUni-CLIExtensionDiscoveryInstruction,
+  resolveUniCliAutomationInstruction,
+  resolveUniCliConnectSkillInstruction,
+  resolveUniCliExtensionDiscoveryInstruction,
   type OpenCodeContext,
-  type Uni-CLIEngineMcpStatusClient,
+  type UniCliEngineMcpStatusClient,
 } from "./uni-cli-extensions-preview-steering.js";
 import {
-  builduni-cliProviderContributions,
+  builduniCliProviderContributions,
   sessionCreateArgsSchema,
   sessionReadArgsSchema,
   sessionSearchArgsSchema,
@@ -61,7 +61,7 @@ const callArgsSchema = z.object({
   args: z.record(z.string(), z.unknown()).optional().describe("JSON arguments for the action."),
 });
 
-const uni-cliAffordanceRequestSchema = z.object({
+const uniCliAffordanceRequestSchema = z.object({
   id: z.string().trim().min(1).describe("Semantic affordance id from uni-cli_context."),
   args: z.record(z.string(), z.unknown()).optional().describe("JSON arguments for the affordance."),
   expectedRevision: z.number().int().nonnegative().optional().describe("Context revision from uni-cli_context. Use for commands to prevent stale writes."),
@@ -169,7 +169,7 @@ Models without vision should use site tools and text observations. When a task r
 
 const WEBMCP_EXECUTION_TIMEOUT_MS = 125_000;
 
-type Uni-CLIWorkspace = z.infer<typeof workspaceSchema>;
+type UniCliWorkspace = z.infer<typeof workspaceSchema>;
 type SessionInfo = z.infer<typeof sessionInfoSchema>;
 type SessionMessage = z.infer<typeof sessionMessageSchema>;
 type SessionSearchArgs = z.infer<typeof sessionSearchArgsSchema>;
@@ -178,7 +178,7 @@ type SessionSearchSnippet = { before: string; match: string; after: string };
 type SessionSearchResult = {
   workspaceId: string;
   /** Engine that holds the session; session.read finds it on either one. */
-  engine: uni-cliEngine;
+  engine: uniCliEngine;
   workspace: string;
   sessionId: string;
   title: string;
@@ -194,17 +194,17 @@ type SessionSearchResult = {
   messageId?: string;
   messageIndex?: number;
 };
-type CreatedUni-CLISessionResult = {
+type CreatedUniCliSessionResult = {
   ok: true;
   sessionId: string;
   title: string;
   titleTruncated: boolean;
   started: boolean;
   /** The model the engine bound to the session, read from its create response. */
-  model: uni-cliSessionModel | null;
+  model: uniCliSessionModel | null;
   route: string;
 };
-type FailedUni-CLISessionResult = {
+type FailedUniCliSessionResult = {
   ok: false;
   title: string;
   titleTruncated: boolean;
@@ -237,23 +237,23 @@ function preserveMcpResult(output: unknown): void {
     ...existing,
     // This is transport-only result preservation. Whether the completed tool
     // owns an MCP App is determined later from its current tool definition.
-    uni-cliMcpApp: appResult,
+    uniCliMcpApp: appResult,
   };
 }
 
-const affordanceReadEffects: uni-cliAffordanceEffects = { data: "read", ui: "none", external: false };
-const affordanceWriteEffects: uni-cliAffordanceEffects = { data: "write", ui: "none", external: false };
-const affordanceExternalWriteEffects: uni-cliAffordanceEffects = { data: "write", ui: "none", external: true };
+const affordanceReadEffects: uniCliAffordanceEffects = { data: "read", ui: "none", external: false };
+const affordanceWriteEffects: uniCliAffordanceEffects = { data: "write", ui: "none", external: false };
+const affordanceExternalWriteEffects: uniCliAffordanceEffects = { data: "write", ui: "none", external: true };
 // session.send with reveal=true: the message is written headlessly, then the
 // target session is opened in the person's pane on their behalf.
-const affordanceWriteNavigateEffects: uni-cliAffordanceEffects = { data: "write", ui: "navigate", external: false };
+const affordanceWriteNavigateEffects: uniCliAffordanceEffects = { data: "write", ui: "navigate", external: false };
 // A proposal writes nothing anywhere: it is rendered for a person to act on.
-const affordanceProposalEffects: uni-cliAffordanceEffects = { data: "none", ui: "none", external: false };
+const affordanceProposalEffects: uniCliAffordanceEffects = { data: "none", ui: "none", external: false };
 
 function affordanceResult(
   id: string,
   result: unknown,
-  effects: uni-cliAffordanceEffects,
+  effects: uniCliAffordanceEffects,
 ) {
   if (isRecord(result) && result.ok === false) {
     return {
@@ -277,17 +277,17 @@ function optionalStringProperty(value: unknown, key: string): string | undefined
   return typeof property === "string" && property.trim().length > 0 ? property : undefined;
 }
 
-type Uni-CLIEngineMcpStatusFunction = Uni-CLIEngineMcpStatusClient["mcp"]["status"];
+type UniCliEngineMcpStatusFunction = UniCliEngineMcpStatusClient["mcp"]["status"];
 
-function isUni-CLIEngineMcpStatusFunction(value: unknown): value is Uni-CLIEngineMcpStatusFunction {
+function isUniCliEngineMcpStatusFunction(value: unknown): value is UniCliEngineMcpStatusFunction {
   return typeof value === "function";
 }
 
-function readEngineMcpStatusClient(value: unknown): Uni-CLIEngineMcpStatusClient | undefined {
+function readEngineMcpStatusClient(value: unknown): UniCliEngineMcpStatusClient | undefined {
   const client = isRecord(value) ? value.client : undefined;
   const mcp = isRecord(client) ? client.mcp : undefined;
   const status = isRecord(mcp) ? mcp.status : undefined;
-  if (!isUni-CLIEngineMcpStatusFunction(status)) return undefined;
+  if (!isUniCliEngineMcpStatusFunction(status)) return undefined;
   return { mcp: { status: (request) => status.call(mcp, request) } };
 }
 
@@ -333,9 +333,9 @@ async function uiControlRequest(
 }
 
 async function serverGet(path: string): Promise<unknown> {
-  const transport = uni-cliReadTransport.getStore();
+  const transport = uniCliReadTransport.getStore();
   if (transport) return transport.get(path);
-  const { url, token } = requireUni-CLIServer();
+  const { url, token } = requireUniCliServer();
   const response = await fetch(`${url}${path}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -356,7 +356,7 @@ async function readConnectSkillDescriptors(): Promise<ConnectSkillDescriptor[]> 
 }
 
 async function readEngineMcpDescriptors(
-  client: Uni-CLIEngineMcpStatusClient | undefined,
+  client: UniCliEngineMcpStatusClient | undefined,
   directory: string | undefined,
 ): Promise<EngineMcpDescriptor[]> {
   if (!client) return [];
@@ -375,8 +375,8 @@ async function readEngineMcpDescriptors(
   }
 }
 
-async function readuni-cliAgentContext(
-  engineMcpStatusClient: Uni-CLIEngineMcpStatusClient | undefined,
+async function readuniCliAgentContext(
+  engineMcpStatusClient: UniCliEngineMcpStatusClient | undefined,
   engineMcpStatusDirectory: string | undefined,
 ): Promise<Record<string, unknown>> {
   const [uiResult, skills, mcps] = await Promise.all([
@@ -384,7 +384,7 @@ async function readuni-cliAgentContext(
     readConnectSkillDescriptors(),
     readEngineMcpDescriptors(engineMcpStatusClient, engineMcpStatusDirectory),
   ]);
-  const contributions = builduni-cliProviderContributions(skills, mcps);
+  const contributions = builduniCliProviderContributions(skills, mcps);
   const providerAffordances = contributions.flatMap((contribution) => contribution.affordances);
   const uiContext = isRecord(uiResult) && isRecord(uiResult.context) ? uiResult.context : null;
   if (!uiContext) {
@@ -409,19 +409,19 @@ async function readuni-cliAgentContext(
   };
 }
 
-async function queryuni-cliAffordance(rawArgs: unknown): Promise<unknown> {
-  const request = uni-cliAffordanceRequestSchema.parse(rawArgs);
+async function queryuniCliAffordance(rawArgs: unknown): Promise<unknown> {
+  const request = uniCliAffordanceRequestSchema.parse(rawArgs);
   if (request.id === "session.search") {
     return affordanceResult(
       request.id,
-      await searchUni-CLISessions(request.args ?? {}),
+      await searchUniCliSessions(request.args ?? {}),
       affordanceReadEffects,
     );
   }
   if (request.id === "session.read") {
     return affordanceResult(
       request.id,
-      await readUni-CLISession(request.args ?? {}),
+      await readUniCliSession(request.args ?? {}),
       affordanceReadEffects,
     );
   }
@@ -446,20 +446,20 @@ async function queryuni-cliAffordance(rawArgs: unknown): Promise<unknown> {
     : unavailableAffordance(request.id, "Uni-CLI UI query returned an invalid response.");
 }
 
-async function executeuni-cliAffordance(
+async function executeuniCliAffordance(
   rawArgs: unknown,
   context: OpenCodeContext,
 ): Promise<unknown> {
-  const request = uni-cliAffordanceRequestSchema.parse(rawArgs);
+  const request = uniCliAffordanceRequestSchema.parse(rawArgs);
   if (request.id === "session.create") {
     return affordanceResult(
       request.id,
-      await createUni-CLISessions(request.args ?? {}, context),
+      await createUniCliSessions(request.args ?? {}, context),
       affordanceWriteEffects,
     );
   }
   if (request.id === "session.send") {
-    const sent = await sendToUni-CLISession(request.args ?? {}, context);
+    const sent = await sendToUniCliSession(request.args ?? {}, context);
     return affordanceResult(
       request.id,
       sent,
@@ -518,7 +518,7 @@ function buildSessionSnippet(text: string, index: number, length: number): Sessi
   return { before, match: text.slice(index, index + length), after };
 }
 
-function workspaceLabel(workspace: Uni-CLIWorkspace): string {
+function workspaceLabel(workspace: UniCliWorkspace): string {
   return workspace.displayName?.trim() || workspace.name?.trim() || workspace.path?.trim() || workspace.id;
 }
 
@@ -539,7 +539,7 @@ function sessionArchived(session: SessionInfo): boolean {
   return typeof archived === "number" && archived > 0;
 }
 
-function sessionMetadata(workspace: Uni-CLIWorkspace, session: SessionInfo, engine: uni-cliEngine) {
+function sessionMetadata(workspace: UniCliWorkspace, session: SessionInfo, engine: uniCliEngine) {
   return {
     workspaceId: workspace.id,
     engine,
@@ -568,7 +568,7 @@ function sessionPassesFilters(session: SessionInfo, args: SessionSearchArgs): bo
  * bound. The engine writes the literal variant "default" for a turn that
  * named none; agents pass and read null for that, like the composer pill.
  */
-function sessionModelOf(session: SessionInfo): uni-cliSessionModel | null {
+function sessionModelOf(session: SessionInfo): uniCliSessionModel | null {
   const model = session.model;
   if (!model) return null;
   const variant = model.variant?.trim();
@@ -613,7 +613,7 @@ function findTextMatch(text: string, queryLower: string, mode: SessionSearchMatc
   return Number.isFinite(firstIndex) ? { index: firstIndex, length: firstLength, phrase: false } : null;
 }
 
-function titleSearchResult(workspace: Uni-CLIWorkspace, session: SessionInfo, engine: uni-cliEngine, queryLower: string, mode: SessionSearchMatchMode): SessionSearchResult | null {
+function titleSearchResult(workspace: UniCliWorkspace, session: SessionInfo, engine: uniCliEngine, queryLower: string, mode: SessionSearchMatchMode): SessionSearchResult | null {
   const text = `${sessionTitle(session)} ${workspaceLabel(workspace)}`;
   const match = findTextMatch(text, queryLower, mode);
   if (!match) return null;
@@ -625,7 +625,7 @@ function titleSearchResult(workspace: Uni-CLIWorkspace, session: SessionInfo, en
   };
 }
 
-function messageSearchResult(workspace: Uni-CLIWorkspace, session: SessionInfo, engine: uni-cliEngine, messages: SessionMessage[], queryLower: string, mode: SessionSearchMatchMode): SessionSearchResult | null {
+function messageSearchResult(workspace: UniCliWorkspace, session: SessionInfo, engine: uniCliEngine, messages: SessionMessage[], queryLower: string, mode: SessionSearchMatchMode): SessionSearchResult | null {
   let fallback: SessionSearchResult | null = null;
   for (const [index, message] of messages.entries()) {
     const role = message.info.role;
@@ -655,11 +655,11 @@ function rankSearchResults(matches: SessionSearchResult[], titleMatched: Readonl
   return matches.sort((left, right) => rank(left) - rank(right) || right.updatedAt - left.updatedAt);
 }
 
-async function listUni-CLIWorkspaces(): Promise<Uni-CLIWorkspace[]> {
+async function listUniCliWorkspaces(): Promise<UniCliWorkspace[]> {
   return workspaceListEnvelopeSchema.parse(await serverGet("/workspaces")).items;
 }
 
-function filterWorkspaces(workspaces: Uni-CLIWorkspace[], workspaceId?: string): Uni-CLIWorkspace[] {
+function filterWorkspaces(workspaces: UniCliWorkspace[], workspaceId?: string): UniCliWorkspace[] {
   const query = workspaceId?.trim().toLowerCase();
   if (!query) return workspaces;
   return workspaces.filter((workspace) => {
@@ -671,8 +671,8 @@ function filterWorkspaces(workspaces: Uni-CLIWorkspace[], workspaceId?: string):
 }
 
 /** The engine this affordance runs on: the read transport's, or v1 when v1 launched the plugin. */
-function ownEngineReader(): uni-cliEngineReader {
-  const transport = uni-cliReadTransport.getStore();
+function ownEngineReader(): uniCliEngineReader {
+  const transport = uniCliReadTransport.getStore();
   if (!transport) return { engine: "v1", get: serverGet };
   const activity = transport.activity;
   return {
@@ -689,9 +689,9 @@ function ownEngineReader(): uni-cliEngineReader {
  * Every read still passes through the host's engine mount, which keeps its
  * workspace ownership and session-home checks.
  */
-function engineReaders(): uni-cliEngineReader[] {
+function engineReaders(): uniCliEngineReader[] {
   const own = ownEngineReader();
-  const transport = uni-cliReadTransport.getStore();
+  const transport = uniCliReadTransport.getStore();
   if (transport) return transport.other ? [own, transport.other] : [own];
   return [own, {
     engine: "v2",
@@ -700,7 +700,7 @@ function engineReaders(): uni-cliEngineReader[] {
   }];
 }
 
-async function listWorkspaceSessions(reader: uni-cliEngineReader, workspace: Uni-CLIWorkspace, limit: number): Promise<SessionInfo[]> {
+async function listWorkspaceSessions(reader: uniCliEngineReader, workspace: UniCliWorkspace, limit: number): Promise<SessionInfo[]> {
   const query = new URLSearchParams({ roots: "true", limit: String(limit) });
   return z.array(sessionInfoSchema).parse(
     await reader.get(`/workspace/${encodeURIComponent(workspace.id)}/opencode/session?${query.toString()}`),
@@ -711,7 +711,7 @@ async function listWorkspaceSessions(reader: uni-cliEngineReader, workspace: Uni
 // requested workspace before exposing it (requireWorkspaceSession). The native
 // engine route only scopes the upstream request, so a caller supplying a
 // foreign session ID would otherwise read cross-workspace transcript data.
-async function assertSessionInWorkspace(workspace: Uni-CLIWorkspace, session: SessionInfo): Promise<void> {
+async function assertSessionInWorkspace(workspace: UniCliWorkspace, session: SessionInfo): Promise<void> {
   const workspacePath = workspace.path?.trim();
   const sessionDirectory = session.directory?.trim();
   if (!workspacePath || !sessionDirectory) return;
@@ -725,7 +725,7 @@ async function assertSessionInWorkspace(workspace: Uni-CLIWorkspace, session: Se
   throw new Error(`Session ${session.id} not found in workspace ${workspaceLabel(workspace)}`);
 }
 
-async function readWorkspaceSession(workspace: Uni-CLIWorkspace, sessionId: string, reader = ownEngineReader()): Promise<SessionInfo> {
+async function readWorkspaceSession(workspace: UniCliWorkspace, sessionId: string, reader = ownEngineReader()): Promise<SessionInfo> {
   const session = sessionInfoSchema.parse(
     await reader.get(`/workspace/${encodeURIComponent(workspace.id)}/opencode/session/${encodeURIComponent(sessionId)}`),
   );
@@ -768,7 +768,7 @@ async function readSessionDescendantIds(get: (path: string) => Promise<unknown>,
   return { ids, unknown };
 }
 
-async function readSessionActivity(reader: uni-cliEngineReader, workspace: Uni-CLIWorkspace, session: SessionInfo): Promise<SessionActivity> {
+async function readSessionActivity(reader: uniCliEngineReader, workspace: UniCliWorkspace, session: SessionInfo): Promise<SessionActivity> {
   if (reader.activity) return reader.activity(workspace.id, session.id);
   const base = `/workspace/${encodeURIComponent(workspace.id)}/opencode`;
   const probe = (path: string) => reader.get(`${base}${path}`).catch(() => null);
@@ -781,7 +781,7 @@ async function readSessionActivity(reader: uni-cliEngineReader, workspace: Uni-C
 
 // The engine returns the newest `limit` messages; without a limit it returns
 // the whole transcript, oldest first.
-async function readSessionMessages(reader: uni-cliEngineReader, workspace: Uni-CLIWorkspace, sessionId: string, limit?: number): Promise<SessionMessage[]> {
+async function readSessionMessages(reader: uniCliEngineReader, workspace: UniCliWorkspace, sessionId: string, limit?: number): Promise<SessionMessage[]> {
   const query = limit === undefined ? "" : `?${new URLSearchParams({ limit: String(limit) }).toString()}`;
   return z.array(sessionMessageSchema).parse(
     await reader.get(`/workspace/${encodeURIComponent(workspace.id)}/opencode/session/${encodeURIComponent(sessionId)}/message${query}`),
@@ -800,7 +800,7 @@ async function forEachWithConcurrency<T>(items: T[], concurrency: number, run: (
   await Promise.all(Array.from({ length: Math.min(Math.max(1, concurrency), Math.max(1, items.length)) }, () => worker()));
 }
 
-async function searchUni-CLISessions(rawArgs: unknown): Promise<object> {
+async function searchUniCliSessions(rawArgs: unknown): Promise<object> {
   const parsed = sessionSearchArgsSchema.safeParse(rawArgs);
   if (!parsed.success) return sessionArgumentError(parsed.error, rawArgs);
   const args = parsed.data;
@@ -809,12 +809,12 @@ async function searchUni-CLISessions(rawArgs: unknown): Promise<object> {
   const messageLimit = args.messageLimit ?? SESSION_SEARCH_DEFAULT_MESSAGE_LIMIT;
   const mode = args.match ?? "all";
   const queryLower = args.query.trim().toLowerCase();
-  const workspaces = filterWorkspaces(await listUni-CLIWorkspaces(), args.workspaceId);
+  const workspaces = filterWorkspaces(await listUniCliWorkspaces(), args.workspaceId);
   if (!workspaces.length) {
     return { ok: false, error: args.workspaceId ? `No workspace matched ${args.workspaceId}` : "No Uni-CLI workspaces are available" };
   }
 
-  const sessions: Array<{ workspace: Uni-CLIWorkspace; session: SessionInfo; reader: uni-cliEngineReader }> = [];
+  const sessions: Array<{ workspace: UniCliWorkspace; session: SessionInfo; reader: uniCliEngineReader }> = [];
   const workspaceErrors: Array<{ workspaceId: string; workspace: string; error: string }> = [];
   const readers = engineReaders();
   await Promise.all(workspaces.map(async (workspace) => {
@@ -918,17 +918,17 @@ function readableMessages(messages: SessionMessage[]): ReadableMessage[] {
     .filter((message) => message.text.trim().length > 0);
 }
 
-async function readWorkspaceModels(reader: uni-cliEngineReader, workspace: Uni-CLIWorkspace): Promise<uni-cliCatalogModel[]> {
-  return uni-cliCatalogModels(uni-cliEngineProviderCatalogSchema.parse(await reader.get(
+async function readWorkspaceModels(reader: uniCliEngineReader, workspace: UniCliWorkspace): Promise<uniCliCatalogModel[]> {
+  return uniCliCatalogModels(uniCliEngineProviderCatalogSchema.parse(await reader.get(
     `/workspace/${encodeURIComponent(workspace.id)}/opencode/provider`,
   )));
 }
 
 async function readSessionOnEitherEngine(
-  workspace: Uni-CLIWorkspace,
+  workspace: UniCliWorkspace,
   sessionId: string,
-  readers: uni-cliEngineReader[],
-): Promise<{ session: SessionInfo; reader: uni-cliEngineReader } | null> {
+  readers: uniCliEngineReader[],
+): Promise<{ session: SessionInfo; reader: uniCliEngineReader } | null> {
   for (const reader of readers) {
     try {
       return { session: await readWorkspaceSession(workspace, sessionId, reader), reader };
@@ -939,14 +939,14 @@ async function readSessionOnEitherEngine(
   return null;
 }
 
-async function readUni-CLISession(rawArgs: unknown): Promise<object> {
+async function readUniCliSession(rawArgs: unknown): Promise<object> {
   const parsed = sessionReadArgsSchema.safeParse(rawArgs);
   if (!parsed.success) return sessionArgumentError(parsed.error, rawArgs);
   const args = parsed.data;
   const count = args.count ?? 30;
   const from = args.from ?? "end";
   const summary = args.summary ?? false;
-  const workspaces = filterWorkspaces(await listUni-CLIWorkspaces(), args.workspaceId);
+  const workspaces = filterWorkspaces(await listUniCliWorkspaces(), args.workspaceId);
   if (!workspaces.length) {
     return { ok: false, error: args.workspaceId ? `No workspace matched ${args.workspaceId}` : "No Uni-CLI workspaces are available" };
   }
@@ -978,7 +978,7 @@ async function readUni-CLISession(rawArgs: unknown): Promise<object> {
         return {
           ok: true,
           ...metadata,
-          model: labeluni-cliSessionModel(sessionModelOf(session), catalog),
+          model: labeluniCliSessionModel(sessionModelOf(session), catalog),
           totalMessages: readable.length,
           firstUser: readable.find((message) => message.role === "user") ?? null,
           lastAssistant: [...readable].reverse().find((message) => message.role === "assistant") ?? null,
@@ -988,7 +988,7 @@ async function readUni-CLISession(rawArgs: unknown): Promise<object> {
       return {
         ok: true,
         ...metadata,
-        model: labeluni-cliSessionModel(sessionModelOf(session), catalog),
+        model: labeluniCliSessionModel(sessionModelOf(session), catalog),
         from,
         returned: window.length,
         requested: count,
@@ -1007,11 +1007,11 @@ async function readUni-CLISession(rawArgs: unknown): Promise<object> {
  * lookup as session.read: every matching workspace is probed and the
  * ownership check in readWorkspaceSession refuses foreign sessions.
  */
-async function locateUni-CLISession(
+async function locateUniCliSession(
   sessionId: string,
   workspaceId: string | undefined,
-): Promise<{ workspace: Uni-CLIWorkspace; session: SessionInfo } | { error: string }> {
-  const workspaces = filterWorkspaces(await listUni-CLIWorkspaces(), workspaceId);
+): Promise<{ workspace: UniCliWorkspace; session: SessionInfo } | { error: string }> {
+  const workspaces = filterWorkspaces(await listUniCliWorkspaces(), workspaceId);
   if (!workspaces.length) {
     return { error: workspaceId ? `No workspace matched ${workspaceId}` : "No Uni-CLI workspaces are available" };
   }
@@ -1033,7 +1033,7 @@ function createSendMessageId(): string {
   return `msg_${lastSendMessageStamp.toString(16).padStart(12, "0").slice(-12)}${randomUUID().replaceAll("-", "").slice(0, 14)}`;
 }
 
-type SendToUni-CLISessionResult =
+type SendToUniCliSessionResult =
   | { ok: false; error: string }
   | {
     ok: true;
@@ -1055,11 +1055,11 @@ type SendToUni-CLISessionResult =
  * which case the desktop is asked to open the session afterwards (best
  * effort: the message is already sent if that fails).
  */
-async function sendToUni-CLISession(rawArgs: unknown, context: OpenCodeContext): Promise<SendToUni-CLISessionResult> {
+async function sendToUniCliSession(rawArgs: unknown, context: OpenCodeContext): Promise<SendToUniCliSessionResult> {
   const parsed = sessionSendArgsSchema.safeParse(rawArgs);
   if (!parsed.success) return sessionArgumentError(parsed.error, rawArgs);
   const args = parsed.data;
-  const located = await locateUni-CLISession(args.sessionId, args.workspaceId);
+  const located = await locateUniCliSession(args.sessionId, args.workspaceId);
   if ("error" in located) return { ok: false, error: located.error };
   const { workspace, session } = located;
   const messageId = createSendMessageId();
@@ -1067,7 +1067,7 @@ async function sendToUni-CLISession(rawArgs: unknown, context: OpenCodeContext):
     `/workspace/${encodeURIComponent(workspace.id)}/opencode/session/${encodeURIComponent(session.id)}/prompt_async`,
     { messageID: messageId, parts: [{ type: "text", text: args.text }] },
   );
-  const result: SendToUni-CLISessionResult = {
+  const result: SendToUniCliSessionResult = {
     ok: true,
     accepted: true,
     sessionId: session.id,
@@ -1093,7 +1093,7 @@ function serverToken(): string {
   return String(process.env.UNICLI_SERVER_TOKEN || "");
 }
 
-function requireUni-CLIServer(): { url: string; token: string } {
+function requireUniCliServer(): { url: string; token: string } {
   const url = serverUrl();
   const token = serverToken();
   if (!url || !token) {
@@ -1131,8 +1131,8 @@ function normalizeDirPath(path: string): string {
   return path.replace(/\/+$/, "");
 }
 
-async function resolveContextWorkspace(workspaceId: string | undefined, context: OpenCodeContext): Promise<Uni-CLIWorkspace> {
-  const workspaces = await listUni-CLIWorkspaces();
+async function resolveContextWorkspace(workspaceId: string | undefined, context: OpenCodeContext): Promise<UniCliWorkspace> {
+  const workspaces = await listUniCliWorkspaces();
   if (!workspaces.length) throw new Error("No Uni-CLI workspaces are available");
   if (workspaceId) {
     const match = filterWorkspaces(workspaces, workspaceId).at(0);
@@ -1164,11 +1164,11 @@ async function resolveContextWorkspace(workspaceId: string | undefined, context:
  * top-level `variant` on prompt_async. Both are sent so the session is bound
  * to the model before its first turn and that turn runs at the same effort.
  */
-function engineSessionCreateModel(model: uni-cliSessionModel) {
+function engineSessionCreateModel(model: uniCliSessionModel) {
   return { providerID: model.providerId, id: model.modelId, ...(model.variant ? { variant: model.variant } : {}) };
 }
 
-function enginePromptModel(model: uni-cliSessionModel) {
+function enginePromptModel(model: uniCliSessionModel) {
   return { model: { providerID: model.providerId, modelID: model.modelId }, ...(model.variant ? { variant: model.variant } : {}) };
 }
 
@@ -1191,33 +1191,33 @@ function sessionArgumentError(error: z.ZodError, rawArgs: unknown): { ok: false;
   return { ok: false, error: issues.map((issue) => issue.message).join("; "), issues };
 }
 
-async function createUni-CLISessions(rawArgs: unknown, context: OpenCodeContext): Promise<object> {
+async function createUniCliSessions(rawArgs: unknown, context: OpenCodeContext): Promise<object> {
   const parsed = sessionCreateArgsSchema.safeParse(rawArgs);
   if (!parsed.success) return sessionArgumentError(parsed.error, rawArgs);
   const args = parsed.data;
   const workspace = await resolveContextWorkspace(args.workspaceId, context);
-  let catalog: uni-cliCatalogModel[];
-  let models: Array<uni-cliSessionModel | undefined>;
+  let catalog: uniCliCatalogModel[];
+  let models: Array<uniCliSessionModel | undefined>;
   try {
     catalog = [];
     if (args.model || args.sessions.some((session) => session.model)) {
-      const envelope = uni-cliAffordanceResultSchema.safeParse(await uiControlRequest("query", {
+      const envelope = uniCliAffordanceResultSchema.safeParse(await uiControlRequest("query", {
         id: "models.list", args: { workspaceId: workspace.id },
       }));
       if (!envelope.success || !envelope.data.ok || envelope.data.id !== "models.list") {
         throw new Error("Model selection requires an existing renderer host with a valid models.list response; no sessions created.");
       }
-      const result = uni-cliModelsListResultSchema.parse(envelope.data.result);
+      const result = uniCliModelsListResultSchema.parse(envelope.data.result);
       if (result.workspaceId !== workspace.id) throw new Error("Model catalog workspace mismatch; no sessions created.");
       catalog = result.models;
     }
-    const defaultModel = args.model ? resolveuni-cliModel(args.model, catalog) : undefined;
-    models = args.sessions.map((session) => session.model ? resolveuni-cliModel(session.model, catalog) : defaultModel);
+    const defaultModel = args.model ? resolveuniCliModel(args.model, catalog) : undefined;
+    models = args.sessions.map((session) => session.model ? resolveuniCliModel(session.model, catalog) : defaultModel);
   } catch (error) {
     return { ok: false, error: unknownErrorMessage(error) };
   }
   let createdOnEngine = false;
-  const results = await Promise.all(args.sessions.map(async (session, index): Promise<CreatedUni-CLISessionResult | FailedUni-CLISessionResult> => {
+  const results = await Promise.all(args.sessions.map(async (session, index): Promise<CreatedUniCliSessionResult | FailedUniCliSessionResult> => {
     const inputTitle = argumentAtPath(rawArgs, ["sessions", index, "title"]);
     const titleTruncated = typeof inputTitle === "string" && inputTitle.trim().length > 120;
     const model = models[index];
@@ -1237,7 +1237,7 @@ async function createUni-CLISessions(rawArgs: unknown, context: OpenCodeContext)
         title: session.title,
         titleTruncated,
         started: true,
-        model: labeluni-cliSessionModel(sessionModelOf(payload), catalog),
+        model: labeluniCliSessionModel(sessionModelOf(payload), catalog),
         route: `/workspace/${encodeURIComponent(workspace.id)}/session/${encodeURIComponent(payload.id)}`,
       };
     } catch (error) {
@@ -1249,8 +1249,8 @@ async function createUni-CLISessions(rawArgs: unknown, context: OpenCodeContext)
       };
     }
   }));
-  const created = results.filter((result): result is CreatedUni-CLISessionResult => result.ok);
-  const failures = results.filter((result): result is FailedUni-CLISessionResult => !result.ok);
+  const created = results.filter((result): result is CreatedUniCliSessionResult => result.ok);
+  const failures = results.filter((result): result is FailedUniCliSessionResult => !result.ok);
   // The desktop only receives engine events for its selected workspace, so a
   // session created here in any other workspace stays invisible until that
   // list is refetched. A session whose prompt failed still exists, so it is
@@ -1297,12 +1297,12 @@ function proposeAutomation(rawArgs: unknown, context: OpenCodeContext): object {
 }
 
 async function postJson(path: string, body: ExtensionActionPayload | Record<string, unknown>, signal?: AbortSignal, gmailAttachment = false): Promise<unknown> {
-  const transport = uni-cliReadTransport.getStore();
+  const transport = uniCliReadTransport.getStore();
   if (transport) return transport.post(path, body, signal);
   if (gmailAttachment && (!serverUrl() || !serverToken())) {
     throw new ApiError(409, "gmail_host_unavailable", "Uni-CLI host transport is unavailable. Run this tool from Uni-CLI.");
   }
-  const { url, token } = requireUni-CLIServer();
+  const { url, token } = requireUniCliServer();
   const response = await fetch(url + path, {
     signal,
     method: "POST",
@@ -1334,7 +1334,7 @@ function contextPayload(context: OpenCodeContext) {
   };
 }
 
-export const Uni-CLIExtensionsPreview = async (factoryInput?: unknown, _options?: unknown, dependencies?: GmailAttachmentDependencies) => {
+export const UniCliExtensionsPreview = async (factoryInput?: unknown, _options?: unknown, dependencies?: GmailAttachmentDependencies) => {
   const factoryContext = normalizeOpenCodeContext(factoryInput);
   const fulfillGmailAttachments = createGmailAttachmentFulfillment(
     dependencies ?? { callExtension: (request, signal) => postJson("/experimental/extensions/call", request, AbortSignal.any([signal, AbortSignal.timeout(130_000)]), true) },
@@ -1376,13 +1376,13 @@ export const Uni-CLIExtensionsPreview = async (factoryInput?: unknown, _options?
       args: {},
       async execute() {
         const [context, routing, skills, automations] = await Promise.all([
-          readuni-cliAgentContext(engineMcpStatusClient, engineMcpStatusDirectory),
-          resolveUni-CLIExtensionDiscoveryInstruction({ context: factoryContext }, fetch, {
+          readuniCliAgentContext(engineMcpStatusClient, engineMcpStatusDirectory),
+          resolveUniCliExtensionDiscoveryInstruction({ context: factoryContext }, fetch, {
             client: engineMcpStatusClient,
             directory: engineMcpStatusDirectory,
           }),
-          resolveUni-CLIConnectSkillInstruction(),
-          resolveUni-CLIAutomationInstruction(),
+          resolveUniCliConnectSkillInstruction(),
+          resolveUniCliAutomationInstruction(),
         ]);
         return JSON.stringify(
           { ...context, instructions: { routing, skills, automations } },
@@ -1393,17 +1393,17 @@ export const Uni-CLIExtensionsPreview = async (factoryInput?: unknown, _options?
     },
     uni-cli_query: {
       description: "Run a side-effect-free Uni-CLI affordance whose executor is Uni-CLI. Use the exact id and arguments from uni-cli_context. This reads backend or app state without navigation or window focus.",
-      args: uni-cliAffordanceRequestSchema.shape,
+      args: uniCliAffordanceRequestSchema.shape,
       async execute(rawArgs: unknown) {
-        return JSON.stringify(await queryuni-cliAffordance(rawArgs), null, 2);
+        return JSON.stringify(await queryuniCliAffordance(rawArgs), null, 2);
       },
     },
     uni-cli_execute: {
       description: "Execute an Uni-CLI command whose executor is Uni-CLI without activating the desktop window. Use the exact id and arguments from uni-cli_context, and pass expectedRevision for UI commands to prevent stale writes. If the descriptor names another executor tool, call that tool instead.",
-      args: uni-cliAffordanceRequestSchema.shape,
+      args: uniCliAffordanceRequestSchema.shape,
       async execute(rawArgs: unknown, context: OpenCodeContext) {
         const mergedContext = { ...factoryContext, ...normalizeOpenCodeContext(context) };
-        return JSON.stringify(await executeuni-cliAffordance(rawArgs, mergedContext), null, 2);
+        return JSON.stringify(await executeuniCliAffordance(rawArgs, mergedContext), null, 2);
       },
     },
     webmcp_list_tools: {

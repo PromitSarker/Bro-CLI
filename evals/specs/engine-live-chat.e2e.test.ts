@@ -59,7 +59,7 @@ test(`LIVE-CLOUD ${resolveEvalEngine()}: the real model retrieves, refreshes and
     // Learn aliases only from a successful tool response for this capability.
     for (const part of tools) {
       const metadata = record(part.state) && part.state.status === "completed" && record(part.state.metadata) ? part.state.metadata : null;
-      const content = metadata && record(metadata.uni-cliMcpApp) ? metadata.uni-cliMcpApp.structuredContent : null;
+      const content = metadata && record(metadata.uniCliMcpApp) ? metadata.uniCliMcpApp.structuredContent : null;
       if (record(content) && content.capability === cloud.capability && typeof content.name === "string") retrievedNames.add(content.name);
     }
     // V2 may wrap the Connect call in its execute tool's code input.

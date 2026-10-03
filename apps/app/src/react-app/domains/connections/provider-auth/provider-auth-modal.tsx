@@ -83,7 +83,7 @@ export type ProviderAuthModalProps = {
     code?: string,
   ) => Promise<{ connected: boolean; pending?: boolean; message?: string }>;
   onRefreshProviders?: () => Promise<unknown>;
-  uni-cliModelsState?: "included" | "off" | "unavailable";
+  uniCliModelsState?: "included" | "off" | "unavailable";
   organizationName?: string;
   organizationProviderIds?: ReadonlySet<string>;
   organizationProviderCount?: number;
@@ -679,7 +679,7 @@ export default function ProviderAuthModal(props: ProviderAuthModalProps) {
   };
 
   const searchText = searchQuery.trim().toLowerCase();
-  const showIncludedAuto = Boolean(props.uni-cliModelsState || props.connectedProviderIds.includes("uni-cli-free"))
+  const showIncludedAuto = Boolean(props.uniCliModelsState || props.connectedProviderIds.includes("uni-cli-free"))
     && (!searchText || "uni-cli models auto free".includes(searchText));
 
   const entrySubtitle = (entry: ProviderAuthEntry) => {
@@ -785,8 +785,8 @@ export default function ProviderAuthModal(props: ProviderAuthModalProps) {
                             <div className="truncate text-sm font-medium text-dls-text">Uni-CLI Models</div>
                             <div className="line-clamp-2 text-xs text-muted-foreground">{autoProviderSubtitle()}</div>
                           </div>
-                          {props.uni-cliModelsState === "off" || props.uni-cliModelsState === "unavailable" ? (
-                            <ProviderStatus tone="neutral">{props.uni-cliModelsState === "off" ? "Turned off" : "Unavailable"}</ProviderStatus>
+                          {props.uniCliModelsState === "off" || props.uniCliModelsState === "unavailable" ? (
+                            <ProviderStatus tone="neutral">{props.uniCliModelsState === "off" ? "Turned off" : "Unavailable"}</ProviderStatus>
                           ) : null}
                         </div>
                       ) : null}

@@ -48,13 +48,13 @@ export async function chatStreamContinuityLiveWeb(seed: Seed, context: { place: 
   const manifest: unknown = JSON.parse(await readFile(resolve(import.meta.dirname, "../../tmp/worlds/runtime", app.handle.name, "runtime.json"), "utf8"));
   if (!manifest || typeof manifest !== "object" || !("hostToken" in manifest) || typeof manifest.hostToken !== "string"
     || !("token" in manifest) || typeof manifest.token !== "string"
-    || !("uni-cliUrl" in manifest) || manifest.uni-cliUrl !== app.uni-cliUrl) throw new Error("Owned app-web runtime receipt mismatch");
+    || !("uniCliUrl" in manifest) || manifest.uniCliUrl !== app.uniCliUrl) throw new Error("Owned app-web runtime receipt mismatch");
   const clientToken = manifest.token;
   const headers = { "x-uni-cli-host-token": manifest.hostToken, "content-type": "application/json" };
   const provision = async (path: string, method: string, body: unknown) => {
     let response: Response;
     try {
-      response = await fetch(app.uni-cliUrl + path, {
+      response = await fetch(app.uniCliUrl + path, {
         method, headers, body: JSON.stringify(body), redirect: "error", signal: AbortSignal.timeout(60_000),
       });
     } catch { throw new Error(`Live provider provisioning failed at ${path} (details suppressed)`); }
@@ -82,7 +82,7 @@ export async function chatStreamContinuityLiveWeb(seed: Seed, context: { place: 
   return {
     app, workspace, session, neighbor, modelId, providerId, continuity,
     readNative: async (id: string) => {
-      const response = await fetch(app.uni-cliUrl + nativePath(id), {
+      const response = await fetch(app.uniCliUrl + nativePath(id), {
         headers: { Authorization: `Bearer ${clientToken}` }, redirect: "error", signal: AbortSignal.timeout(15_000),
       });
       const body: unknown = await response.json().catch(() => {

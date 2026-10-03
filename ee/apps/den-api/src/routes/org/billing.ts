@@ -3,13 +3,13 @@ import { describeRoute } from "hono-openapi"
 import { z } from "zod"
 import { ManagedModelsPolicyError } from "@uni-cli/types/den/managed-models-policy"
 import { getCloudWorkerBillingStatus } from "../../billing/polar.js"
-import { createInferenceCheckoutSession, createInferencePortalSession, createUni-CLIWebCheckout, createSeatCheckoutSession, getUni-CLIWebBillingSummary, getOrgBillingSummary, syncStripeCheckoutSession } from "../../stripe-billing.js"
+import { createInferenceCheckoutSession, createInferencePortalSession, createUniCliWebCheckout, createSeatCheckoutSession, getUniCliWebBillingSummary, getOrgBillingSummary, syncStripeCheckoutSession } from "../../stripe-billing.js"
 import { orgRoleRoute } from "../../middleware/index.js"
 import { forbiddenSchema, jsonResponse, unauthorizedSchema } from "../../openapi.js"
 import { getRequiredUserEmail } from "../../user.js"
 import { env } from "../../env.js"
 import { ORGANIZATION_SUPER_ADMIN_ROLE, organizationRoleValueSatisfies } from "../../organization-role-hierarchy.js"
-import { isUni-CLIWebAvailableForOrganization } from "../../uni-cli-web-availability.js"
+import { isUniCliWebAvailableForOrganization } from "../../uni-cli-web-availability.js"
 import type { OrgRouteVariables } from "./shared.js"
 import { ensureOrganizationAdmin, ensureOrganizationSuperAdmin, orgAccessFailureStatus } from "./shared.js"
 
@@ -23,12 +23,12 @@ const managedModelsPolicyErrorSchema = z.object({
   error: z.enum(["managed_models_disabled_for_dpa", "managed_models_policy_unavailable"]),
   message: z.string(),
 })
-const uni-cliWebUnavailableSchema = z.object({
+const uniCliWebUnavailableSchema = z.object({
   error: z.literal("uni-cli_web_not_available"),
   message: z.string(),
-}).meta({ ref: "Uni-CLIWebUnavailableError" })
+}).meta({ ref: "UniCliWebUnavailableError" })
 
-function uni-cliWebUnavailableResponse(): { error: "uni-cli_web_not_available"; message: string } {
+function uniCliWebUnavailableResponse(): { error: "uni-cli_web_not_available"; message: string } {
   return {
     error: "uni-cli_web_not_available",
     message: "Uni-CLI Web is not available for this organization.",
@@ -57,7 +57,7 @@ function checkoutSuccessUrl(c: { req: { raw: Request } }) {
   return env.stripe.billingSuccessUrl ?? `${getRequestOrigin(c)}/dashboard/billing/stripe/checking?session_id={CHECKOUT_SESSION_ID}&return=models`
 }
 
-function uni-cliWebCheckoutSuccessUrl(c: { req: { raw: Request } }) {
+function uniCliWebCheckoutSuccessUrl(c: { req: { raw: Request } }) {
   const fallback = `${getRequestOrigin(c)}/dashboard/billing/stripe/checking?session_id={CHECKOUT_SESSION_ID}&return=web`
   const configured = env.stripe.billingSuccessUrl
   if (!configured) {
@@ -108,7 +108,7 @@ function checkoutCancelUrl(c: { req: { raw: Request } }) {
   return env.stripe.billingCancelUrl ?? billingReturnUrl(c)
 }
 
-function uni-cliWebCheckoutCancelUrl(c: { req: { raw: Request } }) {
+function uniCliWebCheckoutCancelUrl(c: { req: { raw: Request } }) {
   const configured = env.stripe.billingCancelUrl
   try {
     const url = new URL(configured ?? getRequestOrigin(c), getRequestOrigin(c))
@@ -133,16 +133,16 @@ export function registerOrgBillingRoutes<T extends { Variables: OrgRouteVariable
       responses: {
         200: jsonResponse("Uni-CLI Web billing eligibility returned successfully.", stripeBillingResponseSchema),
         401: jsonResponse("The caller must be an organization member.", unauthorizedSchema),
-        404: jsonResponse("Uni-CLI Web is not available for this organization.", uni-cliWebUnavailableSchema),
+        404: jsonResponse("Uni-CLI Web is not available for this organization.", uniCliWebUnavailableSchema),
       },
     }),
     orgRoleRoute(["member"]),
     async (c) => {
       const payload = c.get("organizationContext")
-      if (!isUni-CLIWebAvailableForOrganization(payload.organization.metadata)) {
-        return c.json(uni-cliWebUnavailableResponse(), 404)
+      if (!isUniCliWebAvailableForOrganization(payload.organization.metadata)) {
+        return c.json(uniCliWebUnavailableResponse(), 404)
       }
-      const web = await getUni-CLIWebBillingSummary(payload.organization.id)
+      const web = await getUniCliWebBillingSummary(payload.organization.id)
       return c.json({ billing: { stripe: { web } } })
     },
   )
@@ -199,7 +199,7 @@ export function registerOrgBillingRoutes<T extends { Variables: OrgRouteVariable
         401: jsonResponse("The caller must be signed in to start billing.", unauthorizedSchema),
         403: jsonResponse("Billing access is denied.", z.union([forbiddenSchema, managedModelsPolicyErrorSchema])),
         503: jsonResponse("Managed Models policy is unavailable.", managedModelsPolicyErrorSchema),
-        404: jsonResponse("Uni-CLI Web is not available for this organization.", uni-cliWebUnavailableSchema),
+        404: jsonResponse("Uni-CLI Web is not available for this organization.", uniCliWebUnavailableSchema),
       },
     }),
     orgRoleRoute(["admin"]),
@@ -220,11 +220,11 @@ export function registerOrgBillingRoutes<T extends { Variables: OrgRouteVariable
       }
       const payload = c.get("organizationContext")
       const subscriptionType = parsed.data.type ?? "inference"
-      if (subscriptionType === "web" && !isUni-CLIWebAvailableForOrganization(payload.organization.metadata)) {
-        return c.json(uni-cliWebUnavailableResponse(), 404)
+      if (subscriptionType === "web" && !isUniCliWebAvailableForOrganization(payload.organization.metadata)) {
+        return c.json(uniCliWebUnavailableResponse(), 404)
       }
       if (subscriptionType === "web") {
-        const webBilling = await getUni-CLIWebBillingSummary(payload.organization.id)
+        const webBilling = await getUniCliWebBillingSummary(payload.organization.id)
         if (webBilling.complimentaryAccess) {
           return c.json({
             error: "uni-cli_web_complimentary_access_exists",
@@ -235,7 +235,7 @@ export function registerOrgBillingRoutes<T extends { Variables: OrgRouteVariable
       const createCheckoutSession = subscriptionType === "seat"
         ? createSeatCheckoutSession
         : subscriptionType === "web"
-          ? createUni-CLIWebCheckout
+          ? createUniCliWebCheckout
           : createInferenceCheckoutSession
       const session = await createCheckoutSession({
         organizationId: payload.organization.id,
@@ -245,9 +245,9 @@ export function registerOrgBillingRoutes<T extends { Variables: OrgRouteVariable
         successUrl: subscriptionType === "seat"
           ? seatCheckoutSuccessUrl(c)
           : subscriptionType === "web"
-            ? uni-cliWebCheckoutSuccessUrl(c)
+            ? uniCliWebCheckoutSuccessUrl(c)
             : checkoutSuccessUrl(c),
-        cancelUrl: subscriptionType === "web" ? uni-cliWebCheckoutCancelUrl(c) : checkoutCancelUrl(c),
+        cancelUrl: subscriptionType === "web" ? uniCliWebCheckoutCancelUrl(c) : checkoutCancelUrl(c),
       }).catch((error) => {
         if (error instanceof ManagedModelsPolicyError) return error
         if (error instanceof Error && error.message === "stripe_uni-cli_web_subscription_exists") {

@@ -24,8 +24,8 @@ export const ORGANIZATION_AUDIT_ACTIONS = {
   ssoConnectionEnabled: "organization.sso.connection_enabled",
   ssoConnectionDisabled: "organization.sso.connection_disabled",
   ssoConnectionDeleted: "organization.sso.connection_deleted",
-  uni-cliWebComplimentaryAccessGranted: "organization.uni-cli_web.complimentary_access_granted",
-  uni-cliWebComplimentaryAccessRevoked: "organization.uni-cli_web.complimentary_access_revoked",
+  uniCliWebComplimentaryAccessGranted: "organization.uni-cli_web.complimentary_access_granted",
+  uniCliWebComplimentaryAccessRevoked: "organization.uni-cli_web.complimentary_access_revoked",
   freeAutoRolloutUpdated: "organization.free_auto.rollout_updated",
   dpaSignedUpdated: "organization.dpa_signed.updated",
   webOriginApproved: "organization.web_origin.approved",
@@ -73,8 +73,8 @@ export function isOrganizationAuditAlertAction(action: OrganizationAuditAction) 
     case ORGANIZATION_AUDIT_ACTIONS.ssoConnectionEnabled:
     case ORGANIZATION_AUDIT_ACTIONS.ssoConnectionDisabled:
     case ORGANIZATION_AUDIT_ACTIONS.ssoConnectionDeleted:
-    case ORGANIZATION_AUDIT_ACTIONS.uni-cliWebComplimentaryAccessGranted:
-    case ORGANIZATION_AUDIT_ACTIONS.uni-cliWebComplimentaryAccessRevoked:
+    case ORGANIZATION_AUDIT_ACTIONS.uniCliWebComplimentaryAccessGranted:
+    case ORGANIZATION_AUDIT_ACTIONS.uniCliWebComplimentaryAccessRevoked:
     case ORGANIZATION_AUDIT_ACTIONS.freeAutoRolloutUpdated:
     case ORGANIZATION_AUDIT_ACTIONS.dpaSignedUpdated:
     case ORGANIZATION_AUDIT_ACTIONS.webOriginApproved:

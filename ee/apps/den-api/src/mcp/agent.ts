@@ -11,7 +11,7 @@ import {
 import { eq } from "@uni-cli-ee/den-db/drizzle"
 import { OrganizationTable } from "@uni-cli-ee/den-db/schema"
 import { normalizeDenTypeId } from "@uni-cli-ee/utils/typeid"
-import { uni-cliCloudMcpConnectionActionSchema } from "@uni-cli/types/den/mcp-connection-action"
+import { uniCliCloudMcpConnectionActionSchema } from "@uni-cli/types/den/mcp-connection-action"
 import type { Hono } from "hono"
 import type { RequestIdVariables } from "hono/request-id"
 import { z } from "zod"
@@ -137,7 +137,7 @@ export const EXECUTE_CAPABILITY_ANNOTATIONS: ToolAnnotations = {
   openWorldHint: true,
 }
 
-const connectionStatusOutputSchema = uni-cliCloudMcpConnectionActionSchema.extend({
+const connectionStatusOutputSchema = uniCliCloudMcpConnectionActionSchema.extend({
   layer: z.enum(["mcp_connection", "downstream_provider"]),
   errorCode: z.enum(["not_connected", "invalid_refresh_token", "invalid_grant", "unauthorized", "provider_error"]),
   message: z.string(),

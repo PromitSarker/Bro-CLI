@@ -11,7 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import { MCP_QUICK_CONNECT } from "../../../app/constants";
-import { isUni-CLIExtensionEnabled, UNICLI_EXTENSION_STATE_CHANGED } from "../settings/extension-state";
+import { isUniCliExtensionEnabled, UNICLI_EXTENSION_STATE_CHANGED } from "../settings/extension-state";
 import { desktopCapabilityConfig, desktopPolicyKeys } from "@uni-cli/types/den/desktop-policies";
 
 import {
@@ -32,13 +32,13 @@ import {
   type DenDesktopConfig,
 } from "../../../app/lib/den";
 import { applyBrandAppName, applyBrandIcon, getBrandIconState } from "../../../app/lib/desktop";
-import { createuni-cliServerClient } from "../../../app/lib/uni-cli-server";
+import { createuniCliServerClient } from "../../../app/lib/uni-cli-server";
 import {
   denSessionUpdatedEvent,
   denSettingsChangedEvent,
 } from "../../../app/lib/den-session-events";
 import { isDesktopRuntime } from "../../../app/lib/runtime-env";
-import { resolveuni-cliConnection } from "../../shell/uni-cli-connection";
+import { resolveuniCliConnection } from "../../shell/uni-cli-connection";
 import {
   createConnectPolicyReconciler,
   type ConnectPolicyReconciler,
@@ -104,7 +104,7 @@ export function resolveConnectStateToPush(config: DenDesktopConfig): boolean | n
  * be reapplied to the new generation.
  */
 export async function resolveConnectPolicyTarget(): Promise<ConnectPolicyTarget | null> {
-  const connection = await resolveuni-cliConnection();
+  const connection = await resolveuniCliConnection();
   if (!connection.normalizedBaseUrl || !connection.resolvedHostToken) return null;
   const { normalizedBaseUrl, resolvedToken, resolvedHostToken } = connection;
   // The desktop runtime reports a monotonic per-start generation; remote or
@@ -113,7 +113,7 @@ export async function resolveConnectPolicyTarget(): Promise<ConnectPolicyTarget 
   return {
     key: `${normalizedBaseUrl}\u0000${resolvedHostToken}\u0000${generation ?? ""}`,
     apply: async (connectEnabled) => {
-      await createuni-cliServerClient({
+      await createuniCliServerClient({
         baseUrl: normalizedBaseUrl,
         token: resolvedToken,
         hostToken: resolvedHostToken,
@@ -242,7 +242,7 @@ export function DesktopConfigProvider({ children }: DesktopConfigProviderProps) 
   useEffect(() => {
     const syncBrowserControl = () => {
       const browser = MCP_QUICK_CONNECT.find((item) => item.id === "uni-cli-browser");
-      const enabled = !!browser && isUni-CLIExtensionEnabled(browser) && config.allowBuiltInExtensions !== false;
+      const enabled = !!browser && isUniCliExtensionEnabled(browser) && config.allowBuiltInExtensions !== false;
       void window.__UNICLI_ELECTRON__?.browser?.setControlEnabled?.(enabled);
     };
     syncBrowserControl();

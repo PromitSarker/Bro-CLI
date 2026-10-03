@@ -91,7 +91,7 @@ export function WorkflowDetailScreen({ workflowId }: { workflowId: string }) {
         { value: "runs", label: "Runs", count: state.snapshots.length },
         { value: "sharing", label: "Sharing" },
       ];
-  const automateHref = `${runtimeConfig.uni-cliWebUrl.replace(/\/$/, "")}/automations?create=1&workflow=${encodeURIComponent(workflowId)}&version=${encodeURIComponent(state.detail.currentVersion.id)}`;
+  const automateHref = `${runtimeConfig.uniCliWebUrl.replace(/\/$/, "")}/automations?create=1&workflow=${encodeURIComponent(workflowId)}&version=${encodeURIComponent(state.detail.currentVersion.id)}`;
 
   function changeTab(next: WorkflowDetailTab) {
     const params = new URLSearchParams(searchParams.toString());

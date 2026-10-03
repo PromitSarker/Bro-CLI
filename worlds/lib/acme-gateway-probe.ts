@@ -7,7 +7,7 @@ export async function probeAcmeGateway(world: AcmeWebWorld) {
   const client = { authorization: `Bearer ${manifest.token}`, "content-type": "application/json" };
   const host = { "x-uni-cli-host-token": manifest.hostToken, "content-type": "application/json" };
   async function request(path: string, method = "GET", body?: unknown, headers = client): Promise<unknown> {
-    const response = await fetch(`${manifest.uni-cliUrl}${path}`, {
+    const response = await fetch(`${manifest.uniCliUrl}${path}`, {
       method, headers, body: body === undefined ? undefined : JSON.stringify(body), signal: AbortSignal.timeout(120_000),
     });
     if (!response.ok) throw new Error(`Acme probe ${method} ${path}: HTTP ${response.status}`);

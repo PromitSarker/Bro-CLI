@@ -1,5 +1,5 @@
 import { expect } from "vitest";
-import { denFetch, grantUni-CLIWebAccess } from "@uni-cli/behaviors";
+import { denFetch, grantUniCliWebAccess } from "@uni-cli/behaviors";
 import { addInitScript, navigate } from "@uni-cli/cdp";
 import { checkedExec, defaultDaytonaExec, execInSandbox } from "@uni-cli/hosts";
 import { installCloudStartupFaults } from "@uni-cli/labs";
@@ -31,7 +31,7 @@ async function cloudStartup(seed: Seed) {
   const rows = record(orgs.body) && Array.isArray(orgs.body.orgs) ? orgs.body.orgs.filter(record) : [];
   const orgId = rows[0]?.id;
   if (typeof orgId !== "string") throw new Error("Missing isolated test organization");
-  await grantUni-CLIWebAccess(den.admin, orgId, "Hosted workspace startup test");
+  await grantUniCliWebAccess(den.admin, orgId, "Hosted workspace startup test");
 
   const app = await seed.appWeb({ name: "web-workspace-startup", workspacePath: seed.tmpPath("startup") });
   const sandboxId = app.handle.sandboxId;

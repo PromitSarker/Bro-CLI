@@ -1,8 +1,8 @@
 import { createServer } from "node:http";
 import { afterEach, expect, vi } from "vitest";
 import { test } from "@uni-cli/testkit";
-import { uni-cliCatalogModels } from "@uni-cli/types/uni-cli-affordance";
-import { Uni-CLIExtensionsPreview } from "../../apps/server/src/opencode-plugins/uni-cli-extensions-preview";
+import { uniCliCatalogModels } from "@uni-cli/types/uni-cli-affordance";
+import { UniCliExtensionsPreview } from "../../apps/server/src/opencode-plugins/uni-cli-extensions-preview";
 import { listControlSessions, type ListControlSessionsState } from "../../apps/app/src/react-app/domains/session/control/list-control-sessions";
 
 const PROVIDER = "ipr_fixture_01";
@@ -17,7 +17,7 @@ const workspaces = [
   { id: "ws_two", name: "Two", path: "/tmp/model-alias-fixture/two" },
 ];
 
-function catalog(name = NAME): Parameters<typeof uni-cliCatalogModels>[0] {
+function catalog(name = NAME): Parameters<typeof uniCliCatalogModels>[0] {
   return {
     connected: [PROVIDER, OTHER_PROVIDER],
     all: [
@@ -109,7 +109,7 @@ async function witness() {
           const value = workspace ? catalogs.get(workspace.id) : undefined;
           if (!workspace || !value) return json(200, { ok: false, id: "models.list", code: "invalid-args", error: "Workspace missing" });
           if (unavailable.has(workspace.id)) return json(200, { ok: false, id: "models.list", code: "unavailable", error: "Fixture catalog unavailable" });
-          const models = host.denied.has(workspace.id) ? [] : uni-cliCatalogModels(value);
+          const models = host.denied.has(workspace.id) ? [] : uniCliCatalogModels(value);
           return json(200, { ok: true, id: "models.list", effects: { data: "read", ui: "none", external: false },
             result: { ok: true, workspaceId: workspace.id, models: models.map((model) => ({ ...model, available: true })) } });
         }
@@ -166,7 +166,7 @@ async function witness() {
   if (!address || typeof address === "string") throw new Error("Fixture failed to bind");
   vi.stubEnv("UNICLI_SERVER_URL", `http://127.0.0.1:${address.port}`);
   vi.stubEnv("UNICLI_SERVER_TOKEN", "fixture-token");
-  const plugin = await Uni-CLIExtensionsPreview({ directory: workspaces[0]?.path });
+  const plugin = await UniCliExtensionsPreview({ directory: workspaces[0]?.path });
   return {
     requests, catalogs, sessions, transcripts, unavailable, host,
     hostQueries: () => requests.filter((request) => isRecord(request.body) && request.body.kind === "query"),
@@ -428,7 +428,7 @@ modelCase("renderer session inventory uses each workspace catalog without changi
       ],
       ws_two: [{ id: "ses_two", model: { providerID: PROVIDER, id: MODEL, variant: "default" } }],
     },
-    modelCatalogByWorkspaceId: { ws_one: uni-cliCatalogModels(catalog()), ws_two: uni-cliCatalogModels(catalog("Workspace Two Luna")) },
+    modelCatalogByWorkspaceId: { ws_one: uniCliCatalogModels(catalog()), ws_two: uniCliCatalogModels(catalog("Workspace Two Luna")) },
     pinnedIds: [],
     statusFor: () => "idle",
   };

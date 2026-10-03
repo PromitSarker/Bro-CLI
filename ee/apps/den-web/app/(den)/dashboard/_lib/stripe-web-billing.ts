@@ -4,7 +4,7 @@ export const UNICLI_WEB_UNIT_AMOUNT = 5000;
 export const UNICLI_WEB_CURRENCY = "usd";
 export const UNICLI_WEB_INTERVAL = "month";
 
-export type Uni-CLIWebAccessSource = "subscription" | "complimentary" | null;
+export type UniCliWebAccessSource = "subscription" | "complimentary" | null;
 
 export type StripeWebSubscription = {
   status: string;
@@ -26,7 +26,7 @@ export type StripeWebBilling = {
   expectedMonthlyTotal: number;
   hasEligibleSubscription: boolean;
   hasAccess: boolean;
-  accessSource: Uni-CLIWebAccessSource;
+  accessSource: UniCliWebAccessSource;
   complimentaryAccess: boolean;
   subscription: StripeWebSubscription | null;
 };
@@ -68,7 +68,7 @@ export function parseStripeWebBilling(payload: unknown): StripeWebBilling | null
 
   const value = payload.billing.stripe.web;
   const subscription = parseSubscription(value.subscription);
-  const accessSource: Uni-CLIWebAccessSource | undefined = value.accessSource === "subscription" || value.accessSource === "complimentary"
+  const accessSource: UniCliWebAccessSource | undefined = value.accessSource === "subscription" || value.accessSource === "complimentary"
     ? value.accessSource
     : value.accessSource === null
       ? null
@@ -115,7 +115,7 @@ export function parseStripeWebBilling(payload: unknown): StripeWebBilling | null
   };
 }
 
-export function getUni-CLIWebQuantityDescription(quantity: number): string {
+export function getUniCliWebQuantityDescription(quantity: number): string {
   const memberLabel = quantity === 1 ? "member" : "members";
   return `${quantity} ${memberLabel}`;
 }

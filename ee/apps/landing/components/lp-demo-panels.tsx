@@ -10,7 +10,7 @@ import { LibraryView } from "./lp-demo-library";
 import { DemoMenu, focusRing } from "./lp-demo-ui";
 import { MCP_CLIENTS, MCP_SERVER_URL } from "./lp-mcp-clients";
 import { GoogleDriveMark, LinearMark, SkillMark, SlackMark } from "./lp-service-marks";
-import { Uni-CLIMark } from "./uni-cli-mark";
+import { UniCliMark } from "./uni-cli-mark";
 
 const selectClass = `flex h-7 items-center rounded-lg px-2.5 text-xs text-[#111827] shadow-[0_0_0_1px_#E5E7EB] hover:bg-[#F7F8FA] ${focusRing}`;
 
@@ -314,7 +314,7 @@ function BrowserTabButton({ selected, onSelect, label }: { selected: boolean; on
       onClick={onSelect}
       className={`flex h-8 min-w-0 items-center gap-2 rounded-t-lg px-3 text-xs transition-colors duration-150 sm:w-[210px] ${focusRing} ${selected ? "bg-white text-[#111827]" : "text-[#4B5563] hover:bg-[#F1F2F4]"}`}
     >
-      <Uni-CLIMark className="h-3 w-4 shrink-0" />
+      <UniCliMark className="h-3 w-4 shrink-0" />
       <span className="truncate">{label}</span>
     </button>
   );

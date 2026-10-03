@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto"
 import { runtimeProviderErrorCode } from "@uni-cli-ee/cloud-runtime/contract"
 import { cloudRuntimeErrorCode } from "@uni-cli-ee/cloud-runtime/orchestrator"
 import type { WorkerTable } from "@uni-cli-ee/den-db/schema"
-import { Uni-CLIWebAccessRequiredError } from "../uni-cli-web-access-error.js"
+import { UniCliWebAccessRequiredError } from "../uni-cli-web-access-error.js"
 
 export type CloudStartupFailureStage = "provisioning" | "recovery" | "runtime"
 
@@ -92,7 +92,7 @@ function classifyRuntimeError(error: unknown): CloudStartupFailureCode | null {
 }
 
 export function classifyCloudStartupFailure(error: unknown): CloudStartupFailureCode {
-  if (error instanceof Uni-CLIWebAccessRequiredError) return "web_access_required"
+  if (error instanceof UniCliWebAccessRequiredError) return "web_access_required"
   const message = errorMessage(error)
   // Storage waits surface as provider timeouts; keep them distinct from a
   // slow instance start.

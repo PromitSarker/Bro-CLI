@@ -3,8 +3,8 @@
 // needing only the shapes do not import the 2k-line client implementation —
 // den.ts re-exports everything here, so existing imports keep working.
 import type {
-  Uni-CLIExtensionManifest,
-  Uni-CLIExtensionSourceFormat,
+  UniCliExtensionManifest,
+  UniCliExtensionSourceFormat,
 } from "../extensions";
 
 export type DenSettings = {
@@ -91,8 +91,8 @@ export type DenOrgExtensionProjection = {
   id: string;
   name: string;
   description: string | null;
-  sourceFormat: Uni-CLIExtensionSourceFormat;
-  manifest: Uni-CLIExtensionManifest | null;
+  sourceFormat: UniCliExtensionSourceFormat;
+  manifest: UniCliExtensionManifest | null;
 };
 
 export type DenPluginCloudReadinessState = "ready" | "needs_signin" | "needs_admin_setup" | "desktop_only" | "not_synced";

@@ -10,11 +10,11 @@ export type OpenCodeContext = {
   workspaceID?: string;
 };
 
-export type Uni-CLIExtensionConnectState = {
+export type UniCliExtensionConnectState = {
   connectEnabled: boolean;
   connectCatalogEnabled: boolean;
   cloudMcpPresent: boolean;
-  cloudHealth: Uni-CLICloudHealthSummary | null;
+  cloudHealth: UniCliCloudHealthSummary | null;
   workspace?: {
     resolution?: string;
     id?: string | null;
@@ -23,7 +23,7 @@ export type Uni-CLIExtensionConnectState = {
   };
 };
 
-export type Uni-CLICloudHealthSummary = {
+export type UniCliCloudHealthSummary = {
   usable: boolean;
   usableByCurrentModel: boolean | null;
   phase: string;
@@ -50,7 +50,7 @@ export type Uni-CLICloudHealthSummary = {
   } | null;
 };
 
-type Uni-CLIFetch = (url: string, init?: RequestInit) => Promise<Response>;
+type UniCliFetch = (url: string, init?: RequestInit) => Promise<Response>;
 
 type EngineMcpStatusRequest = {
   query?: {
@@ -58,14 +58,14 @@ type EngineMcpStatusRequest = {
   };
 };
 
-export type Uni-CLIEngineMcpStatusClient = {
+export type UniCliEngineMcpStatusClient = {
   mcp: {
     status: (request?: EngineMcpStatusRequest) => Promise<unknown>;
   };
 };
 
-export type Uni-CLIEngineMcpStatusSource = {
-  client?: Uni-CLIEngineMcpStatusClient;
+export type UniCliEngineMcpStatusSource = {
+  client?: UniCliEngineMcpStatusClient;
   directory?: string;
 };
 
@@ -218,7 +218,7 @@ function serverToken(): string {
   return String(process.env.UNICLI_SERVER_TOKEN || "");
 }
 
-function requireUni-CLIServer(): { url: string; token: string } {
+function requireUniCliServer(): { url: string; token: string } {
   const url = serverUrl();
   const token = serverToken();
   if (!url || !token) {
@@ -269,15 +269,15 @@ function readEngineMcpStatus(result: unknown): EngineMcpStatusResult {
   return { found: true, status: readNestedString(entry, ["status"]) };
 }
 
-async function fetchEngineMcpStatus(input: unknown, engine: Uni-CLIEngineMcpStatusSource): Promise<EngineMcpStatusResult> {
+async function fetchEngineMcpStatus(input: unknown, engine: UniCliEngineMcpStatusSource): Promise<EngineMcpStatusResult> {
   if (!engine.client) return { found: false };
   const directory = readEngineDirectory(input, engine.directory);
   const request = directory ? { query: { directory } } : undefined;
   return readEngineMcpStatus(await engine.client.mcp.status(request));
 }
 
-async function fetchUni-CLIConnectState(input: unknown, fetcher: Uni-CLIFetch): Promise<Uni-CLIExtensionConnectState> {
-  const { url, token } = requireUni-CLIServer();
+async function fetchUniCliConnectState(input: unknown, fetcher: UniCliFetch): Promise<UniCliExtensionConnectState> {
+  const { url, token } = requireUniCliServer();
   const context = readContext(input);
   const providerModel = readProviderModel(input);
   const query = new URLSearchParams();
@@ -305,9 +305,9 @@ async function fetchUni-CLIConnectState(input: unknown, fetcher: Uni-CLIFetch): 
   };
 }
 
-export async function resolveUni-CLIConnectSkillInstruction(_input?: unknown, fetcher: Uni-CLIFetch = fetch): Promise<string> {
+export async function resolveUniCliConnectSkillInstruction(_input?: unknown, fetcher: UniCliFetch = fetch): Promise<string> {
   try {
-    const { url, token } = requireUni-CLIServer();
+    const { url, token } = requireUniCliServer();
     // Connect skills are server-scoped; workspace/directory query params are unused.
     const response = await fetcher(`${url}/experimental/connect/skills`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -319,9 +319,9 @@ export async function resolveUni-CLIConnectSkillInstruction(_input?: unknown, fe
   }
 }
 
-export async function resolveUni-CLIAutomationInstruction(_input?: unknown, fetcher: Uni-CLIFetch = fetch): Promise<string> {
+export async function resolveUniCliAutomationInstruction(_input?: unknown, fetcher: UniCliFetch = fetch): Promise<string> {
   try {
-    const { url, token } = requireUni-CLIServer();
+    const { url, token } = requireUniCliServer();
     // Automations are account-scoped like Connect skills, not per-workspace.
     const response = await fetcher(`${url}/experimental/connect/automations`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -333,7 +333,7 @@ export async function resolveUni-CLIAutomationInstruction(_input?: unknown, fetc
   }
 }
 
-export function composeUni-CLIExtensionDiscoveryInstruction(state: Uni-CLIExtensionConnectState | null): string {
+export function composeUniCliExtensionDiscoveryInstruction(state: UniCliExtensionConnectState | null): string {
   if (!state) return UNICLI_EXTENSION_DISCOVERY_INSTRUCTION;
   if (state.workspace?.resolution && state.workspace.resolution !== "resolved") return UNICLI_EXTENSION_DISCOVERY_INSTRUCTION;
   const health = state.cloudHealth;
@@ -364,14 +364,14 @@ export function composeSkillAuthoringInstruction(extensionInstruction: string): 
   return { mode: "local", prompt: UNICLI_LOCAL_SKILL_AUTHORING_INSTRUCTION };
 }
 
-export function resetUni-CLIExtensionDiscoveryInstructionCacheForTests(): void {
+export function resetUniCliExtensionDiscoveryInstructionCacheForTests(): void {
   // Retained for older tests; steering is deliberately uncached so repair is observed immediately.
 }
 
-export async function resolveUni-CLIExtensionDiscoveryInstruction(
+export async function resolveUniCliExtensionDiscoveryInstruction(
   input?: unknown,
-  fetcher: Uni-CLIFetch = fetch,
-  engine: Uni-CLIEngineMcpStatusSource = {},
+  fetcher: UniCliFetch = fetch,
+  engine: UniCliEngineMcpStatusSource = {},
 ): Promise<string> {
   if (engine.client) {
     try {
@@ -386,7 +386,7 @@ export async function resolveUni-CLIExtensionDiscoveryInstruction(
     }
   }
   try {
-    return composeUni-CLIExtensionDiscoveryInstruction(await fetchUni-CLIConnectState(input, fetcher));
+    return composeUniCliExtensionDiscoveryInstruction(await fetchUniCliConnectState(input, fetcher));
   } catch {
     return UNICLI_EXTENSION_DISCOVERY_INSTRUCTION;
   }

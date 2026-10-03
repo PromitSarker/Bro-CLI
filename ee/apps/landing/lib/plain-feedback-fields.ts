@@ -5,7 +5,7 @@ export type FeedbackContext = {
   entrypoint?: string;
   deployment?: string;
   appVersion?: string;
-  uni-cliServerVersion?: string;
+  uniCliServerVersion?: string;
   opencodeVersion?: string;
   osName?: string;
   osVersion?: string;

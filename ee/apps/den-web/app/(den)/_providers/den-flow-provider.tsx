@@ -25,8 +25,8 @@ import {
   type WorkerRuntimeSnapshot,
   type WorkerSummary,
   type WorkerStatusBucket,
-  builduni-cliAppConnectUrl,
-  builduni-cliDeepLink,
+  builduniCliAppConnectUrl,
+  builduniCliDeepLink,
   deriveOnboardingWorkerName,
   getAuthInfoForMode,
   getBillingSummary,
@@ -58,7 +58,7 @@ import {
   parseWorkspaceIdFromUrl,
   requestJson,
   resetPosthogUser,
-  resolveuni-cliWorkspaceUrl,
+  resolveuniCliWorkspaceUrl,
   withWorkerConnection,
   workerConnectionEquals,
   workerNeedsConnectionResolution,
@@ -67,7 +67,7 @@ import {
 import { EMPTY_RUNTIME_CONFIG, getRuntimeConfig, type DenWebRuntimeConfig } from "../_lib/runtime-config";
 import {
   getDesktopHandoffGrant,
-  getDesktopHandoffuni-cliUrl,
+  getDesktopHandoffuniCliUrl,
   rememberDesktopHandoffGrant,
 } from "../_lib/desktop-handoff";
 import {
@@ -189,8 +189,8 @@ type DenFlowContextValue = {
   events: LaunchEvent[];
   runtimeConfig: DenWebRuntimeConfig;
   runtimeConfigLoaded: boolean;
-  uni-cliDeepLink: string | null;
-  uni-cliAppConnectUrl: string | null;
+  uniCliDeepLink: string | null;
+  uniCliAppConnectUrl: string | null;
   hasWorkspaceScopedUrl: boolean;
   additionalWorkerNeedsPlan: boolean;
   selectedStatusMeta: { label: string; bucket: WorkerStatusBucket };
@@ -329,19 +329,19 @@ export function DenFlowProvider({ children }: { children: ReactNode }) {
       : selectedWorker
         ? listItemToWorker(selectedWorker, worker)
         : worker;
-  const { desktopUrl: uni-cliConnectUrl, webUrl: previewConnectUrl } = getWorkerConnectionTargets(activeWorker);
-  const { desktopToken: desktopuni-cliToken, webToken: webuni-cliToken } = getWorkerConnectionTokens(activeWorker);
-  const hasWorkspaceScopedUrl = Boolean(uni-cliConnectUrl && /\/w\/[^/?#]+/.test(uni-cliConnectUrl));
-  const uni-cliDeepLink = builduni-cliDeepLink(
-    uni-cliConnectUrl,
-    desktopuni-cliToken,
+  const { desktopUrl: uniCliConnectUrl, webUrl: previewConnectUrl } = getWorkerConnectionTargets(activeWorker);
+  const { desktopToken: desktopuniCliToken, webToken: webuniCliToken } = getWorkerConnectionTokens(activeWorker);
+  const hasWorkspaceScopedUrl = Boolean(uniCliConnectUrl && /\/w\/[^/?#]+/.test(uniCliConnectUrl));
+  const uniCliDeepLink = builduniCliDeepLink(
+    uniCliConnectUrl,
+    desktopuniCliToken,
     activeWorker?.workerId ?? null,
     activeWorker?.workerName ?? null
   );
-  const uni-cliAppConnectUrl = builduni-cliAppConnectUrl(
-    runtimeConfig.uni-cliAppConnectUrl,
+  const uniCliAppConnectUrl = builduniCliAppConnectUrl(
+    runtimeConfig.uniCliAppConnectUrl,
     previewConnectUrl,
-    webuni-cliToken,
+    webuniCliToken,
     activeWorker?.workerId ?? null,
     activeWorker?.workerName ?? null,
     { autoConnect: true }
@@ -687,13 +687,13 @@ export function DenFlowProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  async function withResolveduni-cliCredentials(candidate: WorkerLaunch, options: { quiet?: boolean } = {}) {
-    const existingConnectUrl = candidate.uni-cliUrl?.trim() ?? "";
+  async function withResolveduniCliCredentials(candidate: WorkerLaunch, options: { quiet?: boolean } = {}) {
+    const existingConnectUrl = candidate.uniCliUrl?.trim() ?? "";
     const existingWorkspaceId = candidate.workspaceId?.trim() ?? "";
     if (existingConnectUrl && (existingWorkspaceId || existingConnectUrl.includes("/v1/cloud/workers/"))) {
       return {
         ...candidate,
-        uni-cliUrl: existingConnectUrl,
+        uniCliUrl: existingConnectUrl,
         workspaceId: existingWorkspaceId
       };
     }
@@ -702,7 +702,7 @@ export function DenFlowProvider({ children }: { children: ReactNode }) {
     if (!instanceUrl) {
       return {
         ...candidate,
-        uni-cliUrl: null,
+        uniCliUrl: null,
         workspaceId: null
       };
     }
@@ -712,17 +712,17 @@ export function DenFlowProvider({ children }: { children: ReactNode }) {
       const mountedWorkspaceId = parseWorkspaceIdFromUrl(instanceUrl);
       return {
         ...candidate,
-        uni-cliUrl: instanceUrl.trim().replace(/\/+$/, ""),
+        uniCliUrl: instanceUrl.trim().replace(/\/+$/, ""),
         workspaceId: mountedWorkspaceId
       };
     }
 
     try {
-      const resolved = await resolveuni-cliWorkspaceUrl(instanceUrl, accessToken);
+      const resolved = await resolveuniCliWorkspaceUrl(instanceUrl, accessToken);
       if (resolved) {
         return {
           ...candidate,
-          uni-cliUrl: resolved.uni-cliUrl,
+          uniCliUrl: resolved.uniCliUrl,
           workspaceId: resolved.workspaceId
         };
       }
@@ -734,7 +734,7 @@ export function DenFlowProvider({ children }: { children: ReactNode }) {
 
     return {
       ...candidate,
-      uni-cliUrl: instanceUrl.trim().replace(/\/+$/, ""),
+      uniCliUrl: instanceUrl.trim().replace(/\/+$/, ""),
       workspaceId: parseWorkspaceIdFromUrl(instanceUrl)
     };
   }
@@ -1105,17 +1105,17 @@ export function DenFlowProvider({ children }: { children: ReactNode }) {
         return false;
       }
 
-      const uni-cliUrl = getDesktopHandoffuni-cliUrl(payload) ?? "";
-      if (!uni-cliUrl) {
+      const uniCliUrl = getDesktopHandoffuniCliUrl(payload) ?? "";
+      if (!uniCliUrl) {
         setAuthError("Desktop handoff succeeded, but no Uni-CLI redirect URL was returned.");
         return false;
       }
 
-      rememberDesktopHandoffGrant(getDesktopHandoffGrant(payload, uni-cliUrl));
-      setDesktopRedirectUrl(uni-cliUrl);
+      rememberDesktopHandoffGrant(getDesktopHandoffGrant(payload, uniCliUrl));
+      setDesktopRedirectUrl(uniCliUrl);
       persistContinuation(null);
       clearPendingAuthIntent();
-      window.location.assign(uni-cliUrl);
+      window.location.assign(uniCliUrl);
       return true;
     } catch (error) {
       if (continuationRef.current === current && epoch === sessionEpochRef.current) setAuthError(error instanceof Error ? error.message : "Failed to open Uni-CLI.");
@@ -1379,7 +1379,7 @@ export function DenFlowProvider({ children }: { children: ReactNode }) {
       }
       const latestRuntimeConfig = await getRuntimeConfig();
       setRuntimeConfig(latestRuntimeConfig);
-      const callbackURL = getSocialCallbackUrl(latestRuntimeConfig.uni-cliAuthCallbackUrl);
+      const callbackURL = getSocialCallbackUrl(latestRuntimeConfig.uniCliAuthCallbackUrl);
       const { response, payload } = await requestJson("/api/auth/sign-in/social", {
         method: "POST",
         body: JSON.stringify({
@@ -1589,7 +1589,7 @@ export function DenFlowProvider({ children }: { children: ReactNode }) {
         return "error" as const;
       }
 
-      const resolvedWorker = await withResolveduni-cliCredentials(parsedWorker);
+      const resolvedWorker = await withResolveduniCliCredentials(parsedWorker);
       setWorker(resolvedWorker);
       setWorkerLookupId(parsedWorker.workerId);
       setPendingRestoredWorkerId(null);
@@ -1695,8 +1695,8 @@ export function DenFlowProvider({ children }: { children: ReactNode }) {
               status: summary.status,
               provider: summary.provider,
               instanceUrl: summary.instanceUrl,
-              uni-cliUrl: summary.instanceUrl,
-              previewuni-cliUrl: null,
+              uniCliUrl: summary.instanceUrl,
+              previewuniCliUrl: null,
               previewExpiresAt: null,
               workspaceId: null,
               clientToken: null,
@@ -1706,7 +1706,7 @@ export function DenFlowProvider({ children }: { children: ReactNode }) {
 
       const shouldUpdateActiveWorker = worker?.workerId === summary.workerId || (!background && workerLookupId === summary.workerId);
       if (shouldUpdateActiveWorker) {
-        const resolvedWorker = await withResolveduni-cliCredentials(nextWorker, { quiet: true });
+        const resolvedWorker = await withResolveduniCliCredentials(nextWorker, { quiet: true });
         setWorker(resolvedWorker);
         setPendingRestoredWorkerId(null);
         if (!background) {
@@ -1764,7 +1764,7 @@ export function DenFlowProvider({ children }: { children: ReactNode }) {
       const { response, payload } = await requestJson(`/v1/workers/${encodeURIComponent(id)}/tokens`, {
         method: "POST",
         headers: authToken ? { Authorization: `Bearer ${authToken}` } : undefined,
-        body: JSON.stringify({ includeExpiringuni-cliUrl: true })
+        body: JSON.stringify({ includeExpiringuniCliUrl: true })
       });
 
       if (!response.ok) {
@@ -1794,8 +1794,8 @@ export function DenFlowProvider({ children }: { children: ReactNode }) {
               status: "unknown",
               provider: null,
               instanceUrl: null,
-              uni-cliUrl: tokens.uni-cliUrl,
-              previewuni-cliUrl: tokens.previewuni-cliUrl,
+              uniCliUrl: tokens.uniCliUrl,
+              previewuniCliUrl: tokens.previewuniCliUrl,
               previewExpiresAt: tokens.previewExpiresAt,
               workspaceId: tokens.workspaceId,
               clientToken: tokens.clientToken,
@@ -1803,7 +1803,7 @@ export function DenFlowProvider({ children }: { children: ReactNode }) {
               hostToken: tokens.hostToken
             };
 
-      const resolvedWorker = await withResolveduni-cliCredentials(nextWorker, { quiet: true });
+      const resolvedWorker = await withResolveduniCliCredentials(nextWorker, { quiet: true });
       setWorker((current) => {
         if (!current || current.workerId !== resolvedWorker.workerId) return resolvedWorker;
         if (workerConnectionEquals(current, resolvedWorker)) return current;
@@ -2138,10 +2138,10 @@ export function DenFlowProvider({ children }: { children: ReactNode }) {
 
       const restored: WorkerLaunch = {
         ...parsed,
-        uni-cliUrl: parsed.provider === "daytona" && parsed.uni-cliUrl && !parsed.uni-cliUrl.includes("/v1/cloud/workers/")
+        uniCliUrl: parsed.provider === "daytona" && parsed.uniCliUrl && !parsed.uniCliUrl.includes("/v1/cloud/workers/")
           ? null
-          : parsed.uni-cliUrl ?? parsed.instanceUrl,
-        previewuni-cliUrl: null,
+          : parsed.uniCliUrl ?? parsed.instanceUrl,
+        previewuniCliUrl: null,
         previewExpiresAt: null,
         workspaceId: parsed.workspaceId ?? parseWorkspaceIdFromUrl(parsed.instanceUrl ?? ""),
         clientToken: null,
@@ -2166,7 +2166,7 @@ export function DenFlowProvider({ children }: { children: ReactNode }) {
 
     const serializable: WorkerLaunch = {
       ...worker,
-      previewuni-cliUrl: null,
+      previewuniCliUrl: null,
       previewExpiresAt: null,
       clientToken: null,
       ownerToken: null,
@@ -2200,7 +2200,7 @@ export function DenFlowProvider({ children }: { children: ReactNode }) {
       cancelled = true;
       if (timer !== null) window.clearTimeout(timer);
     };
-  }, [actionBusy, launchBusy, pendingRestoredWorkerId, user?.id, worker?.workerId, worker?.status, worker?.clientToken, worker?.hostToken, worker?.uni-cliUrl, worker?.previewuni-cliUrl, worker?.previewExpiresAt]);
+  }, [actionBusy, launchBusy, pendingRestoredWorkerId, user?.id, worker?.workerId, worker?.status, worker?.clientToken, worker?.hostToken, worker?.uniCliUrl, worker?.previewuniCliUrl, worker?.previewExpiresAt]);
 
   const provisioningWorkerIds = workers
     .filter((item) => item.status === "provisioning")
@@ -2462,8 +2462,8 @@ export function DenFlowProvider({ children }: { children: ReactNode }) {
     events,
     runtimeConfig,
     runtimeConfigLoaded,
-    uni-cliDeepLink,
-    uni-cliAppConnectUrl,
+    uniCliDeepLink,
+    uniCliAppConnectUrl,
     hasWorkspaceScopedUrl,
     additionalWorkerNeedsPlan,
     selectedStatusMeta,

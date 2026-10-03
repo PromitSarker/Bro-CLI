@@ -30,8 +30,8 @@ const skillIndexSchema = z.object({
   }).passthrough()),
 }).passthrough();
 
-export type Uni-CLIConnectSkill = z.infer<typeof skillIndexSchema>["skills"][number];
-const catalogCache = new Map<string, { expiresAt: number; value: Promise<Uni-CLIConnectSkill[] | null> }>();
+export type UniCliConnectSkill = z.infer<typeof skillIndexSchema>["skills"][number];
+const catalogCache = new Map<string, { expiresAt: number; value: Promise<UniCliConnectSkill[] | null> }>();
 
 /**
  * Read the standards-shaped skill index through one uni-cli-cloud config.
@@ -39,7 +39,7 @@ const catalogCache = new Map<string, { expiresAt: number; value: Promise<Uni-CLI
  * is unusable (invalid URL, disabled, auth rejected, transport/protocol error)
  * so callers can fall back to another candidate config.
  */
-export async function readMcpSkillIndex(config: Record<string, unknown>, fetcher: McpFetch): Promise<Uni-CLIConnectSkill[] | null> {
+export async function readMcpSkillIndex(config: Record<string, unknown>, fetcher: McpFetch): Promise<UniCliConnectSkill[] | null> {
   const text = await readMcpResourceText({
     config,
     fetcher,
@@ -50,7 +50,7 @@ export async function readMcpSkillIndex(config: Record<string, unknown>, fetcher
   return skillIndexSchema.parse(JSON.parse(text)).skills;
 }
 
-async function readIndexCached(cloud: Record<string, unknown>, fetcher: McpFetch): Promise<Uni-CLIConnectSkill[] | null> {
+async function readIndexCached(cloud: Record<string, unknown>, fetcher: McpFetch): Promise<UniCliConnectSkill[] | null> {
   const cacheKey = createHash("sha256").update(JSON.stringify(cloud)).digest("hex");
   const cached = catalogCache.get(cacheKey);
   if (cached && cached.expiresAt > Date.now()) return await cached.value;
@@ -67,10 +67,10 @@ async function readIndexCached(cloud: Record<string, unknown>, fetcher: McpFetch
  * of shadowing a valid config, and the winning workspace copy is promoted to
  * server scope so Connect stays account-level.
  */
-export async function readUni-CLIConnectSkillCatalog(
+export async function readUniCliConnectSkillCatalog(
   config: ServerConfig,
   fetcher: McpFetch = externalFetch,
-): Promise<Uni-CLIConnectSkill[]> {
+): Promise<UniCliConnectSkill[]> {
   try {
     const serverCloud = await readConnectCloudMcp(config);
     const candidates: Array<{ cloud: Record<string, unknown>; source: "server" | "workspace" }> = [];
@@ -102,7 +102,7 @@ export async function readUni-CLIConnectSkillCatalog(
   }
 }
 
-export function resetUni-CLIConnectSkillCatalogCacheForTests(): void {
+export function resetUniCliConnectSkillCatalogCacheForTests(): void {
   catalogCache.clear();
 }
 
@@ -146,7 +146,7 @@ function collapseWhitespace(value: string): string {
  * execution needs, the element text carries the human-readable title and
  * description used to decide whether the skill applies.
  */
-export function renderUni-CLIConnectSkillInstruction(skills: Uni-CLIConnectSkill[]): string {
+export function renderUniCliConnectSkillInstruction(skills: UniCliConnectSkill[]): string {
   if (skills.length === 0) {
     logInjectedMarketplaceSkills([]);
     return "";

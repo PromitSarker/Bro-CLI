@@ -217,7 +217,7 @@ export type WorkspaceConnectionState = {
   checkedAt?: number | null;
 };
 
-export type Resetuni-cliMode = "onboarding" | "all";
+export type ResetuniCliMode = "onboarding" | "all";
 
 export type WorkspaceBlueprintStarterKind = "prompt" | "session" | "action";
 
@@ -270,7 +270,7 @@ export type WorkspaceBlueprint = {
   } | null;
 };
 
-export type Workspaceuni-cliConfig = {
+export type WorkspaceuniCliConfig = {
   version: number;
   workspace?: {
     name?: string | null;

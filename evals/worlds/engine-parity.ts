@@ -54,14 +54,14 @@ export async function engineParity(seed: Seed, { place }: { place: Place }, opti
     const paths = resolveHeadlessWorldRuntimePaths(fileURLToPath(new URL("../../", import.meta.url)), app.handle.name);
     const manifest = await readHeadlessRuntimeManifest(paths.runtimeManifestPath);
     if (!manifest) throw new Error("Missing owned app runtime manifest");
-    const ownerResponse = await fetch(`${app.uni-cliUrl}/tokens`, {
+    const ownerResponse = await fetch(`${app.uniCliUrl}/tokens`, {
       method: "POST", headers: { "X-Uni-CLI-Host-Token": manifest.hostToken, "Content-Type": "application/json" },
       body: JSON.stringify({ scope: "owner", label: "engine-parity-fixture" }),
     });
     const owner: unknown = await ownerResponse.json();
     if (ownerResponse.status !== 201 || !owner || typeof owner !== "object" || !("token" in owner) || typeof owner.token !== "string") throw new Error("Could not mint fixture owner token");
     const request = async (path: string, method = "GET", body?: unknown) => {
-      const response = await fetch(`${app.uni-cliUrl}${path}`, {
+      const response = await fetch(`${app.uniCliUrl}${path}`, {
         method, headers: { Authorization: `Bearer ${owner.token}`, "Content-Type": "application/json" },
         ...(body === undefined ? {} : { body: JSON.stringify(body) }), signal: AbortSignal.timeout(60_000),
       });
@@ -94,7 +94,7 @@ export async function engineParity(seed: Seed, { place }: { place: Place }, opti
       async observeNativeCatalog(workspaceId: string) {
         const abort = new AbortController();
         const events: Array<{ type: string; directory?: string }> = [];
-        const response = await fetch(`${app.uni-cliUrl}/workspace/${workspaceId}/opencode2/api/event`, {
+        const response = await fetch(`${app.uniCliUrl}/workspace/${workspaceId}/opencode2/api/event`, {
           headers: { Authorization: `Bearer ${owner.token}`, Accept: "text/event-stream" }, signal: abort.signal,
         });
         if (!response.ok || !response.body) throw new Error("Native event observer did not connect");
@@ -120,7 +120,7 @@ export async function engineParity(seed: Seed, { place }: { place: Place }, opti
         return { events, async stop() { abort.abort(); await reading; } };
       },
       async hostRequest(path: string, method: string, body?: unknown) {
-        const response = await fetch(`${app.uni-cliUrl}${path}`, {
+        const response = await fetch(`${app.uniCliUrl}${path}`, {
           method, headers: { "X-Uni-CLI-Host-Token": manifest.hostToken, "Content-Type": "application/json" },
           ...(body === undefined ? {} : { body: JSON.stringify(body) }), signal: AbortSignal.timeout(60_000),
         });

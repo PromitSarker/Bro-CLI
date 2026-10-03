@@ -22,7 +22,7 @@ import {
 } from "../capability-sources/external-mcp-connections.js"
 import { memberFacingMcpConnectionsEnabled } from "../capability-sources/external-mcp-rollout.js"
 import { organizationHasCapability } from "../organization-capabilities.js"
-import { getUni-CLIWebRuntimeAccess } from "../uni-cli-web-runtime-access.js"
+import { getUniCliWebRuntimeAccess } from "../uni-cli-web-runtime-access.js"
 import { listTeamsForMember } from "../orgs.js"
 import { canUseSlackAssistant, scopeKey, slackClient, type SlackEvent } from "./protocol.js"
 import { slackRuntimeForOrganization, type SlackRuntime } from "./headless.js"
@@ -208,7 +208,7 @@ export async function resolveSlackActor(installation: InstallationRow, slackUser
     db.select().from(OrganizationTable).where(eq(OrganizationTable.id, installation.organizationId)).limit(1),
     listTeamsForMember({ organizationId: installation.organizationId, memberId: member.id }),
     readConnectedAccountForExternalMcpIdentity({ connection, orgMembershipId: member.id }),
-    getUni-CLIWebRuntimeAccess(installation.organizationId),
+    getUniCliWebRuntimeAccess(installation.organizationId),
   ])
   const organization = organizations[0]
   // The headless runner needs no per-member Uni-CLI Web computer.

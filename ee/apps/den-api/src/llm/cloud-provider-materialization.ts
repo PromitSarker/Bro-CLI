@@ -416,7 +416,7 @@ function upsertEnvEntry(entries: EnvEntry[], key: string, value: string) {
   entries.push({ key: trimmedKey, value: trimmedValue })
 }
 
-function readUni-CLIInferenceBaseUrl(providerConfig: JsonRecord) {
+function readUniCliInferenceBaseUrl(providerConfig: JsonRecord) {
   const options = providerConfig.options
   if (isRecord(options)) {
     const baseUrl = readString(options.baseURL)
@@ -465,7 +465,7 @@ function providerEnvEntries(provider: CloudProviderMaterializationProvider): Env
   const primaryCredential = stored.apiKey?.trim() || entries.find((entry) => entry.key === primaryCredentialEnvName)?.value || ""
   if (provider.source === "uni-cli" && primaryCredential) {
     upsertEnvEntry(entries, "UNICLI_API_KEY", primaryCredential)
-    const baseUrl = readUni-CLIInferenceBaseUrl(provider.providerConfig)
+    const baseUrl = readUniCliInferenceBaseUrl(provider.providerConfig)
     if (baseUrl) {
       upsertEnvEntry(entries, "UNICLI_INFERENCE_BASE_URL", baseUrl)
     }

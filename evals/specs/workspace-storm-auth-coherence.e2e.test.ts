@@ -65,7 +65,7 @@ interface WorkspaceListing {
 /** The local server's own workspace registry, read the way the app reads it. */
 async function listWorkspaces(desktopApp: App): Promise<WorkspaceListing> {
   const value = await evalIn(desktopApp, async () => {
-    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uniCliServerInfo");
     if (!info?.running || !info.baseUrl) return { error: "local_server_unavailable" };
     const response = await fetch(String(info.baseUrl).replace(/\/+$/, "") + "/workspaces", {
       headers: { authorization: "Bearer " + String(info.ownerToken ?? info.clientToken ?? "") },
@@ -553,7 +553,7 @@ test.skipIf(!runnable)(
     });
     const coherentBeforeRelease = await eventually(
       () => evalIn(desktopApp, async () => {
-        const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uni-cliServerInfo");
+        const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uniCliServerInfo");
         const desktopState = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("workspaceBootstrap");
         const response = await fetch(String(info?.baseUrl ?? "").replace(/\/+$/, "") + "/workspaces", {
           headers: { authorization: "Bearer " + String(info?.ownerToken ?? info?.clientToken ?? "") },

@@ -5,12 +5,12 @@
  * that actually owns that workspace. For local workspaces that's the user's
  * local Uni-CLI server. For workspaces hosted on a remote Uni-CLI worker
  * (`id` starts with `rem_` and `workspaceType === "remote"`), it's the
- * `baseUrl`/`uni-cliHostUrl` and `uni-cliToken` saved on the workspace
+ * `baseUrl`/`uniCliHostUrl` and `uniCliToken` saved on the workspace
  * record, with the workspace addressed by its server-side id (the `rem_`
- * prefix is stripped, or `uni-cliWorkspaceId` is used when present).
+ * prefix is stripped, or `uniCliWorkspaceId` is used when present).
  *
  * Always go through {@link resolveWorkspaceEndpoint} when you need:
- *   - an `uni-cliServerClient` for a workspace
+ *   - an `uniCliServerClient` for a workspace
  *   - a mounted `/workspace/<id>` URL prefix
  *   - the `/opencode` URL for the OpenCode SDK
  *
@@ -21,9 +21,9 @@
 
 import type { WorkspaceInfo } from "./desktop";
 import {
-  builduni-cliWorkspaceBaseUrl,
-  createuni-cliServerClient,
-  type uni-cliServerClient,
+  builduniCliWorkspaceBaseUrl,
+  createuniCliServerClient,
+  type uniCliServerClient,
 } from "./uni-cli-server";
 
 export type ResolvedWorkspaceEndpoint = {
@@ -35,8 +35,8 @@ export type ResolvedWorkspaceEndpoint = {
   workspaceId: string;
   /** True when the workspace lives on a remote Uni-CLI worker, not the user's local server. */
   isRemote: boolean;
-  /** uni-cliServerClient bound to {@link baseUrl}/{@link token}. */
-  client: uni-cliServerClient;
+  /** uniCliServerClient bound to {@link baseUrl}/{@link token}. */
+  client: uniCliServerClient;
   /** Mounted base url: `<baseUrl>/workspace/<workspaceId>`. No trailing slash. */
   mountedBaseUrl: string;
   /** OpenCode SDK base url: `<mountedBaseUrl>/opencode`. */
@@ -53,11 +53,11 @@ type WorkspaceEndpointInput = Pick<
   | "id"
   | "workspaceType"
   | "baseUrl"
-  | "uni-cliHostUrl"
-  | "uni-cliToken"
-  | "uni-cliClientToken"
-  | "uni-cliHostToken"
-  | "uni-cliWorkspaceId"
+  | "uniCliHostUrl"
+  | "uniCliToken"
+  | "uniCliClientToken"
+  | "uniCliHostToken"
+  | "uniCliWorkspaceId"
 > | null | undefined;
 
 /**
@@ -80,22 +80,22 @@ export function workspaceServerId(workspace: WorkspaceEndpointInput): string {
   if (!workspace) return "";
   const id = workspace.id.trim();
   if (!isRemoteWorkspace(workspace)) return id;
-  const explicit = workspace.uni-cliWorkspaceId?.trim();
+  const explicit = workspace.uniCliWorkspaceId?.trim();
   if (explicit) return explicit;
   return id.startsWith("rem_") ? id.slice("rem_".length) : id;
 }
 
 function pickRemoteBaseUrl(workspace: WorkspaceEndpointInput): string {
   if (!workspace) return "";
-  return (workspace.baseUrl ?? workspace.uni-cliHostUrl ?? "").trim();
+  return (workspace.baseUrl ?? workspace.uniCliHostUrl ?? "").trim();
 }
 
 function pickRemoteToken(workspace: WorkspaceEndpointInput): string {
   if (!workspace) return "";
   return (
-    workspace.uni-cliToken ??
-    workspace.uni-cliClientToken ??
-    workspace.uni-cliHostToken ??
+    workspace.uniCliToken ??
+    workspace.uniCliClientToken ??
+    workspace.uniCliHostToken ??
     ""
   ).trim();
 }
@@ -117,12 +117,12 @@ export function resolveWorkspaceEndpoint(
     if (!baseUrl) return null;
     const token = pickRemoteToken(workspace);
     const workspaceId = workspaceServerId(workspace);
-    const client = createuni-cliServerClient({
+    const client = createuniCliServerClient({
       baseUrl,
       token: token || undefined,
     });
     const mountedBaseUrl = (
-      builduni-cliWorkspaceBaseUrl(baseUrl, workspaceId) ?? baseUrl
+      builduniCliWorkspaceBaseUrl(baseUrl, workspaceId) ?? baseUrl
     ).replace(/\/+$/, "");
     return {
       baseUrl,
@@ -139,12 +139,12 @@ export function resolveWorkspaceEndpoint(
   if (!localBaseUrl) return null;
   const localToken = (localServer.token ?? "").trim();
   const workspaceId = workspace.id.trim();
-  const client = createuni-cliServerClient({
+  const client = createuniCliServerClient({
     baseUrl: localBaseUrl,
     token: localToken || undefined,
   });
   const mountedBaseUrl = (
-    builduni-cliWorkspaceBaseUrl(localBaseUrl, workspaceId) ?? localBaseUrl
+    builduniCliWorkspaceBaseUrl(localBaseUrl, workspaceId) ?? localBaseUrl
   ).replace(/\/+$/, "");
   return {
     baseUrl: localBaseUrl,

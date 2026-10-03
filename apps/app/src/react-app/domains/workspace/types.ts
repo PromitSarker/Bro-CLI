@@ -3,10 +3,10 @@ import type { ComposerAttachment, WorkspacePreset } from "../../../app/types";
 export type CreateWorkspaceScreen = "chooser" | "local" | "remote";
 
 export type RemoteWorkspaceInput = {
-  uni-cliHostUrl?: string | null;
-  uni-cliToken?: string | null;
-  uni-cliClientToken?: string | null;
-  uni-cliHostToken?: string | null;
+  uniCliHostUrl?: string | null;
+  uniCliToken?: string | null;
+  uniCliClientToken?: string | null;
+  uniCliHostToken?: string | null;
   directory?: string | null;
   displayName?: string | null;
   closeModal?: boolean;
@@ -72,14 +72,14 @@ export type CreateRemoteWorkspaceModalProps = {
   open: boolean;
   onClose: () => void;
   onConfirm: (input: {
-    uni-cliHostUrl?: string | null;
-    uni-cliToken?: string | null;
+    uniCliHostUrl?: string | null;
+    uniCliToken?: string | null;
     directory?: string | null;
     displayName?: string | null;
   }) => void;
   initialValues?: {
-    uni-cliHostUrl?: string | null;
-    uni-cliToken?: string | null;
+    uniCliHostUrl?: string | null;
+    uniCliToken?: string | null;
     directory?: string | null;
     displayName?: string | null;
   };

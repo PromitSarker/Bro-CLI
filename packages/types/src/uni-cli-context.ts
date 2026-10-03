@@ -1,21 +1,21 @@
 import { z } from "zod"
 
 import {
-  uni-cliAffordanceDescriptorSchema,
-  uni-cliProviderRefSchema,
+  uniCliAffordanceDescriptorSchema,
+  uniCliProviderRefSchema,
 } from "./uni-cli-affordance.js"
-import { uni-cliFeatureContributionSchema } from "./uni-cli-provider.js"
+import { uniCliFeatureContributionSchema } from "./uni-cli-provider.js"
 
 export const UNICLI_CONTEXT_SCHEMA_VERSION = 1
 
-export const uni-cliSessionRefSchema = z.object({
+export const uniCliSessionRefSchema = z.object({
   workspaceId: z.string().trim().min(1),
   sessionId: z.string().trim().min(1),
   title: z.string().optional(),
 })
-export type uni-cliSessionRef = z.infer<typeof uni-cliSessionRefSchema>
+export type uniCliSessionRef = z.infer<typeof uniCliSessionRefSchema>
 
-export const uni-cliScreenSchema = z.discriminatedUnion("kind", [
+export const uniCliScreenSchema = z.discriminatedUnion("kind", [
   z.object({
     kind: z.literal("conversation"),
     route: z.string(),
@@ -33,9 +33,9 @@ export const uni-cliScreenSchema = z.discriminatedUnion("kind", [
     route: z.string(),
   }),
 ])
-export type uni-cliScreen = z.infer<typeof uni-cliScreenSchema>
+export type uniCliScreen = z.infer<typeof uniCliScreenSchema>
 
-export const uni-cliConversationLayoutSchema = z.discriminatedUnion("kind", [
+export const uniCliConversationLayoutSchema = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("empty") }),
   z.object({
     kind: z.literal("single"),
@@ -51,37 +51,37 @@ export const uni-cliConversationLayoutSchema = z.discriminatedUnion("kind", [
     focused: z.enum(["primary", "secondary"]),
   }),
 ])
-export type uni-cliConversationLayout = z.infer<typeof uni-cliConversationLayoutSchema>
+export type uniCliConversationLayout = z.infer<typeof uniCliConversationLayoutSchema>
 
-export const uni-cliPanelTabSchema = z.object({
+export const uniCliPanelTabSchema = z.object({
   id: z.string(),
   kind: z.enum(["browser", "artifact"]),
   label: z.string(),
   url: z.string().optional(),
   status: z.enum(["loading", "ready", "suspending", "suspended", "restoring"]).optional(),
 })
-export type uni-cliPanelTab = z.infer<typeof uni-cliPanelTabSchema>
+export type uniCliPanelTab = z.infer<typeof uniCliPanelTabSchema>
 
-export const uni-cliResourceDescriptorSchema = z.object({
+export const uniCliResourceDescriptorSchema = z.object({
   ref: z.string().trim().min(1),
   kind: z.enum(["workspace", "session", "screen", "side-panel", "settings"]),
   title: z.string(),
-  provider: uni-cliProviderRefSchema,
+  provider: uniCliProviderRefSchema,
   state: z.record(z.string(), z.unknown()),
 })
-export type uni-cliResourceDescriptor = z.infer<typeof uni-cliResourceDescriptorSchema>
+export type uniCliResourceDescriptor = z.infer<typeof uniCliResourceDescriptorSchema>
 
-export const uni-cliContextSnapshotSchema = z.object({
+export const uniCliContextSnapshotSchema = z.object({
   schemaVersion: z.literal(UNICLI_CONTEXT_SCHEMA_VERSION),
   revision: z.number().int().nonnegative(),
   capturedAt: z.string(),
   features: z.object({
     connectionQuestions: z.boolean().optional(),
   }).optional(),
-  screen: uni-cliScreenSchema,
+  screen: uniCliScreenSchema,
   conversations: z.object({
-    tabs: z.array(uni-cliSessionRefSchema),
-    layout: uni-cliConversationLayoutSchema,
+    tabs: z.array(uniCliSessionRefSchema),
+    layout: uniCliConversationLayoutSchema,
     pinnedSessionIds: z.array(z.string()),
   }),
   chrome: z.object({
@@ -99,11 +99,11 @@ export const uni-cliContextSnapshotSchema = z.object({
     open: z.boolean(),
     ownerSessionId: z.string().nullable(),
     kind: z.enum(["panel", "extensions"]).nullable(),
-    tabs: z.array(uni-cliPanelTabSchema),
+    tabs: z.array(uniCliPanelTabSchema),
     activeTabId: z.string().nullable(),
   }),
-  resources: z.array(uni-cliResourceDescriptorSchema),
-  availableAffordances: z.array(uni-cliAffordanceDescriptorSchema),
-  contributions: z.array(uni-cliFeatureContributionSchema),
+  resources: z.array(uniCliResourceDescriptorSchema),
+  availableAffordances: z.array(uniCliAffordanceDescriptorSchema),
+  contributions: z.array(uniCliFeatureContributionSchema),
 })
-export type uni-cliContextSnapshot = z.infer<typeof uni-cliContextSnapshotSchema>
+export type uniCliContextSnapshot = z.infer<typeof uniCliContextSnapshotSchema>

@@ -33,12 +33,12 @@ import {
 } from "../routes/org/shared.js"
 import { getExternalMcpConnection } from "../capability-sources/external-mcp-connections.js"
 import { getOrgOAuthClient } from "../capability-sources/oauth-credentials.js"
-import { getUni-CLIWebRuntimeAccess } from "../uni-cli-web-runtime-access.js"
+import { getUniCliWebRuntimeAccess } from "../uni-cli-web-runtime-access.js"
 import { listHeadlessModels, slackRuntimeForOrganization } from "./headless.js"
 import { organizationHasCapability } from "../organization-capabilities.js"
 import { publicRequestUrl } from "../request-url.js"
 import { getOrganizationContextForUser } from "../orgs.js"
-import { uni-cliYourConnectionsUrl } from "../mcp/connection-navigation.js"
+import { uniCliYourConnectionsUrl } from "../mcp/connection-navigation.js"
 import {
   BOT_SCOPES,
   isInvocation,
@@ -161,7 +161,7 @@ export function registerSlackAssistantRoutes<T extends { Variables: OrgRouteVari
       const connection = await getExternalMcpConnection({ organizationId: org.organization.id, connectionId })
       if (!connection) return c.json({ error: "not_found" }, 404)
       const installation = await getInstallation(connectionId)
-      const web = await getUni-CLIWebRuntimeAccess(org.organization.id)
+      const web = await getUniCliWebRuntimeAccess(org.organization.id)
       const catalog =
         slackRuntimeForOrganization(org.organization.metadata) === "headless" ? await listHeadlessModels() : null
       return c.json({
@@ -225,7 +225,7 @@ export function registerSlackAssistantRoutes<T extends { Variables: OrgRouteVari
       if (
         body.enabled &&
         slackRuntimeForOrganization(org.organization.metadata) !== "headless" &&
-        !(await getUni-CLIWebRuntimeAccess(org.organization.id)).hasAccess
+        !(await getUniCliWebRuntimeAccess(org.organization.id)).hasAccess
       )
         return c.json({ error: "uni-cli_web_access_required" }, 403)
       const previous = await getInstallation(connectionId)
@@ -557,7 +557,7 @@ export function registerSlackAssistantRoutes<T extends { Variables: OrgRouteVari
         }
         return c.json({
           response_type: "ephemeral",
-          text: `Connect your own Slack account in Uni-CLI: <${uni-cliYourConnectionsUrl(connectionId)}|Connect Uni-CLI>`,
+          text: `Connect your own Slack account in Uni-CLI: <${uniCliYourConnectionsUrl(connectionId)}|Connect Uni-CLI>`,
         })
       },
     )

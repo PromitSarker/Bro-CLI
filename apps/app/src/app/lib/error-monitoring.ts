@@ -19,7 +19,7 @@
  */
 import { isAnalyticsEnabled } from "./analytics";
 import { formatCrashDiagnostic, redactCrashText } from "./crash-diagnostics";
-import { getUni-CLIDeployment } from "./uni-cli-deployment";
+import { getUniCliDeployment } from "./uni-cli-deployment";
 import { isElectronRuntime } from "./runtime-env";
 
 declare global {
@@ -57,7 +57,7 @@ export function shouldMonitorWebErrors(input: WebErrorMonitoringGate): boolean {
 
 /**
  * Strip query and fragment before reporting: sign-in and deep-link URLs can
- * carry credentials (`grant`, `uni-cliToken`, `accessToken`) that must never
+ * carry credentials (`grant`, `uniCliToken`, `accessToken`) that must never
  * leave the page.
  */
 export function sanitizePageUrl(href: string): string {
@@ -163,7 +163,7 @@ export function startWebErrorMonitoring() {
   const dsn = String(import.meta.env.VITE_UNICLI_SENTRY_DSN ?? "").trim();
   const gate: WebErrorMonitoringGate = {
     dsn,
-    deployment: getUni-CLIDeployment(),
+    deployment: getUniCliDeployment(),
     electronRuntime: isElectronRuntime(),
   };
   if (!shouldMonitorWebErrors(gate)) return;

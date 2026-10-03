@@ -4,66 +4,66 @@ import { t } from "../../../i18n";
 import type { StartupPreference, WorkspaceDisplay } from "../../../app/types";
 import { isDesktopRuntime } from "../../../app/utils";
 import {
-  uni-cliServerInfo,
-  uni-cliServerRestart,
-  type uni-cliServerInfo,
+  uniCliServerInfo,
+  uniCliServerRestart,
+  type uniCliServerInfo,
 } from "../../../app/lib/desktop";
 import {
-  getuni-cliGatewayOrigin,
-  readuni-cliGatewayDenToken,
+  getuniCliGatewayOrigin,
+  readuniCliGatewayDenToken,
 } from "../../../app/lib/gateway-runtime";
 import {
-  clearuni-cliServerSettings,
-  createuni-cliServerClient,
-  isLoopbackuni-cliServerUrl,
-  normalizeuni-cliServerUrl,
-  readuni-cliServerSettings,
-  writeuni-cliServerSettings,
-  type uni-cliAuditEntry,
-  type uni-cliServerCapabilities,
-  type uni-cliServerClient,
-  type uni-cliServerDiagnostics,
-  type uni-cliServerError,
-  type uni-cliServerSettings,
-  type uni-cliServerStatus,
+  clearuniCliServerSettings,
+  createuniCliServerClient,
+  isLoopbackuniCliServerUrl,
+  normalizeuniCliServerUrl,
+  readuniCliServerSettings,
+  writeuniCliServerSettings,
+  type uniCliAuditEntry,
+  type uniCliServerCapabilities,
+  type uniCliServerClient,
+  type uniCliServerDiagnostics,
+  type uniCliServerError,
+  type uniCliServerSettings,
+  type uniCliServerStatus,
 } from "../../../app/lib/uni-cli-server";
 
 type SetStateAction<T> = T | ((current: T) => T);
 
 type RemoteWorkspaceInput = {
-  uni-cliHostUrl: string;
-  uni-cliToken?: string | null;
+  uniCliHostUrl: string;
+  uniCliToken?: string | null;
   directory?: string | null;
   displayName?: string | null;
 };
 
-export type uni-cliServerStoreSnapshot = {
-  uni-cliServerSettings: uni-cliServerSettings;
+export type uniCliServerStoreSnapshot = {
+  uniCliServerSettings: uniCliServerSettings;
   shareRemoteAccessBusy: boolean;
   shareRemoteAccessError: string | null;
-  uni-cliServerUrl: string;
-  uni-cliServerBaseUrl: string;
-  uni-cliServerAuth: { token?: string; hostToken?: string };
-  uni-cliServerClient: uni-cliServerClient | null;
-  uni-cliServerStatus: uni-cliServerStatus;
-  uni-cliServerCapabilities: uni-cliServerCapabilities | null;
-  uni-cliServerReady: boolean;
-  uni-cliServerWorkspaceReady: boolean;
-  resolveduni-cliCapabilities: uni-cliServerCapabilities | null;
-  uni-cliServerCanWriteSkills: boolean;
-  uni-cliServerCanWritePlugins: boolean;
-  uni-cliServerHostInfo: uni-cliServerInfo | null;
-  uni-cliServerDiagnostics: uni-cliServerDiagnostics | null;
-  uni-cliReconnectBusy: boolean;
-  uni-cliAuditEntries: uni-cliAuditEntry[];
-  uni-cliAuditStatus: "idle" | "loading" | "error";
-  uni-cliAuditError: string | null;
+  uniCliServerUrl: string;
+  uniCliServerBaseUrl: string;
+  uniCliServerAuth: { token?: string; hostToken?: string };
+  uniCliServerClient: uniCliServerClient | null;
+  uniCliServerStatus: uniCliServerStatus;
+  uniCliServerCapabilities: uniCliServerCapabilities | null;
+  uniCliServerReady: boolean;
+  uniCliServerWorkspaceReady: boolean;
+  resolveduniCliCapabilities: uniCliServerCapabilities | null;
+  uniCliServerCanWriteSkills: boolean;
+  uniCliServerCanWritePlugins: boolean;
+  uniCliServerHostInfo: uniCliServerInfo | null;
+  uniCliServerDiagnostics: uniCliServerDiagnostics | null;
+  uniCliReconnectBusy: boolean;
+  uniCliAuditEntries: uniCliAuditEntry[];
+  uniCliAuditStatus: "idle" | "loading" | "error";
+  uniCliAuditError: string | null;
   devtoolsWorkspaceId: string | null;
 };
 
-export type uni-cliServerStore = ReturnType<typeof createuni-cliServerStore>;
+export type uniCliServerStore = ReturnType<typeof createuniCliServerStore>;
 
-type Createuni-cliServerStoreOptions = {
+type CreateuniCliServerStoreOptions = {
   startupPreference: () => StartupPreference | null;
   documentVisible: () => boolean;
   developerMode: () => boolean;
@@ -75,63 +75,63 @@ type Createuni-cliServerStoreOptions = {
 };
 
 type MutableState = {
-  uni-cliServerSettings: uni-cliServerSettings;
+  uniCliServerSettings: uniCliServerSettings;
   shareRemoteAccessBusy: boolean;
   shareRemoteAccessError: string | null;
-  uni-cliServerUrl: string;
-  uni-cliServerStatus: uni-cliServerStatus;
-  uni-cliServerCapabilities: uni-cliServerCapabilities | null;
-  uni-cliServerCheckedAt: number | null;
-  uni-cliServerHostInfo: uni-cliServerInfo | null;
-  uni-cliServerHostInfoReady: boolean;
-  uni-cliServerDiagnostics: uni-cliServerDiagnostics | null;
-  uni-cliReconnectBusy: boolean;
-  uni-cliAuditEntries: uni-cliAuditEntry[];
-  uni-cliAuditStatus: "idle" | "loading" | "error";
-  uni-cliAuditError: string | null;
+  uniCliServerUrl: string;
+  uniCliServerStatus: uniCliServerStatus;
+  uniCliServerCapabilities: uniCliServerCapabilities | null;
+  uniCliServerCheckedAt: number | null;
+  uniCliServerHostInfo: uniCliServerInfo | null;
+  uniCliServerHostInfoReady: boolean;
+  uniCliServerDiagnostics: uniCliServerDiagnostics | null;
+  uniCliReconnectBusy: boolean;
+  uniCliAuditEntries: uniCliAuditEntry[];
+  uniCliAuditStatus: "idle" | "loading" | "error";
+  uniCliAuditError: string | null;
   devtoolsWorkspaceId: string | null;
 };
 
 const applyStateAction = <T,>(current: T, next: SetStateAction<T>) =>
   typeof next === "function" ? (next as (value: T) => T)(current) : next;
 
-function sameuni-cliServerSnapshot(
-  current: uni-cliServerStoreSnapshot,
-  next: uni-cliServerStoreSnapshot,
+function sameuniCliServerSnapshot(
+  current: uniCliServerStoreSnapshot,
+  next: uniCliServerStoreSnapshot,
 ): boolean {
   return (
-    current.uni-cliServerSettings === next.uni-cliServerSettings &&
+    current.uniCliServerSettings === next.uniCliServerSettings &&
     current.shareRemoteAccessBusy === next.shareRemoteAccessBusy &&
     current.shareRemoteAccessError === next.shareRemoteAccessError &&
-    current.uni-cliServerUrl === next.uni-cliServerUrl &&
-    current.uni-cliServerBaseUrl === next.uni-cliServerBaseUrl &&
-    current.uni-cliServerAuth.token === next.uni-cliServerAuth.token &&
-    current.uni-cliServerAuth.hostToken === next.uni-cliServerAuth.hostToken &&
-    current.uni-cliServerClient === next.uni-cliServerClient &&
-    current.uni-cliServerStatus === next.uni-cliServerStatus &&
-    current.uni-cliServerCapabilities === next.uni-cliServerCapabilities &&
-    current.uni-cliServerReady === next.uni-cliServerReady &&
-    current.uni-cliServerWorkspaceReady === next.uni-cliServerWorkspaceReady &&
-    current.resolveduni-cliCapabilities === next.resolveduni-cliCapabilities &&
-    current.uni-cliServerCanWriteSkills === next.uni-cliServerCanWriteSkills &&
-    current.uni-cliServerCanWritePlugins === next.uni-cliServerCanWritePlugins &&
-    current.uni-cliServerHostInfo === next.uni-cliServerHostInfo &&
-    current.uni-cliServerDiagnostics === next.uni-cliServerDiagnostics &&
-    current.uni-cliReconnectBusy === next.uni-cliReconnectBusy &&
-    current.uni-cliAuditEntries === next.uni-cliAuditEntries &&
-    current.uni-cliAuditStatus === next.uni-cliAuditStatus &&
-    current.uni-cliAuditError === next.uni-cliAuditError &&
+    current.uniCliServerUrl === next.uniCliServerUrl &&
+    current.uniCliServerBaseUrl === next.uniCliServerBaseUrl &&
+    current.uniCliServerAuth.token === next.uniCliServerAuth.token &&
+    current.uniCliServerAuth.hostToken === next.uniCliServerAuth.hostToken &&
+    current.uniCliServerClient === next.uniCliServerClient &&
+    current.uniCliServerStatus === next.uniCliServerStatus &&
+    current.uniCliServerCapabilities === next.uniCliServerCapabilities &&
+    current.uniCliServerReady === next.uniCliServerReady &&
+    current.uniCliServerWorkspaceReady === next.uniCliServerWorkspaceReady &&
+    current.resolveduniCliCapabilities === next.resolveduniCliCapabilities &&
+    current.uniCliServerCanWriteSkills === next.uniCliServerCanWriteSkills &&
+    current.uniCliServerCanWritePlugins === next.uniCliServerCanWritePlugins &&
+    current.uniCliServerHostInfo === next.uniCliServerHostInfo &&
+    current.uniCliServerDiagnostics === next.uniCliServerDiagnostics &&
+    current.uniCliReconnectBusy === next.uniCliReconnectBusy &&
+    current.uniCliAuditEntries === next.uniCliAuditEntries &&
+    current.uniCliAuditStatus === next.uniCliAuditStatus &&
+    current.uniCliAuditError === next.uniCliAuditError &&
     current.devtoolsWorkspaceId === next.devtoolsWorkspaceId
   );
 }
 
-export function createuni-cliServerStore(options: Createuni-cliServerStoreOptions) {
+export function createuniCliServerStore(options: CreateuniCliServerStoreOptions) {
   const bootStartedAt = Date.now();
   const listeners = new Set<() => void>();
   const intervals = new Map<string, number>();
 
   let clientCacheKey = "";
-  let clientCacheValue: uni-cliServerClient | null = null;
+  let clientCacheValue: uniCliServerClient | null = null;
   let started = false;
   let disposed = false;
   let healthTimeoutId: number | null = null;
@@ -139,23 +139,23 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
   let healthDelayMs = 10_000;
   let consecutiveHealthFailures = 0;
   let visibilityChangeHandler: (() => void) | null = null;
-  let snapshot: uni-cliServerStoreSnapshot | undefined;
+  let snapshot: uniCliServerStoreSnapshot | undefined;
 
   let state: MutableState = {
-    uni-cliServerSettings: readuni-cliServerSettings(),
+    uniCliServerSettings: readuniCliServerSettings(),
     shareRemoteAccessBusy: false,
     shareRemoteAccessError: null,
-    uni-cliServerUrl: "",
-    uni-cliServerStatus: "disconnected",
-    uni-cliServerCapabilities: null,
-    uni-cliServerCheckedAt: null,
-    uni-cliServerHostInfo: null,
-    uni-cliServerHostInfoReady: !isDesktopRuntime(),
-    uni-cliServerDiagnostics: null,
-    uni-cliReconnectBusy: false,
-    uni-cliAuditEntries: [],
-    uni-cliAuditStatus: "idle",
-    uni-cliAuditError: null,
+    uniCliServerUrl: "",
+    uniCliServerStatus: "disconnected",
+    uniCliServerCapabilities: null,
+    uniCliServerCheckedAt: null,
+    uniCliServerHostInfo: null,
+    uniCliServerHostInfoReady: !isDesktopRuntime(),
+    uniCliServerDiagnostics: null,
+    uniCliReconnectBusy: false,
+    uniCliAuditEntries: [],
+    uniCliAuditStatus: "idle",
+    uniCliAuditError: null,
     devtoolsWorkspaceId: null,
   };
 
@@ -164,15 +164,15 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
   };
 
   const getBaseUrl = () => {
-    const gatewayOrigin = getuni-cliGatewayOrigin();
-    if (gatewayOrigin) return normalizeuni-cliServerUrl(gatewayOrigin) ?? "";
+    const gatewayOrigin = getuniCliGatewayOrigin();
+    if (gatewayOrigin) return normalizeuniCliServerUrl(gatewayOrigin) ?? "";
 
     const pref = options.startupPreference();
-    const hostInfo = state.uni-cliServerHostInfo;
-    const settingsUrl = normalizeuni-cliServerUrl(state.uni-cliServerSettings.urlOverride ?? "") ?? "";
+    const hostInfo = state.uniCliServerHostInfo;
+    const settingsUrl = normalizeuniCliServerUrl(state.uniCliServerSettings.urlOverride ?? "") ?? "";
 
     if (pref === "local") return hostInfo?.baseUrl ?? "";
-    if (pref === "server" && settingsUrl && isLoopbackuni-cliServerUrl(settingsUrl) && hostInfo?.baseUrl) {
+    if (pref === "server" && settingsUrl && isLoopbackuniCliServerUrl(settingsUrl) && hostInfo?.baseUrl) {
       return hostInfo.baseUrl;
     }
     if (pref === "server") return settingsUrl;
@@ -180,24 +180,24 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
   };
 
   const getAuth = () => {
-    const gatewayOrigin = getuni-cliGatewayOrigin();
+    const gatewayOrigin = getuniCliGatewayOrigin();
     if (gatewayOrigin) {
-      const token = readuni-cliGatewayDenToken().trim();
+      const token = readuniCliGatewayDenToken().trim();
       return { token: token || undefined, hostToken: undefined };
     }
 
     const pref = options.startupPreference();
-    const hostInfo = state.uni-cliServerHostInfo;
-    const settingsUrl = normalizeuni-cliServerUrl(state.uni-cliServerSettings.urlOverride ?? "") ?? "";
-    const settingsToken = state.uni-cliServerSettings.token?.trim() ?? "";
-    const settingsHostToken = state.uni-cliServerSettings.hostToken?.trim() ?? "";
+    const hostInfo = state.uniCliServerHostInfo;
+    const settingsUrl = normalizeuniCliServerUrl(state.uniCliServerSettings.urlOverride ?? "") ?? "";
+    const settingsToken = state.uniCliServerSettings.token?.trim() ?? "";
+    const settingsHostToken = state.uniCliServerSettings.hostToken?.trim() ?? "";
     const clientToken = hostInfo?.clientToken?.trim() ?? "";
     const hostToken = hostInfo?.hostToken?.trim() ?? "";
 
     if (pref === "local") {
       return { token: clientToken || undefined, hostToken: hostToken || undefined };
     }
-    if (pref === "server" && settingsUrl && isLoopbackuni-cliServerUrl(settingsUrl) && hostInfo?.baseUrl) {
+    if (pref === "server" && settingsUrl && isLoopbackuniCliServerUrl(settingsUrl) && hostInfo?.baseUrl) {
       return {
         token: clientToken || settingsToken || undefined,
         hostToken: hostToken || settingsHostToken || undefined,
@@ -206,7 +206,7 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
     if (pref === "server") {
       return {
         token: settingsToken || undefined,
-        hostToken: settingsUrl && isLoopbackuni-cliServerUrl(settingsUrl) ? settingsHostToken || undefined : undefined,
+        hostToken: settingsUrl && isLoopbackuniCliServerUrl(settingsUrl) ? settingsHostToken || undefined : undefined,
       };
     }
     if (hostInfo?.baseUrl) {
@@ -214,7 +214,7 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
     }
     return {
       token: settingsToken || undefined,
-      hostToken: settingsUrl && isLoopbackuni-cliServerUrl(settingsUrl) ? settingsHostToken || undefined : undefined,
+      hostToken: settingsUrl && isLoopbackuniCliServerUrl(settingsUrl) ? settingsHostToken || undefined : undefined,
     };
   };
 
@@ -230,7 +230,7 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
     const key = `${baseUrl}::${auth.token ?? ""}::${auth.hostToken ?? ""}`;
     if (key !== clientCacheKey) {
       clientCacheKey = key;
-      clientCacheValue = createuni-cliServerClient({
+      clientCacheValue = createuniCliServerClient({
         baseUrl,
         token: auth.token,
         hostToken: auth.hostToken,
@@ -240,51 +240,51 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
   };
 
   const refreshSnapshot = (): boolean => {
-    const uni-cliServerBaseUrl = getBaseUrl().trim();
-    const uni-cliServerAuth = getAuth();
-    const uni-cliServerClient = getClient();
-    const uni-cliServerReady = state.uni-cliServerStatus === "connected";
-    const uni-cliServerWorkspaceReady = Boolean(options.runtimeWorkspaceId());
-    const resolveduni-cliCapabilities = state.uni-cliServerCapabilities;
+    const uniCliServerBaseUrl = getBaseUrl().trim();
+    const uniCliServerAuth = getAuth();
+    const uniCliServerClient = getClient();
+    const uniCliServerReady = state.uniCliServerStatus === "connected";
+    const uniCliServerWorkspaceReady = Boolean(options.runtimeWorkspaceId());
+    const resolveduniCliCapabilities = state.uniCliServerCapabilities;
 
     const pref = options.startupPreference();
-    const info = state.uni-cliServerHostInfo;
+    const info = state.uniCliServerHostInfo;
     const hostUrl = info?.connectUrl ?? info?.lanUrl ?? info?.mdnsUrl ?? info?.baseUrl ?? "";
-    const settingsUrl = normalizeuni-cliServerUrl(state.uni-cliServerSettings.urlOverride ?? "") ?? "";
+    const settingsUrl = normalizeuniCliServerUrl(state.uniCliServerSettings.urlOverride ?? "") ?? "";
 
-    let uni-cliServerUrl = hostUrl || settingsUrl;
-    if (pref === "local") uni-cliServerUrl = hostUrl;
-    if (pref === "server") uni-cliServerUrl = settingsUrl;
-    state.uni-cliServerUrl = uni-cliServerUrl;
+    let uniCliServerUrl = hostUrl || settingsUrl;
+    if (pref === "local") uniCliServerUrl = hostUrl;
+    if (pref === "server") uniCliServerUrl = settingsUrl;
+    state.uniCliServerUrl = uniCliServerUrl;
 
-    const nextSnapshot: uni-cliServerStoreSnapshot = {
-      uni-cliServerSettings: state.uni-cliServerSettings,
+    const nextSnapshot: uniCliServerStoreSnapshot = {
+      uniCliServerSettings: state.uniCliServerSettings,
       shareRemoteAccessBusy: state.shareRemoteAccessBusy,
       shareRemoteAccessError: state.shareRemoteAccessError,
-      uni-cliServerUrl,
-      uni-cliServerBaseUrl,
-      uni-cliServerAuth,
-      uni-cliServerClient,
-      uni-cliServerStatus: state.uni-cliServerStatus,
-      uni-cliServerCapabilities: state.uni-cliServerCapabilities,
-      uni-cliServerReady,
-      uni-cliServerWorkspaceReady,
-      resolveduni-cliCapabilities,
-      uni-cliServerCanWriteSkills:
-        uni-cliServerReady &&
-        (resolveduni-cliCapabilities?.skills?.write ?? false),
-      uni-cliServerCanWritePlugins:
-        uni-cliServerReady &&
-        (resolveduni-cliCapabilities?.plugins?.write ?? false),
-      uni-cliServerHostInfo: state.uni-cliServerHostInfo,
-      uni-cliServerDiagnostics: state.uni-cliServerDiagnostics,
-      uni-cliReconnectBusy: state.uni-cliReconnectBusy,
-      uni-cliAuditEntries: state.uni-cliAuditEntries,
-      uni-cliAuditStatus: state.uni-cliAuditStatus,
-      uni-cliAuditError: state.uni-cliAuditError,
+      uniCliServerUrl,
+      uniCliServerBaseUrl,
+      uniCliServerAuth,
+      uniCliServerClient,
+      uniCliServerStatus: state.uniCliServerStatus,
+      uniCliServerCapabilities: state.uniCliServerCapabilities,
+      uniCliServerReady,
+      uniCliServerWorkspaceReady,
+      resolveduniCliCapabilities,
+      uniCliServerCanWriteSkills:
+        uniCliServerReady &&
+        (resolveduniCliCapabilities?.skills?.write ?? false),
+      uniCliServerCanWritePlugins:
+        uniCliServerReady &&
+        (resolveduniCliCapabilities?.plugins?.write ?? false),
+      uniCliServerHostInfo: state.uniCliServerHostInfo,
+      uniCliServerDiagnostics: state.uniCliServerDiagnostics,
+      uniCliReconnectBusy: state.uniCliReconnectBusy,
+      uniCliAuditEntries: state.uniCliAuditEntries,
+      uniCliAuditStatus: state.uniCliAuditStatus,
+      uniCliAuditError: state.uniCliAuditError,
       devtoolsWorkspaceId: state.devtoolsWorkspaceId,
     };
-    if (snapshot && sameuni-cliServerSnapshot(snapshot, nextSnapshot)) return false;
+    if (snapshot && sameuniCliServerSnapshot(snapshot, nextSnapshot)) return false;
     snapshot = nextSnapshot;
     return true;
   };
@@ -299,60 +299,60 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
     mutateState((current) => ({ ...current, [key]: value }));
   };
 
-  const setuni-cliServerSettings = (next: SetStateAction<uni-cliServerSettings>) => {
-    const resolved = applyStateAction(state.uni-cliServerSettings, next);
-    mutateState((current) => ({ ...current, uni-cliServerSettings: resolved }));
+  const setuniCliServerSettings = (next: SetStateAction<uniCliServerSettings>) => {
+    const resolved = applyStateAction(state.uniCliServerSettings, next);
+    mutateState((current) => ({ ...current, uniCliServerSettings: resolved }));
     queueHealthCheck(0);
   };
 
-  const updateuni-cliServerSettings = (next: uni-cliServerSettings) => {
-    const stored = writeuni-cliServerSettings(next);
-    mutateState((current) => ({ ...current, uni-cliServerSettings: stored }));
+  const updateuniCliServerSettings = (next: uniCliServerSettings) => {
+    const stored = writeuniCliServerSettings(next);
+    mutateState((current) => ({ ...current, uniCliServerSettings: stored }));
     queueHealthCheck(0);
   };
 
-  const resetuni-cliServerSettings = () => {
-    clearuni-cliServerSettings();
-    mutateState((current) => ({ ...current, uni-cliServerSettings: {} }));
+  const resetuniCliServerSettings = () => {
+    clearuniCliServerSettings();
+    mutateState((current) => ({ ...current, uniCliServerSettings: {} }));
     queueHealthCheck(0);
   };
 
   const shouldWaitForLocalHostInfo = () =>
     isDesktopRuntime() &&
     options.startupPreference() !== "server" &&
-    !state.uni-cliServerHostInfoReady;
+    !state.uniCliServerHostInfoReady;
 
-  const shouldRetryStartupCheck = (status: uni-cliServerStatus) =>
+  const shouldRetryStartupCheck = (status: uniCliServerStatus) =>
     status !== "connected" &&
     isDesktopRuntime() &&
     options.startupPreference() !== "server" &&
     Date.now() - bootStartedAt < 5_000;
 
-  const checkuni-cliServer = async (url: string, token?: string, hostToken?: string) => {
-    const client = createuni-cliServerClient({ baseUrl: url, token, hostToken });
+  const checkuniCliServer = async (url: string, token?: string, hostToken?: string) => {
+    const client = createuniCliServerClient({ baseUrl: url, token, hostToken });
     try {
       await client.health();
     } catch (error) {
-      const resolved = error as uni-cliServerError | Error;
+      const resolved = error as uniCliServerError | Error;
       if ("status" in resolved && (resolved.status === 401 || resolved.status === 403)) {
-        return { status: "limited" as uni-cliServerStatus, capabilities: null };
+        return { status: "limited" as uniCliServerStatus, capabilities: null };
       }
-      return { status: "disconnected" as uni-cliServerStatus, capabilities: null };
+      return { status: "disconnected" as uniCliServerStatus, capabilities: null };
     }
 
     if (!token) {
-      return { status: "limited" as uni-cliServerStatus, capabilities: null };
+      return { status: "limited" as uniCliServerStatus, capabilities: null };
     }
 
     try {
       const capabilities = await client.capabilities();
-      return { status: "connected" as uni-cliServerStatus, capabilities };
+      return { status: "connected" as uniCliServerStatus, capabilities };
     } catch (error) {
-      const resolved = error as uni-cliServerError | Error;
+      const resolved = error as uniCliServerError | Error;
       if ("status" in resolved && (resolved.status === 401 || resolved.status === 403)) {
-        return { status: "limited" as uni-cliServerStatus, capabilities: null };
+        return { status: "limited" as uniCliServerStatus, capabilities: null };
       }
-      return { status: "disconnected" as uni-cliServerStatus, capabilities: null };
+      return { status: "disconnected" as uniCliServerStatus, capabilities: null };
     }
   };
 
@@ -390,36 +390,36 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
       consecutiveHealthFailures = 0;
       mutateState((current) => ({
         ...current,
-        uni-cliServerStatus: "disconnected",
-        uni-cliServerCapabilities: null,
-        uni-cliServerCheckedAt: Date.now(),
+        uniCliServerStatus: "disconnected",
+        uniCliServerCapabilities: null,
+        uniCliServerCheckedAt: Date.now(),
       }));
       return;
     }
 
     healthBusy = true;
     try {
-      let result = await checkuni-cliServer(url, auth.token, auth.hostToken);
+      let result = await checkuniCliServer(url, auth.token, auth.hostToken);
 
       if (shouldRetryStartupCheck(result.status)) {
         await new Promise<void>((resolve) => window.setTimeout(resolve, 250));
         if (disposed) return;
 
         try {
-          const info = await uni-cliServerInfo() as uni-cliServerInfo;
+          const info = await uniCliServerInfo() as uniCliServerInfo;
           if (disposed) return;
 
           mutateState((current) => ({
             ...current,
-            uni-cliServerHostInfo: info,
-            uni-cliServerHostInfoReady: true,
+            uniCliServerHostInfo: info,
+            uniCliServerHostInfoReady: true,
           }));
 
           const retryUrl = info.baseUrl?.trim() ?? "";
           const retryToken = info.clientToken?.trim() || undefined;
           const retryHostToken = info.hostToken?.trim() || undefined;
           if (retryUrl) {
-            result = await checkuni-cliServer(retryUrl, retryToken, retryHostToken);
+            result = await checkuniCliServer(retryUrl, retryToken, retryHostToken);
           }
         } catch {
           // Preserve the original check result when the retry probe fails.
@@ -427,8 +427,8 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
       }
 
       if (disposed) return;
-      const previousStatus = state.uni-cliServerStatus;
-      const previousCapabilities = state.uni-cliServerCapabilities;
+      const previousStatus = state.uniCliServerStatus;
+      const previousCapabilities = state.uniCliServerCapabilities;
       const healthy = result.status === "connected" || result.status === "limited";
       if (healthy) {
         consecutiveHealthFailures = 0;
@@ -445,15 +445,15 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
 
       mutateState((current) => ({
         ...current,
-        uni-cliServerStatus: preservePrevious ? previousStatus : result.status,
-        uni-cliServerCapabilities: preservePrevious ? previousCapabilities : result.capabilities,
-        uni-cliServerCheckedAt: Date.now(),
+        uniCliServerStatus: preservePrevious ? previousStatus : result.status,
+        uniCliServerCapabilities: preservePrevious ? previousCapabilities : result.capabilities,
+        uniCliServerCheckedAt: Date.now(),
       }));
     } catch {
       healthDelayMs = Math.min(healthDelayMs * 2, 60_000);
       mutateState((current) => ({
         ...current,
-        uni-cliServerCheckedAt: Date.now(),
+        uniCliServerCheckedAt: Date.now(),
       }));
     } finally {
       healthBusy = false;
@@ -465,12 +465,12 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
     if (refreshSnapshot()) emitChange();
 
     if (!isDesktopRuntime()) return;
-    const port = state.uni-cliServerHostInfo?.port;
+    const port = state.uniCliServerHostInfo?.port;
     if (!port) return;
-    if (state.uni-cliServerSettings.portOverride === port) return;
+    if (state.uniCliServerSettings.portOverride === port) return;
 
-    updateuni-cliServerSettings({
-      ...state.uni-cliServerSettings,
+    updateuniCliServerSettings({
+      ...state.uniCliServerSettings,
       portOverride: port,
     });
   };
@@ -512,19 +512,19 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
       if (!options.documentVisible()) return;
       void (async () => {
         try {
-          const info = await uni-cliServerInfo() as uni-cliServerInfo;
+          const info = await uniCliServerInfo() as uniCliServerInfo;
           if (disposed) return;
           mutateState((current) => ({
             ...current,
-            uni-cliServerHostInfo: info,
-            uni-cliServerHostInfoReady: true,
+            uniCliServerHostInfo: info,
+            uniCliServerHostInfoReady: true,
           }));
         } catch {
           if (disposed) return;
           mutateState((current) => ({
             ...current,
-            uni-cliServerHostInfo: null,
-            uni-cliServerHostInfoReady: true,
+            uniCliServerHostInfo: null,
+            uniCliServerHostInfoReady: true,
           }));
         }
       })();
@@ -535,22 +535,22 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
     const refreshDiagnostics = () => {
       if (!options.documentVisible()) return;
       if (!options.developerMode()) {
-        setStateField("uni-cliServerDiagnostics", null);
+        setStateField("uniCliServerDiagnostics", null);
         return;
       }
 
       const client = getClient();
-      if (!client || state.uni-cliServerStatus === "disconnected") {
-        setStateField("uni-cliServerDiagnostics", null);
+      if (!client || state.uniCliServerStatus === "disconnected") {
+        setStateField("uniCliServerDiagnostics", null);
         return;
       }
 
       void (async () => {
         try {
           const status = await client.status();
-          if (!disposed) setStateField("uni-cliServerDiagnostics", status);
+          if (!disposed) setStateField("uniCliServerDiagnostics", status);
         } catch {
-          if (!disposed) setStateField("uni-cliServerDiagnostics", null);
+          if (!disposed) setStateField("uniCliServerDiagnostics", null);
         }
       })();
     };
@@ -592,9 +592,9 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
       if (!options.developerMode()) {
         mutateState((current) => ({
           ...current,
-          uni-cliAuditEntries: [],
-          uni-cliAuditStatus: "idle",
-          uni-cliAuditError: null,
+          uniCliAuditEntries: [],
+          uniCliAuditStatus: "idle",
+          uniCliAuditError: null,
         }));
         return;
       }
@@ -604,17 +604,17 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
       if (!client || !workspaceId) {
         mutateState((current) => ({
           ...current,
-          uni-cliAuditEntries: [],
-          uni-cliAuditStatus: "idle",
-          uni-cliAuditError: null,
+          uniCliAuditEntries: [],
+          uniCliAuditStatus: "idle",
+          uniCliAuditError: null,
         }));
         return;
       }
 
       mutateState((current) => ({
         ...current,
-        uni-cliAuditStatus: "loading",
-        uni-cliAuditError: null,
+        uniCliAuditStatus: "loading",
+        uniCliAuditError: null,
       }));
 
       void (async () => {
@@ -623,16 +623,16 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
           if (disposed) return;
           mutateState((current) => ({
             ...current,
-            uni-cliAuditEntries: Array.isArray(result.items) ? result.items : [],
-            uni-cliAuditStatus: "idle",
+            uniCliAuditEntries: Array.isArray(result.items) ? result.items : [],
+            uniCliAuditStatus: "idle",
           }));
         } catch (error) {
           if (disposed) return;
           mutateState((current) => ({
             ...current,
-            uni-cliAuditEntries: [],
-            uni-cliAuditStatus: "error",
-            uni-cliAuditError:
+            uniCliAuditEntries: [],
+            uniCliAuditStatus: "error",
+            uniCliAuditError:
               error instanceof Error
                 ? error.message
                 : t("app.error_audit_load"),
@@ -655,25 +655,25 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
     for (const key of [...intervals.keys()]) stopInterval(key);
   };
 
-  const testuni-cliServerConnection = async (next: uni-cliServerSettings) => {
-    const derived = normalizeuni-cliServerUrl(next.urlOverride ?? "");
+  const testuniCliServerConnection = async (next: uniCliServerSettings) => {
+    const derived = normalizeuniCliServerUrl(next.urlOverride ?? "");
     if (!derived) {
       mutateState((current) => ({
         ...current,
-        uni-cliServerStatus: "disconnected",
-        uni-cliServerCapabilities: null,
-        uni-cliServerCheckedAt: Date.now(),
+        uniCliServerStatus: "disconnected",
+        uniCliServerCapabilities: null,
+        uniCliServerCheckedAt: Date.now(),
       }));
       return false;
     }
 
-    const result = await checkuni-cliServer(derived, next.token);
+    const result = await checkuniCliServer(derived, next.token);
     consecutiveHealthFailures = result.status === "disconnected" ? consecutiveHealthFailures + 1 : 0;
     mutateState((current) => ({
       ...current,
-      uni-cliServerStatus: result.status,
-      uni-cliServerCapabilities: result.capabilities,
-      uni-cliServerCheckedAt: Date.now(),
+      uniCliServerStatus: result.status,
+      uniCliServerCapabilities: result.capabilities,
+      uniCliServerCheckedAt: Date.now(),
     }));
 
     const ok = result.status === "connected" || result.status === "limited";
@@ -686,8 +686,8 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
       if (shouldAttach) {
         await options
           .createRemoteWorkspaceFlow({
-            uni-cliHostUrl: derived,
-            uni-cliToken: next.token ?? null,
+            uniCliHostUrl: derived,
+            uniCliToken: next.token ?? null,
           })
           .catch(() => undefined);
       }
@@ -695,31 +695,31 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
     return ok;
   };
 
-  const reconnectuni-cliServer = async () => {
-    if (state.uni-cliReconnectBusy) return false;
-    setStateField("uni-cliReconnectBusy", true);
+  const reconnectuniCliServer = async () => {
+    if (state.uniCliReconnectBusy) return false;
+    setStateField("uniCliReconnectBusy", true);
 
     try {
-      let hostInfo = state.uni-cliServerHostInfo;
+      let hostInfo = state.uniCliServerHostInfo;
       if (isDesktopRuntime()) {
         try {
-          hostInfo = await uni-cliServerInfo() as uni-cliServerInfo;
-          mutateState((current) => ({ ...current, uni-cliServerHostInfo: hostInfo }));
+          hostInfo = await uniCliServerInfo() as uniCliServerInfo;
+          mutateState((current) => ({ ...current, uniCliServerHostInfo: hostInfo }));
         } catch {
           hostInfo = null;
-          setStateField("uni-cliServerHostInfo", null);
+          setStateField("uniCliServerHostInfo", null);
         }
       }
 
       if (hostInfo?.clientToken?.trim() && options.startupPreference() !== "server") {
         const liveToken = hostInfo.clientToken.trim();
         const liveHostToken = hostInfo.hostToken?.trim() ?? "";
-        const settings = state.uni-cliServerSettings;
+        const settings = state.uniCliServerSettings;
         if (
           (settings.token?.trim() ?? "") !== liveToken ||
           (settings.hostToken?.trim() ?? "") !== liveHostToken
         ) {
-          updateuni-cliServerSettings({
+          updateuniCliServerSettings({
             ...settings,
             token: liveToken,
             hostToken: liveHostToken || undefined,
@@ -732,34 +732,34 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
       if (!url) {
         mutateState((current) => ({
           ...current,
-          uni-cliServerStatus: "disconnected",
-          uni-cliServerCapabilities: null,
-          uni-cliServerCheckedAt: Date.now(),
+          uniCliServerStatus: "disconnected",
+          uniCliServerCapabilities: null,
+          uniCliServerCheckedAt: Date.now(),
         }));
         return false;
       }
 
-      const result = await checkuni-cliServer(url, auth.token, auth.hostToken);
+      const result = await checkuniCliServer(url, auth.token, auth.hostToken);
       mutateState((current) => ({
         ...current,
-        uni-cliServerStatus: result.status,
-        uni-cliServerCapabilities: result.capabilities,
-        uni-cliServerCheckedAt: Date.now(),
+        uniCliServerStatus: result.status,
+        uniCliServerCapabilities: result.capabilities,
+        uniCliServerCheckedAt: Date.now(),
       }));
       return result.status === "connected" || result.status === "limited";
     } finally {
-      setStateField("uni-cliReconnectBusy", false);
+      setStateField("uniCliReconnectBusy", false);
     }
   };
 
-  async function ensureLocaluni-cliServerClient(): Promise<uni-cliServerClient | null> {
+  async function ensureLocaluniCliServerClient(): Promise<uniCliServerClient | null> {
     const healthyClientFromInfo = async (
-      info: uni-cliServerInfo | null,
-    ): Promise<uni-cliServerClient | null> => {
+      info: uniCliServerInfo | null,
+    ): Promise<uniCliServerClient | null> => {
       const baseUrl = info?.baseUrl?.trim() ?? "";
       const token = info?.clientToken?.trim() ?? "";
       if (!baseUrl || !token) return null;
-      const candidate = createuni-cliServerClient({
+      const candidate = createuniCliServerClient({
         baseUrl,
         token,
         hostToken: info?.hostToken?.trim() || undefined,
@@ -772,10 +772,10 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
       return candidate;
     };
 
-    const cached = await healthyClientFromInfo(state.uni-cliServerHostInfo);
+    const cached = await healthyClientFromInfo(state.uniCliServerHostInfo);
     if (cached) {
       if (options.startupPreference() !== "server") {
-        await reconnectuni-cliServer();
+        await reconnectuniCliServer();
       }
       return cached;
     }
@@ -787,13 +787,13 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
     // server AND its managed engine, killing every live run. Ask the desktop
     // bridge for the live server first and restart only when that running
     // server is genuinely unreachable.
-    let hostInfo: uni-cliServerInfo | null = null;
+    let hostInfo: uniCliServerInfo | null = null;
     try {
-      hostInfo = await uni-cliServerInfo() as uni-cliServerInfo;
+      hostInfo = await uniCliServerInfo() as uniCliServerInfo;
       mutateState((current) => ({
         ...current,
-        uni-cliServerHostInfo: hostInfo,
-        uni-cliServerHostInfoReady: true,
+        uniCliServerHostInfo: hostInfo,
+        uniCliServerHostInfoReady: true,
       }));
     } catch {
       hostInfo = null;
@@ -801,16 +801,16 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
     const live = await healthyClientFromInfo(hostInfo);
     if (live) {
       if (options.startupPreference() !== "server") {
-        await reconnectuni-cliServer();
+        await reconnectuniCliServer();
       }
       return live;
     }
 
     try {
-      hostInfo = await uni-cliServerRestart({
-        remoteAccessEnabled: state.uni-cliServerSettings.remoteAccessEnabled === true,
-      }) as uni-cliServerInfo;
-      mutateState((current) => ({ ...current, uni-cliServerHostInfo: hostInfo }));
+      hostInfo = await uniCliServerRestart({
+        remoteAccessEnabled: state.uniCliServerSettings.remoteAccessEnabled === true,
+      }) as uniCliServerInfo;
+      mutateState((current) => ({ ...current, uniCliServerHostInfo: hostInfo }));
     } catch {
       return null;
     }
@@ -821,10 +821,10 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
     if (!baseUrl || !token) return null;
 
     if (options.startupPreference() !== "server") {
-      await reconnectuni-cliServer();
+      await reconnectuniCliServer();
     }
 
-    return createuni-cliServerClient({
+    return createuniCliServerClient({
       baseUrl,
       token,
       hostToken: hostToken || undefined,
@@ -833,8 +833,8 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
 
   const saveShareRemoteAccess = async (enabled: boolean) => {
     if (state.shareRemoteAccessBusy) return;
-    const previous = state.uni-cliServerSettings;
-    const next: uni-cliServerSettings = {
+    const previous = state.uniCliServerSettings;
+    const next: uniCliServerSettings = {
       ...previous,
       remoteAccessEnabled: enabled,
     };
@@ -844,7 +844,7 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
       shareRemoteAccessBusy: true,
       shareRemoteAccessError: null,
     }));
-    updateuni-cliServerSettings(next);
+    updateuniCliServerSettings(next);
 
     try {
       if (isDesktopRuntime() && options.selectedWorkspaceDisplay().workspaceType === "local") {
@@ -852,10 +852,10 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
         if (!restarted) {
           throw new Error(t("app.error_restart_local_worker"));
         }
-        await reconnectuni-cliServer();
+        await reconnectuniCliServer();
       }
     } catch (error) {
-      updateuni-cliServerSettings(previous);
+      updateuniCliServerSettings(previous);
       mutateState((current) => ({
         ...current,
         shareRemoteAccessError:
@@ -889,17 +889,17 @@ export function createuni-cliServerStore(options: Createuni-cliServerStoreOption
     start,
     dispose,
     syncFromOptions,
-    setuni-cliServerSettings,
-    updateuni-cliServerSettings,
-    resetuni-cliServerSettings,
+    setuniCliServerSettings,
+    updateuniCliServerSettings,
+    resetuniCliServerSettings,
     saveShareRemoteAccess,
-    checkuni-cliServer,
-    testuni-cliServerConnection,
-    reconnectuni-cliServer,
-    ensureLocaluni-cliServerClient,
+    checkuniCliServer,
+    testuniCliServerConnection,
+    reconnectuniCliServer,
+    ensureLocaluniCliServerClient,
   };
 }
 
-export function useuni-cliServerStoreSnapshot(store: uni-cliServerStore) {
+export function useuniCliServerStoreSnapshot(store: uniCliServerStore) {
   return useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
 }

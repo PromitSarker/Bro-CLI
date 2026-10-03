@@ -91,7 +91,7 @@ export function cloudRuntimeOrchestratorConfig(): CloudRuntimeOrchestratorConfig
     sidecarDir: runtime.sidecarDir,
     checkpointIntervalSeconds: runtime.checkpointIntervalSeconds,
     checkpointKeep: runtime.checkpointKeep,
-    port: runtime.uni-cliPort,
+    port: runtime.uniCliPort,
     publicEndpoint: runtime.public,
     lifecycle: {
       autoStopMinutes: runtime.autoStopInterval,

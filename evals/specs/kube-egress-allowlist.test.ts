@@ -159,7 +159,7 @@ test.skipIf(skipReason !== null)(title, async ({ evidence }) => {
     const den = { apiUrl, webUrl };
     const activeAdmin = await signIn(den, {
       email: process.env.UNICLI_EVAL_DEMO_EMAIL?.trim() || "alex@acme.test",
-      password: process.env.UNICLI_EVAL_DEMO_PASSWORD?.trim() || "Uni-CLIDemo123!",
+      password: process.env.UNICLI_EVAL_DEMO_PASSWORD?.trim() || "UniCliDemo123!",
     });
     admin = activeAdmin;
     await deleteConnectionsNamed(activeAdmin, "Kube allowed MCP ");

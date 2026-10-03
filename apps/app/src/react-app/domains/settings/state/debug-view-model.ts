@@ -7,21 +7,21 @@ import {
   engineStart as engineStartCmd,
   getDesktopBootstrapConfig,
   debugDesktopBootstrapConfig,
-  nukeuni-cliAndOpencodeConfigPreview,
-  nukeuni-cliAndOpencodeConfigAndExit,
+  nukeuniCliAndOpencodeConfigPreview,
+  nukeuniCliAndOpencodeConfigAndExit,
   openDesktopUrl,
-  uni-cliServerInfo as uni-cliServerInfoCmd,
-  uni-cliServerRestart as uni-cliServerRestartCmd,
+  uniCliServerInfo as uniCliServerInfoCmd,
+  uniCliServerRestart as uniCliServerRestartCmd,
   pickFile,
   revealDesktopItemInDir,
-  resetuni-cliState,
+  resetuniCliState,
   updaterEnvironment as updaterEnvironmentCmd,
   workspaceBootstrap as workspaceBootstrapCmd,
   type AppBuildInfo,
   type DesktopBootstrapConfig,
   type EngineInfo,
   type NukeManifestPreview,
-  type uni-cliServerInfo,
+  type uniCliServerInfo,
 } from "../../../../app/lib/desktop";
 import { createDenClient, readDenSettings } from "../../../../app/lib/den";
 import {
@@ -31,8 +31,8 @@ import {
 import { downloadTextAsFile } from "../../../../app/lib/download";
 
 import {
-  writeuni-cliServerSettings,
-  type uni-cliRuntimeConfigStatus,
+  writeuniCliServerSettings,
+  type uniCliRuntimeConfigStatus,
 } from "../../../../app/lib/uni-cli-server";
 import {
   clearStartupPreference,
@@ -44,7 +44,7 @@ import {
 import { t } from "../../../../i18n";
 import type { DebugViewProps } from "../pages/debug-view";
 import type { ReleaseChannel } from "../../../../app/types";
-import type { uni-cliServerStore, uni-cliServerStoreSnapshot } from "../../connections/uni-cli-server-store";
+import type { uniCliServerStore, uniCliServerStoreSnapshot } from "../../connections/uni-cli-server-store";
 
 type DebugViewModelProps = Omit<DebugViewProps, "agentContextDiagnostics">;
 
@@ -66,8 +66,8 @@ const ONBOARDING_LOCAL_STORAGE_KEYS = [
 
 type UseDebugViewModelOptions = {
   developerMode: boolean;
-  uni-cliServerStore: uni-cliServerStore;
-  uni-cliServerSnapshot: uni-cliServerStoreSnapshot;
+  uniCliServerStore: uniCliServerStore;
+  uniCliServerSnapshot: uniCliServerStoreSnapshot;
   runtimeWorkspaceId: string | null;
   selectedWorkspaceRoot: string;
   setRouteError: (value: string | null) => void;
@@ -100,7 +100,7 @@ function clearStoredString(key: string): void {
   }
 }
 
-function clearuni-cliLocalStorageForReset(mode: ResetModalMode): void {
+function clearuniCliLocalStorageForReset(mode: ResetModalMode): void {
   if (typeof window === "undefined") return;
   try {
     if (mode === "all") {
@@ -205,7 +205,7 @@ function formatOpencodeBinary(info: EngineInfo | null) {
   return formatBinaryWithSource(info?.opencodeBinPath, info?.opencodeBinSource);
 }
 
-function formatManagedOpencodeBinary(info: uni-cliServerInfo | null) {
+function formatManagedOpencodeBinary(info: uniCliServerInfo | null) {
   return formatBinaryWithSource(
     info?.managedOpencodeBinPath,
     info?.managedOpencodeBinSource,
@@ -219,7 +219,7 @@ function formatBinaryWithSource(path: string | null | undefined, source: string 
   return sourceLabel ? `${binary} (${sourceLabel})` : binary;
 }
 
-function describeuni-cliServer(info: uni-cliServerInfo | null) {
+function describeuniCliServer(info: uniCliServerInfo | null) {
   const running = Boolean(info?.running);
   return {
     ...statusPill(running),
@@ -259,8 +259,8 @@ function describeOpencodeConnect(engine: EngineInfo | null) {
 export function useDebugViewModel(options: UseDebugViewModelOptions) {
   const {
     developerMode,
-    uni-cliServerStore,
-    uni-cliServerSnapshot,
+    uniCliServerStore,
+    uniCliServerSnapshot,
     runtimeWorkspaceId,
     selectedWorkspaceRoot,
     setRouteError,
@@ -273,21 +273,21 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
   const [appBuild, setAppBuild] = useState<AppBuildInfo | null>(null);
   const [bootstrapPrepared, setBootstrapPrepared] = useState<DesktopBootstrapConfig["prepared"]>(null);
   const [bootstrapConfigDebug, setBootstrapConfigDebug] = useState<unknown>(null);
-  const [runtimeConfigStatus, setRuntimeConfigStatus] = useState<uni-cliRuntimeConfigStatus | null>(null);
+  const [runtimeConfigStatus, setRuntimeConfigStatus] = useState<uniCliRuntimeConfigStatus | null>(null);
   const [runtimeConfigStatusError, setRuntimeConfigStatusError] = useState<string | null>(null);
   const [runtimeDebugStatus, setRuntimeDebugStatus] = useState<string | null>(null);
   const [opencodeRestarting, setOpencodeRestarting] = useState(false);
-  const [uni-cliServerRestarting, setuni-cliServerRestarting] = useState(false);
+  const [uniCliServerRestarting, setuniCliServerRestarting] = useState(false);
   const [opencodeServiceStatus, setOpencodeServiceStatus] = useState<{
     tone: "success" | "error";
     message: string;
   } | null>(null);
-  const [uni-cliServiceStatus, setuni-cliServiceStatus] = useState<{
+  const [uniCliServiceStatus, setuniCliServiceStatus] = useState<{
     tone: "success" | "error";
     message: string;
   } | null>(null);
   const [opencodeLogStatus, setOpencodeLogStatus] = useState<string | null>(null);
-  const [uni-cliLogStatus, setuni-cliLogStatus] = useState<string | null>(null);
+  const [uniCliLogStatus, setuniCliLogStatus] = useState<string | null>(null);
   const [serviceRestartError, setServiceRestartError] = useState<string | null>(null);
   const [resetModalBusy, setResetModalBusy] = useState(false);
   const [nukeConfigBusy, setNukeConfigBusy] = useState(false);
@@ -365,7 +365,7 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
 
   useEffect(() => {
     if (!developerMode) return;
-    const client = uni-cliServerSnapshot.uni-cliServerClient;
+    const client = uniCliServerSnapshot.uniCliServerClient;
     const workspaceId = runtimeWorkspaceId?.trim();
     if (!client || !workspaceId) {
       setRuntimeConfigStatus(null);
@@ -389,7 +389,7 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
     return () => {
       cancelled = true;
     };
-  }, [developerMode, uni-cliServerSnapshot.uni-cliServerClient, runtimeWorkspaceId]);
+  }, [developerMode, uniCliServerSnapshot.uniCliServerClient, runtimeWorkspaceId]);
 
   useEffect(() => {
     if (!developerMode || !isDesktopRuntime()) return;
@@ -423,13 +423,13 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
       appVersionLabel: appBuild?.version ?? "—",
       appCommitLabel: appBuild?.gitSha ?? "—",
       opencodeVersionLabel: engineInfoState?.baseUrl ? "managed" : "—",
-      uni-cliServerVersionLabel: uni-cliServerSnapshot.uni-cliServerDiagnostics?.version ?? "—",
+      uniCliServerVersionLabel: uniCliServerSnapshot.uniCliServerDiagnostics?.version ?? "—",
     }),
     [
       appBuild?.gitSha,
       appBuild?.version,
       engineInfoState?.baseUrl,
-      uni-cliServerSnapshot.uni-cliServerDiagnostics?.version,
+      uniCliServerSnapshot.uniCliServerDiagnostics?.version,
     ],
   );
 
@@ -438,13 +438,13 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
       collectedAt: new Date().toISOString(),
       app: appBuild ?? null,
       engine: engineInfoState,
-      uni-cliServer: {
-        hostInfo: uni-cliServerSnapshot.uni-cliServerHostInfo,
-        diagnostics: uni-cliServerSnapshot.uni-cliServerDiagnostics,
-        capabilities: uni-cliServerSnapshot.uni-cliServerCapabilities,
-        settings: uni-cliServerSnapshot.uni-cliServerSettings,
-        status: uni-cliServerSnapshot.uni-cliServerStatus,
-        url: uni-cliServerSnapshot.uni-cliServerUrl,
+      uniCliServer: {
+        hostInfo: uniCliServerSnapshot.uniCliServerHostInfo,
+        diagnostics: uniCliServerSnapshot.uniCliServerDiagnostics,
+        capabilities: uniCliServerSnapshot.uniCliServerCapabilities,
+        settings: uniCliServerSnapshot.uniCliServerSettings,
+        status: uniCliServerSnapshot.uniCliServerStatus,
+        url: uniCliServerSnapshot.uniCliServerUrl,
       },
       runtimeWorkspaceId,
       selectedWorkspaceRoot,
@@ -454,12 +454,12 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
     appBuild,
     bootstrapPrepared,
     engineInfoState,
-    uni-cliServerSnapshot.uni-cliServerCapabilities,
-    uni-cliServerSnapshot.uni-cliServerDiagnostics,
-    uni-cliServerSnapshot.uni-cliServerHostInfo,
-    uni-cliServerSnapshot.uni-cliServerSettings,
-    uni-cliServerSnapshot.uni-cliServerStatus,
-    uni-cliServerSnapshot.uni-cliServerUrl,
+    uniCliServerSnapshot.uniCliServerCapabilities,
+    uniCliServerSnapshot.uniCliServerDiagnostics,
+    uniCliServerSnapshot.uniCliServerHostInfo,
+    uniCliServerSnapshot.uniCliServerSettings,
+    uniCliServerSnapshot.uniCliServerStatus,
+    uniCliServerSnapshot.uniCliServerUrl,
     runtimeWorkspaceId,
     selectedWorkspaceRoot,
   ]);
@@ -474,9 +474,9 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
   );
 
   const engineCard = useMemo(() => describeEngine(engineInfoState), [engineInfoState]);
-  const uni-cliCard = useMemo(
-    () => describeuni-cliServer(uni-cliServerSnapshot.uni-cliServerHostInfo),
-    [uni-cliServerSnapshot.uni-cliServerHostInfo],
+  const uniCliCard = useMemo(
+    () => describeuniCliServer(uniCliServerSnapshot.uniCliServerHostInfo),
+    [uniCliServerSnapshot.uniCliServerHostInfo],
   );
   const opencodeConnectCard = useMemo(
     () => describeOpencodeConnect(engineInfoState),
@@ -739,15 +739,15 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
       runtime: "direct",
       workspacePaths,
       opencodeEnableExa: readOpencodeEnableExa(),
-      uni-cliRemoteAccess:
-        optionsRef.current.uni-cliServerSnapshot.uni-cliServerSettings
+      uniCliRemoteAccess:
+        optionsRef.current.uniCliServerSnapshot.uniCliServerSettings
           .remoteAccessEnabled === true,
     });
 
     // engine_start restarts uni-cli-server on a NEW port and lets that server
     // manage OpenCode. Re-read host info and persist the fresh URL/token.
     try {
-      const hostInfo = (await uni-cliServerInfoCmd()) as {
+      const hostInfo = (await uniCliServerInfoCmd()) as {
         baseUrl?: string;
         ownerToken?: string;
         clientToken?: string;
@@ -756,7 +756,7 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
         remoteAccessEnabled?: boolean;
       } | null;
       if (hostInfo?.baseUrl) {
-        writeuni-cliServerSettings({
+        writeuniCliServerSettings({
           urlOverride: hostInfo.baseUrl,
           token: hostInfo.ownerToken?.trim() || hostInfo.clientToken?.trim() || undefined,
           hostToken: hostInfo.hostToken?.trim() || undefined,
@@ -771,10 +771,10 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
       // best-effort: if this fails, the host-info poller will catch up in ~10s.
     }
 
-    await uni-cliServerStore.reconnectuni-cliServer();
+    await uniCliServerStore.reconnectuniCliServer();
     await refreshEngineInfo();
     return info;
-  }, [uni-cliServerStore, refreshEngineInfo]);
+  }, [uniCliServerStore, refreshEngineInfo]);
 
   const onRestartOpencode = useCallback(async () => {
     if (!isDesktopRuntime()) return;
@@ -800,34 +800,34 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
     }
   }, [bootFullEngineStack, pushDeveloperLog]);
 
-  const onRestartuni-cliServer = useCallback(async () => {
+  const onRestartuniCliServer = useCallback(async () => {
     if (!isDesktopRuntime()) return;
-    setuni-cliServerRestarting(true);
-    setuni-cliServiceStatus(null);
+    setuniCliServerRestarting(true);
+    setuniCliServiceStatus(null);
     setServiceRestartError(null);
     try {
-      await uni-cliServerRestartCmd({
-        remoteAccessEnabled: uni-cliServerSnapshot.uni-cliServerSettings.remoteAccessEnabled === true,
+      await uniCliServerRestartCmd({
+        remoteAccessEnabled: uniCliServerSnapshot.uniCliServerSettings.remoteAccessEnabled === true,
       });
-      setuni-cliServiceStatus({
+      setuniCliServiceStatus({
         tone: "success",
         message: t("settings.restart_succeeded_template", { service: "Uni-CLI server" }),
       });
       pushDeveloperLog("Restarted uni-cli-server");
-      await uni-cliServerStore.reconnectuni-cliServer();
+      await uniCliServerStore.reconnectuniCliServer();
     } catch (error) {
       const message = error instanceof Error ? error.message : safeStringify(error);
-      setuni-cliServiceStatus({
+      setuniCliServiceStatus({
         tone: "error",
         message: `${t("settings.restart_failed_template", { service: "Uni-CLI server" })} ${message}`,
       });
       setServiceRestartError(message);
     } finally {
-      setuni-cliServerRestarting(false);
+      setuniCliServerRestarting(false);
     }
   }, [
-    uni-cliServerSnapshot.uni-cliServerSettings.remoteAccessEnabled,
-    uni-cliServerStore,
+    uniCliServerSnapshot.uniCliServerSettings.remoteAccessEnabled,
+    uniCliServerStore,
     pushDeveloperLog,
   ]);
 
@@ -875,26 +875,26 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
     }
   }, [engineInfoState?.lastStderr, engineInfoState?.lastStdout, formatServiceLogs]);
 
-  const onCopyuni-cliLogs = useCallback(async () => {
-    const info = uni-cliServerSnapshot.uni-cliServerHostInfo;
+  const onCopyuniCliLogs = useCallback(async () => {
+    const info = uniCliServerSnapshot.uniCliServerHostInfo;
     const text = formatServiceLogs(info?.lastStdout, info?.lastStderr);
     if (!text) {
-      setuni-cliLogStatus(t("settings.no_logs_captured"));
+      setuniCliLogStatus(t("settings.no_logs_captured"));
       return;
     }
     try {
       await navigator.clipboard.writeText(text);
-      setuni-cliLogStatus(t("settings.copied_service_logs", { service: "Uni-CLI server" }));
+      setuniCliLogStatus(t("settings.copied_service_logs", { service: "Uni-CLI server" }));
     } catch (error) {
-      setuni-cliLogStatus(error instanceof Error ? error.message : safeStringify(error));
+      setuniCliLogStatus(error instanceof Error ? error.message : safeStringify(error));
     }
-  }, [formatServiceLogs, uni-cliServerSnapshot.uni-cliServerHostInfo]);
+  }, [formatServiceLogs, uniCliServerSnapshot.uniCliServerHostInfo]);
 
-  const onExportuni-cliLogs = useCallback(async () => {
-    const info = uni-cliServerSnapshot.uni-cliServerHostInfo;
+  const onExportuniCliLogs = useCallback(async () => {
+    const info = uniCliServerSnapshot.uniCliServerHostInfo;
     const text = formatServiceLogs(info?.lastStdout, info?.lastStderr);
     if (!text) {
-      setuni-cliLogStatus(t("settings.no_logs_captured"));
+      setuniCliLogStatus(t("settings.no_logs_captured"));
       return;
     }
     try {
@@ -903,11 +903,11 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
         text,
         "text/plain",
       );
-      setuni-cliLogStatus(t("settings.exported_developer_log"));
+      setuniCliLogStatus(t("settings.exported_developer_log"));
     } catch (error) {
-      setuni-cliLogStatus(error instanceof Error ? error.message : safeStringify(error));
+      setuniCliLogStatus(error instanceof Error ? error.message : safeStringify(error));
     }
-  }, [formatServiceLogs, uni-cliServerSnapshot.uni-cliServerHostInfo]);
+  }, [formatServiceLogs, uniCliServerSnapshot.uniCliServerHostInfo]);
 
   const [resetStatus, setResetStatus] = useState<string | null>(null);
 
@@ -923,9 +923,9 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
       }
       setResetModalBusy(true);
       setResetStatus(null);
-      void resetuni-cliState(mode)
+      void resetuniCliState(mode)
         .then(async () => {
-          clearuni-cliLocalStorageForReset(mode);
+          clearuniCliLocalStorageForReset(mode);
           setResetStatus(
             mode === "all"
               ? "Reset Uni-CLI state. Restart the app to see changes."
@@ -948,7 +948,7 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
     setNukePreviewBusy(true);
     setNukeConfigStatus(null);
     try {
-      const preview = await nukeuni-cliAndOpencodeConfigPreview({ preserveBootstrap: true });
+      const preview = await nukeuniCliAndOpencodeConfigPreview({ preserveBootstrap: true });
       setNukeManifestPreview(preview);
       setNukeConfirmationText("");
       setNukeDeleteBootstrap(false);
@@ -966,7 +966,7 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
     setNukePreviewBusy(true);
     setNukeConfigStatus(null);
     try {
-      const preview = await nukeuni-cliAndOpencodeConfigPreview({ preserveBootstrap: !deleteBootstrap });
+      const preview = await nukeuniCliAndOpencodeConfigPreview({ preserveBootstrap: !deleteBootstrap });
       setNukeManifestPreview(preview);
     } catch (error) {
       setNukeDeleteBootstrap(!deleteBootstrap);
@@ -981,13 +981,13 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
     setNukeDialogOpen(false);
   }, [nukeConfigBusy]);
 
-  const onConfirmNukeuni-cliAndOpencodeConfig = useCallback(async () => {
+  const onConfirmNukeuniCliAndOpencodeConfig = useCallback(async () => {
     if (!isDesktopRuntime() || nukeConfirmationText.trim().toUpperCase() !== NUKE_CONFIRMATION_WORD) return;
     setNukeConfigBusy(true);
     setNukeConfigStatus(null);
     try {
       await revokeDenSessionBeforeNuke();
-      await nukeuni-cliAndOpencodeConfigAndExit({ preserveBootstrap: !nukeDeleteBootstrap });
+      await nukeuniCliAndOpencodeConfigAndExit({ preserveBootstrap: !nukeDeleteBootstrap });
     } catch (error) {
       setNukeConfigStatus(error instanceof Error ? error.message : safeStringify(error));
       setNukeConfigBusy(false);
@@ -1009,7 +1009,7 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
       anyActiveRuns: false,
       startupPreference: "server",
       startupLabel:
-        uni-cliServerSnapshot.uni-cliServerStatus === "connected"
+        uniCliServerSnapshot.uniCliServerStatus === "connected"
           ? t("settings.uni-cli_server_label")
           : t("status.disconnected_label"),
       runtimeSummary,
@@ -1062,34 +1062,34 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
       startupStatus,
       workspaceDebugEventsStatus,
       opencodeRestarting,
-      uni-cliServerRestarting,
+      uniCliServerRestarting,
       opencodeServiceStatus,
-      uni-cliServiceStatus,
+      uniCliServiceStatus,
       opencodeLogStatus,
-      uni-cliLogStatus,
+      uniCliLogStatus,
       onCopyOpencodeLogs,
       onExportOpencodeLogs,
-      onCopyuni-cliLogs,
-      onExportuni-cliLogs,
+      onCopyuniCliLogs,
+      onExportuniCliLogs,
       serviceRestartError,
       onRestartOpencode,
-      onRestartuni-cliServer,
+      onRestartuniCliServer,
       engineCard,
       opencodeConnectCard,
-      uni-cliCard,
-      uni-cliServerDiagnostics: uni-cliServerSnapshot.uni-cliServerDiagnostics,
+      uniCliCard,
+      uniCliServerDiagnostics: uniCliServerSnapshot.uniCliServerDiagnostics,
       runtimeWorkspaceId,
-      uni-cliServerCapabilities: uni-cliServerSnapshot.uni-cliServerCapabilities,
+      uniCliServerCapabilities: uniCliServerSnapshot.uniCliServerCapabilities,
       pendingPermissions: {},
       events: [],
       workspaceDebugEvents: [],
       safeStringify,
       onClearWorkspaceDebugEvents,
-      uni-cliAuditEntries: uni-cliServerSnapshot.uni-cliAuditEntries,
-      uni-cliAuditStatus: auditStatusPill(uni-cliServerSnapshot.uni-cliAuditStatus),
-      uni-cliAuditError: uni-cliServerSnapshot.uni-cliAuditError,
+      uniCliAuditEntries: uniCliServerSnapshot.uniCliAuditEntries,
+      uniCliAuditStatus: auditStatusPill(uniCliServerSnapshot.uniCliAuditStatus),
+      uniCliAuditError: uniCliServerSnapshot.uniCliAuditError,
       opencodeConnectStatus: null,
-      opencodeDevModeEnabled: appBuild?.uni-cliDevMode === true,
+      opencodeDevModeEnabled: appBuild?.uniCliDevMode === true,
       nukeConfigBusy,
       nukeConfigStatus,
       nukePreviewBusy,
@@ -1101,10 +1101,10 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
       onCloseNukeDialog,
       onSetNukeConfirmationText: setNukeConfirmationText,
       onSetNukeDeleteBootstrap,
-      onConfirmNukeuni-cliAndOpencodeConfig,
+      onConfirmNukeuniCliAndOpencodeConfig,
     }),
     [
-      appBuild?.uni-cliDevMode,
+      appBuild?.uniCliDevMode,
       developerLog,
       developerLogStatus,
       developerMode,
@@ -1139,7 +1139,7 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
       onExportRuntimeDebugReport,
       onInstallElectronPreviewFromTauri,
       onCheckElectronAlphaUpdates,
-      onConfirmNukeuni-cliAndOpencodeConfig,
+      onConfirmNukeuniCliAndOpencodeConfig,
       onOpenElectronPreviewRelease,
       onOpenNukeDialog,
       onOpenResetModal,
@@ -1149,33 +1149,33 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
       onRevealElectronMigrationBackup,
       onResetStartupPreference,
       onRestartOpencode,
-      onRestartuni-cliServer,
+      onRestartuniCliServer,
       onSetElectronAlphaUpdaterChannel,
       onSetElectronMigrationSha512,
       onSetElectronMigrationUrl,
       onSetEngineSource,
       onStopHost,
       onCopyOpencodeLogs,
-      onCopyuni-cliLogs,
+      onCopyuniCliLogs,
       onExportOpencodeLogs,
-      onExportuni-cliLogs,
+      onExportuniCliLogs,
       opencodeConnectCard,
       opencodeLogStatus,
       opencodeRestarting,
       opencodeServiceStatus,
-      uni-cliCard,
-      uni-cliLogStatus,
-      uni-cliServiceStatus,
-      uni-cliServerRestarting,
+      uniCliCard,
+      uniCliLogStatus,
+      uniCliServiceStatus,
+      uniCliServerRestarting,
       resetStatus,
       startupStatus,
       workspaceDebugEventsStatus,
-      uni-cliServerSnapshot.uni-cliAuditEntries,
-      uni-cliServerSnapshot.uni-cliAuditError,
-      uni-cliServerSnapshot.uni-cliAuditStatus,
-      uni-cliServerSnapshot.uni-cliServerCapabilities,
-      uni-cliServerSnapshot.uni-cliServerDiagnostics,
-      uni-cliServerSnapshot.uni-cliServerStatus,
+      uniCliServerSnapshot.uniCliAuditEntries,
+      uniCliServerSnapshot.uniCliAuditError,
+      uniCliServerSnapshot.uniCliAuditStatus,
+      uniCliServerSnapshot.uniCliServerCapabilities,
+      uniCliServerSnapshot.uniCliServerDiagnostics,
+      uniCliServerSnapshot.uniCliServerStatus,
       resetModalBusy,
       runtimeConfigStatus,
       runtimeConfigStatusError,

@@ -8,11 +8,11 @@ import type { JSONRPCMessage } from "@modelcontextprotocol/sdk/types.js"
 import type { DynamicToolUIPart } from "ai"
 
 import {
-  createuni-cliServerClient,
+  createuniCliServerClient,
   normalizeMcpAppHostOrigin,
-  uni-cliServerError,
-  type uni-cliMcpAppResource,
-  type uni-cliServerClient,
+  uniCliServerError,
+  type uniCliMcpAppResource,
+  type uniCliServerClient,
 } from "../src/app/lib/uni-cli-server"
 import { formatMcpAppDiagnostic, safeMcpAppDiagnosticMessage } from "../src/components/chat/mcp-app-diagnostics"
 import type { McpAppSandboxViewProps } from "../src/components/chat/mcp-app-frame"
@@ -39,7 +39,7 @@ const {
   secureMcpAppHtml,
 } = await import("../src/components/chat/mcp-app-frame")
 
-function fixture(overrides: Partial<uni-cliMcpAppResource> = {}): uni-cliMcpAppResource {
+function fixture(overrides: Partial<uniCliMcpAppResource> = {}): uniCliMcpAppResource {
   return {
     launchId: "launch_fixture",
     serverName: "fixture",
@@ -108,8 +108,8 @@ async function startupFixture(options: Pick<McpAppSandboxViewProps, "presentatio
   const errorSpy = spyOn(console, "error").mockImplementation(() => {})
   const addListenerSpy = spyOn(window, "addEventListener")
   const removeListenerSpy = spyOn(window, "removeEventListener")
-  const client: uni-cliServerClient = {
-    ...createuni-cliServerClient({ baseUrl: "http://localhost:1" }),
+  const client: uniCliServerClient = {
+    ...createuniCliServerClient({ baseUrl: "http://localhost:1" }),
     mcpAppSandbox: app => ({ url: `about:blank#${app.toolName}`, expectedOrigin: "https://sandbox.example", sandbox: "allow-scripts allow-same-origin" }),
   }
   const sandboxSpy = spyOn(client, "mcpAppSandbox")
@@ -171,7 +171,7 @@ async function startupFixture(options: Pick<McpAppSandboxViewProps, "presentatio
 describe("MCP App startup scheduling", () => {
   test("cached HTML exposes pending tools, waits for a live lease, and never reuses cached authority", async () => {
     const host = await startupFixture()
-    const live = Promise.withResolvers<{ origin: mcpAppOrigin.McpAppOrigin; app: uni-cliMcpAppResource }>()
+    const live = Promise.withResolvers<{ origin: mcpAppOrigin.McpAppOrigin; app: uniCliMcpAppResource }>()
     const call = spyOn(host.client, "callMcpAppTool").mockResolvedValue({ content: [] })
     const actionContext = { requestId: 1, signal: new AbortController().signal,
       sendNotification: async () => {}, sendRequest: async () => { throw new Error("Unexpected request") } }
@@ -400,10 +400,10 @@ describe("MCP App retry ownership", () => {
 
   test.each(["safe", "approval", "denied"])("dashboard child retry replaces the failed lease without restarting its healthy sibling (%s)", async policy => {
     const host = await startupFixture()
-    const pending = Promise.withResolvers<{ app: uni-cliMcpAppResource }>()
+    const pending = Promise.withResolvers<{ app: uniCliMcpAppResource }>()
     const resolutions = [0, 0]
     const released: string[] = []
-    const calls: Array<Parameters<uni-cliServerClient["callMcpAppTool"]>[1]> = []
+    const calls: Array<Parameters<uniCliServerClient["callMcpAppTool"]>[1]> = []
     const resolveSpy = spyOn(host.client, "resolveMcpApp").mockImplementation(async (_workspace, name) => {
       const index = name === "render-0" ? 0 : 1
       const attempt = ++resolutions[index]
@@ -418,8 +418,8 @@ describe("MCP App retry ownership", () => {
       calls.push(request)
       if (request.launchId && released.includes(request.launchId)) throw new Error("Released lease reused")
       if (request.launchId === "render-0-2" && request.name === "render-0") {
-        if (policy === "denied") throw new uni-cliServerError(403, "tool_denied", "Forbidden")
-        if (policy === "approval" && !request.approved) throw new uni-cliServerError(422, "tool_requires_approval", "Approval required")
+        if (policy === "denied") throw new uniCliServerError(403, "tool_denied", "Forbidden")
+        if (policy === "approval" && !request.approved) throw new uniCliServerError(422, "tool_requires_approval", "Approval required")
       }
       return { content: [] }
     })
@@ -438,7 +438,7 @@ describe("MCP App retry ownership", () => {
     }
     try {
       await host.renderElement(createElement(WorkspaceProvider, {
-        client: null, uni-cliServerClient: host.client, workspaceId: "fixture", selectedWorkspaceRoot: "/fixture",
+        client: null, uniCliServerClient: host.client, workspaceId: "fixture", selectedWorkspaceRoot: "/fixture",
       }, tile(0), tile(1)))
       await host.notify(0, "ui/notifications/sandbox-proxy-ready")
       await host.notify(1, "ui/notifications/sandbox-proxy-ready")
@@ -726,7 +726,7 @@ describe("MCP App data continuity", () => {
     let finishAction: (() => void) | undefined
     let finishInput: (() => void) | undefined
     host.inputSpy.mockImplementationOnce(() => new Promise(resolve => { finishInput = resolve }))
-    const client: uni-cliServerClient = {
+    const client: uniCliServerClient = {
       ...host.client,
       callMcpAppTool: (...args) => {
         calls.push(args)
@@ -1068,7 +1068,7 @@ describe("MCP App resolution", () => {
       signal.addEventListener("abort", () => reject(signal.reason), { once: true })
     }))
     try {
-      const client = createuni-cliServerClient({ baseUrl: "https://server.example" })
+      const client = createuniCliServerClient({ baseUrl: "https://server.example" })
       let settled = false
       const resolution = client.resolveMcpApp("fixture", "fixture_render")
         .then(value => { settled = true; return value }, (cause: unknown) => { settled = true; return cause })
@@ -1105,7 +1105,7 @@ describe("MCP App resolution", () => {
     Reflect.set(globalThis, "IS_REACT_ACT_ENVIRONMENT", true)
     const container = document.body.appendChild(document.createElement("div"))
     const root = createRoot(container)
-    const client = createuni-cliServerClient({ baseUrl: "https://server.example" })
+    const client = createuniCliServerClient({ baseUrl: "https://server.example" })
     const resolveSpy = spyOn(client, "resolveMcpApp").mockResolvedValue({ app: null })
     const callSpy = spyOn(client, "callMcpAppTool").mockResolvedValue({ content: [] })
     const releaseSpy = spyOn(client, "releaseMcpApp").mockResolvedValue({ released: true })
@@ -1164,7 +1164,7 @@ describe("MCP App resolution", () => {
   test.each(["mcp_auth_required", "mcp_access_denied"])("%s stays actionable without automatic retry or native connection fallback", async code => {
     const host = resolutionFixture(false)
     const timerSpy = spyOn(window, "setTimeout")
-    host.resolveSpy.mockRejectedValue(new uni-cliServerError(403, code, "Connection requires attention"))
+    host.resolveSpy.mockRejectedValue(new uniCliServerError(403, code, "Connection requires attention"))
     try {
       await host.render()
       await host.render()
@@ -1186,7 +1186,7 @@ describe("MCP App resolution", () => {
 
   test.each([
     new Error("Request timed out."),
-    new uni-cliServerError(500, "unexpected_failure", "Discovery failed: Bearer fixture-secret"),
+    new uniCliServerError(500, "unexpected_failure", "Discovery failed: Bearer fixture-secret"),
   ])("shows explicit launch failures with sanitized diagnostics and discovery-only Retry (%s)", async cause => {
     const host = resolutionFixture(true)
     host.resolveSpy.mockRejectedValueOnce(cause).mockResolvedValue({ app: fixture() })
@@ -1199,7 +1199,7 @@ describe("MCP App resolution", () => {
       expect(status?.textContent).toContain("Stage: resource-resolution")
       expect(status?.textContent).not.toContain("fixture-secret")
       expect(JSON.stringify(host.errorSpy.mock.calls)).not.toContain("fixture-secret")
-      if (cause instanceof uni-cliServerError) expect(status?.textContent).toContain(`Cause code: ${cause.code}`)
+      if (cause instanceof uniCliServerError) expect(status?.textContent).toContain(`Cause code: ${cause.code}`)
       expect(host.resolveSpy).toHaveBeenCalledTimes(1)
       expect(host.container.querySelector("iframe")).toBeNull()
       const retry = Array.from(host.container.querySelectorAll("button")).find(button => button.textContent === "Retry")
@@ -1215,7 +1215,7 @@ describe("MCP App resolution", () => {
 
   test.each([
     new Error("Request timed out."),
-    new uni-cliServerError(500, "unexpected_failure", "Discovery failed"),
+    new uniCliServerError(500, "unexpected_failure", "Discovery failed"),
     null,
   ])("keeps ordinary results silent for unknown errors and null resolution (%s)", async cause => {
     const host = resolutionFixture(false)
@@ -1363,7 +1363,7 @@ describe("MCP App resolution", () => {
     { toolName: "uni-cli-cloud_unknown", connectionId: undefined, resourceUri: "ui://uni-cli/skill-created/v1/view.html", code: "tool_not_found" },
   ])("preserves provider and security diagnostics for $toolName $resourceUri $code", async ({ toolName, connectionId, resourceUri, code }) => {
     const host = resolutionFixture(true)
-    host.resolveSpy.mockRejectedValue(new uni-cliServerError(404, code, "Resolution failed"))
+    host.resolveSpy.mockRejectedValue(new uniCliServerError(404, code, "Resolution failed"))
     try {
       await host.render({
         ...host.part, toolName,
@@ -1432,7 +1432,7 @@ describe("MCP App resolution", () => {
     { toolName: "uni-cli-cloud_unknown", arguments: {}, connectionId: undefined },
   ])("keeps malformed or unknown $toolName launches on the diagnostic path", async ({ toolName, arguments: args, connectionId }) => {
     const host = resolutionFixture(false)
-    host.resolveSpy.mockRejectedValue(new uni-cliServerError(400, "invalid_launch_reference", "Invalid launch"))
+    host.resolveSpy.mockRejectedValue(new uniCliServerError(400, "invalid_launch_reference", "Invalid launch"))
     try {
       await host.render({
         ...host.part, toolName,
@@ -1451,7 +1451,7 @@ describe("MCP App resolution", () => {
 
   test("releases a launch that resolves after its frame unmounts", async () => {
     const host = resolutionFixture(true)
-    let finish: ((value: { app: uni-cliMcpAppResource }) => void) | undefined
+    let finish: ((value: { app: uniCliMcpAppResource }) => void) | undefined
     host.resolveSpy.mockImplementation(() => new Promise(resolve => { finish = resolve }))
     try {
       await host.render()
@@ -1530,11 +1530,11 @@ describe("MCP App iframe policy", () => {
     const host = await startupFixture()
     const resolutions: unknown[] = []
     const releases: unknown[] = []
-    const resolve = async (...args: Parameters<uni-cliServerClient["resolveMcpApp"]>) => {
+    const resolve = async (...args: Parameters<uniCliServerClient["resolveMcpApp"]>) => {
       resolutions.push(args)
       return { app: fixture({ toolName: "render-0", launchId: `launch-${resolutions.length}` }) }
     }
-    const release = async (...args: Parameters<uni-cliServerClient["releaseMcpApp"]>) => {
+    const release = async (...args: Parameters<uniCliServerClient["releaseMcpApp"]>) => {
       releases.push(args)
       return { released: true }
     }
@@ -1645,8 +1645,8 @@ describe("MCP App iframe policy", () => {
     const opened: string[] = []
     Reflect.set(window, "__UNICLI_ELECTRON__", { shell: { openExternal: async (url: string) => { opened.push(url); return { ok: true } } } })
     const app = fixture({ launchId: readOnly ? undefined : "launch_fixture" })
-    const sandboxClient = createuni-cliServerClient({ baseUrl: sameOrigin ? window.location.origin : "https://sandbox.example" })
-    const client: uni-cliServerClient = {
+    const sandboxClient = createuniCliServerClient({ baseUrl: sameOrigin ? window.location.origin : "https://sandbox.example" })
+    const client: uniCliServerClient = {
       ...sandboxClient,
       // Exercise real policy selection without asking Happy DOM to fetch a page.
       mcpAppSandbox: (...args) => ({ ...sandboxClient.mcpAppSandbox(...args), url: "about:blank" }),
@@ -1656,13 +1656,13 @@ describe("MCP App iframe policy", () => {
       },
       callMcpAppTool: async (workspaceId, payload) => {
         toolCalls.push({ workspaceId, payload })
-        if (payload.name === "forbidden_detail") throw new uni-cliServerError(403, "tool_denied", "Forbidden")
-        if (challenge && !payload.approved) throw new uni-cliServerError(422, "tool_requires_approval", "Approval required")
+        if (payload.name === "forbidden_detail") throw new uniCliServerError(403, "tool_denied", "Forbidden")
+        if (challenge && !payload.approved) throw new uniCliServerError(422, "tool_requires_approval", "Approval required")
         return result
       },
       releaseMcpApp: async (workspaceId, launchId) => { releases.push({ workspaceId, launchId }); return { released: true } },
     }
-    const primaryClient: uni-cliServerClient = {
+    const primaryClient: uniCliServerClient = {
       ...client,
       resolveMcpApp: async () => { throw new Error("Must not resolve through the selected workspace") },
       callMcpAppTool: async () => { throw new Error("Must not call through the selected workspace") },
@@ -1675,7 +1675,7 @@ describe("MCP App iframe policy", () => {
     const previewOrigin = { client, workspaceId: "fixture", sessionId: null, readOnly: true }
     const render = async (nextPart = part) => {
       await act(async () => root.render(createElement(WorkspaceProvider, {
-        client: null, uni-cliServerClient: primaryClient, workspaceId: "primary", selectedWorkspaceRoot: "/primary",
+        client: null, uniCliServerClient: primaryClient, workspaceId: "primary", selectedWorkspaceRoot: "/primary",
         children: preview
           ? createElement(McpAppSandboxView, {
               origin: previewOrigin,
@@ -1876,7 +1876,7 @@ describe("MCP App iframe policy", () => {
     ["http://127.0.0.1:4321", "http://127.0.0.1:4321", "http://localhost:4321", "http://localhost:4321", "allow-scripts allow-same-origin"],
     ["http://localhost:4321", "file://", "http://localhost:4321", "http://localhost:4321", "allow-scripts allow-same-origin"],
   ])("isolates sandbox delivery for %s hosted at %s", (baseUrl, hostOrigin, urlOrigin, expectedOrigin, sandboxFlags) => {
-    const client = createuni-cliServerClient({ baseUrl, token: "private-client-token", hostToken: "private-host-token" })
+    const client = createuniCliServerClient({ baseUrl, token: "private-client-token", hostToken: "private-host-token" })
     const sandbox = client.mcpAppSandbox(fixture(), hostOrigin)
     expect(new URL(sandbox.url).origin).toBe(urlOrigin)
     expect(sandbox.expectedOrigin).toBe(expectedOrigin)
@@ -1890,14 +1890,14 @@ describe("MCP App iframe policy", () => {
     expect(normalizeMcpAppHostOrigin("null")).toBe("null")
     expect(normalizeMcpAppHostOrigin("https://desktop.example")).toBe("https://desktop.example")
 
-    const client = createuni-cliServerClient({ baseUrl: "http://localhost:61856" })
+    const client = createuniCliServerClient({ baseUrl: "http://localhost:61856" })
     const sandbox = client.mcpAppSandbox(fixture(), "file://")
     expect(new URL(sandbox.url).searchParams.get("hostOrigin")).toBe("null")
   })
 
   test("keeps ordinary tools silent while surfacing advertised resource failures", () => {
-    expect(isActionableMcpAppResolutionError(new uni-cliServerError(503, "mcp_unreachable", "offline"))).toBe(true)
-    expect(isActionableMcpAppResolutionError(new uni-cliServerError(404, "resource_read_failed", "missing"))).toBe(true)
+    expect(isActionableMcpAppResolutionError(new uniCliServerError(503, "mcp_unreachable", "offline"))).toBe(true)
+    expect(isActionableMcpAppResolutionError(new uniCliServerError(404, "resource_read_failed", "missing"))).toBe(true)
     expect(isActionableMcpAppResolutionError(new Error("generic failure"))).toBe(false)
   })
 

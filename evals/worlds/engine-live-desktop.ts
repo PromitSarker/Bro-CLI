@@ -32,7 +32,7 @@ export async function engineLiveDesktop(seed: Seed) {
     ...(process.env.UNICLI_OPENCODE_BIN ? { UNICLI_OPENCODE_BIN: process.env.UNICLI_OPENCODE_BIN } : {}),
     ...(process.env.UNICLI_OPENCODE2_BIN ? { UNICLI_OPENCODE2_BIN: process.env.UNICLI_OPENCODE2_BIN } : {}),
   } });
-  const info = await seed.evalIn(app, async () => window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo"), { awaitPromise: true });
+  const info = await seed.evalIn(app, async () => window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo"), { awaitPromise: true });
   const interactiveMs = performance.now() - bootStarted;
   const request = async (path: string, method = "GET", body?: unknown) => {
     const response = await fetch(`${info.baseUrl}${path}`, { method,

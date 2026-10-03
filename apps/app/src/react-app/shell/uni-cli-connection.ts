@@ -1,24 +1,24 @@
 import {
-  getuni-cliGatewayOrigin,
-  readuni-cliGatewayDenToken,
+  getuniCliGatewayOrigin,
+  readuniCliGatewayDenToken,
 } from "../../app/lib/gateway-runtime";
 import {
-  isLoopbackuni-cliServerUrl,
-  normalizeuni-cliServerUrl,
-  readuni-cliServerSettings,
+  isLoopbackuniCliServerUrl,
+  normalizeuniCliServerUrl,
+  readuniCliServerSettings,
 } from "../../app/lib/uni-cli-server";
 import { isWebDeployment } from "../../app/lib/uni-cli-deployment";
-import { uni-cliServerInfo, type uni-cliServerInfo } from "../../app/lib/desktop";
+import { uniCliServerInfo, type uniCliServerInfo } from "../../app/lib/desktop";
 import { isDesktopRuntime } from "../../app/utils";
 
-export type uni-cliConnectionSource = "desktop-runtime" | "stored-settings" | "same-origin" | "gateway" | "empty";
+export type uniCliConnectionSource = "desktop-runtime" | "stored-settings" | "same-origin" | "gateway" | "empty";
 
-export type Resolveduni-cliConnection = {
+export type ResolveduniCliConnection = {
   normalizedBaseUrl: string;
   resolvedToken: string;
   resolvedHostToken: string;
-  hostInfo: uni-cliServerInfo | null;
-  source: uni-cliConnectionSource;
+  hostInfo: uniCliServerInfo | null;
+  source: uniCliConnectionSource;
 };
 
 function hasUsableConnection(url: string, token: string) {
@@ -45,7 +45,7 @@ export function isStaleStoredDesktopConnection(input: {
   if (!input.desktopRuntime || !input.desktopServerReportedNotReady) return false;
   if (!input.storedBaseUrl) return false;
   return (
-    isLoopbackuni-cliServerUrl(input.storedBaseUrl) ||
+    isLoopbackuniCliServerUrl(input.storedBaseUrl) ||
     input.storedBaseUrl === input.runtimeReportedBaseUrl
   );
 }
@@ -58,12 +58,12 @@ export function isStaleStoredDesktopConnection(input: {
  * there. Stored settings remain the fallback for remote/manual server
  * connections and for desktop cases where the runtime bridge is unavailable.
  */
-export async function resolveuni-cliConnection(): Promise<Resolveduni-cliConnection> {
-  const gatewayOrigin = getuni-cliGatewayOrigin();
+export async function resolveuniCliConnection(): Promise<ResolveduniCliConnection> {
+  const gatewayOrigin = getuniCliGatewayOrigin();
   if (gatewayOrigin) {
     return {
-      normalizedBaseUrl: normalizeuni-cliServerUrl(gatewayOrigin) ?? "",
-      resolvedToken: readuni-cliGatewayDenToken(),
+      normalizedBaseUrl: normalizeuniCliServerUrl(gatewayOrigin) ?? "",
+      resolvedToken: readuniCliGatewayDenToken(),
       resolvedHostToken: "",
       hostInfo: null,
       source: "gateway",
@@ -75,9 +75,9 @@ export async function resolveuni-cliConnection(): Promise<Resolveduni-cliConnect
 
   if (isDesktopRuntime()) {
     try {
-      const info = await uni-cliServerInfo() as uni-cliServerInfo;
+      const info = await uniCliServerInfo() as uniCliServerInfo;
       const normalizedBaseUrl =
-        normalizeuni-cliServerUrl(info.baseUrl ?? info.connectUrl ?? info.lanUrl ?? info.mdnsUrl ?? "") ??
+        normalizeuniCliServerUrl(info.baseUrl ?? info.connectUrl ?? info.lanUrl ?? info.mdnsUrl ?? "") ??
         "";
       const resolvedToken = info.ownerToken?.trim() || info.clientToken?.trim() || "";
       if (info.running === true && hasUsableConnection(normalizedBaseUrl, resolvedToken)) {
@@ -98,15 +98,15 @@ export async function resolveuni-cliConnection(): Promise<Resolveduni-cliConnect
     }
   }
 
-  const settings = readuni-cliServerSettings();
-  const normalizedBaseUrl = normalizeuni-cliServerUrl(settings.urlOverride ?? "") ?? "";
+  const settings = readuniCliServerSettings();
+  const normalizedBaseUrl = normalizeuniCliServerUrl(settings.urlOverride ?? "") ?? "";
   const sameOriginBaseUrl =
     !normalizedBaseUrl && !isDesktopRuntime() && isWebDeployment() && typeof window !== "undefined"
-      ? normalizeuni-cliServerUrl(window.location.origin) ?? ""
+      ? normalizeuniCliServerUrl(window.location.origin) ?? ""
       : "";
   const resolvedToken = settings.token?.trim() ?? "";
   const resolvedHostToken =
-    normalizedBaseUrl && isLoopbackuni-cliServerUrl(normalizedBaseUrl)
+    normalizedBaseUrl && isLoopbackuniCliServerUrl(normalizedBaseUrl)
       ? settings.hostToken?.trim() ?? ""
       : "";
   const storedConnectionIsStaleDesktopRuntime = isStaleStoredDesktopConnection({

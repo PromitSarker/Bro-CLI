@@ -15,7 +15,7 @@ import type {
 import { Button } from "@/components/ui/button";
 import { t } from "@/i18n";
 import { cn } from "@/lib/utils";
-import { resolveUni-CLIConnectStateSummary } from "@/react-app/domains/connections/uni-cli-connect-status";
+import { resolveUniCliConnectStateSummary } from "@/react-app/domains/connections/uni-cli-connect-status";
 import { SettingsInset, SettingsNotice, SettingsSection } from "../settings-section";
 
 const EXPECTED_CLOUD_TOOL_IDS = ["search_capabilities", "execute_capability"];
@@ -82,7 +82,7 @@ const BRANCH_LABEL_KEYS: Record<AgentContextDiagnosticsReport["connect"]["expect
   "extensions-only": "connect.diagnostics_branch_extensions_only",
 };
 
-const AGENT_STATE_LABEL_KEYS: Record<AgentContextDiagnosticsReport["agent"]["configureduni-cliAgent"]["state"], string> = {
+const AGENT_STATE_LABEL_KEYS: Record<AgentContextDiagnosticsReport["agent"]["configureduniCliAgent"]["state"], string> = {
   present: "connect.diagnostics_agent_state_present",
   missing: "connect.diagnostics_agent_state_missing",
   "configured-disabled": "connect.diagnostics_agent_state_configured_disabled",
@@ -322,7 +322,7 @@ function AgentEvidence(props: {
   report: AgentContextDiagnosticsReport;
   effectiveEngineObserved: boolean;
 }) {
-  const agent = props.report.agent.configureduni-cliAgent;
+  const agent = props.report.agent.configureduniCliAgent;
   return (
     <div className="space-y-3">
       <div>
@@ -591,9 +591,9 @@ export function AgentContextDiagnosticsReportView(props: {
   onCopy: () => void | Promise<void>;
 }) {
   const firstFailure = props.report.firstFailedCheck;
-  const agent = props.report.agent.configureduni-cliAgent;
+  const agent = props.report.agent.configureduniCliAgent;
   const effectiveEngineObserved = hasObservedEffectiveEngineConfiguration(props.report);
-  const connectStateSummary = resolveUni-CLIConnectStateSummary(
+  const connectStateSummary = resolveUniCliConnectStateSummary(
     props.report.connect.stateStatus,
     props.report.connect.connectEnabled,
   );

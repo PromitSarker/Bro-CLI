@@ -2,16 +2,16 @@
 import { useCallback, useEffect, useMemo, useReducer } from "react";
 
 import {
-  builduni-cliWorkspaceBaseUrl,
-  createuni-cliServerClient,
-  parseuni-cliWorkspaceIdFromUrl,
+  builduniCliWorkspaceBaseUrl,
+  createuniCliServerClient,
+  parseuniCliWorkspaceIdFromUrl,
 } from "../../../app/lib/uni-cli-server";
 import type {
   EngineInfo,
-  uni-cliServerInfo,
+  uniCliServerInfo,
   WorkspaceInfo,
 } from "../../../app/lib/desktop";
-import type { uni-cliServerSettings } from "../../../app/lib/uni-cli-server";
+import type { uniCliServerSettings } from "../../../app/lib/uni-cli-server";
 import { t } from "../../../i18n";
 import { isDesktopRuntime, normalizeDirectoryPath } from "../../../app/utils";
 
@@ -19,8 +19,8 @@ export type ShareWorkspaceState = ReturnType<typeof useShareWorkspaceState>;
 
 type UseShareWorkspaceStateOptions = {
   workspaces: WorkspaceInfo[];
-  uni-cliServerHostInfo: uni-cliServerInfo | null;
-  uni-cliServerSettings: uni-cliServerSettings;
+  uniCliServerHostInfo: uniCliServerInfo | null;
+  uniCliServerSettings: uniCliServerSettings;
   engineInfo: EngineInfo | null;
   exportWorkspaceBusy: boolean;
   openLink: (url: string) => void;
@@ -29,17 +29,17 @@ type UseShareWorkspaceStateOptions = {
 
 type ShareWorkspaceLocalState = {
   shareWorkspaceId: string | null;
-  shareLocaluni-cliWorkspaceId: string | null;
+  shareLocaluniCliWorkspaceId: string | null;
 };
 
 type ShareWorkspaceLocalAction =
   | { type: "open"; workspaceId: string }
   | { type: "close" }
-  | { type: "localuni-cliWorkspace"; workspaceId: string | null };
+  | { type: "localuniCliWorkspace"; workspaceId: string | null };
 
 const initialShareWorkspaceLocalState: ShareWorkspaceLocalState = {
   shareWorkspaceId: null,
-  shareLocaluni-cliWorkspaceId: null,
+  shareLocaluniCliWorkspaceId: null,
 };
 
 function shareWorkspaceLocalReducer(
@@ -51,13 +51,13 @@ function shareWorkspaceLocalReducer(
       return { ...state, shareWorkspaceId: action.workspaceId };
     case "close":
       return { ...state, shareWorkspaceId: null };
-    case "localuni-cliWorkspace":
-      return { ...state, shareLocaluni-cliWorkspaceId: action.workspaceId };
+    case "localuniCliWorkspace":
+      return { ...state, shareLocaluniCliWorkspaceId: action.workspaceId };
   }
 }
 
 export function useShareWorkspaceState(options: UseShareWorkspaceStateOptions) {
-  const [{ shareWorkspaceId, shareLocaluni-cliWorkspaceId }, dispatchShareWorkspace] = useReducer(
+  const [{ shareWorkspaceId, shareLocaluniCliWorkspaceId }, dispatchShareWorkspace] = useReducer(
     shareWorkspaceLocalReducer,
     initialShareWorkspaceLocalState,
   );
@@ -85,10 +85,10 @@ export function useShareWorkspaceState(options: UseShareWorkspaceStateOptions) {
     if (!workspace) return "";
     if (workspace.workspaceType === "remote") {
       if (workspace.remoteType === "uni-cli") {
-        const hostUrl = workspace.uni-cliHostUrl?.trim() || workspace.baseUrl?.trim() || "";
-        const mounted = builduni-cliWorkspaceBaseUrl(
+        const hostUrl = workspace.uniCliHostUrl?.trim() || workspace.baseUrl?.trim() || "";
+        const mounted = builduniCliWorkspaceBaseUrl(
           hostUrl,
-          workspace.uni-cliWorkspaceId,
+          workspace.uniCliWorkspaceId,
         );
         return mounted || hostUrl;
       }
@@ -103,10 +103,10 @@ export function useShareWorkspaceState(options: UseShareWorkspaceStateOptions) {
 
   useEffect(() => {
     const workspace = shareWorkspace;
-    const baseUrl = options.uni-cliServerHostInfo?.baseUrl?.trim() ?? "";
+    const baseUrl = options.uniCliServerHostInfo?.baseUrl?.trim() ?? "";
     const token =
-      options.uni-cliServerHostInfo?.ownerToken?.trim() ||
-      options.uni-cliServerHostInfo?.clientToken?.trim() ||
+      options.uniCliServerHostInfo?.ownerToken?.trim() ||
+      options.uniCliServerHostInfo?.clientToken?.trim() ||
       "";
     const workspacePath = workspace?.workspaceType === "local" ? (workspace.path?.trim() ?? "") : "";
 
@@ -117,16 +117,16 @@ export function useShareWorkspaceState(options: UseShareWorkspaceStateOptions) {
       !baseUrl ||
       !token
     ) {
-      dispatchShareWorkspace({ type: "localuni-cliWorkspace", workspaceId: null });
+      dispatchShareWorkspace({ type: "localuniCliWorkspace", workspaceId: null });
       return;
     }
 
     let cancelled = false;
-    dispatchShareWorkspace({ type: "localuni-cliWorkspace", workspaceId: null });
+    dispatchShareWorkspace({ type: "localuniCliWorkspace", workspaceId: null });
 
     void (async () => {
       try {
-        const client = createuni-cliServerClient({ baseUrl, token });
+        const client = createuniCliServerClient({ baseUrl, token });
         const response = await client.listWorkspaces();
         if (cancelled) return;
         const items = Array.isArray(response.items) ? response.items : [];
@@ -134,10 +134,10 @@ export function useShareWorkspaceState(options: UseShareWorkspaceStateOptions) {
         const match = items.find(
           (entry) => normalizeDirectoryPath(entry.path) === targetPath,
         );
-        dispatchShareWorkspace({ type: "localuni-cliWorkspace", workspaceId: match?.id ?? null });
+        dispatchShareWorkspace({ type: "localuniCliWorkspace", workspaceId: match?.id ?? null });
       } catch {
         if (!cancelled) {
-          dispatchShareWorkspace({ type: "localuni-cliWorkspace", workspaceId: null });
+          dispatchShareWorkspace({ type: "localuniCliWorkspace", workspaceId: null });
         }
       }
     })();
@@ -145,7 +145,7 @@ export function useShareWorkspaceState(options: UseShareWorkspaceStateOptions) {
     return () => {
       cancelled = true;
     };
-  }, [options.uni-cliServerHostInfo, shareWorkspace]);
+  }, [options.uniCliServerHostInfo, shareWorkspace]);
 
   const shareFields = useMemo(() => {
     const workspace = shareWorkspace;
@@ -160,22 +160,22 @@ export function useShareWorkspaceState(options: UseShareWorkspaceStateOptions) {
     }
 
     if (workspace.workspaceType !== "remote") {
-      if (options.uni-cliServerHostInfo?.remoteAccessEnabled !== true) {
+      if (options.uniCliServerHostInfo?.remoteAccessEnabled !== true) {
         return [];
       }
       const hostUrl =
-        options.uni-cliServerHostInfo?.connectUrl?.trim() ||
-        options.uni-cliServerHostInfo?.lanUrl?.trim() ||
-        options.uni-cliServerHostInfo?.mdnsUrl?.trim() ||
-        options.uni-cliServerHostInfo?.baseUrl?.trim() ||
+        options.uniCliServerHostInfo?.connectUrl?.trim() ||
+        options.uniCliServerHostInfo?.lanUrl?.trim() ||
+        options.uniCliServerHostInfo?.mdnsUrl?.trim() ||
+        options.uniCliServerHostInfo?.baseUrl?.trim() ||
         "";
-      const mountedUrl = shareLocaluni-cliWorkspaceId
-        ? builduni-cliWorkspaceBaseUrl(hostUrl, shareLocaluni-cliWorkspaceId)
+      const mountedUrl = shareLocaluniCliWorkspaceId
+        ? builduniCliWorkspaceBaseUrl(hostUrl, shareLocaluniCliWorkspaceId)
         : null;
       const url = mountedUrl || hostUrl;
-      const collaboratorToken = options.uni-cliServerHostInfo?.clientToken?.trim() || "";
+      const collaboratorToken = options.uniCliServerHostInfo?.clientToken?.trim() || "";
       const ownerToken =
-        collaboratorToken || options.uni-cliServerHostInfo?.ownerToken?.trim() || "";
+        collaboratorToken || options.uniCliServerHostInfo?.ownerToken?.trim() || "";
       return [
         {
           label: t("session.share_worker_url"),
@@ -211,13 +211,13 @@ export function useShareWorkspaceState(options: UseShareWorkspaceStateOptions) {
     }
 
     if (workspace.remoteType === "uni-cli") {
-      const hostUrl = workspace.uni-cliHostUrl?.trim() || workspace.baseUrl?.trim() || "";
+      const hostUrl = workspace.uniCliHostUrl?.trim() || workspace.baseUrl?.trim() || "";
       const url =
-        builduni-cliWorkspaceBaseUrl(hostUrl, workspace.uni-cliWorkspaceId) ||
+        builduniCliWorkspaceBaseUrl(hostUrl, workspace.uniCliWorkspaceId) ||
         hostUrl;
       const token =
-        workspace.uni-cliToken?.trim() ||
-        options.uni-cliServerSettings.token?.trim() ||
+        workspace.uniCliToken?.trim() ||
+        options.uniCliServerSettings.token?.trim() ||
         "";
       return [
         {
@@ -248,9 +248,9 @@ export function useShareWorkspaceState(options: UseShareWorkspaceStateOptions) {
       },
     ];
   }, [
-    options.uni-cliServerHostInfo,
-    options.uni-cliServerSettings,
-    shareLocaluni-cliWorkspaceId,
+    options.uniCliServerHostInfo,
+    options.uniCliServerSettings,
+    shareLocaluniCliWorkspaceId,
     shareWorkspace,
   ]);
 
@@ -270,25 +270,25 @@ export function useShareWorkspaceState(options: UseShareWorkspaceStateOptions) {
       return t("session.share_uni-cli_workers_only");
     }
     if (workspace.workspaceType !== "remote") {
-      const baseUrl = options.uni-cliServerHostInfo?.baseUrl?.trim() ?? "";
+      const baseUrl = options.uniCliServerHostInfo?.baseUrl?.trim() ?? "";
       const token =
-        options.uni-cliServerHostInfo?.ownerToken?.trim() ||
-        options.uni-cliServerHostInfo?.clientToken?.trim() ||
+        options.uniCliServerHostInfo?.ownerToken?.trim() ||
+        options.uniCliServerHostInfo?.clientToken?.trim() ||
         "";
       if (!baseUrl || !token) {
         return t("session.share_local_host_not_ready");
       }
     } else {
-      const hostUrl = workspace.uni-cliHostUrl?.trim() || workspace.baseUrl?.trim() || "";
+      const hostUrl = workspace.uniCliHostUrl?.trim() || workspace.baseUrl?.trim() || "";
       const token =
-        workspace.uni-cliToken?.trim() ||
-        options.uni-cliServerSettings.token?.trim() ||
+        workspace.uniCliToken?.trim() ||
+        options.uniCliServerSettings.token?.trim() ||
         "";
       if (!hostUrl) return t("session.share_missing_host_url");
       if (!token) return t("session.share_missing_token");
     }
     return null;
-  }, [options.uni-cliServerHostInfo, options.uni-cliServerSettings, shareWorkspace]);
+  }, [options.uniCliServerHostInfo, options.uniCliServerSettings, shareWorkspace]);
 
   const exportDisabledReason = useMemo(() => {
     const workspace = shareWorkspace;

@@ -27,11 +27,11 @@ import type { CloudAgentExecution, CloudAgentExecutorInput } from "./cloud-agent
 import { cloudAutomationRuntime, HEADLESS_AGENT_ENGINE_KIND, type CloudAutomationRuntime } from "./headless-runtime.js"
 import { appLogger } from "../observability/logger.js"
 import {
-  getUni-CLIWebRuntimeAccess,
+  getUniCliWebRuntimeAccess,
   UNICLI_WEB_ACCESS_REQUIRED_CODE,
   UNICLI_WEB_ACCESS_REQUIRED_MESSAGE,
-  requireUni-CLIWebRuntimeAccess,
-  type Uni-CLIWebRuntimeAccessResolver,
+  requireUniCliWebRuntimeAccess,
+  type UniCliWebRuntimeAccessResolver,
 } from "../uni-cli-web-runtime-access.js"
 
 const schedulerOwner = `den:${process.pid}:${randomUUID()}`
@@ -129,18 +129,18 @@ export function configureHeadlessAgentExecutor(execute: (input: CloudAgentExecut
 }
 
 export type AutomationServiceOptions = {
-  getUni-CLIWebAccess?: Uni-CLIWebRuntimeAccessResolver
+  getUniCliWebAccess?: UniCliWebRuntimeAccessResolver
   cloudRuntime?: (organizationId: string) => Promise<CloudAutomationRuntime>
 }
 
 export class AutomationService {
   private readonly cloudExecutions = new Map<string, Promise<void>>()
-  private readonly getUni-CLIWebAccess: Uni-CLIWebRuntimeAccessResolver
+  private readonly getUniCliWebAccess: UniCliWebRuntimeAccessResolver
   private readonly cloudRuntime: (organizationId: string) => Promise<CloudAutomationRuntime>
   private runnerPruneDueAt = 0
 
   constructor(options: AutomationServiceOptions = {}) {
-    this.getUni-CLIWebAccess = options.getUni-CLIWebAccess ?? getUni-CLIWebRuntimeAccess
+    this.getUniCliWebAccess = options.getUniCliWebAccess ?? getUniCliWebRuntimeAccess
     this.cloudRuntime = options.cloudRuntime ?? cloudAutomationRuntime
   }
 
@@ -150,12 +150,12 @@ export class AutomationService {
    */
   private async requireCloudRuntimeAccess(organizationId: string) {
     if (await this.cloudRuntime(organizationId) === "headless") return
-    await requireUni-CLIWebRuntimeAccess(organizationId, this.getUni-CLIWebAccess)
+    await requireUniCliWebRuntimeAccess(organizationId, this.getUniCliWebAccess)
   }
 
   /** Whether the owner has an Uni-CLI Web computer that can run agent Automations, with its files. */
   private async cloudComputerAvailable(scope: OwnerScope) {
-    return (await this.getUni-CLIWebAccess(scope.organizationId)).hasAccess
+    return (await this.getUniCliWebAccess(scope.organizationId)).hasAccess
       && cloudAgentRuntimeAvailable !== null
       && await cloudAgentRuntimeAvailable(scope)
   }
@@ -790,7 +790,7 @@ export class AutomationService {
     // Web seat gates only work that executes on one.
     const webAccess = headlessEngine || (runtime === "headless" && claimed.revision.action?.kind === "saved_script")
       ? { hasAccess: true }
-      : await this.getUni-CLIWebAccess(claimed.automation.organizationId)
+      : await this.getUniCliWebAccess(claimed.automation.organizationId)
     if (!webAccess.hasAccess) {
       const now = Date.now()
       await automationRepository.skipRun({

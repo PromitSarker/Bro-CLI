@@ -84,7 +84,7 @@ export async function appSmokeWorld(seed: Seed) {
       return evalIn(app, async () => {
         const bridge = window.__UNICLI_ELECTRON__;
         if (typeof bridge?.invokeDesktop !== "function") return { bridge: false };
-        const info = await bridge.invokeDesktop("uni-cliServerInfo");
+        const info = await bridge.invokeDesktop("uniCliServerInfo");
         const health = await fetch(info.baseUrl + "/health", { signal: AbortSignal.timeout(5000) });
         return { bridge: true, protocol: location.protocol, health: health.status,
           emptySession: /^#\/workspace\/[^/]+\/session$/.test(location.hash)
@@ -101,7 +101,7 @@ export async function appSmokeWorld(seed: Seed) {
         if (workspaces.workspaces.length !== 1 || !workspace?.path?.endsWith("Uni-CLI Chat")) {
           throw new Error("Packaged startup did not select its default chat workspace.");
         }
-        const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+        const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
         const headers = { Authorization: "Bearer " + info.ownerToken, "Content-Type": "application/json" };
         const tools = await fetch(info.baseUrl + "/workspace/" + workspace.id + "/opencode/experimental/tool/ids", {
           headers, signal: AbortSignal.timeout(30000),
@@ -451,7 +451,7 @@ export async function scopedPermissionRefreshWorld(seed: Seed) {
     await command("Network.enable");
     await command("Fetch.enable", { patterns: [{ urlPattern: `*${prefix}/api/session/*/permission*`, requestStage: "Request" }] });
     await seed.evalIn(base.app, browserScript(async (path) => {
-      const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+      const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
       void fetch(info.baseUrl + path, {
         headers: { Authorization: `Bearer ${info.ownerToken}` }, signal: AbortSignal.timeout(120_000),
       }).catch(() => undefined);
@@ -1314,7 +1314,7 @@ export async function managedVaultWorld(_seed: Seed, { place }: { place: Place }
   const serverTarget = async (surface = app) => {
     const deadline = Date.now() + 120_000;
     while (Date.now() < deadline) {
-      const info = await evalIn(surface, () => (window.__UNICLI_ELECTRON__?.invokeDesktop?.("uni-cliServerInfo")), {
+      const info = await evalIn(surface, () => (window.__UNICLI_ELECTRON__?.invokeDesktop?.("uniCliServerInfo")), {
         awaitPromise: true,
         timeoutMs: 15_000,
       }).catch(() => null);

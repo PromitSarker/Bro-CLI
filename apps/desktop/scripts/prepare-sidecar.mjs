@@ -97,7 +97,7 @@ const opencodeCandidatePath = opencodeTargetPath ?? opencodePath;
 let existingOpencodeVersion = null;
 
 // uni-cli-server paths
-const uni-cliServerDir = resolve(__dirname, "..", "..", "server");
+const uniCliServerDir = resolve(__dirname, "..", "..", "server");
 
 const readHeader = (filePath, length = 256) => {
   const fd = openSync(filePath, "r");
@@ -345,9 +345,9 @@ adHocSignDarwinSidecars([
   // uni-cli-server runs in-process — no binary to sign.
 ]);
 
-const uni-cliServerVersion = (() => {
+const uniCliServerVersion = (() => {
   try {
-    const raw = readFileSync(resolve(uni-cliServerDir, "package.json"), "utf8");
+    const raw = readFileSync(resolve(uniCliServerDir, "package.json"), "utf8");
     return String(JSON.parse(raw).version ?? "").trim();
   } catch {
     return null;
@@ -364,7 +364,7 @@ const versions = {
     sha256: opencodeCandidatePath && existsSync(opencodeCandidatePath) ? sha256File(opencodeCandidatePath) : null,
   },
   "uni-cli-server": {
-    version: uni-cliServerVersion,
+    version: uniCliServerVersion,
     sha256: "in-process",
   },
 };

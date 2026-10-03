@@ -954,7 +954,7 @@ export class AgentChannel implements Agent {
       if (!path.startsWith("/") || path.startsWith("//") || /[\\\s]/.test(path)) throw new Error("A root-relative server path is required.");
       const value = await callFunctionOnSurface(surface, async (path, encodedInput) => {
         const input = JSON.parse(encodedInput);
-        const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uni-cliServerInfo");
+        const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uniCliServerInfo");
         if (!info?.running || !info.baseUrl) return { status: 0, body: { error: "local_server_unavailable" } };
         const response = await fetch(String(info.baseUrl).replace(/\/+$/, "") + path, {
           method: input.method,
@@ -1141,7 +1141,7 @@ export class ProbeChannel implements Probe {
         throw new Error("probe.desktopApi requires a root-relative server path.");
       }
       const value = await callFunctionOnSurface(surface, async (path) => {
-        const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uni-cliServerInfo");
+        const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uniCliServerInfo");
         if (!info?.running || !info.baseUrl) return { status: 0, body: { error: "local_server_unavailable" } };
         const response = await fetch(String(info.baseUrl).replace(/\/+$/, "") + path, {
           method: "GET",

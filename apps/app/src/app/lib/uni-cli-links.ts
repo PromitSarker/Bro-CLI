@@ -1,9 +1,9 @@
 import { DEFAULT_DEN_BASE_URL, normalizeDenBaseUrl } from "./den";
-import { normalizeuni-cliServerUrl } from "./uni-cli-server";
+import { normalizeuniCliServerUrl } from "./uni-cli-server";
 
 export type RemoteWorkspaceDefaults = {
-  uni-cliHostUrl?: string | null;
-  uni-cliToken?: string | null;
+  uniCliHostUrl?: string | null;
+  uniCliToken?: string | null;
   directory?: string | null;
   displayName?: string | null;
   autoConnect?: boolean;
@@ -61,9 +61,9 @@ export function parseRemoteConnectDeepLink(rawUrl: string): RemoteWorkspaceDefau
     return null;
   }
 
-  const hostUrlRaw = url.searchParams.get("uni-cliHostUrl") ?? url.searchParams.get("uni-cliUrl") ?? "";
-  const tokenRaw = url.searchParams.get("uni-cliToken") ?? url.searchParams.get("accessToken") ?? "";
-  const normalizedHostUrl = normalizeuni-cliServerUrl(hostUrlRaw);
+  const hostUrlRaw = url.searchParams.get("uniCliHostUrl") ?? url.searchParams.get("uniCliUrl") ?? "";
+  const tokenRaw = url.searchParams.get("uniCliToken") ?? url.searchParams.get("accessToken") ?? "";
+  const normalizedHostUrl = normalizeuniCliServerUrl(hostUrlRaw);
   const token = tokenRaw.trim();
   if (!normalizedHostUrl || !token) {
     return null;
@@ -80,8 +80,8 @@ export function parseRemoteConnectDeepLink(rawUrl: string): RemoteWorkspaceDefau
   const autoConnect = ["1", "true", "yes", "on"].includes(autoConnectRaw.trim().toLowerCase());
 
   return {
-    uni-cliHostUrl: normalizedHostUrl,
-    uni-cliToken: token,
+    uniCliHostUrl: normalizedHostUrl,
+    uniCliToken: token,
     directory: null,
     displayName: displayName || null,
     autoConnect,
@@ -98,9 +98,9 @@ export function stripRemoteConnectQuery(rawUrl: string): string | null {
 
   let changed = false;
   for (const key of [
-    "uni-cliHostUrl",
-    "uni-cliUrl",
-    "uni-cliToken",
+    "uniCliHostUrl",
+    "uniCliUrl",
+    "uniCliToken",
     "accessToken",
     "workerId",
     "workerName",

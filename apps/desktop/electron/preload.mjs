@@ -41,7 +41,7 @@ function applyShellDocumentMarkers() {
     const root = document?.documentElement;
     if (!root) return false;
 
-    root.dataset.uni-cliShell = "electron";
+    root.dataset.uniCliShell = "electron";
     root.dataset.windowFullscreen = String(windowFullscreen);
     root.classList.add("uni-cli-electron");
     if (process.platform === "darwin") {
@@ -213,10 +213,10 @@ contextBridge.exposeInMainWorld("__UNICLI_ELECTRON__", {
   },
   nuke: {
     preview(options) {
-      return ipcRenderer.invoke("uni-cli:desktop", "nukeuni-cliAndOpencodeConfigPreview", options);
+      return ipcRenderer.invoke("uni-cli:desktop", "nukeuniCliAndOpencodeConfigPreview", options);
     },
     execute(options) {
-      return ipcRenderer.invoke("uni-cli:desktop", "nukeuni-cliAndOpencodeConfigAndExit", options);
+      return ipcRenderer.invoke("uni-cli:desktop", "nukeuniCliAndOpencodeConfigAndExit", options);
     },
   },
   updater: {

@@ -18,7 +18,7 @@ export function GeneratedAppPreview({ html, payload, title, revision, presentati
   title: string;
   revision: GeneratedArtifactViewRevision;
 }) {
-  const { uni-cliServerClient, workspaceId } = useWorkspace();
+  const { uniCliServerClient, workspaceId } = useWorkspace();
   const resource = useMemo(() => ({
     serverName: "uni-cli",
     toolName: `render_artifact_${revision.artifactViewId}`,
@@ -28,9 +28,9 @@ export function GeneratedAppPreview({ html, payload, title, revision, presentati
     prefersBorder: true,
   }), [html, revision]);
   const result = useMemo(() => ({ content: [], structuredContent: payload }), [payload]);
-  const origin = useMemo(() => uni-cliServerClient
-    ? { client: uni-cliServerClient, workspaceId, sessionId: null, readOnly: true }
-    : null, [uni-cliServerClient, workspaceId]);
+  const origin = useMemo(() => uniCliServerClient
+    ? { client: uniCliServerClient, workspaceId, sessionId: null, readOnly: true }
+    : null, [uniCliServerClient, workspaceId]);
   if (!origin || !workspaceId) {
     return <>
       <p role="status" className="text-sm text-muted-foreground">Connect a workspace to open the preview.</p>

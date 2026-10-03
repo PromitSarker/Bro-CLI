@@ -284,7 +284,7 @@ export async function provisionOrg(den: DenRef, input: ProvisionOrgInput): Promi
   }
 
   const unique = `${Date.now().toString(36)}-${crypto.randomUUID().slice(0, 12)}`;
-  const password = process.env.UNICLI_EVAL_DEMO_PASSWORD?.trim() || "Uni-CLIDemo123!";
+  const password = process.env.UNICLI_EVAL_DEMO_PASSWORD?.trim() || "UniCliDemo123!";
   const email = `uni-cli-eval-admin-${unique}@example.test`;
   const name = `Uni-CLI Eval ${unique}`;
   const signUp = await denFetch(den, "/api/auth/sign-up/email", {

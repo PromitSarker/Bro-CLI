@@ -30,8 +30,8 @@ interface ModelSelectProps {
   onChange: (model: ModelRef, variant?: string | null) => void;
   disabled?: boolean;
   sessionId?: string;
-  uni-cliModelsEntitled?: boolean;
-  uni-cliModelsSyncing?: boolean;
+  uniCliModelsEntitled?: boolean;
+  uniCliModelsSyncing?: boolean;
   fallbackOptions?: readonly ModelOption[];
   behaviorValue?: string | null;
   behaviorLabel?: string;
@@ -43,7 +43,7 @@ interface ModelSelectProps {
 }
 
 export function ModelSelect({ open, value, hideValue = false, onOpenChange, onChange, disabled = false, sessionId,
-  uni-cliModelsSyncing = false, fallbackOptions = [], behaviorValue = null, behaviorOptions = [], onBehaviorChange, onSetWorkspaceDefault, onReloadWorkspace, retainedSelection: savedSelection }: ModelSelectProps) {
+  uniCliModelsSyncing = false, fallbackOptions = [], behaviorValue = null, behaviorOptions = [], onBehaviorChange, onSetWorkspaceDefault, onReloadWorkspace, retainedSelection: savedSelection }: ModelSelectProps) {
   const [query, setQuery] = React.useState("");
   const [effort, setEffort] = React.useState(false);
   const [focusAlternative, setFocusAlternative] = React.useState(false);
@@ -65,7 +65,7 @@ export function ModelSelect({ open, value, hideValue = false, onOpenChange, onCh
   const choice = useModelChoice(JSON.stringify([sessionId, value, behaviorValue, disabled]));
   const catalog = useModelCatalog({ client: workspace.client, baseUrl: workspace.opencodeBaseUrl, directory: workspace.selectedWorkspaceRoot,
     enabled: true, refreshWhen: open, fallbackOptions, pendingOptions: choice.pendingOptions, disabledProviders: choice.disabledProviders,
-    current: value, savedSelection, sessionScoped: Boolean(sessionId), uni-cliModelsSyncing });
+    current: value, savedSelection, sessionScoped: Boolean(sessionId), uniCliModelsSyncing });
   const { options, catalogState, retainedSelection, restrictToCloud, autoVisible } = catalog;
   React.useEffect(() => {
     const recover = (event: Event) => {
@@ -127,7 +127,7 @@ export function ModelSelect({ open, value, hideValue = false, onOpenChange, onCh
       </div> : <ModelPickerList searchInputRef={searchInputRef} autoFocusSearch={false} options={options} current={value} query={query} onQueryChange={setQuery} onSelect={select}
         focusAlternative={focusAlternative} catalogState={catalogState} retainedSelection={retainedSelection} onConnectProvider={!restrictToCloud ? openProvider : undefined}
         onOpenProviderSettings={!checkRestriction({ restriction: "allowControlSettings" }) ? openSettings : undefined}
-        onSetWorkspaceDefault={onSetWorkspaceDefault ?? setWorkspaceDefault} currentBehaviorValue={behaviorValue} uni-cliModelsSyncing={autoVisible && uni-cliModelsSyncing} onReloadWorkspace={onReloadWorkspace} onRetryAuto={catalogState.onRetry} footer={<>
+        onSetWorkspaceDefault={onSetWorkspaceDefault ?? setWorkspaceDefault} currentBehaviorValue={behaviorValue} uniCliModelsSyncing={autoVisible && uniCliModelsSyncing} onReloadWorkspace={onReloadWorkspace} onRetryAuto={catalogState.onRetry} footer={<>
         <div className="border-t border-border px-2 py-1" data-testid="model-behavior-rows">
           <button ref={effortButtonRef} type="button" data-testid="model-effort" disabled={!canChangeEffort} onClick={() => setEffort(true)}
             className="flex h-10 w-full cursor-pointer items-center gap-3 rounded-md px-2 text-left text-sm hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:hover:bg-transparent">
@@ -146,7 +146,7 @@ export function ModelSelect({ open, value, hideValue = false, onOpenChange, onCh
           {!restrictToCloud ? <Button variant="ghost" size="sm" className="h-9 font-normal text-muted-foreground" onClick={openProvider}>Connect more providers</Button> : <span />}
           <Button variant="ghost" size="sm" className="h-9 font-normal text-muted-foreground" onClick={() => { onOpenChange(false); window.dispatchEvent(new CustomEvent(openModelPickerEvent, { detail: { sessionId } })); }}>All models</Button>
         </div>
-        <AutoAccessFooter available={autoVisible} syncing={autoVisible && uni-cliModelsSyncing} />
+        <AutoAccessFooter available={autoVisible} syncing={autoVisible && uniCliModelsSyncing} />
       </>} />}
     </PopoverContent>
   </Popover>;

@@ -1,4 +1,4 @@
-import type { uni-cliServerClient } from "@/app/lib/uni-cli-server";
+import type { uniCliServerClient } from "@/app/lib/uni-cli-server";
 import type { Client } from "@/app/types";
 import type { DesktopAppRestrictionChecker } from "@/app/cloud/desktop-app-restrictions";
 import { updateManagedDisabledProviders } from "./managed-engine-config";
@@ -28,7 +28,7 @@ type PolicyDisabledProvidersStorage = Pick<Storage, "getItem" | "setItem">;
 
 export type ReconcilePolicyDisabledProvidersInput = {
   opencodeClient: Client | null;
-  uni-cliClient?: uni-cliServerClient | null;
+  uniCliClient?: uniCliServerClient | null;
   workspaceId?: string | null;
   workspaceType?: string | null;
   allProviders: readonly PolicyProviderListItem[];
@@ -166,7 +166,7 @@ export async function reconcilePolicyDisabledProviders(
     if (disabledProviderIds.includes(providerId)) continue;
     const result = await updateManagedDisabledProviders({
       opencodeClient: input.opencodeClient,
-      uni-cliClient: input.uni-cliClient,
+      uniCliClient: input.uniCliClient,
       workspaceId: input.workspaceId,
       workspaceType: input.workspaceType,
       disabledProviders: addProviderId(disabledProviderIds, providerId),
@@ -188,7 +188,7 @@ export async function reconcilePolicyDisabledProviders(
     }
     const result = await updateManagedDisabledProviders({
       opencodeClient: input.opencodeClient,
-      uni-cliClient: input.uni-cliClient,
+      uniCliClient: input.uniCliClient,
       workspaceId: input.workspaceId,
       workspaceType: input.workspaceType,
       disabledProviders: removeProviderId(disabledProviderIds, providerId),

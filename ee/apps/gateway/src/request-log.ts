@@ -22,7 +22,7 @@ export type UpdateRequestLog = (row: GatewayRequestLogRow) => Promise<boolean>
 
 export type RequestLogStartInput = {
   identity: Pick<InferenceContext, "kind" | "organizationId" | "orgMembershipId" | "inferenceKeyId"> | GatewayContext
-  uni-cliRequestId: string
+  uniCliRequestId: string
   route: GatewayRequestRoute
   protocol: GatewayRequestProtocol
   upstreamProviderId: string
@@ -207,7 +207,7 @@ export function createRequestLogRecorder(dependencies: RequestLogRecorderDepende
         stream: input.stream, started_at: startedAt, completed_at: null,
         // Existing enum placeholder; completed_at NULL is the pending marker.
         outcome: "client_aborted", usage_source: "missing",
-        uni-cli_request_id: input.uni-cliRequestId, request_bytes: input.requestBytes ?? null,
+        uni-cli_request_id: input.uniCliRequestId, request_bytes: input.requestBytes ?? null,
         metadata: {
           ...(input.requestedModelSource ? { requested_model_source: input.requestedModelSource } : {}),
           ...(input.gatewayUsage ? { gateway_usage: input.gatewayUsage } : {}),
@@ -268,7 +268,7 @@ export function createRequestLogRecorder(dependencies: RequestLogRecorderDepende
         usage_source: usage && hasUsageTokens(usage) ? usage.usageSource : "missing",
         cost_micro_usd: estimateCost(started, usage, upstreamModel, pricing),
         upstream_request_id: input.upstreamRequestId ?? usage?.upstreamRequestId ?? null,
-        uni-cli_request_id: started.uni-cliRequestId,
+        uni-cli_request_id: started.uniCliRequestId,
         started_at: startedAt,
         first_byte_at: firstByteAt,
         completed_at: now(),

@@ -3,7 +3,7 @@ import { createServer, type Server } from "node:http";
 import { join } from "node:path";
 import type { Seed } from "@uni-cli/env";
 import {
-  bootManageduni-cliServer,
+  bootManageduniCliServer,
   close,
   isRecord,
   listen,
@@ -11,7 +11,7 @@ import {
   sendJson,
   sendMockError,
   sendStream,
-  type Manageduni-cliServer,
+  type ManageduniCliServer,
 } from "./uni-cli-server-cli.ts";
 
 export const MOCK_REPLY = "MOCK OK";
@@ -134,7 +134,7 @@ export async function agentUiContext(seed: Seed): Promise<AgentUiContextWorld> {
   const token = "agent-ui-context-client-token";
   let output = "";
   const sink = (chunk: string) => { output += chunk; };
-  let managed: Manageduni-cliServer | null = null;
+  let managed: ManageduniCliServer | null = null;
   const windows = new Set<FakeWindow>();
 
   const dispose = async () => {
@@ -147,7 +147,7 @@ export async function agentUiContext(seed: Seed): Promise<AgentUiContextWorld> {
   };
 
   try {
-    managed = await bootManageduni-cliServer({ scratch, workspace, token, sink });
+    managed = await bootManageduniCliServer({ scratch, workspace, token, sink });
     const server = managed;
     const headers = { authorization: `Bearer ${token}`, "content-type": "application/json" };
 

@@ -204,7 +204,7 @@ function excerpt(content: string, query: string): string {
   return content.slice(from, from + 500).replace(/\s+/g, " ").trim();
 }
 
-export const Uni-CLICapabilitiesKnowledge = async () => ({
+export const UniCliCapabilitiesKnowledge = async () => ({
   "experimental.chat.system.transform": async (_input: unknown, output: { system: string[] }) => {
     appendAgentInstructions(output.system, createInstructionSection("capabilities-knowledge", UNICLI_CAPABILITIES_KNOWLEDGE));
   },

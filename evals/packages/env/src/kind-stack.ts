@@ -42,7 +42,7 @@ const DEN_API_URL = `http://127.0.0.1:${DEN_API_PORT}`;
 const DEN_WEB_URL = `http://127.0.0.1:${DEN_WEB_PORT}`;
 const DEN_BASE_URL = `http://localhost:${DEN_API_PORT}`;
 const DEMO_EMAIL = process.env.DEN_DEMO_OWNER_EMAIL ?? "alex@acme.test";
-export const DEMO_PASSWORD = process.env.DEN_DEMO_OWNER_PASSWORD ?? "Uni-CLIDemo123!";
+export const DEMO_PASSWORD = process.env.DEN_DEMO_OWNER_PASSWORD ?? "UniCliDemo123!";
 const LOCAL_IMAGE_TAG = process.env.UNICLI_EVAL_KUBE_LOCAL_IMAGE_TAG?.trim() || "kube-lab";
 const PUBLISHED_IMAGE_TAG = process.env.UNICLI_EVAL_KUBE_IMAGE_TAG?.trim() || "latest";
 const PUBLISHED_DEN_API_REPOSITORY = "ghcr.io/different-ai/uni-cli-den-api";
@@ -503,7 +503,7 @@ export function helmUpgradeArgs(profile: KubeProfileConfig, plan: KubeImagePlan,
   ];
   if (egress === "allowlist") {
     args.push(
-      "--set", "config.uni-cliDevMode=0",
+      "--set", "config.uniCliDevMode=0",
       "--set", "config.public.allowPrivateMcpUrls=1",
     );
   }
@@ -798,8 +798,8 @@ async function mysqlQuery(runtime: KubeRuntime, sql: string): Promise<string> {
     `deployment/${MYSQL_DEPLOYMENT}`,
     "--",
     "mysql",
-    "-uuni-cli",
-    "-puni-cli",
+    "-uuniCli",
+    "-puniCli",
     "uni-cli_den",
     "-N",
     "-e",

@@ -1,16 +1,16 @@
 import { Check, CheckCircle2, Minus } from "lucide-react";
 
 import { LpAlphaBadge } from "./lp-primitives";
-import { Uni-CLIMark } from "./uni-cli-mark";
+import { UniCliMark } from "./uni-cli-mark";
 
 type CoworkSupport = "check" | "none" | "limited";
 
-type Uni-CLISupport = "check" | "soon";
+type UniCliSupport = "check" | "soon";
 
 type ParityRow = {
   capability: string;
   cowork: CoworkSupport;
-  uni-cli?: Uni-CLISupport;
+  uni-cli?: UniCliSupport;
   badge?: "alpha" | "uni-cli";
   highlighted?: boolean;
 };
@@ -43,7 +43,7 @@ const rows: ParityRow[] = [
   { capability: "Open source. Audit it, fork it, own it", cowork: "none" }
 ];
 
-function Uni-CLICheck() {
+function UniCliCheck() {
   return (
     <span
       className="inline-flex items-center justify-center text-[var(--lp-ink)]"
@@ -76,7 +76,7 @@ function CoworkCell({ support }: { support: CoworkSupport }) {
   );
 }
 
-function Uni-CLICell({ support }: { support?: Uni-CLISupport }) {
+function UniCliCell({ support }: { support?: UniCliSupport }) {
   if (support === "soon") {
     return (
       <span className="text-[12px] font-medium text-[var(--lp-blue)]">
@@ -85,7 +85,7 @@ function Uni-CLICell({ support }: { support?: Uni-CLISupport }) {
     );
   }
 
-  return <Uni-CLICheck />;
+  return <UniCliCheck />;
 }
 
 function Capability({ row }: { row: ParityRow }) {
@@ -121,10 +121,10 @@ export function LpParityTable() {
             <div className="mt-4 grid grid-cols-2 gap-3 rounded-[12px] bg-[var(--lp-tonal)] p-3">
               <div>
                 <div className="mb-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--lp-muted)]">
-                  <Uni-CLIMark className="h-3.5 w-3.5 object-contain" />
+                  <UniCliMark className="h-3.5 w-3.5 object-contain" />
                   Uni-CLI
                 </div>
-                <Uni-CLICell support={row.uni-cli} />
+                <UniCliCell support={row.uni-cli} />
               </div>
               <div>
                 <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--lp-muted)]">
@@ -143,7 +143,7 @@ export function LpParityTable() {
             CAPABILITY
           </div>
           <div className="flex w-40 items-center justify-center gap-2 text-[13px] font-semibold text-[var(--lp-ink)]">
-            <Uni-CLIMark className="h-5 w-5 object-contain" />
+            <UniCliMark className="h-5 w-5 object-contain" />
             Uni-CLI
           </div>
           <div className="w-40 text-center text-[13px] font-medium text-[var(--lp-muted)]">
@@ -162,7 +162,7 @@ export function LpParityTable() {
               <Capability row={row} />
             </div>
             <div className="flex w-40 justify-center">
-              <Uni-CLICell support={row.uni-cli} />
+              <UniCliCell support={row.uni-cli} />
             </div>
             <div className="flex w-40 justify-center">
               <CoworkCell support={row.cowork} />

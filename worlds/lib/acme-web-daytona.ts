@@ -67,7 +67,7 @@ manifest = json.load(open(${JSON.stringify(manifest)}))
 session = base64.b64decode(${JSON.stringify(session)})
 headers = {"x-uni-cli-host-token": manifest["hostToken"], "content-type": "application/json"}
 def call(method, path, body):
-    request = urllib.request.Request(manifest["uni-cliUrl"] + path, data=body, method=method, headers=headers)
+    request = urllib.request.Request(manifest["uniCliUrl"] + path, data=body, method=method, headers=headers)
     with urllib.request.urlopen(request, timeout=60) as response:
         return response.status, response.read().decode("utf-8")
 print("den-session", call("PUT", "/den-session", session)[0])

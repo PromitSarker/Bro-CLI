@@ -1,12 +1,12 @@
 export function headlessBrowserEnvironment(input: {
   browserHostSuffix?: string;
-  uni-cliUrl: string;
+  uniCliUrl: string;
 }): Record<string, string> {
   if (input.browserHostSuffix === undefined) return {};
   if (!/^\.[a-z0-9-]+(?:\.[a-z0-9-]+)+$/i.test(input.browserHostSuffix)) {
     throw new Error("Invalid headless browser host suffix.");
   }
-  const target = new URL(input.uni-cliUrl);
+  const target = new URL(input.uniCliUrl);
   if (target.protocol !== "http:" || target.hostname !== "127.0.0.1" || !target.port) {
     throw new Error("Headless browser proxy must target the loopback runtime.");
   }

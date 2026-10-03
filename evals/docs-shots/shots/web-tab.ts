@@ -5,7 +5,7 @@ import { shot } from "./shot.ts";
 
 const browser = webTab({ org });
 
-async function waitForUni-CLIWeb(surface: Awaited<ReturnType<typeof browser.load>>): Promise<void> {
+async function waitForUniCliWeb(surface: Awaited<ReturnType<typeof browser.load>>): Promise<void> {
   await waitFor(surface, () => (Boolean(window.__uni-cliControl)), {
     timeoutMs: 120_000,
     label: "Uni-CLI Web booted",
@@ -18,10 +18,10 @@ async function waitForUni-CLIWeb(surface: Awaited<ReturnType<typeof browser.load
   });
 }
 
-export const uni-cliWebTab = shot("uni-cli-web-tab", {
+export const uniCliWebTab = shot("uni-cli-web-tab", {
   use: browser,
   at: "/",
-  steps: [waitForUni-CLIWeb],
+  steps: [waitForUniCliWeb],
   expect: ["acme-robotics", "What do you need done?"],
   never: ["Something went wrong", "Unable to connect", "docs-3959-screenshots"],
   out: "packages/docs/images/uni-cli-web-browser-tab.png",

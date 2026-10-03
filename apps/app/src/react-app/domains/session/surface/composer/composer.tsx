@@ -76,8 +76,8 @@ type ComposerProps = {
   modelOptions?: readonly ModelOption[];
   /** When set, the full model picker opened from here targets this session. */
   sessionId?: string;
-  uni-cliModelsEntitled?: boolean;
-  uni-cliModelsSyncing?: boolean;
+  uniCliModelsEntitled?: boolean;
+  uniCliModelsSyncing?: boolean;
   onRefreshOrganizationModels?: () => void | Promise<void>;
   onModelPickerOpenChange: (open: boolean) => void;
   onModelChange: (model: ModelRef, variant?: string | null) => void;
@@ -1556,8 +1556,8 @@ export const ReactSessionComposer = memo(function ReactSessionComposer(props: Co
                   }}
                   disabled={props.steering}
                   sessionId={props.sessionId}
-                  uni-cliModelsEntitled={props.uni-cliModelsEntitled}
-                  uni-cliModelsSyncing={props.uni-cliModelsSyncing}
+                  uniCliModelsEntitled={props.uniCliModelsEntitled}
+                  uniCliModelsSyncing={props.uniCliModelsSyncing}
                   fallbackOptions={props.modelOptions}
                   behaviorValue={props.modelVariant}
                   behaviorLabel={props.modelVariantLabel}

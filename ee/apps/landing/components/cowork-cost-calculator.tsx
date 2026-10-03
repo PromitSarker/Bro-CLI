@@ -559,7 +559,7 @@ export function CoworkCostCalculator({
   const claudeModelShort = shortClaudeModel(model.label);
   const claudePlanLabel = `${claudePlanVendor} · ${claudeModelShort}${claudeSeat ? ` (${claudeSeat})` : ""}`;
   const claudeLabel = claudePlanLabel;
-  const uni-cliLabel = `Uni-CLI · ${model.label}`;
+  const uniCliLabel = `Uni-CLI · ${model.label}`;
   const openPercent = Math.round(mixShare * 100);
   const claudePercent = 100 - openPercent;
   // "DeepSeek V4 Pro" -> "DeepSeek"; the end label stays short enough for the chart gutter.
@@ -568,7 +568,7 @@ export function CoworkCostCalculator({
 
   const lines: ChartLine[] = [
     { key: "claude", label: claudeLabel, series: claudeLine, stroke: claudeGray, width: 2.25, pattern: "solid", opacity: 1 },
-    { key: "uni-cli", label: uni-cliLabel, series: result.uni-cli, stroke: accent, width: 2.75, pattern: "solid", opacity: 1 },
+    { key: "uni-cli", label: uniCliLabel, series: result.uni-cli, stroke: accent, width: 2.75, pattern: "solid", opacity: 1 },
     ...(result.mix
       ? [
           {
@@ -588,8 +588,8 @@ export function CoworkCostCalculator({
     ...(result.claudeTeamUnavailable
       ? [`Claude Team stops at ${planPrices.claudeTeamMaxSeats} seats, so this compares Claude Enterprise.`]
       : []),
-    ...(tier === "enterprise" && users > planPrices.uni-cliEnterpriseVolumeAbove
-      ? [`Includes Uni-CLI Enterprise volume pricing above ${planPrices.uni-cliEnterpriseVolumeAbove} people.`]
+    ...(tier === "enterprise" && users > planPrices.uniCliEnterpriseVolumeAbove
+      ? [`Includes Uni-CLI Enterprise volume pricing above ${planPrices.uniCliEnterpriseVolumeAbove} people.`]
       : [])
   ];
 
@@ -896,8 +896,8 @@ export function CoworkCostCalculator({
               seats minimum, all usage at API rates.
             </li>
             <li>
-              Uni-CLI Team on Uni-CLI Cloud: first {planPrices.uni-cliFreeSeats} seats free, then $
-              {planPrices.uni-cliTeamSeat}/seat. Uni-CLI Enterprise on Uni-CLI Cloud: {describeEnterpriseVolumeTiers()},
+              Uni-CLI Team on Uni-CLI Cloud: first {planPrices.uniCliFreeSeats} seats free, then $
+              {planPrices.uniCliTeamSeat}/seat. Uni-CLI Enterprise on Uni-CLI Cloud: {describeEnterpriseVolumeTiers()},
               billed annually. Tokens billed by your own provider or gateway.
             </li>
             <li>

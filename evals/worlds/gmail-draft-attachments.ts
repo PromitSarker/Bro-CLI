@@ -8,7 +8,7 @@ import { createNativeConnector, createOrgConnection, denFetch, type DenSession }
 import { localMysqlIsRunning, localRedisIsRunning, mcpMock, server, SkipError, type Place } from "@uni-cli/env";
 import { startMockGoogle } from "@uni-cli/labs";
 import { gmailDraftModel, gmailResultObjects } from "../packages/labs/src/gmail-draft-model.ts";
-import { bootManageduni-cliServer, close, engineBinary, isRecord, listen } from "./uni-cli-server-cli.ts";
+import { bootManageduniCliServer, close, engineBinary, isRecord, listen } from "./uni-cli-server-cli.ts";
 import constants from "../../constants.json";
 
 export const gmailAttachmentFixtures = [
@@ -213,7 +213,7 @@ export async function gmailDraftAttachments(place: Place) {
       mcp: { "uni-cli-cloud": { type: "remote", url: `${cloudUrl}/mcp/agent`, oauth: false, enabled: true, headers: { Authorization: `Bearer ${firstToken}` } } },
       provider: { mock: { npm: "@ai-sdk/openai-compatible", name: "Synthetic Gmail model", options: { baseURL: model.url, apiKey: "synthetic-model-key" }, models: { mock: { name: "Synthetic Gmail model", tool_call: true, limit: { context: 131_072, output: 4_096 } } } } },
     }));
-    const managed = await bootManageduni-cliServer({ scratch, workspace, binary, configPath: config, preload: fileURLToPath(preload), token: "gmail-host-fixture", sink: () => {}, env: { UNICLI_DATA_DIR: join(scratch, "data"), UNICLI_DEV_MODE: "1", OPENCODE_MODELS_URL: `${model.url}/models` } });
+    const managed = await bootManageduniCliServer({ scratch, workspace, binary, configPath: config, preload: fileURLToPath(preload), token: "gmail-host-fixture", sink: () => {}, env: { UNICLI_DATA_DIR: join(scratch, "data"), UNICLI_DEV_MODE: "1", OPENCODE_MODELS_URL: `${model.url}/models` } });
     stack.defer(() => managed.stop());
     const capability = `native:${selected.id}:postCapabilitiesGoogleWorkspaceGmailDrafts`;
     const body = { to: "review@test.example", subject: "Inventory review", body: "Please review the two attached files.", attachments: gmailAttachmentFixtures.map((file) => file.filename) };

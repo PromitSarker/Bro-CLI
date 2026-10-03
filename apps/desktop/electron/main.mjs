@@ -76,9 +76,9 @@ import { createDesktopVaultKeyProvider } from "./secure-vault-key.mjs";
 import { createDesktopFreeSigner, desktopFreeBootstrapEligible } from "./desktop-free-signer.mjs";
 import { applyDesktopFreeBuildSettings, loadDesktopFreeReleaseSecret } from "./desktop-free-release.mjs";
 import {
-  clearuni-cliSentrySession,
-  inituni-cliSentry,
-  setuni-cliSentrySession,
+  clearuniCliSentrySession,
+  inituniCliSentry,
+  setuniCliSentrySession,
 } from "./sentry.mjs";
 import { installStdioErrorHandlers } from "./stdio-errors.mjs";
 import {
@@ -117,7 +117,7 @@ const AUTOMATION_RUNNER_CREDENTIAL_REJECTED_EVENT = "uni-cli:automation-runner:c
 const isDevMode = process.env.UNICLI_DEV_MODE === "1";
 const DESKTOP_DISTRIBUTION = resolveDesktopDistribution({
   isPackaged: app.isPackaged,
-  packageFlavor: Reflect.get(desktopPackageMetadata, "uni-cliDistribution"),
+  packageFlavor: Reflect.get(desktopPackageMetadata, "uniCliDistribution"),
   environmentFlavor: process.env.UNICLI_DESKTOP_DISTRIBUTION,
 });
 const TAURI_APP_IDENTIFIER = DESKTOP_DISTRIBUTION.appIdentifier;
@@ -134,7 +134,7 @@ const APP_NAME = BLANK_SLATE_LAUNCH.appName;
 let currentDisplayAppName = APP_NAME;
 installStdioErrorHandlers();
 installSocketTypeOfServiceGuard();
-await inituni-cliSentry({
+await inituniCliSentry({
   app,
   distribution: DESKTOP_DISTRIBUTION,
   packageMetadata: desktopPackageMetadata,
@@ -1014,7 +1014,7 @@ if (remoteDebugPort > 0) {
   app.commandLine.appendSwitch("remote-debugging-address", "127.0.0.1");
 }
 // Make the resolved port available to the embedded server so it flows into
-// agent instructions via ensureuni-cliAgent → resolveAgentTemplate.
+// agent instructions via ensureuniCliAgent → resolveAgentTemplate.
 process.env.UNICLI_ELECTRON_REMOTE_DEBUG_PORT = String(remoteDebugPort);
 if (isDevMode && !app.isPackaged) {
   const cdpAddress = remoteDebugPort > 0 ? `http://127.0.0.1:${remoteDebugPort}` : "disabled";
@@ -1110,7 +1110,7 @@ browserPanel = createBrowserPanel({
     if (!DESKTOP_POLICY_ENFORCEMENT_ENABLED) return;
     let code = "policy_unavailable";
     try {
-      const server = await runtimeManager.uni-cliServerInfo();
+      const server = await runtimeManager.uniCliServerInfo();
       if (!server.baseUrl || !(server.clientToken ?? server.ownerToken)) throw new Error("Policy service unavailable");
       // loopback-fetch: the policy service is the locally managed Uni-CLI server.
       const response = await fetch(`${server.baseUrl}/managed-policy/evaluate`, {
@@ -1370,7 +1370,7 @@ const desktopAutomationRunner = createDesktopAutomationRunner({
   // rollout only for endpoints trusted before the renderer starts issuing IPC.
   legacyBaseUrls: legacyRunnerBaseUrls,
   getLocalRuntime: async () => {
-    const server = await runtimeManager.uni-cliServerInfo();
+    const server = await runtimeManager.uniCliServerInfo();
     return { baseUrl: server.baseUrl, token: server.clientToken ?? server.ownerToken };
   },
   // Remote-session callers choose a computer by this label, then a workspace and model.
@@ -1476,7 +1476,7 @@ const quitSequencer = createQuitSequencer({
 });
 const quitInProgress = () => quitSequencer.phase() !== "idle";
 
-function assertuni-cliServerReady(info) {
+function assertuniCliServerReady(info) {
   if (!info?.running) {
     throw new Error("Uni-CLI server did not stay running after startup.");
   }
@@ -1547,8 +1547,8 @@ async function bootRuntimeForSelectedWorkspace() {
       watchedId: String(fallback.id ?? ""),
     }).catch(() => undefined);
   }
-  const uni-cliServer = assertuni-cliServerReady(await runtimeManager.uni-cliServerInfo());
-  return { ok: true, skipped: false, engine, uni-cliServer, workspaceId: bootWorkspace.id ?? null };
+  const uniCliServer = assertuniCliServerReady(await runtimeManager.uniCliServerInfo());
+  return { ok: true, skipped: false, engine, uniCliServer, workspaceId: bootWorkspace.id ?? null };
 }
 
 function ensureRuntimeBootstrap() {
@@ -1877,13 +1877,13 @@ const desktopCommandHandlers = {
   "workspaceAddAuthorizedRoot": async (event, ...args) => {
       return workspaceStore.addAuthorizedRoot(args[0] ?? {});
   },
-  "workspaceuni-cliRead": async (event, ...args) => {
-      return workspaceStore.readWorkspaceuni-cliConfig(String(args[0]?.workspacePath ?? "").trim());
+  "workspaceuniCliRead": async (event, ...args) => {
+      return workspaceStore.readWorkspaceuniCliConfig(String(args[0]?.workspacePath ?? "").trim());
   },
-  "workspaceuni-cliWrite": async (event, ...args) => {
-      return workspaceStore.writeWorkspaceuni-cliConfig(
+  "workspaceuniCliWrite": async (event, ...args) => {
+      return workspaceStore.writeWorkspaceuniCliConfig(
         String(args[0]?.workspacePath ?? "").trim(),
-        args[0]?.config ?? workspaceStore.defaultWorkspaceuni-cliConfig(""),
+        args[0]?.config ?? workspaceStore.defaultWorkspaceuniCliConfig(""),
       );
   },
   "workspaceExportConfig": async (event, ...args) => {
@@ -1943,7 +1943,7 @@ const desktopCommandHandlers = {
         version: app.getVersion(),
         gitSha: process.env.UNICLI_GIT_SHA ?? null,
         buildEpoch: process.env.UNICLI_BUILD_EPOCH ?? null,
-        uni-cliDevMode: process.env.UNICLI_DEV_MODE === "1",
+        uniCliDevMode: process.env.UNICLI_DEV_MODE === "1",
       };
   },
   "desktopNotificationShow": async (event, ...args) => {
@@ -1952,14 +1952,14 @@ const desktopCommandHandlers = {
   "desktopSentrySetSession": async (event, ...args) => {
       const input = args[0] ?? {};
       return {
-        enabled: setuni-cliSentrySession({
+        enabled: setuniCliSentrySession({
           userId: input.userId,
           orgId: input.orgId,
         }),
       };
   },
   "desktopSentryClearSession": async (event, ...args) => {
-      return { enabled: clearuni-cliSentrySession() };
+      return { enabled: clearuniCliSentrySession() };
   },
   "desktopIntegrationStatus": async (event, ...args) => {
       return linuxDesktopIntegration.getStatus();
@@ -1980,13 +1980,13 @@ const desktopCommandHandlers = {
         return null;
       }
   },
-  "getuni-cliUiMcpCommand": async (event, ...args) => {
+  "getuniCliUiMcpCommand": async (event, ...args) => {
       if (process.env.UNICLI_DEV_MODE === "1") {
         return ["node", path.resolve(__dirname, "../../..", "packages/uni-cli-ui-mcp/index.mjs")];
       }
       return ["npx", "-y", "uni-cli-ui-mcp"];
   },
-  "getuni-cliUiMcpEnvironment": async (event, ...args) => {
+  "getuniCliUiMcpEnvironment": async (event, ...args) => {
       return {
         UNICLI_UI_CONTROL_DISCOVERY: path.join(app.getPath("userData"), "uni-cli-ui-control.json"),
       };
@@ -2055,7 +2055,7 @@ const desktopCommandHandlers = {
       const config = await persistConnectLinkClaims(verified.claims);
       return { ok: true, config };
   },
-  "nukeuni-cliAndOpencodeConfigPreview": async (event, ...args) => {
+  "nukeuniCliAndOpencodeConfigPreview": async (event, ...args) => {
       return buildNukeManifest({
         env: process.env,
         homedir: os.homedir(),
@@ -2065,7 +2065,7 @@ const desktopCommandHandlers = {
         workspacePaths: await workspaceStore.listLocalWorkspacePaths(),
       });
   },
-  "nukeuni-cliAndOpencodeConfigAndExit": async (event, ...args) => {
+  "nukeuniCliAndOpencodeConfigAndExit": async (event, ...args) => {
       return executeNukeFreshStart({
         app,
         session,
@@ -2083,17 +2083,17 @@ const desktopCommandHandlers = {
         },
       });
   },
-  "sandboxCleanupuni-cliContainers": async (event, ...args) => {
-      return runtimeManager.sandboxCleanupuni-cliContainers();
+  "sandboxCleanupuniCliContainers": async (event, ...args) => {
+      return runtimeManager.sandboxCleanupuniCliContainers();
   },
-  "uni-cliServerInfo": async (event, ...args) => {
-      return runtimeManager.uni-cliServerInfo();
+  "uniCliServerInfo": async (event, ...args) => {
+      return runtimeManager.uniCliServerInfo();
   },
   "automationRunnerConfigure": async (event, ...args) => {
       return desktopAutomationRunner.configure(args[0] ?? null);
   },
-  "uni-cliServerRestart": async (event, ...args) => {
-      return runtimeManager.uni-cliServerRestart(args[0] ?? {});
+  "uniCliServerRestart": async (event, ...args) => {
+      return runtimeManager.uniCliServerRestart(args[0] ?? {});
   },
   "pickDirectory": async (event, ...args) => {
       const options = args[0] ?? {};
@@ -2220,8 +2220,8 @@ const desktopCommandHandlers = {
         String(args[2] ?? ""),
       );
   },
-  "resetuni-cliState": async (event, ...args) => {
-      return workspaceStore.resetuni-cliState();
+  "resetuniCliState": async (event, ...args) => {
+      return workspaceStore.resetuniCliState();
   },
   "resetOpencodeCache": async (event, ...args) => {
       return { removed: [], missing: [], errors: [] };

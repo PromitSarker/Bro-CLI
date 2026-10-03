@@ -4,7 +4,7 @@ import { enginePoolForConfig } from "./engine-pool.js";
 import { resolveWorkspaceOpencodeConnection } from "./opencode-connection.js";
 import { readGlobalRuntimeOpencodeConfig, runtimeProviderMap } from "./runtime-opencode-config-store.js";
 import type { ServerConfig } from "./types.js";
-import { readuni-cliWorkspaceConfig, writeuni-cliWorkspaceConfig } from "./uni-cli-workspace-config-store.js";
+import { readuniCliWorkspaceConfig, writeuniCliWorkspaceConfig } from "./uni-cli-workspace-config-store.js";
 import { findManagedEngineWorkspace } from "./workspaces.js";
 
 /**
@@ -290,13 +290,13 @@ async function reconcileManagedProviderAuth(input: ManagedProviderAuthInput): Pr
 
   const managedIds = new Set(Object.keys(providers));
   const ownershipKey = `__managed_provider_auth__:${target.ownershipScope}`;
-  const persisted = await readuni-cliWorkspaceConfig(input.config, ownershipKey);
+  const persisted = await readuniCliWorkspaceConfig(input.config, ownershipKey);
   const savedIds = Array.isArray(persisted.providerIds)
     ? persisted.providerIds.filter((id): id is string => typeof id === "string") : [];
   const ownedProviderIds = state.ownedProviderIdsByScope.get(target.ownershipScope) ?? new Set<string>();
   for (const id of [...savedIds, ...(input.retiredProviderIds ?? [])]) ownedProviderIds.add(id);
   state.ownedProviderIdsByScope.set(target.ownershipScope, ownedProviderIds);
-  const persist = () => writeuni-cliWorkspaceConfig(input.config, ownershipKey, () => ({ providerIds: [...ownedProviderIds] }));
+  const persist = () => writeuniCliWorkspaceConfig(input.config, ownershipKey, () => ({ providerIds: [...ownedProviderIds] }));
   await persist();
 
   for (const [providerId, entry] of Object.entries(providers)) {

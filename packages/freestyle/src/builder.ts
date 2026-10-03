@@ -27,7 +27,7 @@ export interface BuildOptions {
 
 /** Metadata on every builder VM of one commit/world build; see `isBuilding`. */
 export function buildLabel(sha: string, world: PreviewWorld): Record<string, string> {
-  return { uni-cliBuild: `${world}-${sha}` };
+  return { uniCliBuild: `${world}-${sha}` };
 }
 
 export async function runScript(vm: Vm, stage: string, script: string, options: BuildOptions) {
@@ -192,6 +192,6 @@ node /opt/uni-cli-preview/refresh.mjs ${sha}`, options);
  * treat a sustained "not building, not ready" as a failed build.
  */
 export async function isBuilding(sha: string, world: PreviewWorld, api = client()): Promise<boolean> {
-  const { vms } = await api.vms.list({ metadata: `uni-cliBuild:${buildLabel(sha, world).uni-cliBuild}`, limit: 20 });
+  const { vms } = await api.vms.list({ metadata: `uniCliBuild:${buildLabel(sha, world).uniCliBuild}`, limit: 20 });
   return vms.some((vm) => vm.state === "starting" || vm.state === "running");
 }

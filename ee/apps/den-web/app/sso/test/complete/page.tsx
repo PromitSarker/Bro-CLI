@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation";
 function CompleteContent() {
   const searchParams = useSearchParams();
   const [{ intentId, failed }] = useState(() => ({
-    intentId: searchParams.get("uni-cliSsoTest") ?? "",
+    intentId: searchParams.get("uniCliSsoTest") ?? "",
     failed: searchParams.has("error") || searchParams.has("failed"),
   }));
 

@@ -109,7 +109,7 @@ export function createV2SessionHomes(config: ServerConfig, read: (path: string) 
     const session = nativeSession(value);
     const directory = nativeSessionDirectory(value);
     if (!session || !home || !directory || home === await canonical(directory)) return value;
-    const info = { ...session, uni-cliHomeDirectory: home };
+    const info = { ...session, uniCliHomeDirectory: home };
     return isRecord(value) && isRecord(value.info) ? { ...value, info } : info;
   };
   return { canonical, stored, remember, created, resolve, project };

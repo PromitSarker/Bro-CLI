@@ -152,7 +152,7 @@ export function personDefaults(key: string, person: PersonShape | undefined, run
   return {
     email: person?.email?.trim() || `${key}+${runId}@uni-cli.test`,
     name: person?.name?.trim() || key.replace(/(^|[-_ ])\w/g, (part) => part.toUpperCase()),
-    password: person?.password || "Uni-CLIEval123!",
+    password: person?.password || "UniCliEval123!",
   };
 }
 
@@ -168,7 +168,7 @@ export function defaultReuseAdmin(): Required<PersonShape> {
   return {
     email: process.env.UNICLI_EVAL_DEMO_EMAIL?.trim() || "alex@acme.test",
     name: "Alex Eval",
-    password: process.env.UNICLI_EVAL_DEMO_PASSWORD || "Uni-CLIDemo123!",
+    password: process.env.UNICLI_EVAL_DEMO_PASSWORD || "UniCliDemo123!",
   };
 }
 

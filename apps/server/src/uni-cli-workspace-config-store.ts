@@ -1,44 +1,44 @@
 import type { ServerConfig } from "./types.js";
 import { createWorkspaceKvStore, isRecord } from "./workspace-kv-store.js";
 
-function normalizeuni-cliWorkspaceConfig(value: unknown): Record<string, unknown> {
+function normalizeuniCliWorkspaceConfig(value: unknown): Record<string, unknown> {
   return isRecord(value) ? value : {};
 }
 
-function parseuni-cliWorkspaceConfig(configJson: string): Record<string, unknown> {
+function parseuniCliWorkspaceConfig(configJson: string): Record<string, unknown> {
   try {
-    return normalizeuni-cliWorkspaceConfig(JSON.parse(configJson));
+    return normalizeuniCliWorkspaceConfig(JSON.parse(configJson));
   } catch {
     return {};
   }
 }
 
-const uni-cliWorkspaceConfigStore = createWorkspaceKvStore<Record<string, unknown>>({
+const uniCliWorkspaceConfigStore = createWorkspaceKvStore<Record<string, unknown>>({
   tableName: "uni-cli_workspace_configs",
   valueColumn: "config_json",
-  parse: parseuni-cliWorkspaceConfig,
+  parse: parseuniCliWorkspaceConfig,
   serialize: (value) => JSON.stringify(value),
 });
 
-export async function readuni-cliWorkspaceConfig(config: ServerConfig, workspaceId: string): Promise<Record<string, unknown>> {
-  return await uni-cliWorkspaceConfigStore.get(config, workspaceId) ?? {};
+export async function readuniCliWorkspaceConfig(config: ServerConfig, workspaceId: string): Promise<Record<string, unknown>> {
+  return await uniCliWorkspaceConfigStore.get(config, workspaceId) ?? {};
 }
 
-export async function writeuni-cliWorkspaceConfig(
+export async function writeuniCliWorkspaceConfig(
   config: ServerConfig,
   workspaceId: string,
   updater: (current: Record<string, unknown>) => Record<string, unknown>,
 ): Promise<Record<string, unknown>> {
-  const next = normalizeuni-cliWorkspaceConfig(updater(await readuni-cliWorkspaceConfig(config, workspaceId)));
-  await uni-cliWorkspaceConfigStore.set(config, workspaceId, next);
+  const next = normalizeuniCliWorkspaceConfig(updater(await readuniCliWorkspaceConfig(config, workspaceId)));
+  await uniCliWorkspaceConfigStore.set(config, workspaceId, next);
   return next;
 }
 
-export async function hasuni-cliWorkspaceConfig(
+export async function hasuniCliWorkspaceConfig(
   config: ServerConfig,
   workspaceId: string,
 ): Promise<boolean> {
-  return uni-cliWorkspaceConfigStore.has(config, workspaceId);
+  return uniCliWorkspaceConfigStore.has(config, workspaceId);
 }
 
 /**
@@ -47,18 +47,18 @@ export async function hasuni-cliWorkspaceConfig(
  * legacy `.opencode/uni-cli.json` files. No-op when a row is already present,
  * so it never clobbers live provisioning state.
  */
-export async function seeduni-cliWorkspaceConfigIfEmpty(
+export async function seeduniCliWorkspaceConfigIfEmpty(
   config: ServerConfig,
   workspaceId: string,
   seed: Record<string, unknown>,
 ): Promise<Record<string, unknown>> {
-  if (await hasuni-cliWorkspaceConfig(config, workspaceId)) {
-    return readuni-cliWorkspaceConfig(config, workspaceId);
+  if (await hasuniCliWorkspaceConfig(config, workspaceId)) {
+    return readuniCliWorkspaceConfig(config, workspaceId);
   }
-  return writeuni-cliWorkspaceConfig(config, workspaceId, () => seed);
+  return writeuniCliWorkspaceConfig(config, workspaceId, () => seed);
 }
 
-export function mergeuni-cliWorkspaceConfigs(
+export function mergeuniCliWorkspaceConfigs(
   legacy: Record<string, unknown>,
   stored: Record<string, unknown>,
 ): Record<string, unknown> {

@@ -1,34 +1,34 @@
 import { z } from "zod"
 
 import {
-  uni-cliAffordanceDescriptorSchema,
-  uni-cliProviderRefSchema,
+  uniCliAffordanceDescriptorSchema,
+  uniCliProviderRefSchema,
 } from "./uni-cli-affordance.js"
 
-export const uni-cliGuidanceDescriptorSchema = z.object({
+export const uniCliGuidanceDescriptorSchema = z.object({
   ref: z.string().trim().min(1),
   title: z.string().trim().min(1),
   description: z.string().trim().min(1),
-  provider: uni-cliProviderRefSchema,
+  provider: uniCliProviderRefSchema,
   loading: z.enum(["eager", "catalog", "on-demand"]),
 })
-export type uni-cliGuidanceDescriptor = z.infer<typeof uni-cliGuidanceDescriptorSchema>
+export type uniCliGuidanceDescriptor = z.infer<typeof uniCliGuidanceDescriptorSchema>
 
-export const uni-cliFeatureContributionSchema = z.object({
+export const uniCliFeatureContributionSchema = z.object({
   featureId: z.string().trim().min(1),
-  provider: uni-cliProviderRefSchema,
-  affordances: z.array(uni-cliAffordanceDescriptorSchema),
-  guidance: z.array(uni-cliGuidanceDescriptorSchema),
+  provider: uniCliProviderRefSchema,
+  affordances: z.array(uniCliAffordanceDescriptorSchema),
+  guidance: z.array(uniCliGuidanceDescriptorSchema),
 })
-export type uni-cliFeatureContribution = z.infer<typeof uni-cliFeatureContributionSchema>
+export type uniCliFeatureContribution = z.infer<typeof uniCliFeatureContributionSchema>
 
-export const uni-cliProviderCatalogSchema = z.object({
+export const uniCliProviderCatalogSchema = z.object({
   schemaVersion: z.literal(1),
-  contributions: z.array(uni-cliFeatureContributionSchema),
+  contributions: z.array(uniCliFeatureContributionSchema),
 })
-export type uni-cliProviderCatalog = z.infer<typeof uni-cliProviderCatalogSchema>
+export type uniCliProviderCatalog = z.infer<typeof uniCliProviderCatalogSchema>
 
-export const uni-cliCapabilityResultSchema = z.discriminatedUnion("status", [
+export const uniCliCapabilityResultSchema = z.discriminatedUnion("status", [
   z.object({
     status: z.literal("completed"),
     data: z.unknown(),
@@ -49,4 +49,4 @@ export const uni-cliCapabilityResultSchema = z.discriminatedUnion("status", [
     retryable: z.boolean(),
   }),
 ])
-export type uni-cliCapabilityResult = z.infer<typeof uni-cliCapabilityResultSchema>
+export type uniCliCapabilityResult = z.infer<typeof uniCliCapabilityResultSchema>

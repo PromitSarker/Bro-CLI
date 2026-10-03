@@ -130,8 +130,8 @@ export type WorkerLaunch = {
   /** The instance endpoint expires or is proxied, so only Den's lifecycle route is durable. */
   expiringEndpoint?: boolean;
   instanceUrl: string | null;
-  uni-cliUrl: string | null;
-  previewuni-cliUrl?: string | null;
+  uniCliUrl: string | null;
+  previewuniCliUrl?: string | null;
   previewExpiresAt?: string | null;
   workspaceId: string | null;
   clientToken: string | null;
@@ -152,8 +152,8 @@ export type WorkerTokens = {
   clientToken: string | null;
   ownerToken: string | null;
   hostToken: string | null;
-  uni-cliUrl: string | null;
-  previewuni-cliUrl: string | null;
+  uniCliUrl: string | null;
+  previewuniCliUrl: string | null;
   previewExpiresAt: string | null;
   workspaceId: string | null;
 };
@@ -608,8 +608,8 @@ export function getWorker(payload: unknown): WorkerLaunch | null {
     provider: instance && typeof instance.provider === "string" ? instance.provider : null,
     expiringEndpoint: instanceUsesExpiringEndpoint(instance),
     instanceUrl: getDurableWorkerInstanceUrl(instance),
-    uni-cliUrl: getDurableWorkerInstanceUrl(instance),
-    previewuni-cliUrl: null,
+    uniCliUrl: getDurableWorkerInstanceUrl(instance),
+    previewuniCliUrl: null,
     previewExpiresAt: null,
     workspaceId: null,
     clientToken: tokens && typeof tokens.client === "string" ? tokens.client : null,
@@ -661,8 +661,8 @@ export function getWorkerTokens(payload: unknown): WorkerTokens | null {
       ? tokens.host
       : null;
   const hostToken = typeof tokens.host === "string" ? tokens.host : null;
-  const uni-cliUrl = connect && typeof connect.uni-cliUrl === "string" ? connect.uni-cliUrl : null;
-  const previewuni-cliUrl = directPreview && typeof directPreview.uni-cliUrl === "string" ? directPreview.uni-cliUrl : null;
+  const uniCliUrl = connect && typeof connect.uniCliUrl === "string" ? connect.uniCliUrl : null;
+  const previewuniCliUrl = directPreview && typeof directPreview.uniCliUrl === "string" ? directPreview.uniCliUrl : null;
   const previewExpiresAt = directPreview && typeof directPreview.expiresAt === "string" ? directPreview.expiresAt : null;
   const workspaceId = connect && typeof connect.workspaceId === "string" ? connect.workspaceId : null;
 
@@ -670,14 +670,14 @@ export function getWorkerTokens(payload: unknown): WorkerTokens | null {
     return null;
   }
 
-  return { clientToken, ownerToken, hostToken, uni-cliUrl, previewuni-cliUrl, previewExpiresAt, workspaceId };
+  return { clientToken, ownerToken, hostToken, uniCliUrl, previewuniCliUrl, previewExpiresAt, workspaceId };
 }
 
 export function withWorkerConnection(worker: WorkerLaunch, tokens: WorkerTokens): WorkerLaunch {
   return {
     ...worker,
-    uni-cliUrl: tokens.uni-cliUrl,
-    previewuni-cliUrl: tokens.previewuni-cliUrl,
+    uniCliUrl: tokens.uniCliUrl,
+    previewuniCliUrl: tokens.previewuniCliUrl,
     previewExpiresAt: tokens.previewExpiresAt,
     workspaceId: tokens.workspaceId,
     clientToken: tokens.clientToken,
@@ -687,8 +687,8 @@ export function withWorkerConnection(worker: WorkerLaunch, tokens: WorkerTokens)
 }
 
 export function getWorkerConnectionTargets(worker: WorkerLaunch | null) {
-  const desktopUrl = worker?.uni-cliUrl ?? worker?.instanceUrl ?? null;
-  const webUrl = worker?.previewuni-cliUrl
+  const desktopUrl = worker?.uniCliUrl ?? worker?.instanceUrl ?? null;
+  const webUrl = worker?.previewuniCliUrl
     ?? (workerUsesExpiringEndpoint(worker) || worker?.instanceUrl === null ? null : desktopUrl);
   return { desktopUrl, webUrl };
 }
@@ -701,8 +701,8 @@ export function getWorkerConnectionTokens(worker: WorkerLaunch | null) {
 }
 
 export function workerConnectionEquals(current: WorkerLaunch, next: WorkerLaunch) {
-  return current.uni-cliUrl === next.uni-cliUrl
-    && current.previewuni-cliUrl === next.previewuni-cliUrl
+  return current.uniCliUrl === next.uniCliUrl
+    && current.previewuniCliUrl === next.previewuniCliUrl
     && current.previewExpiresAt === next.previewExpiresAt
     && current.workspaceId === next.workspaceId
     && current.clientToken === next.clientToken
@@ -715,11 +715,11 @@ const WORKER_PREVIEW_REFRESH_LEAD_MS = 30_000;
 export function workerNeedsConnectionResolution(worker: WorkerLaunch, now = Date.now()): boolean {
   if (worker.status.trim().toLowerCase() === "failed") return false;
   const hasRequiredTokens = Boolean(worker.clientToken?.trim() && (worker.hostToken?.trim() || worker.ownerToken?.trim()));
-  if (!hasRequiredTokens || !worker.uni-cliUrl?.trim()) return true;
+  if (!hasRequiredTokens || !worker.uniCliUrl?.trim()) return true;
 
-  const usesExpiringPreview = workerUsesExpiringEndpoint(worker) || worker.instanceUrl === null || Boolean(worker.previewuni-cliUrl);
+  const usesExpiringPreview = workerUsesExpiringEndpoint(worker) || worker.instanceUrl === null || Boolean(worker.previewuniCliUrl);
   if (!usesExpiringPreview) return false;
-  if (!worker.workspaceId?.trim() || !worker.previewuni-cliUrl?.trim() || !worker.previewExpiresAt) return true;
+  if (!worker.workspaceId?.trim() || !worker.previewuniCliUrl?.trim() || !worker.previewExpiresAt) return true;
 
   const expiresAt = Date.parse(worker.previewExpiresAt);
   return !Number.isFinite(expiresAt) || expiresAt <= now + WORKER_PREVIEW_REFRESH_LEAD_MS;
@@ -1017,8 +1017,8 @@ export function isWorkerLaunch(value: unknown): value is WorkerLaunch {
     typeof value.status === "string" &&
     (typeof value.provider === "string" || value.provider === null) &&
     (typeof value.instanceUrl === "string" || value.instanceUrl === null) &&
-    (typeof value.uni-cliUrl === "string" || value.uni-cliUrl === null || typeof value.uni-cliUrl === "undefined") &&
-    (typeof value.previewuni-cliUrl === "string" || value.previewuni-cliUrl === null || typeof value.previewuni-cliUrl === "undefined") &&
+    (typeof value.uniCliUrl === "string" || value.uniCliUrl === null || typeof value.uniCliUrl === "undefined") &&
+    (typeof value.previewuniCliUrl === "string" || value.previewuniCliUrl === null || typeof value.previewuniCliUrl === "undefined") &&
     (typeof value.previewExpiresAt === "string" || value.previewExpiresAt === null || typeof value.previewExpiresAt === "undefined") &&
     (typeof value.workspaceId === "string" || value.workspaceId === null || typeof value.workspaceId === "undefined") &&
     (typeof value.clientToken === "string" || value.clientToken === null) &&
@@ -1034,8 +1034,8 @@ export function listItemToWorker(item: WorkerListItem, current: WorkerLaunch | n
     status: item.status,
     provider: item.provider,
     instanceUrl: item.instanceUrl,
-    uni-cliUrl: current?.workerId === item.workerId ? current.uni-cliUrl ?? item.instanceUrl : item.instanceUrl,
-    previewuni-cliUrl: current?.workerId === item.workerId ? current.previewuni-cliUrl ?? null : null,
+    uniCliUrl: current?.workerId === item.workerId ? current.uniCliUrl ?? item.instanceUrl : item.instanceUrl,
+    previewuniCliUrl: current?.workerId === item.workerId ? current.previewuniCliUrl ?? null : null,
     previewExpiresAt: current?.workerId === item.workerId ? current.previewExpiresAt ?? null : null,
     workspaceId: current?.workerId === item.workerId ? current.workspaceId : null,
     clientToken: current?.workerId === item.workerId ? current.clientToken : null,
@@ -1080,19 +1080,19 @@ function buildWorkspaceUrl(instanceUrl: string, workspaceId: string): string {
   return `${normalizeUrl(instanceUrl)}/w/${encodeURIComponent(workspaceId)}`;
 }
 
-export function builduni-cliDeepLink(
-  uni-cliUrl: string | null,
+export function builduniCliDeepLink(
+  uniCliUrl: string | null,
   accessToken: string | null,
   workerId: string | null,
   workerName: string | null
 ): string | null {
-  if (!uni-cliUrl || !accessToken) {
+  if (!uniCliUrl || !accessToken) {
     return null;
   }
 
   const params = new URLSearchParams({
-    uni-cliHostUrl: uni-cliUrl,
-    uni-cliToken: accessToken,
+    uniCliHostUrl: uniCliUrl,
+    uniCliToken: accessToken,
     source: "uni-cli-web"
   });
 
@@ -1107,15 +1107,15 @@ export function builduni-cliDeepLink(
   return `uni-cli://connect-remote?${params.toString()}`;
 }
 
-export function builduni-cliAppConnectUrl(
+export function builduniCliAppConnectUrl(
   appConnectBaseUrl: string,
-  uni-cliUrl: string | null,
+  uniCliUrl: string | null,
   accessToken: string | null,
   workerId: string | null,
   workerName: string | null,
   options?: { autoConnect?: boolean }
 ): string | null {
-  if (!appConnectBaseUrl || !uni-cliUrl || !accessToken) {
+  if (!appConnectBaseUrl || !uniCliUrl || !accessToken) {
     return null;
   }
 
@@ -1135,8 +1135,8 @@ export function builduni-cliAppConnectUrl(
     connectUrl.pathname = lastSegment === "connect-remote" ? normalizedPath : `${normalizedPath}/connect-remote`;
   }
 
-  connectUrl.searchParams.set("uni-cliHostUrl", uni-cliUrl);
-  connectUrl.searchParams.set("uni-cliToken", accessToken);
+  connectUrl.searchParams.set("uniCliHostUrl", uniCliUrl);
+  connectUrl.searchParams.set("uniCliToken", accessToken);
   if (options?.autoConnect) {
     connectUrl.searchParams.set("autoConnect", "1");
   }
@@ -1211,7 +1211,7 @@ async function requestAbsoluteJson(url: string, init: RequestInit = {}, timeoutM
   return { response, payload };
 }
 
-export async function resolveuni-cliWorkspaceUrl(instanceUrl: string, accessToken: string): Promise<{ workspaceId: string; uni-cliUrl: string } | null> {
+export async function resolveuniCliWorkspaceUrl(instanceUrl: string, accessToken: string): Promise<{ workspaceId: string; uniCliUrl: string } | null> {
   const baseUrl = normalizeUrl(instanceUrl);
   const token = accessToken.trim();
   if (!baseUrl || !token) {
@@ -1222,7 +1222,7 @@ export async function resolveuni-cliWorkspaceUrl(instanceUrl: string, accessToke
   if (mountedWorkspaceId) {
     return {
       workspaceId: mountedWorkspaceId,
-      uni-cliUrl: baseUrl
+      uniCliUrl: baseUrl
     };
   }
 
@@ -1244,7 +1244,7 @@ export async function resolveuni-cliWorkspaceUrl(instanceUrl: string, accessToke
 
   return {
     workspaceId,
-    uni-cliUrl: buildWorkspaceUrl(baseUrl, workspaceId)
+    uniCliUrl: buildWorkspaceUrl(baseUrl, workspaceId)
   };
 }
 

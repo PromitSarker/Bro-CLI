@@ -1,5 +1,5 @@
 import * as React from "react";
-import type { uni-cliServerClient } from "@/app/lib/uni-cli-server";
+import type { uniCliServerClient } from "@/app/lib/uni-cli-server";
 
 import type { OpenTarget } from "@/react-app/domains/session/artifacts/open-target";
 
@@ -12,7 +12,7 @@ export type OpenTargetOptions = {
 type OpenTargetHandler = (target: OpenTarget, options?: OpenTargetOptions) => void;
 
 type OpenTargetContextValue = {
-  client?: uni-cliServerClient;
+  client?: uniCliServerClient;
   workspaceId?: string;
   workspaceRoot?: string;
   isLocalWorkspace?: boolean;
@@ -22,7 +22,7 @@ type OpenTargetContextValue = {
 
 type OpenTargetProviderProps = {
   children: React.ReactNode;
-  client?: uni-cliServerClient;
+  client?: uniCliServerClient;
   workspaceId?: string;
   workspaceRoot?: string;
   isLocalWorkspace?: boolean;

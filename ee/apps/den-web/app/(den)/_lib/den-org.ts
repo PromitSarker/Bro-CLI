@@ -261,7 +261,7 @@ export type DenOrgCapabilities = {
   /** Always on: Workflows/Code Mode shipped for every organization. Older servers may still return false. */
   workflows: boolean;
   /** Effective Web offer; true for the global switch or this organization's complimentary admin grant. */
-  uni-cliWeb: boolean;
+  uniCliWeb: boolean;
   cloud: boolean;
 };
 
@@ -1076,7 +1076,7 @@ function parseOrgAuthMethods(value: unknown): DenOrgAuthMethods {
 
 function parseOrgCapabilities(value: unknown): DenOrgCapabilities {
   if (!isRecord(value)) {
-    return { auditLogs: false, orgManagedDashboards: false, installLinks: false, mcpConnections: false, appMcpServers: false, workflows: true, uni-cliWeb: false, cloud: false };
+    return { auditLogs: false, orgManagedDashboards: false, installLinks: false, mcpConnections: false, appMcpServers: false, workflows: true, uniCliWeb: false, cloud: false };
   }
 
   return {
@@ -1088,7 +1088,7 @@ function parseOrgCapabilities(value: unknown): DenOrgCapabilities {
     // Workflows are enabled everywhere on current servers; only an explicit
     // false from an older server still hides the surface.
     workflows: value.workflows !== false,
-    uni-cliWeb: value.uni-cliWeb === true,
+    uniCliWeb: value.uniCliWeb === true,
     cloud: value.cloud === true,
   };
 }

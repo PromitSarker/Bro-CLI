@@ -76,7 +76,7 @@ export async function readConnectState(app: Surface): Promise<ConnectState> {
     try {
       const invokeDesktop = window.__UNICLI_ELECTRON__ && window.__UNICLI_ELECTRON__.invokeDesktop;
       if (invokeDesktop) {
-        const info = await invokeDesktop("uni-cliServerInfo");
+        const info = await invokeDesktop("uniCliServerInfo");
         if (info && info.running === true) {
           baseUrl = String(info.baseUrl ?? info.connectUrl ?? "").trim().replace(/\/+$/, "");
           token = String(info.ownerToken ?? info.clientToken ?? "").trim();
@@ -144,7 +144,7 @@ export async function readCloudMcpHealth(
     try {
       const invokeDesktop = window.__UNICLI_ELECTRON__ && window.__UNICLI_ELECTRON__.invokeDesktop;
       if (invokeDesktop) {
-        const info = await invokeDesktop("uni-cliServerInfo");
+        const info = await invokeDesktop("uniCliServerInfo");
         if (info && info.running === true) {
           baseUrl = String(info.baseUrl ?? info.connectUrl ?? "").trim().replace(/\/+$/, "");
           token = String(info.ownerToken ?? info.clientToken ?? "").trim();
@@ -210,7 +210,7 @@ export async function readConnectStateFile(
   }
   if (!app.handle.profileDir) throw new Error(`The ${app.handle.hostKind} app did not expose its profile directory.`);
   // The local server persists runtime state next to its config file
-  // (`uni-cliConfigDir()`). The dev-mode desktop redirects that XDG config
+  // (`uniCliConfigDir()`). The dev-mode desktop redirects that XDG config
   // root under its Electron userData dir (`<userData>/uni-cli-dev-data/xdg/config`),
   // so probe the known layouts in order.
   const paths = electronProfilePaths(app.handle.profileDir);

@@ -37,10 +37,10 @@ export const planPrices = {
   claudeTeamMaxSeats: 150,
   claudeEnterpriseSeat: 20,
   claudeEnterpriseMinSeats: 20,
-  uni-cliTeamSeat: 10,
-  uni-cliFreeSeats: 5,
-  uni-cliEnterpriseSeat: 20,
-  uni-cliEnterpriseVolumeAbove: 250
+  uniCliTeamSeat: 10,
+  uniCliFreeSeats: 5,
+  uniCliEnterpriseSeat: 20,
+  uniCliEnterpriseVolumeAbove: 250
 };
 
 /**
@@ -48,7 +48,7 @@ export const planPrices = {
  * only to the seats inside that tier. The pricing page shows Enterprise as custom pricing; the calculator is the only
  * public place these numbers appear.
  */
-export const uni-cliEnterpriseVolumeTiers: { upTo: number; price: number }[] = [
+export const uniCliEnterpriseVolumeTiers: { upTo: number; price: number }[] = [
   { upTo: 250, price: 20 },
   { upTo: 1000, price: 16 },
   { upTo: Number.POSITIVE_INFINITY, price: 13 }
@@ -58,7 +58,7 @@ export const uni-cliEnterpriseVolumeTiers: { upTo: number; price: number }[] = [
 export function describeEnterpriseVolumeTiers(): string {
   const count = new Intl.NumberFormat("en-US");
   let previous = 0;
-  const parts = uni-cliEnterpriseVolumeTiers.map((tier, index) => {
+  const parts = uniCliEnterpriseVolumeTiers.map((tier, index) => {
     const from = previous + 1;
     previous = tier.upTo;
     if (index === 0) return `$${tier.price} a person a month for the first ${count.format(tier.upTo)}`;
@@ -69,11 +69,11 @@ export function describeEnterpriseVolumeTiers(): string {
 }
 
 /** Monthly Uni-CLI Enterprise seat cost for a number of seats, with graduated volume tiers. */
-export function uni-cliEnterpriseSeatsMonthly(seats: number): number {
+export function uniCliEnterpriseSeatsMonthly(seats: number): number {
   let remaining = Math.max(0, Math.round(seats));
   let previous = 0;
   let total = 0;
-  for (const tier of uni-cliEnterpriseVolumeTiers) {
+  for (const tier of uniCliEnterpriseVolumeTiers) {
     const inTier = Math.min(remaining, tier.upTo - previous);
     total += inTier * tier.price;
     remaining -= inTier;
@@ -245,26 +245,26 @@ export function cumulativeCosts(inputs: CumulativeInputs): CumulativeCosts {
     );
   }
 
-  const uni-cliSeats =
-    inputs.tier === "team" ? Math.max(0, users - planPrices.uni-cliFreeSeats) : users;
-  const uni-cliSeatsMonthly =
+  const uniCliSeats =
+    inputs.tier === "team" ? Math.max(0, users - planPrices.uniCliFreeSeats) : users;
+  const uniCliSeatsMonthly =
     inputs.tier === "team"
-      ? uni-cliSeats * planPrices.uni-cliTeamSeat
-      : uni-cliEnterpriseSeatsMonthly(uni-cliSeats);
-  const uni-cliBase: Omit<CostSeries, "monthly" | "points" | "total" | "modelLabel" | "tokensMonthly"> = {
+      ? uniCliSeats * planPrices.uniCliTeamSeat
+      : uniCliEnterpriseSeatsMonthly(uniCliSeats);
+  const uniCliBase: Omit<CostSeries, "monthly" | "points" | "total" | "modelLabel" | "tokensMonthly"> = {
     id: inputs.tier === "team" ? "uni-cli-team" : "uni-cli-enterprise",
     vendor: "uni-cli",
     name: inputs.tier === "team" ? "Uni-CLI Team" : "Uni-CLI Enterprise",
-    seatsBilled: uni-cliSeats,
-    seatsMonthly: uni-cliSeatsMonthly,
+    seatsBilled: uniCliSeats,
+    seatsMonthly: uniCliSeatsMonthly,
     tokensIncluded: false
   };
-  const uni-cli = series({ ...uni-cliBase, modelLabel: inputs.model.label, tokensMonthly: tokens }, months);
+  const uni-cli = series({ ...uniCliBase, modelLabel: inputs.model.label, tokensMonthly: tokens }, months);
   const mixInput = inputs.mix && inputs.mix.openShare > 0 ? inputs.mix : null;
   const mix = mixInput
     ? series(
         {
-          ...uni-cliBase,
+          ...uniCliBase,
           modelLabel: mixLabel(inputs.model, mixInput),
           tokensMonthly: blendedTokenCostPerUser(inputs.model, mixInput, inputs.usage) * users
         },

@@ -10,10 +10,10 @@ import {
   desktopBootstrapPath as resolveDesktopBootstrapPath,
   legacyDesktopBootstrapPath as resolveLegacyDesktopBootstrapPath,
   normalizeWorkspaceRootPath,
-  uni-cliServerConfigPath as resolveuni-cliServerConfigPath,
+  uniCliServerConfigPath as resolveuniCliServerConfigPath,
 } from "@uni-cli/paths";
 
-import { uni-cliWorkspaceDisplayName, selectuni-cliWorkspaceForConnection } from "./remote-workspace.mjs";
+import { uniCliWorkspaceDisplayName, selectuniCliWorkspaceForConnection } from "./remote-workspace.mjs";
 import { exportWorkspaceConfig, importWorkspaceConfig } from "./workspace-archive.mjs";
 
 const EMPTY_WORKSPACE_LIST = Object.freeze({
@@ -171,14 +171,14 @@ export function createWorkspaceStore({
     return path.join(app.getPath("userData"), "uni-cli-workspaces.json");
   }
 
-  function uni-cliServerTokenStorePath() {
+  function uniCliServerTokenStorePath() {
     const override = process.env.UNICLI_SERVER_TOKEN_STORE_PATH?.trim();
     if (override) return path.resolve(override);
     return path.join(app.getPath("userData"), "uni-cli-server-tokens.json");
   }
 
-  function uni-cliServerConfigPath() {
-    return resolveuni-cliServerConfigPath({ env: process.env, homeDir: os.homedir() });
+  function uniCliServerConfigPath() {
+    return resolveuniCliServerConfigPath({ env: process.env, homeDir: os.homedir() });
   }
 
   // Earlier Electron alpha builds copied Tauri's uni-cli-workspaces.json into
@@ -507,7 +507,7 @@ export function createWorkspaceStore({
     return undefined;
   }
 
-  function defaultWorkspaceuni-cliConfig(workspacePath, preset = null) {
+  function defaultWorkspaceuniCliConfig(workspacePath, preset = null) {
     return {
       version: 1,
       workspace: workspacePath
@@ -557,7 +557,7 @@ export function createWorkspaceStore({
   }
 
   async function recoverWorkspacesFromTokenStore() {
-    const store = await readJsonFile(uni-cliServerTokenStorePath(), null);
+    const store = await readJsonFile(uniCliServerTokenStorePath(), null);
     if (!isRecord(store) || !isRecord(store.workspaces)) return [];
 
     const candidates = [];
@@ -593,7 +593,7 @@ export function createWorkspaceStore({
     const workspaceKey = normalizeWorkspacePathKey(workspacePath);
     if (!workspaceKey) return;
 
-    const store = await readJsonFile(uni-cliServerTokenStorePath(), null);
+    const store = await readJsonFile(uniCliServerTokenStorePath(), null);
     if (!isRecord(store) || !isRecord(store.workspaces)) return;
 
     const workspaces = { ...store.workspaces };
@@ -604,12 +604,12 @@ export function createWorkspaceStore({
       changed = true;
     }
     if (changed) {
-      await writeJsonFileAtomic(uni-cliServerTokenStorePath(), { ...store, workspaces });
+      await writeJsonFileAtomic(uniCliServerTokenStorePath(), { ...store, workspaces });
     }
   }
 
   async function recoverWorkspacesFromServerConfig() {
-    const config = await readJsonFile(uni-cliServerConfigPath(), null);
+    const config = await readJsonFile(uniCliServerConfigPath(), null);
     if (!isRecord(config) || !Array.isArray(config.workspaces)) return [];
 
     const seen = new Set();
@@ -626,12 +626,12 @@ export function createWorkspaceStore({
       const baseUrl = typeof entry.baseUrl === "string" ? entry.baseUrl.trim() : "";
       const directory = typeof entry.directory === "string" && entry.directory.trim() ? entry.directory.trim() : null;
       const remoteType = entry.remoteType === "opencode" ? "opencode" : "uni-cli";
-      const uni-cliWorkspaceId = typeof entry.uni-cliWorkspaceId === "string" ? entry.uni-cliWorkspaceId.trim() : "";
+      const uniCliWorkspaceId = typeof entry.uniCliWorkspaceId === "string" ? entry.uniCliWorkspaceId.trim() : "";
       const id = typeof entry.id === "string" && entry.id.trim()
         ? entry.id.trim()
         : workspaceType === "remote"
           ? remoteType === "uni-cli"
-            ? uni-cliRemoteWorkspaceId(baseUrl, uni-cliWorkspaceId)
+            ? uniCliRemoteWorkspaceId(baseUrl, uniCliWorkspaceId)
             : remoteWorkspaceId(baseUrl, directory)
           : localWorkspaceId(normalizedPath);
       const key = workspaceType === "remote" ? id : normalizeWorkspacePathKey(normalizedPath);
@@ -674,7 +674,7 @@ export function createWorkspaceStore({
     return stableWorkspaceId(key);
   }
 
-  function parseuni-cliWorkspaceIdFromUrl(input) {
+  function parseuniCliWorkspaceIdFromUrl(input) {
     const raw = String(input ?? "").trim();
     if (!raw) return null;
     try {
@@ -697,7 +697,7 @@ export function createWorkspaceStore({
     }
   }
 
-  function stripuni-cliWorkspaceMount(input) {
+  function stripuniCliWorkspaceMount(input) {
     const raw = String(input ?? "").trim();
     if (!raw) return null;
     try {
@@ -716,13 +716,13 @@ export function createWorkspaceStore({
     }
   }
 
-  function uni-cliRemoteWorkspaceId(hostUrl, workspaceId) {
-    const remoteWorkspaceId = String(workspaceId ?? "").trim() || parseuni-cliWorkspaceIdFromUrl(hostUrl);
+  function uniCliRemoteWorkspaceId(hostUrl, workspaceId) {
+    const remoteWorkspaceId = String(workspaceId ?? "").trim() || parseuniCliWorkspaceIdFromUrl(hostUrl);
     if (remoteWorkspaceId) return `rem_${remoteWorkspaceId}`;
     return `rem_${createHash("sha256").update(`uni-cli::${hostUrl}`).digest("hex").slice(0, 12)}`;
   }
 
-  async function fetchuni-cliWorkspaceList(hostUrl, token, hostToken) {
+  async function fetchuniCliWorkspaceList(hostUrl, token, hostToken) {
     const url = `${String(hostUrl ?? "").replace(/\/+$/, "")}/workspaces`;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 8_000);
@@ -750,9 +750,9 @@ export function createWorkspaceStore({
     }
   }
 
-  async function discoveruni-cliWorkspace({ hostUrl, token, hostToken, directory }) {
-    const list = await fetchuni-cliWorkspaceList(hostUrl, token, hostToken);
-    return selectuni-cliWorkspaceForConnection(list, directory);
+  async function discoveruniCliWorkspace({ hostUrl, token, hostToken, directory }) {
+    const list = await fetchuniCliWorkspaceList(hostUrl, token, hostToken);
+    return selectuniCliWorkspaceForConnection(list, directory);
   }
 
   function normalizeWorkspaceEntry(input) {
@@ -766,32 +766,32 @@ export function createWorkspaceStore({
       baseUrl: input.baseUrl ?? null,
       directory: input.directory ?? null,
       displayName: input.displayName ?? null,
-      uni-cliHostUrl: input.uni-cliHostUrl ?? null,
-      uni-cliToken: input.uni-cliToken ?? null,
-      uni-cliClientToken: input.uni-cliClientToken ?? null,
-      uni-cliHostToken: input.uni-cliHostToken ?? null,
-      uni-cliWorkspaceId: input.uni-cliWorkspaceId ?? null,
-      uni-cliWorkspaceName: input.uni-cliWorkspaceName ?? null,
+      uniCliHostUrl: input.uniCliHostUrl ?? null,
+      uniCliToken: input.uniCliToken ?? null,
+      uniCliClientToken: input.uniCliClientToken ?? null,
+      uniCliHostToken: input.uniCliHostToken ?? null,
+      uniCliWorkspaceId: input.uniCliWorkspaceId ?? null,
+      uniCliWorkspaceName: input.uniCliWorkspaceName ?? null,
       sandboxBackend: input.sandboxBackend ?? null,
       sandboxRunId: input.sandboxRunId ?? null,
       sandboxContainerName: input.sandboxContainerName ?? null,
     };
   }
 
-  async function readWorkspaceuni-cliConfig(workspacePath) {
-    const uni-cliPath = path.join(workspacePath, ".opencode", "uni-cli.json");
-    if (!(await pathExists(uni-cliPath))) {
-      return defaultWorkspaceuni-cliConfig(workspacePath);
+  async function readWorkspaceuniCliConfig(workspacePath) {
+    const uniCliPath = path.join(workspacePath, ".opencode", "uni-cli.json");
+    if (!(await pathExists(uniCliPath))) {
+      return defaultWorkspaceuniCliConfig(workspacePath);
     }
-    const raw = await readFile(uni-cliPath, "utf8");
+    const raw = await readFile(uniCliPath, "utf8");
     return JSON.parse(raw);
   }
 
-  async function writeWorkspaceuni-cliConfig(workspacePath, config) {
-    const uni-cliPath = path.join(workspacePath, ".opencode", "uni-cli.json");
-    await mkdir(path.dirname(uni-cliPath), { recursive: true });
-    await writeFile(uni-cliPath, `${JSON.stringify(config, null, 2)}\n`, "utf8");
-    return execResult(true, `Wrote ${uni-cliPath}`);
+  async function writeWorkspaceuniCliConfig(workspacePath, config) {
+    const uniCliPath = path.join(workspacePath, ".opencode", "uni-cli.json");
+    await mkdir(path.dirname(uniCliPath), { recursive: true });
+    await writeFile(uniCliPath, `${JSON.stringify(config, null, 2)}\n`, "utf8");
+    return execResult(true, `Wrote ${uniCliPath}`);
   }
 
   async function writeWorkspaceState(nextState) {
@@ -853,22 +853,22 @@ export function createWorkspaceStore({
       const workspace = entry && typeof entry === "object" ? entry : normalizeWorkspaceEntry(entry ?? {});
       if (workspace.workspaceType !== "remote" || workspace.remoteType !== "uni-cli") return workspace;
 
-      const remoteWorkspaceId = String(workspace.uni-cliWorkspaceId ?? "").trim()
-        || parseuni-cliWorkspaceIdFromUrl(workspace.uni-cliHostUrl)
-        || parseuni-cliWorkspaceIdFromUrl(workspace.baseUrl);
+      const remoteWorkspaceId = String(workspace.uniCliWorkspaceId ?? "").trim()
+        || parseuniCliWorkspaceIdFromUrl(workspace.uniCliHostUrl)
+        || parseuniCliWorkspaceIdFromUrl(workspace.baseUrl);
       if (!remoteWorkspaceId) return workspace;
 
-      const hostUrl = stripuni-cliWorkspaceMount(workspace.uni-cliHostUrl) || stripuni-cliWorkspaceMount(workspace.baseUrl);
-      const nextId = uni-cliRemoteWorkspaceId(hostUrl ?? workspace.baseUrl, remoteWorkspaceId);
+      const hostUrl = stripuniCliWorkspaceMount(workspace.uniCliHostUrl) || stripuniCliWorkspaceMount(workspace.baseUrl);
+      const nextId = uniCliRemoteWorkspaceId(hostUrl ?? workspace.baseUrl, remoteWorkspaceId);
       idMap.set(workspace.id, nextId);
       const nextWorkspace = {
         ...workspace,
         id: nextId,
         baseUrl: hostUrl,
-        uni-cliWorkspaceId: remoteWorkspaceId,
-        uni-cliHostUrl: hostUrl,
+        uniCliWorkspaceId: remoteWorkspaceId,
+        uniCliHostUrl: hostUrl,
       };
-      if (workspace.id !== nextWorkspace.id || workspace.baseUrl !== nextWorkspace.baseUrl || workspace.uni-cliWorkspaceId !== nextWorkspace.uni-cliWorkspaceId || workspace.uni-cliHostUrl !== nextWorkspace.uni-cliHostUrl) {
+      if (workspace.id !== nextWorkspace.id || workspace.baseUrl !== nextWorkspace.baseUrl || workspace.uniCliWorkspaceId !== nextWorkspace.uniCliWorkspaceId || workspace.uniCliHostUrl !== nextWorkspace.uniCliHostUrl) {
         changed = true;
       }
       return nextWorkspace;
@@ -958,7 +958,7 @@ export function createWorkspaceStore({
     const prefixes = new Set();
     for (const workspace of (await readWorkspaceState()).workspaces) {
       if (workspace?.workspaceType !== "remote") continue;
-      for (const value of [workspace.baseUrl, workspace.uni-cliHostUrl]) {
+      for (const value of [workspace.baseUrl, workspace.uniCliHostUrl]) {
         const raw = typeof value === "string" ? value.trim() : "";
         if (raw) prefixes.add(raw);
       }
@@ -1001,7 +1001,7 @@ export function createWorkspaceStore({
     });
     await mkdir(path.join(folderPath, ".opencode"), { recursive: true });
     if (!(await pathExists(path.join(folderPath, ".opencode", "uni-cli.json")))) {
-      await writeWorkspaceuni-cliConfig(folderPath, defaultWorkspaceuni-cliConfig(folderPath, preset));
+      await writeWorkspaceuniCliConfig(folderPath, defaultWorkspaceuniCliConfig(folderPath, preset));
     }
 
     return mutateWorkspaceState((state) => {
@@ -1025,24 +1025,24 @@ export function createWorkspaceStore({
     }
     const remoteType = input.remoteType === "opencode" ? "opencode" : "uni-cli";
     const directory = typeof input.directory === "string" && input.directory.trim() ? input.directory.trim() : null;
-    const rawuni-cliHostUrl = typeof input.uni-cliHostUrl === "string" && input.uni-cliHostUrl.trim()
-      ? input.uni-cliHostUrl.trim()
+    const rawuniCliHostUrl = typeof input.uniCliHostUrl === "string" && input.uniCliHostUrl.trim()
+      ? input.uniCliHostUrl.trim()
       : null;
-    const uni-cliHostUrl = remoteType === "uni-cli"
-      ? stripuni-cliWorkspaceMount(rawuni-cliHostUrl ?? baseUrl)
-      : rawuni-cliHostUrl;
-    const uni-cliWorkspaceId = typeof input.uni-cliWorkspaceId === "string" && input.uni-cliWorkspaceId.trim()
-      ? input.uni-cliWorkspaceId.trim()
+    const uniCliHostUrl = remoteType === "uni-cli"
+      ? stripuniCliWorkspaceMount(rawuniCliHostUrl ?? baseUrl)
+      : rawuniCliHostUrl;
+    const uniCliWorkspaceId = typeof input.uniCliWorkspaceId === "string" && input.uniCliWorkspaceId.trim()
+      ? input.uniCliWorkspaceId.trim()
       : remoteType === "uni-cli"
-        ? parseuni-cliWorkspaceIdFromUrl(rawuni-cliHostUrl) || parseuni-cliWorkspaceIdFromUrl(baseUrl)
+        ? parseuniCliWorkspaceIdFromUrl(rawuniCliHostUrl) || parseuniCliWorkspaceIdFromUrl(baseUrl)
         : null;
-    let resolveduni-cliWorkspaceId = uni-cliWorkspaceId;
-    let resolveduni-cliWorkspaceName = input.uni-cliWorkspaceName ?? null;
-    if (remoteType === "uni-cli" && !resolveduni-cliWorkspaceId) {
-      const discovered = await discoveruni-cliWorkspace({
-        hostUrl: uni-cliHostUrl ?? baseUrl,
-        token: input.uni-cliToken,
-        hostToken: input.uni-cliHostToken,
+    let resolveduniCliWorkspaceId = uniCliWorkspaceId;
+    let resolveduniCliWorkspaceName = input.uniCliWorkspaceName ?? null;
+    if (remoteType === "uni-cli" && !resolveduniCliWorkspaceId) {
+      const discovered = await discoveruniCliWorkspace({
+        hostUrl: uniCliHostUrl ?? baseUrl,
+        token: input.uniCliToken,
+        hostToken: input.uniCliHostToken,
         directory,
       });
       if (!discovered?.id) {
@@ -1052,28 +1052,28 @@ export function createWorkspaceStore({
             : "Uni-CLI server returned no workspaces.",
         );
       }
-      resolveduni-cliWorkspaceId = String(discovered.id).trim();
-      resolveduni-cliWorkspaceName = uni-cliWorkspaceDisplayName(discovered);
+      resolveduniCliWorkspaceId = String(discovered.id).trim();
+      resolveduniCliWorkspaceName = uniCliWorkspaceDisplayName(discovered);
     }
     const id = remoteType === "uni-cli"
-      ? uni-cliRemoteWorkspaceId(uni-cliHostUrl ?? baseUrl, resolveduni-cliWorkspaceId)
+      ? uniCliRemoteWorkspaceId(uniCliHostUrl ?? baseUrl, resolveduniCliWorkspaceId)
       : remoteWorkspaceId(baseUrl, directory);
     const workspace = normalizeWorkspaceEntry({
       id,
-      name: String(input.displayName ?? resolveduni-cliWorkspaceName ?? "Remote workspace"),
+      name: String(input.displayName ?? resolveduniCliWorkspaceName ?? "Remote workspace"),
       displayName: input.displayName ?? null,
       path: directory ?? "",
       preset: "remote",
       workspaceType: "remote",
       remoteType,
-      baseUrl: remoteType === "uni-cli" ? (uni-cliHostUrl ?? baseUrl) : baseUrl,
+      baseUrl: remoteType === "uni-cli" ? (uniCliHostUrl ?? baseUrl) : baseUrl,
       directory,
-      uni-cliHostUrl,
-      uni-cliToken: input.uni-cliToken ?? null,
-      uni-cliClientToken: input.uni-cliClientToken ?? null,
-      uni-cliHostToken: input.uni-cliHostToken ?? null,
-      uni-cliWorkspaceId: resolveduni-cliWorkspaceId,
-      uni-cliWorkspaceName: resolveduni-cliWorkspaceName,
+      uniCliHostUrl,
+      uniCliToken: input.uniCliToken ?? null,
+      uniCliClientToken: input.uniCliClientToken ?? null,
+      uniCliHostToken: input.uniCliHostToken ?? null,
+      uniCliWorkspaceId: resolveduniCliWorkspaceId,
+      uniCliWorkspaceName: resolveduniCliWorkspaceName,
       sandboxBackend: input.sandboxBackend ?? null,
       sandboxRunId: input.sandboxRunId ?? null,
       sandboxContainerName: input.sandboxContainerName ?? null,
@@ -1098,26 +1098,26 @@ export function createWorkspaceStore({
       let nextWorkspace = { ...existing, ...patch };
       const nextRemoteType = nextWorkspace.remoteType === "opencode" ? "opencode" : "uni-cli";
       if (nextRemoteType === "uni-cli") {
-        const rawHostUrl = typeof nextWorkspace.uni-cliHostUrl === "string" && nextWorkspace.uni-cliHostUrl.trim()
-          ? nextWorkspace.uni-cliHostUrl.trim()
+        const rawHostUrl = typeof nextWorkspace.uniCliHostUrl === "string" && nextWorkspace.uniCliHostUrl.trim()
+          ? nextWorkspace.uniCliHostUrl.trim()
           : null;
         const nextBaseUrl = String(nextWorkspace.baseUrl ?? "").trim();
-        const hostUrl = stripuni-cliWorkspaceMount(rawHostUrl ?? nextBaseUrl);
+        const hostUrl = stripuniCliWorkspaceMount(rawHostUrl ?? nextBaseUrl);
         const directory = typeof nextWorkspace.directory === "string" && nextWorkspace.directory.trim()
           ? nextWorkspace.directory.trim()
           : null;
-        const parsedWorkspaceId = parseuni-cliWorkspaceIdFromUrl(rawHostUrl) || parseuni-cliWorkspaceIdFromUrl(nextBaseUrl);
+        const parsedWorkspaceId = parseuniCliWorkspaceIdFromUrl(rawHostUrl) || parseuniCliWorkspaceIdFromUrl(nextBaseUrl);
         let remoteWorkspaceId = parsedWorkspaceId || (
-          typeof nextWorkspace.uni-cliWorkspaceId === "string" && nextWorkspace.uni-cliWorkspaceId.trim()
-            ? nextWorkspace.uni-cliWorkspaceId.trim()
+          typeof nextWorkspace.uniCliWorkspaceId === "string" && nextWorkspace.uniCliWorkspaceId.trim()
+            ? nextWorkspace.uniCliWorkspaceId.trim()
             : null
         );
-        let remoteWorkspaceName = nextWorkspace.uni-cliWorkspaceName ?? null;
+        let remoteWorkspaceName = nextWorkspace.uniCliWorkspaceName ?? null;
         if (!remoteWorkspaceId) {
-          const discovered = await discoveruni-cliWorkspace({
+          const discovered = await discoveruniCliWorkspace({
             hostUrl: hostUrl ?? nextBaseUrl,
-            token: nextWorkspace.uni-cliToken,
-            hostToken: nextWorkspace.uni-cliHostToken,
+            token: nextWorkspace.uniCliToken,
+            hostToken: nextWorkspace.uniCliHostToken,
             directory,
           });
           if (!discovered?.id) {
@@ -1128,18 +1128,18 @@ export function createWorkspaceStore({
             );
           }
           remoteWorkspaceId = String(discovered.id).trim();
-          remoteWorkspaceName = uni-cliWorkspaceDisplayName(discovered);
+          remoteWorkspaceName = uniCliWorkspaceDisplayName(discovered);
         }
-        const nextId = uni-cliRemoteWorkspaceId(hostUrl ?? nextBaseUrl, remoteWorkspaceId);
+        const nextId = uniCliRemoteWorkspaceId(hostUrl ?? nextBaseUrl, remoteWorkspaceId);
         nextWorkspace = normalizeWorkspaceEntry({
           ...nextWorkspace,
           id: nextId,
           baseUrl: hostUrl ?? nextBaseUrl,
-          uni-cliHostUrl: hostUrl,
+          uniCliHostUrl: hostUrl,
           directory,
           remoteType: "uni-cli",
-          uni-cliWorkspaceId: remoteWorkspaceId,
-          uni-cliWorkspaceName: remoteWorkspaceName,
+          uniCliWorkspaceId: remoteWorkspaceId,
+          uniCliWorkspaceName: remoteWorkspaceName,
         });
         if (nextId !== workspaceId) {
           if (state.selectedId === workspaceId) state.selectedId = nextId;
@@ -1188,14 +1188,14 @@ export function createWorkspaceStore({
     if (!workspacePath || !authorizedRoot) {
       throw new Error("workspacePath and folderPath are required");
     }
-    const config = await readWorkspaceuni-cliConfig(workspacePath);
+    const config = await readWorkspaceuniCliConfig(workspacePath);
     if (!Array.isArray(config.authorizedRoots)) {
       config.authorizedRoots = [];
     }
     if (!config.authorizedRoots.includes(authorizedRoot)) {
       config.authorizedRoots.push(authorizedRoot);
     }
-    return writeWorkspaceuni-cliConfig(workspacePath, config);
+    return writeWorkspaceuniCliConfig(workspacePath, config);
   }
 
   async function exportConfig(input = {}) {
@@ -1241,7 +1241,7 @@ export function createWorkspaceStore({
     });
   }
 
-  async function resetuni-cliState() {
+  async function resetuniCliState() {
     await rm(workspaceStatePath(), { force: true });
     await clearDesktopBootstrapFiles();
     return undefined;
@@ -1254,7 +1254,7 @@ export function createWorkspaceStore({
     createWorkspace,
     clearDesktopBootstrapConfig,
     debugDesktopBootstrapConfig,
-    defaultWorkspaceuni-cliConfig,
+    defaultWorkspaceuniCliConfig,
     exportConfig,
     forgetWorkspace,
     getDesktopBootstrapConfig,
@@ -1263,15 +1263,15 @@ export function createWorkspaceStore({
     listRemoteWorkspaceUrlPrefixes,
     migrateLegacyElectronWorkspaceStateIfNeeded,
     readDesktopBootstrapConfigSync,
-    readWorkspaceuni-cliConfig,
+    readWorkspaceuniCliConfig,
     readWorkspaceState,
-    resetuni-cliState,
+    resetuniCliState,
     setDesktopBootstrapConfig,
     setRuntimeActiveWorkspace,
     setSelectedWorkspace,
     updateRemoteWorkspace,
     updateWorkspaceDisplayName,
-    writeWorkspaceuni-cliConfig,
+    writeWorkspaceuniCliConfig,
     writeWorkspaceState,
   };
 }

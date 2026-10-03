@@ -592,9 +592,9 @@ export async function mcpAppServersChat(seed: Seed, benchmark: boolean | { place
   }, engine);
   const session = await seed.session(app, { title: appTitle });
   // The private App host reads the Connect server index, which lists the App as its own server.
-  if ("uni-cliUrl" in app) {
+  if ("uniCliUrl" in app) {
   const hostSetup = {
-      name: app.handle.name, uni-cliUrl: app.uni-cliUrl, workspaceRoot: app.workspaceRoot,
+      name: app.handle.name, uniCliUrl: app.uniCliUrl, workspaceRoot: app.workspaceRoot,
       workspaceId: workspace.workspaceId, cloudUrl: `${den.ref.apiUrl}/mcp/agent`, token, appHostToken: field(minted.body, "appHostToken"),
     };
     const reconciled = record(app.handle.sandboxId

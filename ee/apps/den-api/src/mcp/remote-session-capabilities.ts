@@ -16,10 +16,10 @@ import { db } from "../db.js"
 import { env } from "../env.js"
 import { appLogger } from "../observability/logger.js"
 import {
-  getUni-CLIWebRuntimeAccess,
+  getUniCliWebRuntimeAccess,
   UNICLI_WEB_ACCESS_REQUIRED_CODE,
   UNICLI_WEB_ACCESS_REQUIRED_MESSAGE,
-  type Uni-CLIWebRuntimeAccessResolver,
+  type UniCliWebRuntimeAccessResolver,
 } from "../uni-cli-web-runtime-access.js"
 // The automation repository is the presence source of truth. Importing the
 // automation service instead would pull the codemode execution graph (and
@@ -332,7 +332,7 @@ export type RemoteSessionDesktopTargets = {
 }
 
 export type RemoteSessionExecuteDeps = {
-  getUni-CLIWebAccess: Uni-CLIWebRuntimeAccessResolver
+  getUniCliWebAccess: UniCliWebRuntimeAccessResolver
   resolveRuntime: (scope: { organizationId: DenTypeId<"organization">; userId: string; provisionIfMissing?: boolean }) => Promise<RemoteSessionRuntimeResult>
   createClient: (runtime: RemoteSessionRuntime) => RemoteSessionThreadClient
   commandStore: RemoteSessionCommandStore
@@ -613,7 +613,7 @@ async function defaultDesktopRunner(scope: {
 }
 
 export const DEFAULT_REMOTE_SESSION_DEPS: RemoteSessionExecuteDeps = {
-  getUni-CLIWebAccess: getUni-CLIWebRuntimeAccess,
+  getUniCliWebAccess: getUniCliWebRuntimeAccess,
   resolveRuntime: defaultResolveRuntime,
   createClient: defaultCreateClient,
   commandStore: databaseRemoteSessionCommandStore,
@@ -1069,7 +1069,7 @@ export async function executeRemoteSessionCapability(
   // connected desktop is remote control of that machine, so it is gated like
   // Cloud execution; only the status read of an already queued command above
   // stays available without Web access.
-  const webAccess = await deps.getUni-CLIWebAccess(input.organizationId)
+  const webAccess = await deps.getUniCliWebAccess(input.organizationId)
   if (!webAccess.hasAccess) {
     return errorResult({
       error: UNICLI_WEB_ACCESS_REQUIRED_CODE,

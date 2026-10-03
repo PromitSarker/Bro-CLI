@@ -7,10 +7,10 @@ import { mcpAppResourceIdentity } from "@uni-cli/types/mcp-app";
 import { Play } from "lucide-react";
 
 import {
-  uni-cliServerError,
-  type uni-cliMcpAppResource,
-  type uni-cliMcpAppToolResult,
-  type uni-cliServerClient,
+  uniCliServerError,
+  type uniCliMcpAppResource,
+  type uniCliMcpAppToolResult,
+  type uniCliServerClient,
 } from "@/app/lib/uni-cli-server";
 import { McpAppSandboxView, type PreservedMcpAppResult } from "@/components/chat/mcp-app-frame";
 import { snapshotMcpAppArguments, type McpAppOrigin } from "@/components/chat/mcp-app-origin";
@@ -34,7 +34,7 @@ import type { DashboardMcpAppEntry } from "./granted-dashboard-store";
 
 /** A workspace MCP runtime a tile may launch through. */
 export type DashboardLaunchEndpoint = {
-  client: uni-cliServerClient;
+  client: uniCliServerClient;
   workspaceId: string;
 };
 
@@ -48,7 +48,7 @@ type TileDocument = { id: number; active: boolean; failed: boolean };
 
 type ReadyTileState = {
   phase: "ready";
-  app: uni-cliMcpAppResource;
+  app: uniCliMcpAppResource;
   result: PreservedMcpAppResult;
   endpoint: DashboardLaunchEndpoint;
   origin: McpAppOrigin;
@@ -132,7 +132,7 @@ function sameLaunchEndpoint(left: DashboardLaunchEndpoint, right: DashboardLaunc
   return left.workspaceId === right.workspaceId && (left.client === right.client || left.client.baseUrl === right.client.baseUrl);
 }
 
-function appMatchesEntry(app: uni-cliMcpAppResource, entry: DashboardMcpAppEntry) {
+function appMatchesEntry(app: uniCliMcpAppResource, entry: DashboardMcpAppEntry) {
   return app.serverName === entry.serverName && app.toolName === entry.toolName && app.resourceUri === entry.resourceUri;
 }
 
@@ -153,7 +153,7 @@ function tileConnectionState(entry: DashboardMcpAppEntry, value: unknown, args: 
 }
 
 function invalidatesTileDocument(cause: unknown) {
-  return cause instanceof uni-cliServerError && (
+  return cause instanceof uniCliServerError && (
     [401, 403, 404, 410].includes(cause.status)
     || cause.code.startsWith("invalid_resource")
     || ["tool_denied", "tool_not_visible", "tool_not_found", "tool_resource_mismatch", "tool_requires_approval",
@@ -194,7 +194,7 @@ function McpAppTileContent({
   fallbackEndpoints?: DashboardLaunchEndpoint[];
 }) {
   const workspace = useWorkspace();
-  const { uni-cliServerClient, workspaceId } = workspace;
+  const { uniCliServerClient, workspaceId } = workspace;
   // Provider annotations are not an authorization boundary. A safe-looking
   // tile runs on load only after this user has successfully run this exact
   // element once; approval-gated tools stay run-on-request forever.
@@ -206,11 +206,11 @@ function McpAppTileContent({
   );
   const manualLaunch = !runsAutomatically;
   const launchEndpoints = useMemo(() => [
-    ...(uni-cliServerClient && workspaceId ? [{ client: uni-cliServerClient, workspaceId }] : []),
+    ...(uniCliServerClient && workspaceId ? [{ client: uniCliServerClient, workspaceId }] : []),
     ...(fallbackEndpoints ?? []),
   ].filter((endpoint, index, all) => (
     all.findIndex((other) => sameLaunchEndpoint(other, endpoint)) === index
-  )), [fallbackEndpoints, uni-cliServerClient, workspaceId]);
+  )), [fallbackEndpoints, uniCliServerClient, workspaceId]);
   // Cached app HTML is interactive, so it follows the same per-user launch
   // consent as a live call and never mounts on a first visit.
   const [nonce, setNonce] = useState(0);
@@ -390,10 +390,10 @@ function McpAppTileContent({
       const launch = entry.connectionId
         ? { connectionId: entry.connectionId, toolName: entry.toolName, resourceUri: entry.resourceUri, arguments: {} }
         : undefined;
-      let target: { endpoint: DashboardLaunchEndpoint; app: uni-cliMcpAppResource } | null = null;
+      let target: { endpoint: DashboardLaunchEndpoint; app: uniCliMcpAppResource } | null = null;
       let reused: ReadyTileState | null = null;
       let fallbackEndpoint: DashboardLaunchEndpoint | null = null;
-      let result: uni-cliMcpAppToolResult | undefined;
+      let result: uniCliMcpAppToolResult | undefined;
       let approvalWasRequired = false;
       let acquiredLaunchId: string | undefined;
       let keepLaunch = false;
@@ -419,7 +419,7 @@ function McpAppTileContent({
             reused = current;
           } catch (cause) {
             assertActive();
-            if (!(cause instanceof uni-cliServerError) || cause.status !== 422 || !["mcp_app_resource_changed", "mcp_app_refresh_denied"].includes(cause.code)) throw cause;
+            if (!(cause instanceof uniCliServerError) || cause.status !== 422 || !["mcp_app_resource_changed", "mcp_app_refresh_denied"].includes(cause.code)) throw cause;
             fallbackEndpoint = current.endpoint;
             clearDocument({ phase: "loading" });
             attempt.document = undefined;
@@ -445,7 +445,7 @@ function McpAppTileContent({
           if (!target) return { phase: "error", message: "This tool no longer advertises an interactive artifact." };
           const { endpoint, app } = target;
           attempt.endpoint = endpoint;
-          if (!app.launchId) throw new uni-cliServerError(422, "missing_launch_context", "This artifact has no live launch context. Update Uni-CLI and run the tile again.");
+          if (!app.launchId) throw new uniCliServerError(422, "missing_launch_context", "This artifact has no live launch context. Update Uni-CLI and run the tile again.");
           acquiredLaunchId = app.launchId;
           ownedLaunches.current.set(app.launchId, endpoint);
           const request = {
@@ -457,7 +457,7 @@ function McpAppTileContent({
             result = await endpoint.client.callMcpAppTool(endpoint.workspaceId, request);
           } catch (cause) {
             assertActive();
-            if (!(cause instanceof uni-cliServerError) || cause.code !== "tool_requires_approval") throw cause;
+            if (!(cause instanceof uniCliServerError) || cause.code !== "tool_requires_approval") throw cause;
             approvalWasRequired = true;
             if (!userInitiated || fallbackEndpoint) return { phase: "idle", revokeAutoLaunch: true };
             if (!endpointIsActive(endpoint)) throw new Error("This artifact launch has closed or changed. Run the tile again.");
@@ -544,7 +544,7 @@ function McpAppTileContent({
       }
     }).catch((cause: unknown) => {
       if (!isCurrent()) return;
-      const connection = tileConnectionState(entry, cause instanceof uni-cliServerError ? cause.details : undefined, launchArguments);
+      const connection = tileConnectionState(entry, cause instanceof uniCliServerError ? cause.details : undefined, launchArguments);
       if (connection) {
         clearDocument(connection);
         releaseLaunches();

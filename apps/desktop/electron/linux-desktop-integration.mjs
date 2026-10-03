@@ -87,7 +87,7 @@ function entryTargetsAppImage(fields, appImagePath) {
     || exec.includes(`'${appImagePath.replaceAll("'", "'\\''")}'`);
 }
 
-function entryHandlesuni-cli(fields) {
+function entryHandlesuniCli(fields) {
   return (fields.get("MimeType") ?? "")
     .split(";")
     .map((value) => value.trim())
@@ -175,7 +175,7 @@ function unsupportedStatus() {
   };
 }
 
-export function builduni-cliDesktopEntry({
+export function builduniCliDesktopEntry({
   appImagePath,
   appName,
   appVersion,
@@ -276,7 +276,7 @@ export function createLinuxDesktopIntegration({
       path: candidate,
       managed: fields.get(OWNERSHIP_MARKER) === "true",
       acceptsUrl: entryAcceptsUrl(fields),
-      handlesProtocol: entryHandlesuni-cli(fields),
+      handlesProtocol: entryHandlesuniCli(fields),
     };
   }
 
@@ -309,7 +309,7 @@ export function createLinuxDesktopIntegration({
       /** @type {DesktopIntegrationIssue[]} */
       const issues = [];
       if (!entryTargetsAppImage(ownFields, appImagePath)) issues.push("appimage-path");
-      if (!entryHandlesuni-cli(ownFields)) issues.push("desktop-entry");
+      if (!entryHandlesuniCli(ownFields)) issues.push("desktop-entry");
       if (ownFields.get(MANAGED_VERSION_MARKER) !== app.getVersion()) issues.push("version");
       const iconsPresent = await Promise.all(
         ICON_SIZES.map((size) => fileExists(iconPaths[size])),
@@ -427,7 +427,7 @@ export function createLinuxDesktopIntegration({
         await mkdir(path.dirname(iconPaths[size]), { recursive: true });
         await copyFile(iconSources[size], iconPaths[size]);
       }
-      await atomicWrite(desktopEntryPath, builduni-cliDesktopEntry({
+      await atomicWrite(desktopEntryPath, builduniCliDesktopEntry({
         appImagePath,
         appName,
         appVersion: app.getVersion(),

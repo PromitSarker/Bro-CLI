@@ -142,7 +142,7 @@ type AdminOrganizationCapabilities = {
   mcpConnections: boolean;
 };
 
-type AdminUni-CLIWebAccess = {
+type AdminUniCliWebAccess = {
   hasAccess: boolean;
   accessSource: "subscription" | "complimentary" | null;
   complimentaryAccess: boolean;
@@ -167,7 +167,7 @@ type AdminOrganization = {
   seatsFreeAdditional: number;
   billableSeatCount: number;
   capabilities: AdminOrganizationCapabilities;
-  uni-cliWebAccess: AdminUni-CLIWebAccess;
+  uniCliWebAccess: AdminUniCliWebAccess;
   freeAuto: { enabled: boolean; globallyEnabled: boolean; rolloutAllOrganizations: boolean };
 };
 
@@ -258,7 +258,7 @@ function parseBillingStatus(value: unknown): AdminBillingStatus | null {
   };
 }
 
-function parseAdminUni-CLIWebAccess(value: unknown): AdminUni-CLIWebAccess {
+function parseAdminUniCliWebAccess(value: unknown): AdminUniCliWebAccess {
   if (!isRecord(value)) {
     return {
       hasAccess: false,
@@ -476,7 +476,7 @@ function parseAdminPayload(payload: unknown): AdminPayload | null {
             mcpConnections: capabilities.mcpConnections === true
           },
           freeAuto: parseAdminFreeAuto(value.freeAuto),
-          uni-cliWebAccess: parseAdminUni-CLIWebAccess(value.uni-cliWebAccess)
+          uniCliWebAccess: parseAdminUniCliWebAccess(value.uniCliWebAccess)
         };
       })
       .filter((value): value is AdminOrganization => value !== null)
@@ -847,7 +847,7 @@ function buildFixtureOrganization(index: number): AdminOrganization {
     billableSeatCount: target ? 103 : 0,
     capabilities: { auditLogs: false, orgManagedDashboards: false, appMcpServers: false, slackAssistant: false, slackAssistantHeadless: false, headlessAutomations: false, installLinks: target, mcpConnections: target, modelsAnalytics: false },
     freeAuto: { enabled: false, globallyEnabled: false, rolloutAllOrganizations: false },
-    uni-cliWebAccess: {
+    uniCliWebAccess: {
       hasAccess: target,
       accessSource: target ? "complimentary" : null,
       complimentaryAccess: target,
@@ -1409,7 +1409,7 @@ function PlanPill({ tier }: { tier: AdminOrganization["plan"]["tier"] }) {
   );
 }
 
-function Uni-CLIWebAccessPill({ access }: { access: AdminUni-CLIWebAccess }) {
+function UniCliWebAccessPill({ access }: { access: AdminUniCliWebAccess }) {
   const label = access.hasOngoingSubscription
     ? "Paid subscription"
     : access.complimentaryAccess
@@ -1501,9 +1501,9 @@ export function DenAdminPanel() {
   const [savingFreeSeatsOrgId, setSavingFreeSeatsOrgId] = useState<string | null>(null);
   const [savingCapabilityOrgId, setSavingCapabilityOrgId] = useState<string | null>(null);
   const [capabilityError, setCapabilityError] = useState<{ orgId: string; message: string } | null>(null);
-  const [uni-cliWebAccessDialog, setUni-CLIWebAccessDialog] = useState<{ org: AdminOrganization; enabled: boolean; reason: string } | null>(null);
-  const [savingUni-CLIWebAccessOrgId, setSavingUni-CLIWebAccessOrgId] = useState<string | null>(null);
-  const [uni-cliWebAccessError, setUni-CLIWebAccessError] = useState<{ orgId: string; message: string } | null>(null);
+  const [uniCliWebAccessDialog, setUniCliWebAccessDialog] = useState<{ org: AdminOrganization; enabled: boolean; reason: string } | null>(null);
+  const [savingUniCliWebAccessOrgId, setSavingUniCliWebAccessOrgId] = useState<string | null>(null);
+  const [uniCliWebAccessError, setUniCliWebAccessError] = useState<{ orgId: string; message: string } | null>(null);
   const [deleteUserDialog, setDeleteUserDialog] = useState<AdminUser | null>(null);
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
   const [adminEmail, setAdminEmail] = useState("");
@@ -2188,20 +2188,20 @@ export function DenAdminPanel() {
     }
   }, [setOrganizationCapabilityLocally]);
 
-  const saveUni-CLIWebAccess = useCallback(async () => {
-    if (!uni-cliWebAccessDialog) {
+  const saveUniCliWebAccess = useCallback(async () => {
+    if (!uniCliWebAccessDialog) {
       return;
     }
 
-    const reason = uni-cliWebAccessDialog.reason.trim();
+    const reason = uniCliWebAccessDialog.reason.trim();
     if (reason.length < 3) {
-      setUni-CLIWebAccessError({ orgId: uni-cliWebAccessDialog.org.id, message: "Add a short reason for the audit log." });
+      setUniCliWebAccessError({ orgId: uniCliWebAccessDialog.org.id, message: "Add a short reason for the audit log." });
       return;
     }
 
-    const { org, enabled } = uni-cliWebAccessDialog;
-    setSavingUni-CLIWebAccessOrgId(org.id);
-    setUni-CLIWebAccessError(null);
+    const { org, enabled } = uniCliWebAccessDialog;
+    setSavingUniCliWebAccessOrgId(org.id);
+    setUniCliWebAccessError(null);
     setError(null);
 
     try {
@@ -2211,7 +2211,7 @@ export function DenAdminPanel() {
       });
       if (!response.ok) {
         const message = getErrorMessage(nextPayload, `Could not update Uni-CLI Web access for ${org.name}.`);
-        setUni-CLIWebAccessError({ orgId: org.id, message });
+        setUniCliWebAccessError({ orgId: org.id, message });
         setError(message);
         return;
       }
@@ -2220,7 +2220,7 @@ export function DenAdminPanel() {
       if (!updatedOrganization) {
         throw new Error("The Uni-CLI Web access response was incomplete.");
       }
-      const uni-cliWebAccess = parseAdminUni-CLIWebAccess(updatedOrganization.uni-cliWebAccess);
+      const uniCliWebAccess = parseAdminUniCliWebAccess(updatedOrganization.uniCliWebAccess);
       setPayload((current) => {
         if (!current) {
           return current;
@@ -2228,19 +2228,19 @@ export function DenAdminPanel() {
         return {
           ...current,
           organizations: current.organizations.map((entry) => entry.id === org.id
-            ? { ...entry, uni-cliWebAccess }
+            ? { ...entry, uniCliWebAccess }
             : entry)
         };
       });
-      setUni-CLIWebAccessDialog(null);
+      setUniCliWebAccessDialog(null);
     } catch (nextError) {
       const message = nextError instanceof Error ? nextError.message : "Unknown network error";
-      setUni-CLIWebAccessError({ orgId: org.id, message });
+      setUniCliWebAccessError({ orgId: org.id, message });
       setError(message);
     } finally {
-      setSavingUni-CLIWebAccessOrgId(null);
+      setSavingUniCliWebAccessOrgId(null);
     }
-  }, [uni-cliWebAccessDialog]);
+  }, [uniCliWebAccessDialog]);
 
   const deleteUser = useCallback(async () => {
     if (!deleteUserDialog) {
@@ -2880,12 +2880,12 @@ export function DenAdminPanel() {
                       <div>
                         <div className="flex flex-wrap items-center gap-2">
                           <p className="text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-slate-500">Uni-CLI Web billing access</p>
-                          <Uni-CLIWebAccessPill access={org.uni-cliWebAccess} />
+                          <UniCliWebAccessPill access={org.uniCliWebAccess} />
                         </div>
                         <p className="mt-2 text-sm leading-6 text-slate-600">
-                          {org.uni-cliWebAccess.hasOngoingSubscription
-                            ? `A ${org.uni-cliWebAccess.subscriptionStatus ?? "current"} Stripe subscription controls access and billing.`
-                            : org.uni-cliWebAccess.complimentaryAccess
+                          {org.uniCliWebAccess.hasOngoingSubscription
+                            ? `A ${org.uniCliWebAccess.subscriptionStatus ?? "current"} Stripe subscription controls access and billing.`
+                            : org.uniCliWebAccess.complimentaryAccess
                               ? "All joined members can use Uni-CLI Web without a Stripe subscription or per-member charge, even when deployment-wide availability is off."
                               : "No complimentary grant or ongoing paid Uni-CLI Web subscription."}
                         </p>
@@ -2893,29 +2893,29 @@ export function DenAdminPanel() {
                       <button
                         type="button"
                         data-testid="admin-uni-cli-web-access-action"
-                        onClick={() => setUni-CLIWebAccessDialog({
+                        onClick={() => setUniCliWebAccessDialog({
                           org,
-                          enabled: !org.uni-cliWebAccess.complimentaryAccess,
+                          enabled: !org.uniCliWebAccess.complimentaryAccess,
                           reason: ""
                         })}
-                        disabled={savingUni-CLIWebAccessOrgId === org.id || (!org.uni-cliWebAccess.complimentaryAccess && org.uni-cliWebAccess.hasOngoingSubscription)}
+                        disabled={savingUniCliWebAccessOrgId === org.id || (!org.uniCliWebAccess.complimentaryAccess && org.uniCliWebAccess.hasOngoingSubscription)}
                         className="inline-flex shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
                       >
-                        {savingUni-CLIWebAccessOrgId === org.id
+                        {savingUniCliWebAccessOrgId === org.id
                           ? "Saving..."
-                          : org.uni-cliWebAccess.complimentaryAccess
+                          : org.uniCliWebAccess.complimentaryAccess
                             ? "Revoke complimentary access"
                             : "Grant complimentary access"}
                       </button>
                     </div>
-                    {!org.uni-cliWebAccess.complimentaryAccess && org.uni-cliWebAccess.hasOngoingSubscription ? (
+                    {!org.uniCliWebAccess.complimentaryAccess && org.uniCliWebAccess.hasOngoingSubscription ? (
                       <p className="mt-2 text-xs leading-5 text-amber-700">
                         Cancel or finish the paid subscription in Stripe before granting complimentary access.
                       </p>
                     ) : null}
-                    {uni-cliWebAccessError?.orgId === org.id ? (
+                    {uniCliWebAccessError?.orgId === org.id ? (
                       <p data-testid="admin-uni-cli-web-access-error" className="mt-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs leading-5 text-red-700">
-                        {uni-cliWebAccessError.message}
+                        {uniCliWebAccessError.message}
                       </p>
                     ) : null}
                   </div>
@@ -3216,23 +3216,23 @@ export function DenAdminPanel() {
         <p className="mt-6 text-xs leading-6 text-slate-500">Snapshot generated {formatDateTime(payload.generatedAt)}.</p>
       </div>
 
-      {uni-cliWebAccessDialog ? (
+      {uniCliWebAccessDialog ? (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 px-4 py-6"
           role="dialog"
           aria-modal="true"
           aria-labelledby="uni-cli-web-access-dialog-title"
-          onClick={() => setUni-CLIWebAccessDialog(null)}
+          onClick={() => setUniCliWebAccessDialog(null)}
         >
           <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-6 shadow-xl" onClick={(event) => event.stopPropagation()}>
             <p className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-slate-500">Organization billing access</p>
             <h2 id="uni-cli-web-access-dialog-title" className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-slate-950">
-              {uni-cliWebAccessDialog.enabled ? "Grant" : "Revoke"} complimentary Uni-CLI Web?
+              {uniCliWebAccessDialog.enabled ? "Grant" : "Revoke"} complimentary Uni-CLI Web?
             </h2>
             <p className="mt-2 text-sm leading-6 text-slate-600">
-              {uni-cliWebAccessDialog.enabled
-                ? `${uni-cliWebAccessDialog.org.name} will receive Uni-CLI Web for every joined member without a Stripe subscription or per-member charge, even when deployment-wide availability is off.`
-                : `${uni-cliWebAccessDialog.org.name} will lose complimentary access immediately unless an independently eligible paid subscription exists.`}
+              {uniCliWebAccessDialog.enabled
+                ? `${uniCliWebAccessDialog.org.name} will receive Uni-CLI Web for every joined member without a Stripe subscription or per-member charge, even when deployment-wide availability is off.`
+                : `${uniCliWebAccessDialog.org.name} will lose complimentary access immediately unless an independently eligible paid subscription exists.`}
             </p>
 
             <label className="mt-5 grid gap-2">
@@ -3241,24 +3241,24 @@ export function DenAdminPanel() {
                 data-testid="admin-uni-cli-web-access-reason"
                 rows={3}
                 maxLength={500}
-                value={uni-cliWebAccessDialog.reason}
-                onChange={(event) => setUni-CLIWebAccessDialog({ ...uni-cliWebAccessDialog, reason: event.target.value })}
+                value={uniCliWebAccessDialog.reason}
+                onChange={(event) => setUniCliWebAccessDialog({ ...uniCliWebAccessDialog, reason: event.target.value })}
                 placeholder="For example: Internal Uni-CLI administration organization"
                 className="resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-hidden transition focus:border-slate-400"
               />
             </label>
 
-            {uni-cliWebAccessError?.orgId === uni-cliWebAccessDialog.org.id ? (
+            {uniCliWebAccessError?.orgId === uniCliWebAccessDialog.org.id ? (
               <p className="mt-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-xs leading-5 text-red-700">
-                {uni-cliWebAccessError.message}
+                {uniCliWebAccessError.message}
               </p>
             ) : null}
 
             <div className="mt-6 flex flex-wrap justify-end gap-3">
               <button
                 type="button"
-                onClick={() => setUni-CLIWebAccessDialog(null)}
-                disabled={savingUni-CLIWebAccessOrgId === uni-cliWebAccessDialog.org.id}
+                onClick={() => setUniCliWebAccessDialog(null)}
+                disabled={savingUniCliWebAccessOrgId === uniCliWebAccessDialog.org.id}
                 className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 Cancel
@@ -3267,14 +3267,14 @@ export function DenAdminPanel() {
                 type="button"
                 data-testid="admin-uni-cli-web-access-confirm"
                 onClick={() => {
-                  void saveUni-CLIWebAccess();
+                  void saveUniCliWebAccess();
                 }}
-                disabled={savingUni-CLIWebAccessOrgId === uni-cliWebAccessDialog.org.id || uni-cliWebAccessDialog.reason.trim().length < 3}
+                disabled={savingUniCliWebAccessOrgId === uniCliWebAccessDialog.org.id || uniCliWebAccessDialog.reason.trim().length < 3}
                 className="inline-flex items-center justify-center rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {savingUni-CLIWebAccessOrgId === uni-cliWebAccessDialog.org.id
+                {savingUniCliWebAccessOrgId === uniCliWebAccessDialog.org.id
                   ? "Saving..."
-                  : uni-cliWebAccessDialog.enabled
+                  : uniCliWebAccessDialog.enabled
                     ? "Grant access"
                     : "Revoke access"}
               </button>

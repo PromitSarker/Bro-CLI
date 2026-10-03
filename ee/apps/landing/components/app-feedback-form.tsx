@@ -8,7 +8,7 @@ export type AppFeedbackPrefill = {
   entrypoint: string;
   deployment: string;
   appVersion: string;
-  uni-cliServerVersion: string;
+  uniCliServerVersion: string;
   opencodeVersion: string;
   osName: string;
   osVersion: string;
@@ -39,7 +39,7 @@ export function AppFeedbackForm(props: Props) {
   const contextItems = useMemo(
     () => [
       { label: "App version", value: props.prefill.appVersion },
-      { label: "Uni-CLI server", value: props.prefill.uni-cliServerVersion },
+      { label: "Uni-CLI server", value: props.prefill.uniCliServerVersion },
       { label: "OpenCode", value: props.prefill.opencodeVersion },
       {
         label: "OS",

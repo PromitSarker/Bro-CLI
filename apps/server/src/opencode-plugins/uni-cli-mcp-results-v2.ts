@@ -102,7 +102,7 @@ export function createMcpResultsCollector() {
       if (event.tool === "execute") {
         open.delete(key(event));
         if (event.status === "completed" && list && list.length > 0) {
-          event.result.metadata = { ...(event.result.metadata ?? {}), uni-cliMcpResults: list };
+          event.result.metadata = { ...(event.result.metadata ?? {}), uniCliMcpResults: list };
         }
         return;
       }

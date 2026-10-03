@@ -1,15 +1,15 @@
 import { dirname, join } from "node:path";
 import { appendFile, readFile } from "node:fs/promises";
-import { uni-cliServerDataDir } from "@uni-cli/paths";
+import { uniCliServerDataDir } from "@uni-cli/paths";
 import type { AuditEntry } from "./types.js";
 import { ensureDir, exists } from "./utils.js";
 
-function resolveuni-cliDataDir(): string {
-  return uni-cliServerDataDir();
+function resolveuniCliDataDir(): string {
+  return uniCliServerDataDir();
 }
 
 export function auditLogPath(workspaceId: string): string {
-  return join(resolveuni-cliDataDir(), "audit", `${workspaceId}.jsonl`);
+  return join(resolveuniCliDataDir(), "audit", `${workspaceId}.jsonl`);
 }
 
 export function legacyAuditLogPath(workspaceRoot: string): string {

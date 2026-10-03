@@ -272,7 +272,7 @@ function currentWindow(input: { anchorAt: Date | null; currentEnd: Date | null; 
   return { start, end }
 }
 
-export function buildUni-CLIProviderConfig() {
+export function buildUniCliProviderConfig() {
   return {
     id: UNICLI_PROVIDER_ID,
     name: "Uni-CLI",
@@ -286,7 +286,7 @@ export function buildUni-CLIProviderConfig() {
   }
 }
 
-async function deleteUni-CLIProviders(where: { organizationId: OrgId; memberId?: MemberId }) {
+async function deleteUniCliProviders(where: { organizationId: OrgId; memberId?: MemberId }) {
   const providerWhere = where.memberId
     ? and(
         eq(LlmProviderTable.organizationId, where.organizationId),
@@ -343,7 +343,7 @@ async function findActiveMemberInferenceKey(input: { organizationId: OrgId; memb
   return row ?? null
 }
 
-async function findUni-CLILlmProviderApiKey(tx: Tx, input: { organizationId: OrgId; memberId: MemberId }) {
+async function findUniCliLlmProviderApiKey(tx: Tx, input: { organizationId: OrgId; memberId: MemberId }) {
   const [provider] = await tx
     .select({ apiKey: LlmProviderTable.apiKey })
     .from(LlmProviderTable)
@@ -378,7 +378,7 @@ export async function ensureMemberInferenceKey(input: { organizationId: OrgId; m
     if (!member?.userId) throw new Error("member_not_found")
     const existing = await findActiveMemberInferenceKey(input, tx)
     if (existing) {
-      const legacyKey = existing.encryptedKey ?? await findUni-CLILlmProviderApiKey(tx, input)
+      const legacyKey = existing.encryptedKey ?? await findUniCliLlmProviderApiKey(tx, input)
       if (legacyKey && (await inferenceBearerKeyLookupDigests(inferenceBearerKey(legacyKey))).includes(existing.keyHash)) {
         if (!existing.encryptedKey) await tx.update(InferenceKeyTable).set({ encrypted_key: legacyKey }).where(eq(InferenceKeyTable.id, existing.id))
         return legacyKey
@@ -390,9 +390,9 @@ export async function ensureMemberInferenceKey(input: { organizationId: OrgId; m
   })
 }
 
-async function ensureUni-CLILlmProviderForMember(input: { organizationId: OrgId; memberId: MemberId; rawKey: string }) {
+async function ensureUniCliLlmProviderForMember(input: { organizationId: OrgId; memberId: MemberId; rawKey: string }) {
   const now = new Date()
-  const providerConfig = buildUni-CLIProviderConfig()
+  const providerConfig = buildUniCliProviderConfig()
 
   await withManagedModelsAdmission(input.organizationId, async (tx) => {
     const [organization] = await tx.select({ metadata: OrganizationTable.metadata }).from(OrganizationTable)
@@ -448,10 +448,10 @@ async function ensureUni-CLILlmProviderForMember(input: { organizationId: OrgId;
 async function ensureMemberInferenceAccess(input: { organizationId: OrgId; memberId: MemberId }) {
   await assertOrganizationManagedModelsAllowed(input.organizationId)
   const rawKey = await ensureMemberInferenceKey(input)
-  await ensureUni-CLILlmProviderForMember({ ...input, rawKey })
+  await ensureUniCliLlmProviderForMember({ ...input, rawKey })
 }
 
-async function memberHasUni-CLIInferenceAccess(input: { organizationId: OrgId; memberId: MemberId }) {
+async function memberHasUniCliInferenceAccess(input: { organizationId: OrgId; memberId: MemberId }) {
   const [provider] = await db
     .select({ id: LlmProviderTable.id, apiKey: LlmProviderTable.apiKey })
     .from(LlmProviderTable)
@@ -488,7 +488,7 @@ export async function repairMemberInferenceAccessIfNeeded(input: {
     return false
   }
 
-  if (await memberHasUni-CLIInferenceAccess(input)) {
+  if (await memberHasUniCliInferenceAccess(input)) {
     return false
   }
 
@@ -533,7 +533,7 @@ export async function syncInferenceAfterMemberChange(input: {
 }) {
   if (input.change === "removed") {
     await revokeMemberGatewayCredentials(input)
-    await deleteUni-CLIProviders({ organizationId: input.organizationId, memberId: input.memberId })
+    await deleteUniCliProviders({ organizationId: input.organizationId, memberId: input.memberId })
   } else {
     const [member] = await db.select({ userId: MemberTable.userId }).from(MemberTable)
       .where(and(eq(MemberTable.id, input.memberId), eq(MemberTable.organizationId, input.organizationId), isNull(MemberTable.removedAt)))
@@ -870,7 +870,7 @@ export async function setInferenceEnabled(input: { organizationId: OrgId; enable
         .where(and(eq(InferenceKeyTable.organization_id, input.organizationId), eq(InferenceKeyTable.status, "active")))
     })
     await revokeOrgUpstreamProviderKeys(input.organizationId)
-    await deleteUni-CLIProviders({ organizationId: input.organizationId })
+    await deleteUniCliProviders({ organizationId: input.organizationId })
     return getInferenceStatus(input.organizationId)
   }
 

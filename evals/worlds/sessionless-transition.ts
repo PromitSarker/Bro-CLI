@@ -62,7 +62,7 @@ export async function sessionlessTransition(seed: Seed, app: AppWeb, workspaceId
     socket.addEventListener("open", () => { clearTimeout(timer); resolve(); }, { once: true });
     socket.addEventListener("error", () => { clearTimeout(timer); reject(new Error("CDP gate connection failed")); }, { once: true });
   });
-  await command("Fetch.enable", { patterns: [{ urlPattern: `${new URL(app.uni-cliUrl).origin}${base}*`, requestStage: "Request" }] });
+  await command("Fetch.enable", { patterns: [{ urlPattern: `${new URL(app.uniCliUrl).origin}${base}*`, requestStage: "Request" }] });
   const release = async (reject = false) => {
     released = true;
     await Promise.all([...held].map((requestId) => command(reject ? "Fetch.fulfillRequest" : "Fetch.continueRequest", reject ? {

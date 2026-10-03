@@ -64,7 +64,7 @@ export function createUiControlServer({
     return JSON.stringify(JSON.stringify(value ?? {}));
   }
 
-  async function evaluateuni-cliControl(expression) {
+  async function evaluateuniCliControl(expression) {
     const win = await getWindow();
     // Commands mutate renderer state directly and do not require the desktop
     // window to become active. Foreground activation must be an explicit
@@ -72,10 +72,10 @@ export function createUiControlServer({
     return win.webContents.executeJavaScript(expression, true);
   }
 
-  async function rununi-cliControlCommand(command, args = {}) {
+  async function rununiCliControlCommand(command, args = {}) {
     const argsJsonLiteral = jsonForJavaScript(args);
     if (command === "snapshot") {
-      return evaluateuni-cliControl(`(async () => {
+      return evaluateuniCliControl(`(async () => {
         const control = window.__uni-cliControl;
         if (!control) return { ok: false, error: "Uni-CLI control surface is not available yet." };
         control.setEnabled?.(true);
@@ -83,7 +83,7 @@ export function createUiControlServer({
       })()`);
     }
     if (command === "actions") {
-      return evaluateuni-cliControl(`(async () => {
+      return evaluateuniCliControl(`(async () => {
         const control = window.__uni-cliControl;
         if (!control) return { ok: false, error: "Uni-CLI control surface is not available yet." };
         control.setEnabled?.(true);
@@ -91,14 +91,14 @@ export function createUiControlServer({
       })()`);
     }
     if (command === "context") {
-      return evaluateuni-cliControl(`(async () => {
+      return evaluateuniCliControl(`(async () => {
         const control = window.__uni-cliControl;
         if (!control) return { ok: false, error: "Uni-CLI control surface is not available yet." };
         return { ok: true, context: control.context() };
       })()`);
     }
     if (command === "query" || command === "command") {
-      return evaluateuni-cliControl(`(async () => {
+      return evaluateuniCliControl(`(async () => {
         const control = window.__uni-cliControl;
         const input = JSON.parse(${argsJsonLiteral});
         if (!control) return { ok: false, error: "Uni-CLI control surface is not available yet." };
@@ -109,7 +109,7 @@ export function createUiControlServer({
       })()`);
     }
     if (command === "execute") {
-      return evaluateuni-cliControl(`(async () => {
+      return evaluateuniCliControl(`(async () => {
         const control = window.__uni-cliControl;
         const input = JSON.parse(${argsJsonLiteral});
         if (!control) return { ok: false, error: "Uni-CLI control surface is not available yet." };
@@ -137,27 +137,27 @@ export function createUiControlServer({
           return;
         }
         if (request.method === "GET" && url.pathname === "/snapshot") {
-          sendJsonResponse(response, 200, await rununi-cliControlCommand("snapshot"));
+          sendJsonResponse(response, 200, await rununiCliControlCommand("snapshot"));
           return;
         }
         if (request.method === "GET" && url.pathname === "/actions") {
-          sendJsonResponse(response, 200, await rununi-cliControlCommand("actions"));
+          sendJsonResponse(response, 200, await rununiCliControlCommand("actions"));
           return;
         }
         if (request.method === "GET" && url.pathname === "/context") {
-          sendJsonResponse(response, 200, await rununi-cliControlCommand("context"));
+          sendJsonResponse(response, 200, await rununiCliControlCommand("context"));
           return;
         }
         if (request.method === "POST" && url.pathname === "/query") {
-          sendJsonResponse(response, 200, await rununi-cliControlCommand("query", await readJsonRequestBody(request)));
+          sendJsonResponse(response, 200, await rununiCliControlCommand("query", await readJsonRequestBody(request)));
           return;
         }
         if (request.method === "POST" && url.pathname === "/command") {
-          sendJsonResponse(response, 200, await rununi-cliControlCommand("command", await readJsonRequestBody(request)));
+          sendJsonResponse(response, 200, await rununiCliControlCommand("command", await readJsonRequestBody(request)));
           return;
         }
         if (request.method === "POST" && url.pathname === "/execute") {
-          sendJsonResponse(response, 200, await rununi-cliControlCommand("execute", await readJsonRequestBody(request)));
+          sendJsonResponse(response, 200, await rununiCliControlCommand("execute", await readJsonRequestBody(request)));
           return;
         }
         if (request.method === "POST" && url.pathname === "/browser/task") {

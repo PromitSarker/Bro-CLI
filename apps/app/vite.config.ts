@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-import { devuni-cliProxy } from "./dev-uni-cli-proxy";
+import { devuniCliProxy } from "./dev-uni-cli-proxy";
 import { devDenProxy } from "./dev-den-proxy";
 
 const portValue = Number.parseInt(process.env.PORT ?? "", 10);
@@ -110,8 +110,8 @@ const isElectronPackagedBuild = process.env.UNICLI_ELECTRON_BUILD === "1";
 // that runtime implies a provisioned cloud instance, which local dev lacks.
 export default defineConfig(({ command, isPreview }) => {
   const denProxy = devDenProxy(command === "serve" && !isPreview ? process.env : {});
-  const uni-cliProxy = devuni-cliProxy(command === "serve" && !isPreview ? process.env : {});
-  const headlessBrowserHostSuffix = Object.keys(uni-cliProxy).length > 0
+  const uniCliProxy = devuniCliProxy(command === "serve" && !isPreview ? process.env : {});
+  const headlessBrowserHostSuffix = Object.keys(uniCliProxy).length > 0
     ? process.env.UNICLI_DEV_BROWSER_HOST_SUFFIX
     : undefined;
   if (headlessBrowserHostSuffix && !/^\.[a-z0-9-]+(?:\.[a-z0-9-]+)+$/i.test(headlessBrowserHostSuffix)) {
@@ -155,7 +155,7 @@ export default defineConfig(({ command, isPreview }) => {
         : {}),
       proxy: {
         ...denProxy,
-        ...uni-cliProxy,
+        ...uniCliProxy,
       },
     },
     build: {

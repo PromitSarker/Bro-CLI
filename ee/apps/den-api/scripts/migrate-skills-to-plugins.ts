@@ -245,7 +245,7 @@ function collectMigratedSkillIds(rows: { normalizedPayloadJson: Record<string, u
   return migrated
 }
 
-async function ensureDefaultUni-CLIMarketplace(input: {
+async function ensureDefaultUniCliMarketplace(input: {
   createdByOrgMembershipId: MemberId
   database: DbTransaction
   organizationId: OrganizationId
@@ -309,7 +309,7 @@ async function attachPluginToDefaultMarketplace(input: {
   organizationId: OrganizationId
   pluginId: PluginId
 }) {
-  const marketplaceId = await ensureDefaultUni-CLIMarketplace(input)
+  const marketplaceId = await ensureDefaultUniCliMarketplace(input)
   const existing = (await input.database
     .select()
     .from(MarketplacePluginTable)

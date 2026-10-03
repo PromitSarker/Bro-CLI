@@ -164,7 +164,7 @@ async function seedBrowserTab(seed: Seed, app: Surface, url: string, ownerSessio
  * browser; the response body is irrelevant to the viewport journey.
  */
 async function embeddedServerUrl(seed: Seed, app: Surface): Promise<string> {
-  const info = await seed.evalIn(app, () => (window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo")), { awaitPromise: true });
+  const info = await seed.evalIn(app, () => (window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo")), { awaitPromise: true });
   if (!isRecord(info) || info.running !== true) throw new Error("The embedded Uni-CLI server is not running.");
   return stringField(info.baseUrl).replace(/\/+$/, "");
 }
@@ -218,7 +218,7 @@ export async function createBuiltinBrowserWorld(seed: Seed, env?: Record<string,
       const artifactName = "browser-handoff.md";
       const artifactText = "Keep these notes open while following the research link.";
       await seed.evalIn(app, browserScript(async (workspaceId, sessionId, url, artifactName, artifactText, fileUrl) => {
-        const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+        const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
         if (!info.baseUrl) throw new Error("Missing local server URL");
         const base = info.baseUrl.replace(/\/+$/, "") + "/workspace/" + encodeURIComponent(workspaceId);
         const headers = { Authorization: "Bearer " + (info.ownerToken ?? info.clientToken), "Content-Type": "application/json" };
@@ -232,7 +232,7 @@ export async function createBuiltinBrowserWorld(seed: Seed, env?: Record<string,
           body: JSON.stringify({ noReply: true, parts: [
             { type: "text", text: "Continue research at " + url },
             { type: "text", synthetic: true, text: "Attached workspace file: " + artifactName,
-              metadata: { uni-cliAttachments: [{ filename: artifactName, mime: "text/markdown", url: fileUrl }] } },
+              metadata: { uniCliAttachments: [{ filename: artifactName, mime: "text/markdown", url: fileUrl }] } },
           ] }),
         });
         if (!message.ok) throw new Error("Could not seed the transcript link: " + message.status);
@@ -451,7 +451,7 @@ export async function transcriptLinkWorld(seed: Seed) {
   const linkUrl = `${origin}/?link-context=alpha%20beta&encoded=%2Fkeep%3Fyes%3D1#thread-link`;
   const note = "Keep this note in its own conversation.";
   await seed.evalIn(app, browserScript(async (workspaceId, sessionId, note, url) => {
-    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
     const response = await fetch(String(info.baseUrl).replace(/\/+$/, "")
       + "/workspace/" + encodeURIComponent(workspaceId)
       + "/opencode/session/" + encodeURIComponent(sessionId) + "/message", {
@@ -590,7 +590,7 @@ export async function builtinBrowserWorld(seed: Seed, options: { workspacePath?:
   const app = await seed.desktop({ name: "builtin-browser", env: { ELECTRON_EXTRA_LAUNCH_ARGS: "--force-color-profile=srgb" } });
   const workspace = await seed.workspace(app, options.workspacePath ?? seed.tmpPath("builtin-browser"), { create: true });
   const session = await seed.session(app, { title: "Browser project" });
-  const info = await seed.evalIn(app, () => window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo"), { awaitPromise: true });
+  const info = await seed.evalIn(app, () => window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo"), { awaitPromise: true });
   if (!info || typeof info !== "object" || !("baseUrl" in info) || typeof info.baseUrl !== "string") throw new Error("The embedded server is unavailable.");
   return { app, workspace, session, origin: info.baseUrl.replace(/\/+$/, "") };
 }

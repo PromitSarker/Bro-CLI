@@ -3,7 +3,7 @@ import { useCallback } from "react";
 
 import type { McpDirectoryInfo } from "../../../app/constants";
 import { evaluateEnablement, type EnablementContext } from "../../../app/enablement";
-import type { uni-cliServerClient } from "../../../app/lib/uni-cli-server";
+import type { uniCliServerClient } from "../../../app/lib/uni-cli-server";
 import { getExtensionConfigSlot, type ExtensionConfigContext } from "./extension-registry";
 import type { LocalProviderInstallInput } from "./openai-image-extension";
 
@@ -13,8 +13,8 @@ type ProviderLike = {
 };
 
 type SettingsExtensionControllerInput = {
-  uni-cliServerClient: uni-cliServerClient | null;
-  hostuni-cliServerClient: uni-cliServerClient | null;
+  uniCliServerClient: uniCliServerClient | null;
+  hostuniCliServerClient: uniCliServerClient | null;
   enablementContext: EnablementContext;
   restartLocalServer?: () => Promise<boolean>;
   providers: ProviderLike[];
@@ -45,8 +45,8 @@ function hasOpenAiEnv(input: Pick<SettingsExtensionControllerInput, "providers" 
 
 export function useSettingsExtensionController(input: SettingsExtensionControllerInput) {
   const configContextForEntry = useCallback((entry: McpDirectoryInfo): ExtensionConfigContext => ({
-    uni-cliServerClient: input.uni-cliServerClient,
-    hostuni-cliServerClient: input.hostuni-cliServerClient,
+    uniCliServerClient: input.uniCliServerClient,
+    hostuniCliServerClient: input.hostuniCliServerClient,
     restartLocalServer: input.restartLocalServer,
     imageExtension: {
       ...input.imageExtension,

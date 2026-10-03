@@ -108,7 +108,7 @@ exec ${quote(real)} "$@"
   const session = await seed.session(app, { title: "Copy a local file during policy outage" });
   const token = await seed.evalIn(app, () => localStorage.getItem("uni-cli.server.token"));
   if (typeof token !== "string" || !token) throw new Error("Missing isolated app-web token");
-  const native = engineSessionProbe({ engine, serverUrl: app.uni-cliUrl, token, workspaceId: workspace.workspaceId });
+  const native = engineSessionProbe({ engine, serverUrl: app.uniCliUrl, token, workspaceId: workspace.workspaceId });
   const owned = setup.move();
   return {
     app, engine, marker, session, content, command,

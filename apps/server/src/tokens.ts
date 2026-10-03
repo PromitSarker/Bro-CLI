@@ -1,6 +1,6 @@
 import { dirname, join, resolve } from "node:path";
 import { readFile, writeFile } from "node:fs/promises";
-import { uni-cliConfigDir } from "@uni-cli/paths";
+import { uniCliConfigDir } from "@uni-cli/paths";
 
 import type { ServerConfig, TokenScope } from "./types.js";
 import { ensureDir, exists, hashToken, shortId } from "./utils.js";
@@ -29,7 +29,7 @@ function resolveTokenStorePath(config: ServerConfig): string {
   if (override) return resolve(override);
 
   const configPath = config.configPath?.trim();
-  const configDir = configPath ? dirname(configPath) : uni-cliConfigDir();
+  const configDir = configPath ? dirname(configPath) : uniCliConfigDir();
   return join(configDir, "tokens.json");
 }
 

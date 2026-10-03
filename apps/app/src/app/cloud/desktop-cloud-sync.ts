@@ -3,10 +3,10 @@ import {
   readDenSettings,
 } from "../lib/den";
 import type {
-  uni-cliDesktopCloudSyncChange,
-  uni-cliDesktopCloudSyncResult,
-  uni-cliDesktopCloudSyncState,
-  uni-cliServerClient,
+  uniCliDesktopCloudSyncChange,
+  uniCliDesktopCloudSyncResult,
+  uniCliDesktopCloudSyncState,
+  uniCliServerClient,
 } from "../lib/uni-cli-server";
 
 export type PendingCloudPluginChange = "modified" | "removed";
@@ -20,7 +20,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }
 
-function readSyncChange(value: unknown): uni-cliDesktopCloudSyncChange | null {
+function readSyncChange(value: unknown): uniCliDesktopCloudSyncChange | null {
   if (!isRecord(value)) return null;
   const id = typeof value.id === "string" ? value.id.trim() : "";
   const kind = value.kind === "new" || value.kind === "modified" || value.kind === "removed" ? value.kind : null;
@@ -44,7 +44,7 @@ function readSyncChange(value: unknown): uni-cliDesktopCloudSyncChange | null {
 }
 
 /** Read all pending changes from a persisted desktop-cloud-sync state (GET response). */
-export function readPendingCloudSyncChanges(state: uni-cliDesktopCloudSyncState): uni-cliDesktopCloudSyncChange[] {
+export function readPendingCloudSyncChanges(state: uniCliDesktopCloudSyncState): uniCliDesktopCloudSyncChange[] {
   return Object.values(state.entries).flatMap((entry) => {
     if (!isRecord(entry) || !Array.isArray(entry.pendingChanges)) return [];
     return entry.pendingChanges.flatMap((change) => {
@@ -61,7 +61,7 @@ export function readPendingCloudSyncChanges(state: uni-cliDesktopCloudSyncState)
  * no longer installed) are filtered out.
  */
 export function derivePendingCloudPluginChanges(input: {
-  changes: uni-cliDesktopCloudSyncChange[];
+  changes: uniCliDesktopCloudSyncChange[];
   installedPlugins: Record<string, InstalledCloudPluginLike>;
 }): Record<string, PendingCloudPluginChange> {
   const pending: Record<string, PendingCloudPluginChange> = {};
@@ -101,9 +101,9 @@ export function derivePendingCloudPluginChanges(input: {
 let desktopCloudSyncQueue: Promise<void> = Promise.resolve();
 
 async function runDesktopCloudSync(input: {
-  uni-cliClient: uni-cliServerClient;
+  uniCliClient: uniCliServerClient;
   workspaceId: string;
-}): Promise<uni-cliDesktopCloudSyncResult | null> {
+}): Promise<uniCliDesktopCloudSyncResult | null> {
   const settings = readDenSettings();
   const token = settings.authToken?.trim() ?? "";
   const activeOrgId = settings.activeOrgId?.trim() ?? "";
@@ -114,18 +114,18 @@ async function runDesktopCloudSync(input: {
     token,
   }).getResourceSnapshot(activeOrgId);
 
-  return input.uni-cliClient.syncDesktopCloud(input.workspaceId, snapshot);
+  return input.uniCliClient.syncDesktopCloud(input.workspaceId, snapshot);
 }
 
 export function refreshDesktopCloudSync(input: {
-  uni-cliClient: uni-cliServerClient | null | undefined;
+  uniCliClient: uniCliServerClient | null | undefined;
   workspaceId: string | null | undefined;
-}): Promise<uni-cliDesktopCloudSyncResult | null> {
-  const uni-cliClient = input.uni-cliClient ?? null;
+}): Promise<uniCliDesktopCloudSyncResult | null> {
+  const uniCliClient = input.uniCliClient ?? null;
   const workspaceId = input.workspaceId?.trim() ?? "";
-  if (!uni-cliClient || !workspaceId) return Promise.resolve(null);
+  if (!uniCliClient || !workspaceId) return Promise.resolve(null);
 
-  const run = desktopCloudSyncQueue.then(() => runDesktopCloudSync({ uni-cliClient, workspaceId }));
+  const run = desktopCloudSyncQueue.then(() => runDesktopCloudSync({ uniCliClient, workspaceId }));
   desktopCloudSyncQueue = run.then(
     () => undefined,
     () => undefined,

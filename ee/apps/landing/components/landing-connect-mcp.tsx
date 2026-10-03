@@ -23,13 +23,13 @@ import {
   OPENCODE_SNIPPET,
   VS_CODE_COMMAND,
 } from "./uni-cli-connect-installer-config";
-import type { Uni-CLIConnectClientId } from "./uni-cli-connect-installer-config";
+import type { UniCliConnectClientId } from "./uni-cli-connect-installer-config";
 
 const DOCS_URL = "https://uni-clilabs.com/docs/cloud/run-in-the-cloud/cloud-mcp#connect-mcp-install-opencode";
 const SIGNUP_URL = "https://app.uni-clilabs.com?mode=sign-up";
 
 type CopyMethod = "clipboard" | "execCommand" | "none";
-type ClientId = Uni-CLIConnectClientId;
+type ClientId = UniCliConnectClientId;
 
 type ClientInstall = {
   id: ClientId;

@@ -5,7 +5,7 @@ import { TaskRecovery } from "@/components/chat/task-recovery";
 import type { UIMessage } from "ai";
 import { applyHistorySourceChanges, mergeHistoryWindow, projectHistoryRead, reconcileHistoryRead, type LatestSessionHistory } from "./session-render-state";
 import { snapshotToUIMessages } from "../sync/usechat-adapter";
-import type { uni-cliSessionHistory } from "@/app/lib/uni-cli-server";
+import type { uniCliSessionHistory } from "@/app/lib/uni-cli-server";
 import { SYNTHETIC_SESSION_ERROR_MESSAGE_PREFIX } from "@/app/types";
 import { sessionHistoryCredential, snapshotKey } from "../sync/session-sync";
 import { composerAutoSendScopeKey } from "./composer-auto-send";
@@ -61,8 +61,8 @@ type OpeningHistoryInput = {
   ignoreCached?: boolean;
   metadataQueryKey?: readonly unknown[];
   snapshotQueryKey: readonly unknown[];
-  readSnapshot: (signal: AbortSignal, window?: OpeningHistoryWindow, options?: { desktopTransport: "main" }) => Promise<uni-cliSessionHistory>;
-  readOpening?: (signal: AbortSignal, window: OpeningHistoryWindow) => Promise<uni-cliSessionHistory>;
+  readSnapshot: (signal: AbortSignal, window?: OpeningHistoryWindow, options?: { desktopTransport: "main" }) => Promise<uniCliSessionHistory>;
+  readOpening?: (signal: AbortSignal, window: OpeningHistoryWindow) => Promise<uniCliSessionHistory>;
 };
 
 const hydratingTranscripts = new WeakSet<object>();
@@ -70,7 +70,7 @@ const EMPTY_HISTORY: UIMessage[] = [];
 /** The newest-window size a warm return reads; a shorter window is the whole conversation. */
 export const LATEST_HISTORY_WINDOW = 24;
 
-type HistoryRecord = uni-cliSessionHistory["messages"][number];
+type HistoryRecord = uniCliSessionHistory["messages"][number];
 
 function recordSignature(record: HistoryRecord): string {
   // Compare everything except inline file bytes: an image data URL can be
@@ -87,8 +87,8 @@ function recordSignature(record: HistoryRecord): string {
  * falls back to the uncapped read.
  */
 export function latestConfirmsFullHistory(
-  full: uni-cliSessionHistory,
-  latest: Pick<uni-cliSessionHistory, "session" | "messages">,
+  full: uniCliSessionHistory,
+  latest: Pick<uniCliSessionHistory, "session" | "messages">,
 ): boolean {
   if (full.session.id !== latest.session.id || full.messages.length < latest.messages.length) return false;
   if (full.pagination && (full.pagination.before !== undefined || full.pagination.nextCursor !== null)) return false;
@@ -275,7 +275,7 @@ export function openingSessionHistoryOptions(input: OpeningHistoryInput, saved =
   const readKey = ["react-session-latest", ...input.snapshotQueryKey, input.owner, credential, "opening-read", window];
   return queryOptions({
     queryKey: ["react-session-opening", input.owner, credential, window],
-    queryFn: async ({ signal, client, queryKey }): Promise<{ snapshot: uni-cliSessionHistory | null; baseline: UIMessage[] }> => {
+    queryFn: async ({ signal, client, queryKey }): Promise<{ snapshot: uniCliSessionHistory | null; baseline: UIMessage[] }> => {
       const baseline = client.getQueryData<LatestSessionHistory>([
         "react-session-latest", ...input.snapshotQueryKey, input.owner, credential, "pages",
       ])?.messages ?? EMPTY_HISTORY;
@@ -315,7 +315,7 @@ export function openingSessionHistoryOptions(input: OpeningHistoryInput, saved =
       return { snapshot, baseline };
     },
     staleTime: (query) => query.state.data?.snapshot && (!cache
-      || cache.getQueryData<{ snapshot?: uni-cliSessionHistory }>(readKey)?.snapshot === query.state.data.snapshot) ? 2_000 : 0,
+      || cache.getQueryData<{ snapshot?: uniCliSessionHistory }>(readKey)?.snapshot === query.state.data.snapshot) ? 2_000 : 0,
     structuralSharing: false,
     gcTime: 15_000,
     retry: false,
@@ -326,7 +326,7 @@ export function openingSessionHistoryOptions(input: OpeningHistoryInput, saved =
 }
 
 export function prefetchOpeningSessionHistory(client: QueryClient, input: OpeningHistoryInput) {
-  if (client.getQueryData<uni-cliSessionHistory>(input.snapshotQueryKey)?.session.id === input.sessionId) return;
+  if (client.getQueryData<uniCliSessionHistory>(input.snapshotQueryKey)?.session.id === input.sessionId) return;
   // No queue and no neighboring reads: only one speculative opening at a time.
   if (client.isFetching({ queryKey: ["react-session-opening"] })) return;
   const options = openingSessionHistoryOptions(input, undefined, client);
@@ -357,18 +357,18 @@ export function useSessionPrefetchIntent(intent: boolean, prefetch: () => void |
 
 export function useOpeningSessionHistory(input: OpeningHistoryInput & {
   transcriptQueryKey?: readonly unknown[];
-  readLatest?: (signal: AbortSignal, options?: { desktopTransport: "main" }) => Promise<Pick<uni-cliSessionHistory, "session" | "messages">>;
+  readLatest?: (signal: AbortSignal, options?: { desktopTransport: "main" }) => Promise<Pick<uniCliSessionHistory, "session" | "messages">>;
 }) {
   const client = useQueryClient();
   const hasLegacyPosition = useSessionScrollStore((state) => Boolean(state.sessions[input.sessionId]));
   const saved = useMemo(() => {
     return getSessionScrollState(useSessionScrollStore.getState().sessions, input.sessionId, input.owner);
   }, [input.owner, input.sessionId, hasLegacyPosition]);
-  const hasFullSnapshot = !input.ignoreCached && client.getQueryData<uni-cliSessionHistory>(input.snapshotQueryKey)?.session.id === input.sessionId;
+  const hasFullSnapshot = !input.ignoreCached && client.getQueryData<uniCliSessionHistory>(input.snapshotQueryKey)?.session.id === input.sessionId;
   const options = openingSessionHistoryOptions(input, saved, client);
   const query = useQuery({ ...options, enabled: !hasFullSnapshot });
   const credential = options.queryKey[2];
-  const openingRead = client.getQueryData<{ snapshot?: uni-cliSessionHistory }>([
+  const openingRead = client.getQueryData<{ snapshot?: uniCliSessionHistory }>([
     "react-session-latest", ...input.snapshotQueryKey, input.owner, credential, "opening-read", openingHistoryWindow(saved),
   ]);
   const openingSnapshot = !query.isFetching && openingRead?.snapshot === query.data?.snapshot ? query.data?.snapshot ?? null : null;
@@ -380,10 +380,10 @@ export function useOpeningSessionHistory(input: OpeningHistoryInput & {
      * The exact cached complete history whose tail the latest newest read
      * matched. Weak so a replaced snapshot is not kept alive by this record.
      */
-    confirmedFull: WeakRef<uni-cliSessionHistory> | null;
+    confirmedFull: WeakRef<uniCliSessionHistory> | null;
     readers: Set<AbortController>;
   }>(() => ({
-    warm: !input.ignoreCached && client.getQueryData<uni-cliSessionHistory>(input.snapshotQueryKey)?.session.id === input.sessionId,
+    warm: !input.ignoreCached && client.getQueryData<uniCliSessionHistory>(input.snapshotQueryKey)?.session.id === input.sessionId,
     fullRead: null,
     confirmedFull: null,
     readers: new Set<AbortController>(),
@@ -396,7 +396,7 @@ export function useOpeningSessionHistory(input: OpeningHistoryInput & {
     queryKey: latestKey,
     enabled: entry.warm && Boolean(input.readLatest),
     queryFn: async ({ signal }): Promise<LatestSessionHistory> => {
-      const full = client.getQueryData<uni-cliSessionHistory>(input.snapshotQueryKey);
+      const full = client.getQueryData<uniCliSessionHistory>(input.snapshotQueryKey);
       if (!input.readLatest || !full) throw new Error("Latest conversation history is unavailable.");
       const initial = client.getQueryData<LatestSessionHistory>(latestKey) ?? {
         messages: mergeHistoryWindow(projectHistoryRead(full), readSource()), source: readSource(),
@@ -410,10 +410,10 @@ export function useOpeningSessionHistory(input: OpeningHistoryInput & {
         throw new Error("Conversation history belongs to another session.");
       }
       // Judge the cache as it stands now: live events may have changed it during the read.
-      const cachedNow = client.getQueryData<uni-cliSessionHistory>(input.snapshotQueryKey);
+      const cachedNow = client.getQueryData<uniCliSessionHistory>(input.snapshotQueryKey);
       entry.confirmedFull = cachedNow !== undefined && latestConfirmsFullHistory(cachedNow, history) ? new WeakRef(cachedNow) : null;
       const current = applyHistorySourceChanges(client.getQueryData<LatestSessionHistory>(latestKey) ?? initial, readSource());
-      if (history.session.revert?.messageID || client.getQueryData<uni-cliSessionHistory>(input.snapshotQueryKey)?.session.revert?.messageID) return current;
+      if (history.session.revert?.messageID || client.getQueryData<uniCliSessionHistory>(input.snapshotQueryKey)?.session.revert?.messageID) return current;
       return {
         messages: reconcileHistoryRead(current.messages, projectHistoryRead({ ...full, messages: history.messages }), initial.messages),
         source: current.source,
@@ -442,14 +442,14 @@ export function useOpeningSessionHistory(input: OpeningHistoryInput & {
     });
   }, [client, entry, input.readLatest, input.transcriptQueryKey, latestKey, latestQuery.isSuccess, readSource]);
   const readFullSnapshot = useCallback(async (signal: AbortSignal, options?: { desktopTransport: "main" }) => {
-    const cached = client.getQueryData<uni-cliSessionHistory>(input.snapshotQueryKey);
+    const cached = client.getQueryData<uniCliSessionHistory>(input.snapshotQueryKey);
     const baseline = client.getQueryData<LatestSessionHistory>(latestKey)?.messages
       ?? (cached ? snapshotToUIMessages(cached) : EMPTY_HISTORY);
     const metadataBefore = input.metadataQueryKey ? client.getQueryData(input.metadataQueryKey) : undefined;
     let snapshot = await input.readSnapshot(signal, undefined, options);
     signal.throwIfAborted();
     const metadataAfter = input.metadataQueryKey
-      ? client.getQueryData<Pick<uni-cliSessionHistory["session"], "revert">>(input.metadataQueryKey) : undefined;
+      ? client.getQueryData<Pick<uniCliSessionHistory["session"], "revert">>(input.metadataQueryKey) : undefined;
     if (metadataAfter && metadataAfter !== metadataBefore) snapshot = { ...snapshot, session: { ...snapshot.session, ...metadataAfter } };
     if (snapshot.session.id !== input.sessionId || snapshot.pagination && (snapshot.pagination.before !== undefined || snapshot.pagination.nextCursor !== null)) {
       throw new Error("Complete conversation history is unavailable.");
@@ -457,7 +457,7 @@ export function useOpeningSessionHistory(input: OpeningHistoryInput & {
     entry.fullRead = { baseline, updateCount: (client.getQueryState(input.snapshotQueryKey)?.dataUpdateCount ?? 0) + 1 };
     return snapshot;
   }, [client, entry, input.metadataQueryKey, input.readSnapshot, input.sessionId, input.snapshotQueryKey, latestKey]);
-  const seedSnapshot = useCallback((snapshot: uni-cliSessionHistory, seed: () => void) => {
+  const seedSnapshot = useCallback((snapshot: uniCliSessionHistory, seed: () => void) => {
     if (snapshot.session.id !== input.sessionId) return;
     if (pages.ready && !hasFullSnapshot) { pages.seedSnapshot(seed); return; }
     if (!entry.warm || !input.readLatest || !input.transcriptQueryKey) { seed(); return; }
@@ -495,7 +495,7 @@ export function useOpeningSessionHistory(input: OpeningHistoryInput & {
     if (activeOwner.current !== entry) throw new CancelledError();
     if (pages.ready && !hasFullSnapshot) return pages.refreshForStop(options);
     const filters = { queryKey: input.snapshotQueryKey, exact: true };
-    const query = client.getQueryCache().find<uni-cliSessionHistory>(filters);
+    const query = client.getQueryCache().find<uniCliSessionHistory>(filters);
     if (!query) throw new CancelledError();
     const assertCurrent = () => {
       if (activeOwner.current !== entry || client.getQueryCache().find(filters) !== query) {
@@ -549,14 +549,14 @@ export function useOpeningSessionHistory(input: OpeningHistoryInput & {
   // read a saved reading position leaves in flight: on a cold engine that read
   // can outlast its request timeout, and a timed-out read must not bounce the
   // person's message back into the composer.
-  const readSendHistory = useCallback(async (options: { revealLatest?: boolean } = {}): Promise<uni-cliSessionHistory["messages"]> => {
+  const readSendHistory = useCallback(async (options: { revealLatest?: boolean } = {}): Promise<uniCliSessionHistory["messages"]> => {
     if (activeOwner.current !== entry) throw new CancelledError();
-    const cached = client.getQueryData<uni-cliSessionHistory>(input.snapshotQueryKey);
+    const cached = client.getQueryData<uniCliSessionHistory>(input.snapshotQueryKey);
     if (!input.ignoreCached && cached?.session.id === input.sessionId) return cached.messages;
     if (options.revealLatest && pages.hasNewer) return pages.readLatestForSend({ desktopTransport: "main" });
     const readLatest = input.readLatest;
     if (!readLatest) return (await ensureFullSnapshot()).messages;
-    const read = async (canRetry: boolean): Promise<uni-cliSessionHistory["messages"]> => {
+    const read = async (canRetry: boolean): Promise<uniCliSessionHistory["messages"]> => {
       const controller = new AbortController();
       entry.readers.add(controller);
       try {
@@ -576,7 +576,7 @@ export function useOpeningSessionHistory(input: OpeningHistoryInput & {
     return read(true);
   }, [client, ensureFullSnapshot, entry, input.ignoreCached, input.readLatest, input.sessionId, input.snapshotQueryKey, pages.hasNewer, pages.readLatestForSend]);
   const runWithFullSnapshot = useCallback(async (
-    action: (snapshot: uni-cliSessionHistory) => void | Promise<unknown>,
+    action: (snapshot: uniCliSessionHistory) => void | Promise<unknown>,
     options: { fresh?: boolean } = {},
   ) => {
     if (activeOwner.current !== entry) return;
@@ -654,7 +654,7 @@ export function useOpeningSessionHistory(input: OpeningHistoryInput & {
     // uncapped re-read. Only that exact object is current: a later refresh or
     // terminal-edge invalidation replaces it and returns to the default policy.
     fullCurrent: hasFullSnapshot && entry.warm && latestQuery.isSuccess && entry.confirmedFull !== null
-      && client.getQueryData<uni-cliSessionHistory>(input.snapshotQueryKey) === entry.confirmedFull.deref(),
+      && client.getQueryData<uniCliSessionHistory>(input.snapshotQueryKey) === entry.confirmedFull.deref(),
     pages,
     complete: hasFullSnapshot || pages.complete,
     paginated,

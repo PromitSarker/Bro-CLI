@@ -10,10 +10,10 @@ import {
 } from "lucide-react";
 
 import type {
-  uni-cliAuditEntry,
-  uni-cliRuntimeConfigStatus,
-  uni-cliServerCapabilities,
-  uni-cliServerDiagnostics,
+  uniCliAuditEntry,
+  uniCliRuntimeConfigStatus,
+  uniCliServerCapabilities,
+  uniCliServerDiagnostics,
 } from "../../../../app/lib/uni-cli-server";
 import type { NukeManifestPreview } from "../../../../app/lib/desktop";
 import type {
@@ -42,9 +42,9 @@ import {
 } from "./agent-context-diagnostics-section";
 import { AgentAccessCard } from "@/react-app/domains/settings/cloud/agent-access-card";
 import type {
-  uni-cliCloudMcpHealth,
-  uni-cliCloudMcpProviderModelContext,
-  uni-cliServerClient,
+  uniCliCloudMcpHealth,
+  uniCliCloudMcpProviderModelContext,
+  uniCliServerClient,
 } from "@/app/lib/uni-cli-server";
 
 const sectionHeaderClass = "flex flex-col gap-1 pb-2";
@@ -64,7 +64,7 @@ type RuntimeSummary = {
   appVersionLabel: string;
   appCommitLabel: string;
   opencodeVersionLabel: string;
-  uni-cliServerVersionLabel: string;
+  uniCliServerVersionLabel: string;
 };
 
 type StatusPill = {
@@ -92,10 +92,10 @@ export type DebugViewProps = {
   developerMode: boolean;
   agentContextDiagnostics: AgentContextDiagnosticsSectionProps;
   agentAccess?: {
-    client: uni-cliServerClient | null;
+    client: uniCliServerClient | null;
     workspaceId: string | null;
-    currentModel: uni-cliCloudMcpProviderModelContext | null;
-    onHealthChange?: (health: uni-cliCloudMcpHealth | null) => void;
+    currentModel: uniCliCloudMcpProviderModelContext | null;
+    onHealthChange?: (health: uniCliCloudMcpHealth | null) => void;
   } | null;
   busy: boolean;
   anyActiveRuns: boolean;
@@ -105,7 +105,7 @@ export type DebugViewProps = {
   runtimeSummary: RuntimeSummary;
   runtimeDebugReportJson: string;
   bootstrapConfigDebugJson: string;
-  runtimeConfigStatus: uni-cliRuntimeConfigStatus | null;
+  runtimeConfigStatus: uniCliRuntimeConfigStatus | null;
   runtimeConfigStatusError: string | null;
   runtimeDebugStatus: string | null;
   onCopyRuntimeDebugReport: () => void | Promise<void>;
@@ -150,33 +150,33 @@ export type DebugViewProps = {
   resetModalBusy: boolean;
   resetStatus: string | null;
   opencodeRestarting: boolean;
-  uni-cliServerRestarting: boolean;
+  uniCliServerRestarting: boolean;
   opencodeServiceStatus: ServiceStatus;
-  uni-cliServiceStatus: ServiceStatus;
+  uniCliServiceStatus: ServiceStatus;
   opencodeLogStatus: string | null;
-  uni-cliLogStatus: string | null;
+  uniCliLogStatus: string | null;
   onCopyOpencodeLogs: () => void | Promise<void>;
   onExportOpencodeLogs: () => void | Promise<void>;
-  onCopyuni-cliLogs: () => void | Promise<void>;
-  onExportuni-cliLogs: () => void | Promise<void>;
+  onCopyuniCliLogs: () => void | Promise<void>;
+  onExportuniCliLogs: () => void | Promise<void>;
   serviceRestartError: string | null;
   onRestartOpencode: () => void | Promise<void>;
-  onRestartuni-cliServer: () => void | Promise<void>;
+  onRestartuniCliServer: () => void | Promise<void>;
   engineCard: RuntimeServiceCard;
   opencodeConnectCard: OpenCodeConnectDebugCard;
-  uni-cliCard: RuntimeServiceCard;
-  uni-cliServerDiagnostics: uni-cliServerDiagnostics | null;
+  uniCliCard: RuntimeServiceCard;
+  uniCliServerDiagnostics: uniCliServerDiagnostics | null;
   runtimeWorkspaceId: string | null;
-  uni-cliServerCapabilities: uni-cliServerCapabilities | null;
+  uniCliServerCapabilities: uniCliServerCapabilities | null;
   pendingPermissions: unknown;
   events: unknown;
   workspaceDebugEvents: unknown;
   workspaceDebugEventsStatus: string | null;
   safeStringify: (value: unknown) => string;
   onClearWorkspaceDebugEvents: () => void | Promise<void>;
-  uni-cliAuditEntries: uni-cliAuditEntry[];
-  uni-cliAuditStatus: StatusPill;
-  uni-cliAuditError: string | null;
+  uniCliAuditEntries: uniCliAuditEntry[];
+  uniCliAuditStatus: StatusPill;
+  uniCliAuditError: string | null;
   opencodeConnectStatus: OpencodeConnectStatus | null;
   opencodeDevModeEnabled: boolean;
   nukeConfigBusy: boolean;
@@ -190,10 +190,10 @@ export type DebugViewProps = {
   onCloseNukeDialog: () => void;
   onSetNukeConfirmationText: (value: string) => void;
   onSetNukeDeleteBootstrap: (value: boolean) => void | Promise<void>;
-  onConfirmNukeuni-cliAndOpencodeConfig: () => void | Promise<void>;
+  onConfirmNukeuniCliAndOpencodeConfig: () => void | Promise<void>;
 };
 
-function formatActor(entry: uni-cliAuditEntry) {
+function formatActor(entry: uniCliAuditEntry) {
   if (entry.actor.type === "host") return t("settings.audit_actor_host");
   if (entry.actor.clientId) return entry.actor.clientId;
   if (entry.actor.tokenHash) return entry.actor.tokenHash;
@@ -300,7 +300,7 @@ function formatManagedFileTime(value: number | null | undefined): string {
 }
 
 function RuntimeConfigOwnershipCard(props: {
-  status: uni-cliRuntimeConfigStatus | null;
+  status: uniCliRuntimeConfigStatus | null;
   error: string | null;
 }) {
   return (
@@ -487,7 +487,7 @@ export function DebugView(props: DebugViewProps) {
           </div>
           <div>
             {t("settings.debug_uni-cli_server_version", {
-              version: props.runtimeSummary.uni-cliServerVersionLabel,
+              version: props.runtimeSummary.uniCliServerVersionLabel,
             })}
           </div>
         </div>
@@ -523,19 +523,19 @@ export function DebugView(props: DebugViewProps) {
           <ServiceCard
             title={t("settings.uni-cli_server_label")}
             description={t("settings.uni-cli_config_sidecar_desc")}
-            pill={props.uni-cliCard}
-            lines={props.uni-cliCard.lines}
-            stdout={props.uni-cliCard.stdout ?? null}
-            stderr={props.uni-cliCard.stderr ?? null}
-            execution={props.uni-cliCard.execution ?? null}
-            error={props.uni-cliCard.error ?? null}
-            restarting={props.uni-cliServerRestarting}
+            pill={props.uniCliCard}
+            lines={props.uniCliCard.lines}
+            stdout={props.uniCliCard.stdout ?? null}
+            stderr={props.uniCliCard.stderr ?? null}
+            execution={props.uniCliCard.execution ?? null}
+            error={props.uniCliCard.error ?? null}
+            restarting={props.uniCliServerRestarting}
             restartLabel={t("settings.restart_uni-cli_server")}
-            onRestart={props.onRestartuni-cliServer}
-            serviceStatus={props.uni-cliServiceStatus}
-            logStatus={props.uni-cliLogStatus}
-            onCopyLogs={props.onCopyuni-cliLogs}
-            onExportLogs={props.onExportuni-cliLogs}
+            onRestart={props.onRestartuniCliServer}
+            serviceStatus={props.uniCliServiceStatus}
+            logStatus={props.uniCliLogStatus}
+            onCopyLogs={props.onCopyuniCliLogs}
+            onExportLogs={props.onExportuniCliLogs}
             isDesktop={isDesktop}
           />
 
@@ -617,49 +617,49 @@ export function DebugView(props: DebugViewProps) {
           <div className={sectionTitleClass}>{t("settings.uni-cli_diagnostics_title")}</div>
           <div className={sectionDescClass}>
             <span className="font-mono text-[11px] text-dls-secondary">
-              {props.uni-cliServerDiagnostics?.version ?? "—"}
+              {props.uniCliServerDiagnostics?.version ?? "—"}
             </span>
           </div>
         </div>
 
-        {props.uni-cliServerDiagnostics ? (
+        {props.uniCliServerDiagnostics ? (
           <div className="grid gap-2 text-[12px] text-dls-secondary md:grid-cols-2">
-            <div>{t("settings.diag_started", { time: formatUptime(props.uni-cliServerDiagnostics.uptimeMs) })}</div>
+            <div>{t("settings.diag_started", { time: formatUptime(props.uniCliServerDiagnostics.uptimeMs) })}</div>
             <div>
               {t("settings.diag_read_only", {
-                value: props.uni-cliServerDiagnostics.readOnly ? "true" : "false",
+                value: props.uniCliServerDiagnostics.readOnly ? "true" : "false",
               })}
             </div>
             <div>
               {t("settings.diag_approval", {
-                mode: props.uni-cliServerDiagnostics.approval.mode,
-                ms: String(props.uni-cliServerDiagnostics.approval.timeoutMs),
+                mode: props.uniCliServerDiagnostics.approval.mode,
+                ms: String(props.uniCliServerDiagnostics.approval.timeoutMs),
               })}
             </div>
-            <div>{t("settings.diag_workspaces", { count: String(props.uni-cliServerDiagnostics.workspaceCount) })}</div>
+            <div>{t("settings.diag_workspaces", { count: String(props.uniCliServerDiagnostics.workspaceCount) })}</div>
             <div>
               {t("settings.diag_selected_workspace", {
-                id: props.uni-cliServerDiagnostics.selectedWorkspaceId ?? "—",
+                id: props.uniCliServerDiagnostics.selectedWorkspaceId ?? "—",
               })}
             </div>
             <div>
               {t("settings.diag_runtime_workspace", {
-                id: props.uni-cliServerDiagnostics.activeWorkspaceId ?? "—",
+                id: props.uniCliServerDiagnostics.activeWorkspaceId ?? "—",
               })}
             </div>
             <div>
               {t("settings.diag_config_path", {
-                path: props.uni-cliServerDiagnostics.server.configPath ?? t("settings.diag_default"),
+                path: props.uniCliServerDiagnostics.server.configPath ?? t("settings.diag_default"),
               })}
             </div>
             <div>
               {t("settings.diag_token_source", {
-                source: props.uni-cliServerDiagnostics.tokenSource.client,
+                source: props.uniCliServerDiagnostics.tokenSource.client,
               })}
             </div>
             <div>
               {t("settings.diag_host_token_source", {
-                source: props.uni-cliServerDiagnostics.tokenSource.host,
+                source: props.uniCliServerDiagnostics.tokenSource.host,
               })}
             </div>
           </div>
@@ -678,17 +678,17 @@ export function DebugView(props: DebugViewProps) {
                 : t("settings.worker_unresolved")}
             </div>
           </div>
-          {props.uni-cliServerCapabilities ? (
+          {props.uniCliServerCapabilities ? (
             <div className="grid gap-2 text-[12px] text-dls-secondary md:grid-cols-2">
-              <div>{t("settings.cap_skills", { value: formatCapability(props.uni-cliServerCapabilities.skills) })}</div>
-              <div>{t("settings.cap_plugins", { value: formatCapability(props.uni-cliServerCapabilities.plugins) })}</div>
-              <div>{t("settings.cap_mcp", { value: formatCapability(props.uni-cliServerCapabilities.mcp) })}</div>
-              <div>{t("settings.cap_commands", { value: formatCapability(props.uni-cliServerCapabilities.commands) })}</div>
-              <div>{t("settings.cap_config", { value: formatCapability(props.uni-cliServerCapabilities.config) })}</div>
+              <div>{t("settings.cap_skills", { value: formatCapability(props.uniCliServerCapabilities.skills) })}</div>
+              <div>{t("settings.cap_plugins", { value: formatCapability(props.uniCliServerCapabilities.plugins) })}</div>
+              <div>{t("settings.cap_mcp", { value: formatCapability(props.uniCliServerCapabilities.mcp) })}</div>
+              <div>{t("settings.cap_commands", { value: formatCapability(props.uniCliServerCapabilities.commands) })}</div>
+              <div>{t("settings.cap_config", { value: formatCapability(props.uniCliServerCapabilities.config) })}</div>
               <div>
                 {t("settings.cap_browser_tools", {
                   value: (() => {
-                    const browser = props.uni-cliServerCapabilities.toolProviders?.browser;
+                    const browser = props.uniCliServerCapabilities.toolProviders?.browser;
                     if (!browser?.enabled) return t("settings.disabled");
                     return `${browser.mode} · ${browser.placement}`;
                   })(),
@@ -697,7 +697,7 @@ export function DebugView(props: DebugViewProps) {
               <div>
                 {t("settings.cap_file_tools", {
                   value: (() => {
-                    const files = props.uni-cliServerCapabilities.toolProviders?.files;
+                    const files = props.uniCliServerCapabilities.toolProviders?.files;
                     if (!files) return t("config.unavailable");
                     return [
                       files.injection ? t("settings.cap_inbox_on") : t("settings.cap_inbox_off"),
@@ -708,8 +708,8 @@ export function DebugView(props: DebugViewProps) {
               </div>
               <div>
                 {t("settings.cap_sandbox", {
-                  value: props.uni-cliServerCapabilities.sandbox
-                    ? `${props.uni-cliServerCapabilities.sandbox.backend} (${props.uni-cliServerCapabilities.sandbox.enabled ? t("settings.on") : t("settings.off")})`
+                  value: props.uniCliServerCapabilities.sandbox
+                    ? `${props.uniCliServerCapabilities.sandbox.backend} (${props.uniCliServerCapabilities.sandbox.enabled ? t("settings.on") : t("settings.off")})`
                     : t("config.unavailable"),
                 })}
               </div>
@@ -732,14 +732,14 @@ export function DebugView(props: DebugViewProps) {
             <div className="text-sm font-semibold tracking-[-0.1px] text-dls-text">
               {t("settings.audit_log_title")}
             </div>
-            <div className={`rounded-full border px-2 py-1 text-[11px] font-medium ${props.uni-cliAuditStatus.className}`}>
-              {props.uni-cliAuditStatus.label}
+            <div className={`rounded-full border px-2 py-1 text-[11px] font-medium ${props.uniCliAuditStatus.className}`}>
+              {props.uniCliAuditStatus.label}
             </div>
           </div>
-          {props.uni-cliAuditError ? <StatusBanner tone="error" message={props.uni-cliAuditError} /> : null}
-          {props.uni-cliAuditEntries.length > 0 ? (
+          {props.uniCliAuditError ? <StatusBanner tone="error" message={props.uniCliAuditError} /> : null}
+          {props.uniCliAuditEntries.length > 0 ? (
             <div className="divide-y divide-dls-border/60">
-              {props.uni-cliAuditEntries.map((entry) => (
+              {props.uniCliAuditEntries.map((entry) => (
                 <div key={entry.id} className="flex items-start justify-between gap-4 py-2">
                   <div className="min-w-0">
                     <div className="truncate text-sm text-dls-text">{entry.summary}</div>
@@ -1316,7 +1316,7 @@ export function DebugView(props: DebugViewProps) {
           <AlertDialogCancel disabled={props.nukeConfigBusy}>{t("settings.nuke_cancel")}</AlertDialogCancel>
           <AlertDialogAction
             variant="destructive"
-            onClick={() => void props.onConfirmNukeuni-cliAndOpencodeConfig()}
+            onClick={() => void props.onConfirmNukeuniCliAndOpencodeConfig()}
             disabled={!canConfirmNuke}
           >
             {props.nukeConfigBusy ? t("settings.removing_local_state") : t("settings.nuke_confirm_button")}

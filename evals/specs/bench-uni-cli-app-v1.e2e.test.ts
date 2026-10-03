@@ -280,7 +280,7 @@ async function readServerInfo(app: Surface): Promise<ServerInfo> {
     try {
       const invokeDesktop = window.__UNICLI_ELECTRON__ && window.__UNICLI_ELECTRON__.invokeDesktop;
       if (invokeDesktop) {
-        const info = await invokeDesktop("uni-cliServerInfo");
+        const info = await invokeDesktop("uniCliServerInfo");
         if (info && info.running === true) {
           baseUrl = String(info.baseUrl ?? info.connectUrl ?? "").trim().replace(/\/+$/, "");
           token = String(info.ownerToken ?? info.clientToken ?? "").trim();

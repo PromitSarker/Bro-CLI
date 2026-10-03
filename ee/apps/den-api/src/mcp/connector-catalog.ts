@@ -1,10 +1,10 @@
 import { connectorCatalogSchema, type ConnectorCatalog } from "@uni-cli/types/connection-action-app"
 import { EXTERNAL_MCP_PRESETS } from "../capability-sources/external-mcp-presets.js"
-import { uni-cliOrganizationConnectionsUrl } from "./connection-navigation.js"
+import { uniCliOrganizationConnectionsUrl } from "./connection-navigation.js"
 
 export function connectorCatalogForQuery(query: string, showAll = false): ConnectorCatalog | null {
   const setupUrl = (id: string) => {
-    const url = new URL(uni-cliOrganizationConnectionsUrl())
+    const url = new URL(uniCliOrganizationConnectionsUrl())
     url.searchParams.set("quickAdd", id)
     return url.toString()
   }

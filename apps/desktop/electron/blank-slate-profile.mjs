@@ -46,7 +46,7 @@ export function prepareBlankSlateProfile({
   const rootPath = createTempRoot(paths.join(temporaryDirectory, "uni-cli-test-profile-"));
   const userDataPath = paths.join(rootPath, "electron", "user-data");
   const homePath = paths.join(rootPath, "home");
-  const uni-cliConfigPath = paths.join(rootPath, "uni-cli", "config");
+  const uniCliConfigPath = paths.join(rootPath, "uni-cli", "config");
   const opencodeDataPath = paths.join(rootPath, "opencode", "data");
   const environment = {
     HOME: homePath,
@@ -58,11 +58,11 @@ export function prepareBlankSlateProfile({
     APPDATA: paths.join(rootPath, "windows", "app-data", "roaming"),
     LOCALAPPDATA: paths.join(rootPath, "windows", "app-data", "local"),
     UNICLI_ELECTRON_USERDATA: userDataPath,
-    UNICLI_DESKTOP_BOOTSTRAP_PATH: paths.join(uni-cliConfigPath, "desktop-bootstrap.json"),
-    UNICLI_SERVER_CONFIG: paths.join(uni-cliConfigPath, "server.json"),
-    UNICLI_ENV_STORE: paths.join(uni-cliConfigPath, "env.json"),
-    UNICLI_TOKEN_STORE: paths.join(uni-cliConfigPath, "tokens.json"),
-    UNICLI_RUNTIME_DB: paths.join(uni-cliConfigPath, "runtime.sqlite"),
+    UNICLI_DESKTOP_BOOTSTRAP_PATH: paths.join(uniCliConfigPath, "desktop-bootstrap.json"),
+    UNICLI_SERVER_CONFIG: paths.join(uniCliConfigPath, "server.json"),
+    UNICLI_ENV_STORE: paths.join(uniCliConfigPath, "env.json"),
+    UNICLI_TOKEN_STORE: paths.join(uniCliConfigPath, "tokens.json"),
+    UNICLI_RUNTIME_DB: paths.join(uniCliConfigPath, "runtime.sqlite"),
     UNICLI_DATA_DIR: paths.join(rootPath, "uni-cli", "data"),
     OPENCODE_CONFIG_DIR: paths.join(rootPath, "opencode", "config"),
     OPENCODE_DB: paths.join(opencodeDataPath, "opencode.db"),
@@ -77,7 +77,7 @@ export function prepareBlankSlateProfile({
     environment.XDG_STATE_HOME,
     environment.APPDATA,
     environment.LOCALAPPDATA,
-    uni-cliConfigPath,
+    uniCliConfigPath,
     environment.UNICLI_DATA_DIR,
     environment.OPENCODE_CONFIG_DIR,
     opencodeDataPath,

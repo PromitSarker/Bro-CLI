@@ -15,7 +15,7 @@ import {
   type CapabilityCell,
   type ProductKey
 } from "../lib/cowork-capabilities";
-import { Uni-CLIMark } from "./uni-cli-mark";
+import { UniCliMark } from "./uni-cli-mark";
 
 const valueClass: Record<CapabilityCell["value"], string> = {
   yes: "font-semibold text-[var(--lp-ink)]",
@@ -89,7 +89,7 @@ export function CapabilityMatrix({ caption, emphasis }: Props) {
                   >
                     {uni-cli ? (
                       <span className="inline-flex flex-col items-center gap-1 md:flex-row md:gap-2">
-                        <Uni-CLIMark className="h-4 w-4 object-contain" />
+                        <UniCliMark className="h-4 w-4 object-contain" />
                         {column.label}
                       </span>
                     ) : (

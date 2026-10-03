@@ -173,8 +173,8 @@ export function CreateWorkspaceModal(props: CreateWorkspaceModalProps) {
     if (!props.onConfirmRemote) return;
     await Promise.resolve(
       props.onConfirmRemote({
-        uni-cliHostUrl: remoteUrl.trim(),
-        uni-cliToken: remoteToken.trim() || null,
+        uniCliHostUrl: remoteUrl.trim(),
+        uniCliToken: remoteToken.trim() || null,
         directory: null,
         displayName: remoteDisplayName.trim() || null,
         closeModal: true,

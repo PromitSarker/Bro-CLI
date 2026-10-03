@@ -20,7 +20,7 @@ export function workspaceIdForRemote(baseUrl: string, directory?: string | null)
   return workspaceIdForKey(key);
 }
 
-export function workspaceIdForuni-cli(hostUrl: string, workspaceId?: string | null): string {
+export function workspaceIdForuniCli(hostUrl: string, workspaceId?: string | null): string {
   const normalizedHostUrl = hostUrl.trim();
   const normalizedWorkspaceId = workspaceId?.trim() ?? "";
   const key = normalizedWorkspaceId
@@ -41,12 +41,12 @@ export function buildWorkspaceInfos(
     const id = workspace.id?.trim()
       || (workspaceType === "remote"
         ? remoteType === "uni-cli"
-          ? workspaceIdForuni-cli(workspace.uni-cliHostUrl ?? workspace.baseUrl ?? "", workspace.uni-cliWorkspaceId)
+          ? workspaceIdForuniCli(workspace.uniCliHostUrl ?? workspace.baseUrl ?? "", workspace.uniCliWorkspaceId)
           : workspaceIdForRemote(workspace.baseUrl ?? "", workspace.directory)
         : workspaceIdForPath(resolvedPath));
     const name = workspace.name?.trim()
       || workspace.displayName?.trim()
-      || workspace.uni-cliWorkspaceName?.trim()
+      || workspace.uniCliWorkspaceName?.trim()
       || basename(resolvedPath || workspace.directory?.trim() || workspace.baseUrl?.trim() || "Workspace");
     return {
       id,
@@ -58,10 +58,10 @@ export function buildWorkspaceInfos(
       baseUrl: workspace.baseUrl,
       directory: workspace.directory,
       displayName: workspace.displayName,
-      uni-cliHostUrl: workspace.uni-cliHostUrl,
-      uni-cliToken: workspace.uni-cliToken,
-      uni-cliWorkspaceId: workspace.uni-cliWorkspaceId,
-      uni-cliWorkspaceName: workspace.uni-cliWorkspaceName,
+      uniCliHostUrl: workspace.uniCliHostUrl,
+      uniCliToken: workspace.uniCliToken,
+      uniCliWorkspaceId: workspace.uniCliWorkspaceId,
+      uniCliWorkspaceName: workspace.uniCliWorkspaceName,
       sandboxBackend: workspace.sandboxBackend,
       sandboxRunId: workspace.sandboxRunId,
       sandboxContainerName: workspace.sandboxContainerName,

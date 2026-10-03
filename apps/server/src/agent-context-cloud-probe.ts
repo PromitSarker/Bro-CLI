@@ -181,7 +181,7 @@ export type CloudCatalogProbeFetch = (
   init?: RequestInit,
 ) => Promise<Response>;
 
-export type Probeuni-cliCloudCatalogInput = {
+export type ProbeuniCliCloudCatalogInput = {
   workspaceId: string;
   workspaceType: "local" | "remote";
   runtimeConfigAvailable?: boolean;
@@ -363,7 +363,7 @@ function authorizationHeader(config: Record<string, unknown>): { value: string |
  * by its own check. Only structural, trust, credential, and privacy
  * boundaries can skip the probe.
  */
-function prepare(input: Probeuni-cliCloudCatalogInput): PreparedProbe | CloudCatalogProbeCode {
+function prepare(input: ProbeuniCliCloudCatalogInput): PreparedProbe | CloudCatalogProbeCode {
   if (input.workspaceType !== "local") return "remote_workspace_unavailable";
   if (input.runtimeConfigAvailable === false) return "runtime_config_unavailable";
   if (!isRecord(input.config)) return "cloud_mcp_missing";
@@ -1015,8 +1015,8 @@ export function differentialCloudVerdict(
  * calls a tool, mutates configuration, or returns endpoint, credential,
  * header, response-body, or caught-error values.
  */
-export async function probeuni-cliCloudCatalog(
-  input: Probeuni-cliCloudCatalogInput,
+export async function probeuniCliCloudCatalog(
+  input: ProbeuniCliCloudCatalogInput,
 ): Promise<CloudCatalogProbe> {
   const clock = input.clock ?? input.now ?? Date.now;
   const startedAt = clock();

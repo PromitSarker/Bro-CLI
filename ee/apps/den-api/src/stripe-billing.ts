@@ -16,8 +16,8 @@ import type { DenOrgMode } from "./env.js"
 import { setInferenceEnabled } from "./inference.js"
 import { assertOrganizationManagedModelsAllowed } from "./organization-metadata.js"
 import { appLogger } from "./observability/logger.js"
-import { isUni-CLIWebAvailable } from "./uni-cli-web-availability.js"
-import { hasUni-CLIWebComplimentaryAccess, resolveUni-CLIWebAccess } from "./uni-cli-web-access.js"
+import { isUniCliWebAvailable } from "./uni-cli-web-availability.js"
+import { hasUniCliWebComplimentaryAccess, resolveUniCliWebAccess } from "./uni-cli-web-access.js"
 
 type OrgId = typeof OrganizationTable.$inferSelect.id
 type MemberId = typeof MemberTable.$inferSelect.id
@@ -74,9 +74,9 @@ function requireSeatPriceId() {
   return env.stripe.seatPriceId
 }
 
-function requireUni-CLIWebPriceId() {
-  const priceId = env.stripe.uni-cliWebPriceId
-  if (!isUni-CLIWebAvailable() || !priceId) {
+function requireUniCliWebPriceId() {
+  const priceId = env.stripe.uniCliWebPriceId
+  if (!isUniCliWebAvailable() || !priceId) {
     throw new Error("stripe_uni-cli_web_not_available")
   }
   return priceId
@@ -89,7 +89,7 @@ function requirePriceIdForSubscriptionType(subscriptionType: StripeCheckoutSubsc
     case SEAT_SUBSCRIPTION_TYPE:
       return requireSeatPriceId()
     case WEB_SUBSCRIPTION_TYPE:
-      return requireUni-CLIWebPriceId()
+      return requireUniCliWebPriceId()
   }
 }
 
@@ -199,7 +199,7 @@ function subscriptionTypeFromStripeSubscription(subscription: Stripe.Subscriptio
   if (env.stripe.seatPriceId && priceId === env.stripe.seatPriceId) {
     return SEAT_SUBSCRIPTION_TYPE
   }
-  if (env.stripe.uni-cliWebPriceId && priceId === env.stripe.uni-cliWebPriceId) {
+  if (env.stripe.uniCliWebPriceId && priceId === env.stripe.uniCliWebPriceId) {
     return WEB_SUBSCRIPTION_TYPE
   }
 
@@ -226,20 +226,20 @@ async function joinedMemberCount(organizationId: OrgId) {
   return normalizeSeatCount(Number(row?.count ?? 0))
 }
 
-async function organizationUni-CLIWebComplimentaryAccess(organizationId: OrgId) {
+async function organizationUniCliWebComplimentaryAccess(organizationId: OrgId) {
   const rows = await db
     .select({ metadata: OrganizationTable.metadata })
     .from(OrganizationTable)
     .where(eq(OrganizationTable.id, organizationId))
     .limit(1)
-  return hasUni-CLIWebComplimentaryAccess(rows[0]?.metadata)
+  return hasUniCliWebComplimentaryAccess(rows[0]?.metadata)
 }
 
-export function isUni-CLIWebBillableMember(input: { joinedAt: Date | null; removedAt: Date | null }) {
+export function isUniCliWebBillableMember(input: { joinedAt: Date | null; removedAt: Date | null }) {
   return input.joinedAt !== null && input.removedAt === null
 }
 
-export function calculateUni-CLIWebBilling(input: { joinedMemberCount: number }) {
+export function calculateUniCliWebBilling(input: { joinedMemberCount: number }) {
   const quantity = normalizeSeatCount(input.joinedMemberCount)
   return {
     quantity,
@@ -248,11 +248,11 @@ export function calculateUni-CLIWebBilling(input: { joinedMemberCount: number })
   }
 }
 
-export function isEligibleUni-CLIWebSubscriptionStatus(status: string | null | undefined) {
+export function isEligibleUniCliWebSubscriptionStatus(status: string | null | undefined) {
   return status === "active" || status === "trialing"
 }
 
-export function isOngoingUni-CLIWebSubscriptionStatus(status: string | null | undefined) {
+export function isOngoingUniCliWebSubscriptionStatus(status: string | null | undefined) {
   return typeof status === "string" && ONGOING_STATUSES.has(subscriptionStatus(status)) && status !== "expired"
 }
 
@@ -264,7 +264,7 @@ export function isInferenceDisablingSubscriptionStatus(status: string | null | u
   return INFERENCE_DISABLING_STATUSES.has(subscriptionStatus(status))
 }
 
-export function uni-cliWebPaymentStatus(status: string | null | undefined, paymentFailed = false) {
+export function uniCliWebPaymentStatus(status: string | null | undefined, paymentFailed = false) {
   if (paymentFailed) {
     return "payment_failed" as const
   }
@@ -464,35 +464,35 @@ export async function organizationHasActiveSeatSubscription(organizationId: OrgI
   return Boolean(row && ACTIVE_STATUSES.has(row.status))
 }
 
-function isEligibleUni-CLIWebSubscriptionRow(row: Awaited<ReturnType<typeof findWebSubscriptionByOrg>>) {
+function isEligibleUniCliWebSubscriptionRow(row: Awaited<ReturnType<typeof findWebSubscriptionByOrg>>) {
   return Boolean(
     row
-    && isEligibleUni-CLIWebSubscriptionStatus(row.status)
-    && env.stripe.uni-cliWebPriceId
-    && row.stripe_price_id === env.stripe.uni-cliWebPriceId
+    && isEligibleUniCliWebSubscriptionStatus(row.status)
+    && env.stripe.uniCliWebPriceId
+    && row.stripe_price_id === env.stripe.uniCliWebPriceId
     && row.payment_failed !== true,
   )
 }
 
-function isOngoingConfiguredUni-CLIWebSubscriptionRow(row: Awaited<ReturnType<typeof findWebSubscriptionByOrg>>) {
+function isOngoingConfiguredUniCliWebSubscriptionRow(row: Awaited<ReturnType<typeof findWebSubscriptionByOrg>>) {
   return Boolean(
     row
-    && isOngoingUni-CLIWebSubscriptionStatus(row.status)
-    && env.stripe.uni-cliWebPriceId
-    && row.stripe_price_id === env.stripe.uni-cliWebPriceId,
+    && isOngoingUniCliWebSubscriptionStatus(row.status)
+    && env.stripe.uniCliWebPriceId
+    && row.stripe_price_id === env.stripe.uniCliWebPriceId,
   )
 }
 
-export async function organizationHasEligibleUni-CLIWebSubscription(organizationId: OrgId) {
-  return isEligibleUni-CLIWebSubscriptionRow(await findWebSubscriptionByOrg(organizationId))
+export async function organizationHasEligibleUniCliWebSubscription(organizationId: OrgId) {
+  return isEligibleUniCliWebSubscriptionRow(await findWebSubscriptionByOrg(organizationId))
 }
 
-export async function organizationHasOngoingUni-CLIWebSubscription(organizationId: OrgId) {
+export async function organizationHasOngoingUniCliWebSubscription(organizationId: OrgId) {
   let row = await findWebSubscriptionByOrg(organizationId)
   if (row?.stripe_subscription_id) {
     row = await refreshOrgSubscriptionFromStripe(row.stripe_subscription_id)
   }
-  return Boolean(row && isOngoingUni-CLIWebSubscriptionStatus(row.status))
+  return Boolean(row && isOngoingUniCliWebSubscriptionStatus(row.status))
 }
 
 export async function getOrganizationSeatAddEligibility(organizationId: OrgId) {
@@ -760,7 +760,7 @@ export async function findOrCreateStripeCustomer(input: {
   return customer.id
 }
 
-export function uni-cliWebCheckoutIdempotencyKey(input: {
+export function uniCliWebCheckoutIdempotencyKey(input: {
   organizationId: string
   quantity: number
   previousSessionId?: string | null
@@ -768,16 +768,16 @@ export function uni-cliWebCheckoutIdempotencyKey(input: {
   return `uni-cli-web-checkout:${input.organizationId}:${input.quantity}:${input.previousSessionId ?? "initial"}`
 }
 
-function subscriptionHasConfiguredUni-CLIWebPrice(subscription: Stripe.Subscription) {
+function subscriptionHasConfiguredUniCliWebPrice(subscription: Stripe.Subscription) {
   const item = firstSubscriptionItem(subscription)
   return Boolean(
-    env.stripe.uni-cliWebPriceId
+    env.stripe.uniCliWebPriceId
     && typeof item?.price?.id === "string"
-    && item.price.id === env.stripe.uni-cliWebPriceId,
+    && item.price.id === env.stripe.uniCliWebPriceId,
   )
 }
 
-async function validateUni-CLIWebPrice(priceId: string) {
+async function validateUniCliWebPrice(priceId: string) {
   const price = await stripe().prices.retrieve(priceId)
   if (
     !price.active
@@ -794,7 +794,7 @@ async function validateUni-CLIWebPrice(priceId: string) {
   }
 }
 
-function checkoutSessionMatchesUni-CLIWeb(input: {
+function checkoutSessionMatchesUniCliWeb(input: {
   session: Stripe.Checkout.Session
   organizationId: string
 }) {
@@ -805,7 +805,7 @@ function checkoutSessionMatchesUni-CLIWeb(input: {
     && metadata.subscriptionType === WEB_SUBSCRIPTION_TYPE
 }
 
-async function createUni-CLIWebCheckoutSession(input: {
+async function createUniCliWebCheckoutSession(input: {
   organizationId: OrgId
   orgMemberId: MemberId
   email: string
@@ -815,7 +815,7 @@ async function createUni-CLIWebCheckoutSession(input: {
   successUrl: string
   cancelUrl: string
 }) {
-  await validateUni-CLIWebPrice(input.priceId)
+  await validateUniCliWebPrice(input.priceId)
   const quantity = await joinedMemberCount(input.organizationId)
   if (quantity < 1) {
     throw new Error("stripe_uni-cli_web_quantity_empty")
@@ -824,7 +824,7 @@ async function createUni-CLIWebCheckoutSession(input: {
   const storedWebSubscription = await findWebSubscriptionByOrg(input.organizationId)
   if (storedWebSubscription?.stripe_subscription_id) {
     const refreshedWebSubscription = await refreshOrgSubscriptionFromStripe(storedWebSubscription.stripe_subscription_id)
-    if (isOngoingConfiguredUni-CLIWebSubscriptionRow(refreshedWebSubscription)) {
+    if (isOngoingConfiguredUniCliWebSubscriptionRow(refreshedWebSubscription)) {
       throw new Error("stripe_uni-cli_web_subscription_exists")
     }
   }
@@ -849,8 +849,8 @@ async function createUni-CLIWebCheckoutSession(input: {
     const metadata = getSubscriptionMetadata(subscription)
     return metadata.organizationId === input.organizationId
       && metadata.subscriptionType === WEB_SUBSCRIPTION_TYPE
-      && isOngoingUni-CLIWebSubscriptionStatus(subscription.status)
-      && subscriptionHasConfiguredUni-CLIWebPrice(subscription)
+      && isOngoingUniCliWebSubscriptionStatus(subscription.status)
+      && subscriptionHasConfiguredUniCliWebPrice(subscription)
   })
   if (existingOngoingSubscription) {
     await upsertOrgSubscriptionFromStripe(existingOngoingSubscription)
@@ -861,7 +861,7 @@ async function createUni-CLIWebCheckoutSession(input: {
     customer,
     limit: 100,
   })
-  const latestMatchingSession = checkoutSessions.data.find((session) => checkoutSessionMatchesUni-CLIWeb({
+  const latestMatchingSession = checkoutSessions.data.find((session) => checkoutSessionMatchesUniCliWeb({
     session,
     organizationId: input.organizationId,
   }))
@@ -896,7 +896,7 @@ async function createUni-CLIWebCheckoutSession(input: {
       metadata: input.metadata,
     },
   }, {
-    idempotencyKey: uni-cliWebCheckoutIdempotencyKey({
+    idempotencyKey: uniCliWebCheckoutIdempotencyKey({
       organizationId: input.organizationId,
       quantity,
       previousSessionId: latestMatchingSession?.id,
@@ -935,7 +935,7 @@ export async function createOrgSubscriptionCheckoutSession(input: {
     await assertOrganizationManagedModelsAllowed(input.organizationId)
   }
   const priceId = requirePriceIdForSubscriptionType(input.subscriptionType)
-  const uni-cliProduct = input.subscriptionType === SEAT_SUBSCRIPTION_TYPE
+  const uniCliProduct = input.subscriptionType === SEAT_SUBSCRIPTION_TYPE
     ? "uni-cli_seats"
     : input.subscriptionType === WEB_SUBSCRIPTION_TYPE
       ? "uni-cli_web"
@@ -943,11 +943,11 @@ export async function createOrgSubscriptionCheckoutSession(input: {
   const metadata = {
     org_id: input.organizationId,
     created_by_org_member_id: input.orgMemberId,
-    uni-cli_product: uni-cliProduct,
+    uni-cli_product: uniCliProduct,
     subscription_type: input.subscriptionType,
   }
   if (input.subscriptionType === WEB_SUBSCRIPTION_TYPE) {
-    return createUni-CLIWebCheckoutSession({
+    return createUniCliWebCheckoutSession({
       organizationId: input.organizationId,
       orgMemberId: input.orgMemberId,
       email: input.email,
@@ -966,7 +966,7 @@ export async function createOrgSubscriptionCheckoutSession(input: {
     metadata: {
       org_id: input.organizationId,
       created_by_org_member_id: input.orgMemberId,
-      uni-cli_product: uni-cliProduct,
+      uni-cli_product: uniCliProduct,
     },
   })
 
@@ -1039,7 +1039,7 @@ export async function createSeatCheckoutSession(input: Omit<Parameters<typeof cr
   return createOrgSubscriptionCheckoutSession({ ...input, subscriptionType: SEAT_SUBSCRIPTION_TYPE })
 }
 
-export async function createUni-CLIWebCheckout(input: Omit<Parameters<typeof createOrgSubscriptionCheckoutSession>[0], "subscriptionType">) {
+export async function createUniCliWebCheckout(input: Omit<Parameters<typeof createOrgSubscriptionCheckoutSession>[0], "subscriptionType">) {
   return createOrgSubscriptionCheckoutSession({ ...input, subscriptionType: WEB_SUBSCRIPTION_TYPE })
 }
 
@@ -1065,7 +1065,7 @@ function serializeSubscription(row: Awaited<ReturnType<typeof findOrgSubscriptio
   return row ? {
     id: row.id,
     status: row.status,
-    paymentStatus: uni-cliWebPaymentStatus(row.status, row.payment_failed),
+    paymentStatus: uniCliWebPaymentStatus(row.status, row.payment_failed),
     stripeCustomerId: row.stripe_customer_id,
     stripeSubscriptionId: row.stripe_subscription_id,
     stripePriceId: row.stripe_price_id,
@@ -1078,10 +1078,10 @@ function serializeSubscription(row: Awaited<ReturnType<typeof findOrgSubscriptio
   } : null
 }
 
-function serializeUni-CLIWebSubscription(row: Awaited<ReturnType<typeof findWebSubscriptionByOrg>>) {
+function serializeUniCliWebSubscription(row: Awaited<ReturnType<typeof findWebSubscriptionByOrg>>) {
   return row ? {
     status: row.status,
-    paymentStatus: uni-cliWebPaymentStatus(row.status, row.payment_failed),
+    paymentStatus: uniCliWebPaymentStatus(row.status, row.payment_failed),
     quantity: row.quantity,
     currentPeriodStart: row.current_period_start?.toISOString() ?? null,
     currentPeriodEnd: row.current_period_end?.toISOString() ?? null,
@@ -1091,24 +1091,24 @@ function serializeUni-CLIWebSubscription(row: Awaited<ReturnType<typeof findWebS
   } : null
 }
 
-async function loadUni-CLIWebBillingSummary(organizationId: OrgId) {
+async function loadUniCliWebBillingSummary(organizationId: OrgId) {
   const [row, memberCount, complimentaryAccess] = await Promise.all([
     findWebSubscriptionByOrg(organizationId),
     joinedMemberCount(organizationId),
-    organizationUni-CLIWebComplimentaryAccess(organizationId),
+    organizationUniCliWebComplimentaryAccess(organizationId),
   ])
-  const billing = calculateUni-CLIWebBilling({ joinedMemberCount: memberCount })
-  const hasEligibleSubscription = isEligibleUni-CLIWebSubscriptionRow(row)
-  const access = resolveUni-CLIWebAccess({
-    deploymentAvailable: isUni-CLIWebAvailable(),
+  const billing = calculateUniCliWebBilling({ joinedMemberCount: memberCount })
+  const hasEligibleSubscription = isEligibleUniCliWebSubscriptionRow(row)
+  const access = resolveUniCliWebAccess({
+    deploymentAvailable: isUniCliWebAvailable(),
     hasEligibleSubscription,
     complimentaryAccess,
   })
   return {
     row,
     summary: {
-      configured: isUni-CLIWebAvailable()
-        && Boolean(env.stripe.secretKey && env.stripe.uni-cliWebPriceId),
+      configured: isUniCliWebAvailable()
+        && Boolean(env.stripe.secretKey && env.stripe.uniCliWebPriceId),
       unitAmount: UNICLI_WEB_UNIT_AMOUNT,
       currency: UNICLI_WEB_CURRENCY,
       interval: UNICLI_WEB_INTERVAL,
@@ -1118,36 +1118,36 @@ async function loadUni-CLIWebBillingSummary(organizationId: OrgId) {
       expectedMonthlyTotal: billing.expectedMonthlyTotal,
       hasEligibleSubscription,
       ...access,
-      subscription: serializeUni-CLIWebSubscription(row),
+      subscription: serializeUniCliWebSubscription(row),
     },
   }
 }
 
-export async function getUni-CLIWebAccess(organizationId: OrgId) {
+export async function getUniCliWebAccess(organizationId: OrgId) {
   const [row, complimentaryAccess] = await Promise.all([
     findWebSubscriptionByOrg(organizationId),
-    organizationUni-CLIWebComplimentaryAccess(organizationId),
+    organizationUniCliWebComplimentaryAccess(organizationId),
   ])
-  return resolveUni-CLIWebAccess({
-    deploymentAvailable: isUni-CLIWebAvailable(),
-    hasEligibleSubscription: isEligibleUni-CLIWebSubscriptionRow(row),
+  return resolveUniCliWebAccess({
+    deploymentAvailable: isUniCliWebAvailable(),
+    hasEligibleSubscription: isEligibleUniCliWebSubscriptionRow(row),
     complimentaryAccess,
   })
 }
 
-export async function getUni-CLIWebBillingSummary(organizationId: OrgId) {
-  return (await loadUni-CLIWebBillingSummary(organizationId)).summary
+export async function getUniCliWebBillingSummary(organizationId: OrgId) {
+  return (await loadUniCliWebBillingSummary(organizationId)).summary
 }
 
 export async function getOrgBillingSummary(input: { organizationId: OrgId; includePortalUrl?: boolean; returnUrl: string }) {
   const row = await findInferenceSubscriptionByOrg(input.organizationId)
   const seatRow = await findSeatSubscriptionByOrg(input.organizationId)
-  const webBillingState = await loadUni-CLIWebBillingSummary(input.organizationId)
+  const webBillingState = await loadUniCliWebBillingSummary(input.organizationId)
   const webRow = webBillingState.row
   const seatCounts = await getOrganizationSeatBillingCounts({ organizationId: input.organizationId })
   const hasActiveSubscription = Boolean(row && ACTIVE_STATUSES.has(row.status))
   const hasActiveSeatSubscription = Boolean(seatRow && ACTIVE_STATUSES.has(seatRow.status))
-  const hasEligibleWebSubscription = isEligibleUni-CLIWebSubscriptionRow(webRow)
+  const hasEligibleWebSubscription = isEligibleUniCliWebSubscriptionRow(webRow)
   let portalUrl: string | null = null
   if (input.includePortalUrl && (row?.stripe_customer_id || seatRow?.stripe_customer_id || webRow?.stripe_customer_id)) {
     try {
@@ -1182,7 +1182,7 @@ export async function getOrgBillingSummary(input: { organizationId: OrgId; inclu
       },
       web: {
         ...webBillingState.summary,
-        priceId: env.stripe.uni-cliWebPriceId ?? null,
+        priceId: env.stripe.uniCliWebPriceId ?? null,
         hasEligibleSubscription: hasEligibleWebSubscription,
         portalUrl,
         subscription: serializeSubscription(webRow),
@@ -1236,7 +1236,7 @@ export async function syncWebSubscriptionQuantityAfterMemberChange(input: { orga
   }
 
   const row = await findWebSubscriptionByOrg(input.organizationId)
-  if (!isEligibleUni-CLIWebSubscriptionRow(row) || !row?.stripe_subscription_item_id) {
+  if (!isEligibleUniCliWebSubscriptionRow(row) || !row?.stripe_subscription_item_id) {
     return
   }
 
@@ -1332,7 +1332,7 @@ export async function syncStripeCheckoutSession(input: { organizationId: OrgId; 
   const eventId = `checkout-session-sync:${session.id}`
   let row = await syncCurrentStripeSubscription(subscription.id, eventId)
   if (row?.type === WEB_SUBSCRIPTION_TYPE) {
-    row = await syncUni-CLIWebPaymentStateFromCurrentInvoice({
+    row = await syncUniCliWebPaymentStateFromCurrentInvoice({
       row,
       stripeSubscriptionId: subscription.id,
       eventId,
@@ -1365,7 +1365,7 @@ async function syncCurrentStripeSubscription(stripeSubscriptionId: string, event
     const existing = await findWebSubscriptionByOrg(metadata.organizationId as OrgId)
     if (existing?.stripe_subscription_id && existing.stripe_subscription_id !== subscription.id) {
       const refreshedExisting = await refreshOrgSubscriptionFromStripe(existing.stripe_subscription_id)
-      if (isOngoingConfiguredUni-CLIWebSubscriptionRow(refreshedExisting)) {
+      if (isOngoingConfiguredUniCliWebSubscriptionRow(refreshedExisting)) {
         return refreshedExisting
       }
     }
@@ -1374,7 +1374,7 @@ async function syncCurrentStripeSubscription(stripeSubscriptionId: string, event
   return upsertOrgSubscriptionFromStripe(subscription, eventId)
 }
 
-async function syncUni-CLIWebPaymentStateFromCurrentInvoice(input: {
+async function syncUniCliWebPaymentStateFromCurrentInvoice(input: {
   row: Awaited<ReturnType<typeof findOrgSubscriptionByStripeId>>
   stripeSubscriptionId: string
   eventId: string
@@ -1499,7 +1499,7 @@ export async function handleStripeWebhook(input: { payload: string; signature: s
         const subscription = await stripe().subscriptions.retrieve(session.subscription)
         let row = await syncCurrentStripeSubscription(subscription.id, event.id)
         if (row?.type === WEB_SUBSCRIPTION_TYPE) {
-          row = await syncUni-CLIWebPaymentStateFromCurrentInvoice({
+          row = await syncUniCliWebPaymentStateFromCurrentInvoice({
             row,
             stripeSubscriptionId: subscription.id,
             eventId: event.id,
@@ -1523,7 +1523,7 @@ export async function handleStripeWebhook(input: { payload: string; signature: s
         const subscription = await stripe().subscriptions.retrieve(session.subscription)
         let row = await syncCurrentStripeSubscription(subscription.id, event.id)
         if (row?.type === WEB_SUBSCRIPTION_TYPE) {
-          row = await syncUni-CLIWebPaymentStateFromCurrentInvoice({
+          row = await syncUniCliWebPaymentStateFromCurrentInvoice({
             row,
             stripeSubscriptionId: subscription.id,
             eventId: event.id,
@@ -1532,7 +1532,7 @@ export async function handleStripeWebhook(input: { payload: string; signature: s
         if (row?.type === INFERENCE_SUBSCRIPTION_TYPE && ACTIVE_STATUSES.has(subscriptionStatus(subscription.status))) {
           await activatePurchasedInference(row.organization_id)
         }
-        if (row?.type === WEB_SUBSCRIPTION_TYPE && isEligibleUni-CLIWebSubscriptionStatus(subscription.status)) {
+        if (row?.type === WEB_SUBSCRIPTION_TYPE && isEligibleUniCliWebSubscriptionStatus(subscription.status)) {
           await syncWebSubscriptionQuantityAfterMemberChange({
             organizationId: row.organization_id,
             memberCount: row.quantity,
@@ -1545,7 +1545,7 @@ export async function handleStripeWebhook(input: { payload: string; signature: s
     case "customer.subscription.updated":
     case "customer.subscription.deleted": {
       const row = await syncCurrentStripeSubscription((event.data.object as Stripe.Subscription).id, event.id)
-      if (row?.type === WEB_SUBSCRIPTION_TYPE && isEligibleUni-CLIWebSubscriptionStatus(row.status)) {
+      if (row?.type === WEB_SUBSCRIPTION_TYPE && isEligibleUniCliWebSubscriptionStatus(row.status)) {
         await syncWebSubscriptionQuantityAfterMemberChange({
           organizationId: row.organization_id,
           memberCount: row.quantity,
@@ -1560,7 +1560,7 @@ export async function handleStripeWebhook(input: { payload: string; signature: s
         eventType: event.type,
         eventId: event.id,
       })
-      if (row && isEligibleUni-CLIWebSubscriptionRow(row)) {
+      if (row && isEligibleUniCliWebSubscriptionRow(row)) {
         await syncWebSubscriptionQuantityAfterMemberChange({
           organizationId: row.organization_id,
           memberCount: row.quantity,

@@ -12,7 +12,7 @@ const fastMode = z.object({
 const reasoningEffort = z.enum(["none", "minimal", "low", "medium", "high", "xhigh", "max"]);
 const effortOption = z.object({ type: z.literal("effort"), values: z.array(reasoningEffort) }).strict();
 const fastMetadata = z.object({
-  disabled: z.literal(true), uni-cliNativeFast: z.literal(1), reasoningEfforts: z.array(reasoningEffort).optional(),
+  disabled: z.literal(true), uniCliNativeFast: z.literal(1), reasoningEfforts: z.array(reasoningEffort).optional(),
 }).strict();
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -37,7 +37,7 @@ export function catalogFastVariants(config: Record<string, unknown>, providerNpm
     return parsed.success ? parsed.data.values : [];
   }))];
   return { ...variants, [CATALOG_FAST_VARIANT]: {
-    disabled: true, uni-cliNativeFast: 1,
+    disabled: true, uniCliNativeFast: 1,
     ...(reasoningEfforts.length > 0 ? { reasoningEfforts } : {}),
   } };
 }

@@ -1,7 +1,7 @@
 import { platform } from "node:os";
 import { chmod, readFile, rename, rm, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
-import { uni-cliEnvStorePath } from "@uni-cli/paths";
+import { uniCliEnvStorePath } from "@uni-cli/paths";
 
 import { ensureDir, exists } from "./utils.js";
 
@@ -52,7 +52,7 @@ function isInternalEnvKey(key: string): boolean {
 }
 
 export function resolveDefaultEnvStorePath(): string {
-  return uni-cliEnvStorePath();
+  return uniCliEnvStorePath();
 }
 
 function parseRecord(raw: unknown): EnvRecord | null {

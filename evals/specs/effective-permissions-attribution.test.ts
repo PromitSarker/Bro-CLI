@@ -14,7 +14,7 @@ import {
   summarizeEffectivePermissions,
   type EffectivePermissionRow,
 } from "../../apps/server/src/effective-permissions.js";
-import { builduni-cliRuntimeConfigObjectFromSnapshot } from "../../apps/server/src/uni-cli-runtime-config.js";
+import { builduniCliRuntimeConfigObjectFromSnapshot } from "../../apps/server/src/uni-cli-runtime-config.js";
 import type { RuntimeOpencodeConfig } from "../../apps/server/src/runtime-opencode-config-store.js";
 
 /**
@@ -90,7 +90,7 @@ async function bootEngine(input: EngineInput): Promise<BootedEngine> {
   await Promise.all([mkdir(workspace, { recursive: true }), mkdir(home, { recursive: true }), mkdir(join(xdg, "config", "opencode"), { recursive: true })]);
 
   // Plugins would pull packages at boot and do not affect permission rules.
-  const { plugin: _plugin, ...injected } = builduni-cliRuntimeConfigObjectFromSnapshot(input.runtime);
+  const { plugin: _plugin, ...injected } = builduniCliRuntimeConfigObjectFromSnapshot(input.runtime);
   const injectedPath = join(root, "runtime-opencode-config.json");
   await writeFile(injectedPath, JSON.stringify(stableJson(injected)), "utf8");
   await writeFile(join(xdg, "config", "opencode", "opencode.json"), JSON.stringify(input.globalConfig ?? {}), "utf8");

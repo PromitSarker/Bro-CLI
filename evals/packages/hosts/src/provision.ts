@@ -1097,7 +1097,7 @@ async function previewUrl(exec: DaytonaExec, sandbox: string, port: number): Pro
 
 async function proveDenSeed(apiUrl: string, webUrl: string, sandbox: string, reused: boolean): Promise<void> {
   const email = process.env.UNICLI_EVAL_DEMO_EMAIL?.trim() || "alex@acme.test";
-  const password = process.env.UNICLI_EVAL_DEMO_PASSWORD ?? "Uni-CLIDemo123!";
+  const password = process.env.UNICLI_EVAL_DEMO_PASSWORD ?? "UniCliDemo123!";
   const url = `${apiUrl.replace(/\/+$/, "")}/api/auth/sign-in/email`;
   // A freshly-booted stack was observed answering public sign-in with bare
   // 403s for its first ~minute, then recovering on its own — so the window is

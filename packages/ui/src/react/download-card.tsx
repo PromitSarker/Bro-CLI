@@ -312,7 +312,7 @@ function groupsForInstallers(installers: DownloadCardInstallers): DownloadPlatfo
   ]
 }
 
-export function DownloadUni-CLICard({
+export function DownloadUniCliCard({
   installers,
   releaseTag,
   compact = false,

@@ -32,19 +32,19 @@ import { sendSessionCommand, sessionWorkHeld } from "@/app/lib/opencode-interrup
 import { useSessionManagementStore as sessionManagementStore } from "@/react-app/domains/session/sidebar/session-management-store";
 import { getSessionDescendantIds } from "@/react-app/domains/session/sidebar/utils";
 import {
-  builduni-cliWorkspaceBaseUrl,
-  readuni-cliServerSettings,
+  builduniCliWorkspaceBaseUrl,
+  readuniCliServerSettings,
 } from "@/app/lib/uni-cli-server";
 import {
   resolveWorkspaceEndpoint,
   workspaceServerId,
   type ResolvedWorkspaceEndpoint,
 } from "@/app/lib/workspace-endpoint";
-import { builduni-cliEnvRuntimeKey } from "@/app/lib/uni-cli-env-runtime";
+import { builduniCliEnvRuntimeKey } from "@/app/lib/uni-cli-env-runtime";
 import {
   getDesktopHomeDir,
   joinDesktopPath,
-  uni-cliServerInfo,
+  uniCliServerInfo,
   revealDesktopItemInDir,
   pickDirectory,
   resolveWorkspaceListSelectedId,
@@ -53,7 +53,7 @@ import {
   workspaceForget,
   workspaceSetRuntimeActive,
   workspaceSetSelected,
-  type uni-cliServerInfo,
+  type uniCliServerInfo,
   type WorkspaceInfo,
   type WorkspaceList,
 } from "@/app/lib/desktop";
@@ -133,7 +133,7 @@ import { useRestrictionNotice } from "@/react-app/domains/cloud/restriction-noti
 import { ReactSessionRuntime } from "@/react-app/domains/session/sync/runtime-sync";
 import { createSessionChildIdsSelector, useSessionActivityStore } from "@/react-app/domains/session/status/session-activity-store";
 import { createWorkspaceSessionAttentionSelector, sessionAttentionLabel, sessionAttentionSidebarStatus } from "@/react-app/domains/session/status/session-attention";
-import { builduni-cliSessionSystemContext } from "@/react-app/domains/session/sync/env-context";
+import { builduniCliSessionSystemContext } from "@/react-app/domains/session/sync/env-context";
 import {
   applySessionRevert,
   applySessionUnrevert,
@@ -205,8 +205,8 @@ import { RenameWorkspaceModal } from "@/react-app/domains/workspace/rename-works
 import { useRemoteWorkspaceConnectionEditor } from "@/react-app/domains/workspace/use-remote-workspace-connection-editor";
 import { useDenAuth } from "@/react-app/domains/cloud/den-auth-provider";
 import {
-  hasUni-CLIModelsAvailable,
-  shouldShowUni-CLIModelsSyncing,
+  hasUniCliModelsAvailable,
+  shouldShowUniCliModelsSyncing,
 } from "@/react-app/domains/cloud/uni-cli-models-promo";
 import {
   diagnoseRemoteWorkspaceTaskLoadFailure,
@@ -247,7 +247,7 @@ import {
   persistableComposerDraftText,
   useComposerStateStore,
 } from "@/react-app/domains/session/surface/composer-state-store";
-import { useControlAction, type uni-cliControlAction } from "./control/control-provider";
+import { useControlAction, type uniCliControlAction } from "./control/control-provider";
 import { useReactRenderWatchdog } from "./react-render-watchdog";
 import { useBootOverlayVisible } from "./boot-state";
 
@@ -260,8 +260,8 @@ import {
 import { denSessionUpdatedEvent, denSettingsChangedEvent } from "@/app/lib/den-session-events";
 
 import { filterProviderList } from "@/app/utils/providers";
-import { ensureDesktopLocaluni-cliConnection } from "./desktop-local-uni-cli";
-import { resolveuni-cliConnection } from "./uni-cli-connection";
+import { ensureDesktopLocaluniCliConnection } from "./desktop-local-uni-cli";
+import { resolveuniCliConnection } from "./uni-cli-connection";
 import { useReloadCoordinator } from "./reload-coordinator";
 import { useShellConfig } from "./shell-config";
 import { useShellShortcuts } from "./use-shell-shortcuts";
@@ -497,8 +497,8 @@ export function SessionRoute() {
   const checkDesktopRestriction = useCheckDesktopRestriction();
   const restrictionNotice = useRestrictionNotice();
   const [activeOrganizationRole, setActiveOrganizationRole] = useState<DenOrgRole | null>(null);
-  const [uni-cliServerHostInfoState, setuni-cliServerHostInfoState] = useState<uni-cliServerInfo | null>(null);
-  const [uni-cliServerSettingsVersion, setuni-cliServerSettingsVersion] = useState(0);
+  const [uniCliServerHostInfoState, setuniCliServerHostInfoState] = useState<uniCliServerInfo | null>(null);
+  const [uniCliServerSettingsVersion, setuniCliServerSettingsVersion] = useState(0);
 
   const [developerMode, setDeveloperMode] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -560,8 +560,8 @@ export function SessionRoute() {
     preservePendingConversationRoute: Boolean(requestedPendingId && pendingConversations[requestedPendingId]?.scope === sessionDraftScope),
     developerMode,
     workspaceRoute: activityRouteActive ? "activity" : appsRouteActive ? "apps" : automationsRouteActive ? "automations" : dashboardWorkspaceRoute ? "dashboard" : "session",
-    onServerSettingsChanged: () => setuni-cliServerSettingsVersion((value) => value + 1),
-    onHostInfo: setuni-cliServerHostInfoState,
+    onServerSettingsChanged: () => setuniCliServerSettingsVersion((value) => value + 1),
+    onHostInfo: setuniCliServerHostInfoState,
   });
   const modelProfileId = useWorkspaceModelProfile();
   const workspaceDefaultScope = workspaceModelScope({ profileId: modelProfileId,
@@ -569,7 +569,7 @@ export function SessionRoute() {
   const workspaceDefault = useWorkspaceDefaultModel(workspaceDefaultScope);
   const configuredNewTaskModel = workspaceDefault?.model ?? local.prefs.defaultModel;
   // This route creates the provider below; use its same scope when choosing a new-task default.
-  const autoAccessWorkspace = { uni-cliServerClient: selectedWorkspaceEndpoint?.client ?? null,
+  const autoAccessWorkspace = { uniCliServerClient: selectedWorkspaceEndpoint?.client ?? null,
     workspaceId: selectedWorkspaceEndpoint?.workspaceId ?? "" };
   const observedAutoSnapshot = useObservedAutoAccessSnapshot(autoAccessWorkspace);
   const observedAutoStatus = observedAutoSnapshot?.status === "success" ? observedAutoSnapshot.data : undefined;
@@ -749,9 +749,9 @@ export function SessionRoute() {
   // options for whichever model is currently selected so the composer's
   // behavior pill actually shows its options (bug: was empty before).
 
-  const uni-cliServerSettings = useMemo(
-    () => readuni-cliServerSettings(),
-    [uni-cliServerSettingsVersion],
+  const uniCliServerSettings = useMemo(
+    () => readuniCliServerSettings(),
+    [uniCliServerSettingsVersion],
   );
 
   const activeReloadBlockingSessions = useMemo(
@@ -789,9 +789,9 @@ export function SessionRoute() {
     [selectedInteractionSessionIds, selectedWorkspaceId, sessionsByWorkspaceId],
   );
   const remoteAccessRestart = useRemoteAccessRestart({
-    isEnabled: () => uni-cliServerSettings.remoteAccessEnabled === true,
-    onHostInfo: setuni-cliServerHostInfoState,
-    onSettingsChanged: () => setuni-cliServerSettingsVersion((value) => value + 1),
+    isEnabled: () => uniCliServerSettings.remoteAccessEnabled === true,
+    onHostInfo: setuniCliServerHostInfoState,
+    onSettingsChanged: () => setuniCliServerSettingsVersion((value) => value + 1),
   });
 
   useEffect(() => {
@@ -804,8 +804,8 @@ export function SessionRoute() {
       if (checking || document.visibilityState !== "visible") return;
       checking = true;
       try {
-        const info = await uni-cliServerInfo();
-        if (cancelled || !info.running || info.generation === uni-cliServerHostInfoState?.generation) return;
+        const info = await uniCliServerInfo();
+        if (cancelled || !info.running || info.generation === uniCliServerHostInfoState?.generation) return;
         await refreshRouteState({ supersede: true });
       } catch {
         // The next probe can recover a temporarily unavailable desktop bridge.
@@ -817,7 +817,7 @@ export function SessionRoute() {
       cancelled = true;
       window.clearInterval(interval);
     };
-  }, [uni-cliServerHostInfoState?.generation, refreshRouteState, selectedWorkspace?.workspaceType]);
+  }, [uniCliServerHostInfoState?.generation, refreshRouteState, selectedWorkspace?.workspaceType]);
 
   const { engineReloadVersion, routeEngineInfo, reloadWorkspaceEngineFromUi } = useEngineReload({
     client,
@@ -831,12 +831,12 @@ export function SessionRoute() {
   });
 
   const environmentRuntimeKey = useMemo(
-    () => builduni-cliEnvRuntimeKey({
+    () => builduniCliEnvRuntimeKey({
       baseUrl: client?.baseUrl ?? null,
-      pid: uni-cliServerHostInfoState?.pid ?? null,
-      port: uni-cliServerHostInfoState?.port ?? null,
+      pid: uniCliServerHostInfoState?.pid ?? null,
+      port: uniCliServerHostInfoState?.port ?? null,
     }),
-    [client?.baseUrl, uni-cliServerHostInfoState?.pid, uni-cliServerHostInfoState?.port],
+    [client?.baseUrl, uniCliServerHostInfoState?.pid, uniCliServerHostInfoState?.port],
   );
 
   const handleApplyEnvironmentChanges = useCallback(async () => {
@@ -857,8 +857,8 @@ export function SessionRoute() {
 
   const shareWorkspaceState = useShareWorkspaceState({
     workspaces,
-    uni-cliServerHostInfo: uni-cliServerHostInfoState,
-    uni-cliServerSettings,
+    uniCliServerHostInfo: uniCliServerHostInfoState,
+    uniCliServerSettings,
     engineInfo: routeEngineInfo,
     exportWorkspaceBusy: false,
     openLink: (url) => platform.openLink(url),
@@ -1018,8 +1018,8 @@ export function SessionRoute() {
     selectedWorkspaceEndpoint,
     selectedWorkspaceRoot,
     selectedWorkspaceId,
-    localServerHostToken: uni-cliServerHostInfoState?.hostToken?.trim() ?? "",
-    localServerGeneration: uni-cliServerHostInfoState?.generation ?? null,
+    localServerHostToken: uniCliServerHostInfoState?.hostToken?.trim() ?? "",
+    localServerGeneration: uniCliServerHostInfoState?.generation ?? null,
     setProviders,
     setProviderDefaults,
     setProviderConnectedIds,
@@ -1065,7 +1065,7 @@ export function SessionRoute() {
   const handleModelPickerOpen = useCallback(() => {
     void refreshCloudProviderSync("model_picker_open");
   }, [refreshCloudProviderSync]);
-  const uni-cliModelsEntitled = useMemo(() => {
+  const uniCliModelsEntitled = useMemo(() => {
     if (!denAuth.isSignedIn) return false;
     const fromOrg = sessionProviderAuthSnapshot.cloudOrgProviders.some(
       (provider) =>
@@ -1183,13 +1183,13 @@ export function SessionRoute() {
       if (auto) local.setPrefs((previous) => ({ ...previous, defaultModel: auto, modelVariant: null }));
     } catch {}
   }, [initialAutoAccess.isPending, initialAutoAccess.fetchStatus, initialAutoAccess.data, cloudProviderList, providerListQuery.data, loading, selectedSessionId, sessionsByWorkspaceId, workspaceSessionGroups, local, workspaceDefault]);
-  const uni-cliModelsAvailable = hasUni-CLIModelsAvailable({
+  const uniCliModelsAvailable = hasUniCliModelsAvailable({
     providerConnectedIds,
     providers,
   });
-  const uni-cliModelsSyncing = shouldShowUni-CLIModelsSyncing({
-    entitled: uni-cliModelsEntitled,
-    available: uni-cliModelsAvailable,
+  const uniCliModelsSyncing = shouldShowUniCliModelsSyncing({
+    entitled: uniCliModelsEntitled,
+    available: uniCliModelsAvailable,
     workspaceReady: Boolean(selectedWorkspaceId && opencodeClient),
     reloadPending: sessionProviderAuthSnapshot.cloudProviderServerSync?.reloadPending === true,
   });
@@ -1283,7 +1283,7 @@ export function SessionRoute() {
       loading,
       signedIn: denAuth.isSignedIn,
       cloudProviderSyncReady,
-      uni-cliModelsSyncing,
+      uniCliModelsSyncing,
       restrictToCloud: restrictToCloudProviders,
       checkRestriction: checkDesktopRestriction,
       cloudProviderList,
@@ -1298,7 +1298,7 @@ export function SessionRoute() {
     loading,
     modelAvailabilityGate,
     opencodeClient,
-    uni-cliModelsSyncing,
+    uniCliModelsSyncing,
     providerListQuery.data,
     restrictToCloudProviders,
     selectedWorkspaceId,
@@ -1443,7 +1443,7 @@ export function SessionRoute() {
       try {
         disabledProviders = await readManagedDisabledProviders({
           opencodeClient,
-          uni-cliClient: disabledProvidersEndpointClient,
+          uniCliClient: disabledProvidersEndpointClient,
           workspaceId: disabledProvidersWorkspaceId,
           workspaceType: disabledProvidersWorkspaceType,
           directory: selectedWorkspaceRoot || undefined,
@@ -1553,7 +1553,7 @@ export function SessionRoute() {
     }
 
     // Note: do NOT include `client`, `workspaceId`, `sessionId`,
-    // `opencodeBaseUrl`, or `uni-cliToken` here. SessionPage forwards those
+    // `opencodeBaseUrl`, or `uniCliToken` here. SessionPage forwards those
     // explicitly to SessionSurface from the per-workspace endpoint resolved
     // by `resolveWorkspaceEndpoint`. If we leak them in here, the spread of
     // `surfaceProps` in SessionPage overrides those correct values with the
@@ -1581,8 +1581,8 @@ export function SessionRoute() {
       resolveModelAvailability,
       organizationModelsEmpty,
       selectedModel: local.prefs.defaultModel ?? { providerID: "", modelID: "" },
-      uni-cliModelsEntitled,
-      uni-cliModelsSyncing,
+      uniCliModelsEntitled,
+      uniCliModelsSyncing,
       onRefreshOrganizationModels: refreshOrganizationModelAccess,
       onModelPickerOpenChange: (open: boolean) => {
         modelPicker.setCompactOpen(open);
@@ -1713,7 +1713,7 @@ export function SessionRoute() {
 
                   const parts = await draftToParts(draft, selectedWorkspaceRoot, targetSessionId, selectedWorkspaceEndpoint);
                   assertCurrent();
-                  const system = await builduni-cliSessionSystemContext(client, {
+                  const system = await builduniCliSessionSystemContext(client, {
                     workspaceId: selectedWorkspaceId,
                     cacheKey: targetSessionId,
                     runtimeKey: environmentRuntimeKey,
@@ -1881,8 +1881,8 @@ export function SessionRoute() {
     providerCatalog,
     gatewayProviderIds,
     sessionProviderAuthSnapshot.gatewayUsageProviderScope,
-    uni-cliModelsEntitled,
-    uni-cliModelsSyncing,
+    uniCliModelsEntitled,
+    uniCliModelsSyncing,
     refreshCloudProviderSync,
     refreshOrganizationModelAccess,
     resolveModelAvailability,
@@ -1929,7 +1929,7 @@ export function SessionRoute() {
         workspaceType: paneEndpoint.workspaceType,
         runtimeWorkspaceId: endpoint.workspaceId,
         opencodeBaseUrl: endpoint.opencodeBaseUrl,
-        uni-cliToken: endpoint.token,
+        uniCliToken: endpoint.token,
         client: endpoint.client,
         environmentClient: client,
         surface: surfaceProps,
@@ -2075,7 +2075,7 @@ export function SessionRoute() {
                   }
                   const parts = await draftToParts(draft, workspaceRoot, targetSessionId, endpoint);
                   assertCurrent();
-                  const system = await builduni-cliSessionSystemContext(endpoint.client, {
+                  const system = await builduniCliSessionSystemContext(endpoint.client, {
                     workspaceId: workspace.id,
                     cacheKey: targetSessionId,
                     runtimeKey: workspace.workspaceType === "remote" ? null : environmentRuntimeKey,
@@ -2172,7 +2172,7 @@ export function SessionRoute() {
       workspaceType: paneEndpoint.workspaceType,
       runtimeWorkspaceId: endpoint.workspaceId,
       opencodeBaseUrl: endpoint.opencodeBaseUrl,
-      uni-cliToken: endpoint.token,
+      uniCliToken: endpoint.token,
       client: endpoint.client,
       environmentClient: client,
       surface: scopedSurface,
@@ -2311,8 +2311,8 @@ export function SessionRoute() {
           : newTaskModel?.providerID === model.providerID && newTaskModel.modelID === model.modelID ? newTaskVariant : null);
         modelPicker.setCompactOpen(false);
       },
-      uni-cliModelsEntitled,
-      uni-cliModelsSyncing,
+      uniCliModelsEntitled,
+      uniCliModelsSyncing,
       modelVariantLabel: newTaskBehavior.label,
       modelVariant: newTaskBehavior.value,
       modelBehaviorOptions: newTaskBehavior.options,
@@ -2363,8 +2363,8 @@ export function SessionRoute() {
     resolveModelAvailability,
     modelPicker,
     opencodeClient,
-    uni-cliModelsEntitled,
-    uni-cliModelsSyncing,
+    uniCliModelsEntitled,
+    uniCliModelsSyncing,
     organizationAssignedModelOptions,
     organizationModelsEmpty,
     refreshCloudProviderSync,
@@ -2713,7 +2713,7 @@ export function SessionRoute() {
     return options.find((option) => option.value === next)?.label ?? next;
   }, [changeNewTaskModel, newTaskModel, newTaskBehavior.options, newTaskVariant, providerCatalog, selectedSessionId]);
 
-  const cycleThinkingModeControlAction = useMemo<uni-cliControlAction>(() => ({
+  const cycleThinkingModeControlAction = useMemo<uniCliControlAction>(() => ({
     id: "session.model_variant.cycle",
     label: "Cycle thinking mode",
     description: "Advance the focused conversation to its next available thinking or reasoning effort.",
@@ -2726,7 +2726,7 @@ export function SessionRoute() {
   useControlAction(cycleThinkingModeControlAction);
 
   const gatewayWorkbenchScope = useWorkbenchStore((state) => JSON.stringify([state.focusedPane, state.secondary?.workspaceId, state.secondary?.sessionId]));
-  const gatewayProviderScopeKey = JSON.stringify([selectedWorkspaceId, selectedWorkspaceRoot, opencodeBaseUrl, selectedWorkspaceEndpoint?.baseUrl, selectedWorkspaceEndpoint?.workspaceId, uni-cliServerHostInfoState?.generation, denSessionVersion]);
+  const gatewayProviderScopeKey = JSON.stringify([selectedWorkspaceId, selectedWorkspaceRoot, opencodeBaseUrl, selectedWorkspaceEndpoint?.baseUrl, selectedWorkspaceEndpoint?.workspaceId, uniCliServerHostInfoState?.generation, denSessionVersion]);
   const favoriteModelScope = useRef({ workspaceId: selectedWorkspaceId, sessionId: selectedSessionId, providerScopeKey: gatewayProviderScopeKey });
   favoriteModelScope.current = { workspaceId: selectedWorkspaceId, sessionId: selectedSessionId, providerScopeKey: gatewayProviderScopeKey };
   // Shortcut model switching: the next pinned model, or the first model from the next source.
@@ -2758,7 +2758,7 @@ export function SessionRoute() {
     return needsSignIn ? null : label;
   }, [local.prefs.defaultModel, newTaskModel, newTaskVariant, changeNewTaskModel, modelVariantValue, modelPicker.actionOptions]);
 
-  const cycleFavoriteModelControlAction = useMemo<uni-cliControlAction>(() => ({
+  const cycleFavoriteModelControlAction = useMemo<uniCliControlAction>(() => ({
     id: "session.favorite_model.cycle",
     label: "Next pinned model",
     description: "Switch the focused conversation to its next accessible pinned model.",
@@ -2843,7 +2843,7 @@ export function SessionRoute() {
     return decision.fastOn ? "Fast on" : "Fast off";
   }, [local, modelBehaviorOptions, modelVariantValue, providerCatalog, newTaskModel, newTaskVariant, newTaskBehavior.options, changeNewTaskModel]);
 
-  const toggleFastModeControlAction = useMemo<uni-cliControlAction>(() => ({
+  const toggleFastModeControlAction = useMemo<uniCliControlAction>(() => ({
     id: "session.fast_mode.toggle",
     label: "Toggle Fast",
     description: "Turn Fast on or off for the focused conversation's model, keeping its reasoning level.",
@@ -2932,7 +2932,7 @@ export function SessionRoute() {
     selectedWorkspaceRoot,
     selectedSessionId,
     canCreateTask,
-    uni-cliClient: client,
+    uniCliClient: client,
     opencodeClient,
     archiveDisabledReason,
     endpointForWorkspace,
@@ -2947,7 +2947,7 @@ export function SessionRoute() {
     archiveSession,
   });
 
-  const seedUnavailableModelControlAction = useMemo<uni-cliControlAction | null>(() => {
+  const seedUnavailableModelControlAction = useMemo<uniCliControlAction | null>(() => {
     if (!import.meta.env.DEV) return null;
     return {
       id: "eval.model_not_available.seed",
@@ -3016,7 +3016,7 @@ export function SessionRoute() {
   }, [checkDesktopRestriction, disabledProviderIds, local, modelPicker.setQuery, modelPicker.setRecentProviderIds, opencodeBaseUrl, opencodeClient, selectedSessionId, selectedWorkspaceId, selectedWorkspaceRoot]);
   useControlAction(seedUnavailableModelControlAction);
 
-  const seedActiveSessionSidebarControlAction = useMemo<uni-cliControlAction | null>(() => {
+  const seedActiveSessionSidebarControlAction = useMemo<uniCliControlAction | null>(() => {
     if (!import.meta.env.DEV) return null;
     return {
       id: "eval.session_sidebar.seed_active",
@@ -3035,7 +3035,7 @@ export function SessionRoute() {
   }, [selectedSessionId, selectedWorkspaceId]);
   useControlAction(seedActiveSessionSidebarControlAction);
 
-  const seedChildPermissionControlAction = useMemo<uni-cliControlAction | null>(() => {
+  const seedChildPermissionControlAction = useMemo<uniCliControlAction | null>(() => {
     if (!import.meta.env.DEV) return null;
     return {
       id: "eval.child_permission.seed",
@@ -3103,7 +3103,7 @@ export function SessionRoute() {
   }, [rememberPendingCreatedSession, selectedSessionId, selectedWorkspaceEndpoint?.workspaceId, selectedWorkspaceId, sessionsByWorkspaceId, setSessionsByWorkspaceId]);
   useControlAction(seedChildPermissionControlAction);
 
-  const commandPaletteControlAction = useMemo<uni-cliControlAction>(() => ({
+  const commandPaletteControlAction = useMemo<uniCliControlAction>(() => ({
     id: "command_palette.open",
     label: "Open the command palette",
     description: "Open the in-app command palette so the next choice is visible.",
@@ -3113,7 +3113,7 @@ export function SessionRoute() {
   }), []);
   useControlAction(commandPaletteControlAction);
 
-  const addProviderControlAction = useMemo<uni-cliControlAction>(() => ({
+  const addProviderControlAction = useMemo<uniCliControlAction>(() => ({
     id: "settings.provider.add",
     label: "Add a model provider",
     description: "Open the provider connection modal, optionally pre-filtered to a specific provider.",
@@ -3342,9 +3342,9 @@ export function SessionRoute() {
     canReloadWorkspace: reloadCoordinator.canReloadWorkspaceEngine,
     clientConnected: canCreateTask,
     developerMode,
-    hostInfo: uni-cliServerHostInfoState,
-    uni-cliServerStatus: client ? "connected" : "disconnected",
-    uni-cliServerUrl: baseUrl,
+    hostInfo: uniCliServerHostInfoState,
+    uniCliServerStatus: client ? "connected" : "disconnected",
+    uniCliServerUrl: baseUrl,
     runtimeWorkspaceId: selectedWorkspaceEndpoint?.workspaceId ?? null,
   }), [
     activeReloadBlockingSessions.length,
@@ -3352,7 +3352,7 @@ export function SessionRoute() {
     canCreateTask,
     client,
     developerMode,
-    uni-cliServerHostInfoState,
+    uniCliServerHostInfoState,
     reloadCoordinator.canReloadWorkspaceEngine,
     selectedWorkspaceEndpoint?.workspaceId,
   ]);
@@ -3512,14 +3512,14 @@ export function SessionRoute() {
       let sessionBaseUrl = baseUrl;
       let sessionToken = token;
       if (targetWorkspace && isDesktopRuntime()) {
-        await ensureDesktopLocaluni-cliConnection({
+        await ensureDesktopLocaluniCliConnection({
           route: "session",
           workspace: targetWorkspace,
           allWorkspaces: list.workspaces,
         }).catch(() => undefined);
         // The engine boot can restart the server with fresh tokens; re-resolve
         // so the first-session creation below doesn't use stale credentials.
-        const fresh = await resolveuni-cliConnection().catch(() => null);
+        const fresh = await resolveuniCliConnection().catch(() => null);
         if (fresh?.normalizedBaseUrl && fresh.resolvedToken) {
           sessionBaseUrl = fresh.normalizedBaseUrl;
           sessionToken = fresh.resolvedToken;
@@ -3545,7 +3545,7 @@ export function SessionRoute() {
         // its supplied prompt; ordinary creation lands on the New task state.
         const session = createdOnServer && sessionBaseUrl && sessionToken && (firstTaskPrompt || firstTaskAttachments.length > 0)
           ? await createClient(
-              `${(builduni-cliWorkspaceBaseUrl(sessionBaseUrl, targetWorkspaceId) ?? sessionBaseUrl).replace(/\/+$/, "")}/opencode`,
+              `${(builduniCliWorkspaceBaseUrl(sessionBaseUrl, targetWorkspaceId) ?? sessionBaseUrl).replace(/\/+$/, "")}/opencode`,
               workspacePath || undefined,
               { token: sessionToken, mode: "uni-cli" },
             ).session.create({ directory: workspacePath || undefined })
@@ -3639,7 +3639,7 @@ export function SessionRoute() {
     });
   }, [endpointForWorkspace, handleCreateWorkspace, handleOpenCreateWorkspace, navigate, newTaskAgent, publishCreatedConversation, sessionDraftScope, workspacesRef]);
 
-  const createWorkspaceControlAction = useMemo<uni-cliControlAction>(() => ({
+  const createWorkspaceControlAction = useMemo<uniCliControlAction>(() => ({
     id: "workspace.create",
     label: "Create a local workspace",
     description: "Create a workspace at the given folder path without showing the file picker dialog, optionally labeling its project for analytics.",
@@ -3664,7 +3664,7 @@ export function SessionRoute() {
   // Sessions created outside this window (server-side session.create, other
   // clients) never reach a non-selected workspace's cached list, so callers
   // that create them ask the sidebar to refetch that one workspace.
-  const reloadWorkspaceSessionsControlAction = useMemo<uni-cliControlAction>(() => ({
+  const reloadWorkspaceSessionsControlAction = useMemo<uniCliControlAction>(() => ({
     id: "workspace.reload_sessions",
     label: "Reload a workspace's sessions",
     description: "Refetch the session list of one workspace so sessions created outside this window appear in the sidebar.",
@@ -3687,12 +3687,12 @@ export function SessionRoute() {
   useControlAction(reloadWorkspaceSessionsControlAction);
 
   const handleCreateRemoteWorkspace = useCallback(async (input: {
-    uni-cliHostUrl?: string | null;
-    uni-cliToken?: string | null;
+    uniCliHostUrl?: string | null;
+    uniCliToken?: string | null;
     directory?: string | null;
     displayName?: string | null;
   }) => {
-    const baseUrlValue = input.uni-cliHostUrl?.trim() ?? "";
+    const baseUrlValue = input.uniCliHostUrl?.trim() ?? "";
     if (!baseUrlValue) return false;
     setCreateWorkspaceRemoteBusy(true);
     setCreateWorkspaceRemoteError(null);
@@ -3700,8 +3700,8 @@ export function SessionRoute() {
       const remoteType: "uni-cli" = "uni-cli";
       const payload = {
         baseUrl: baseUrlValue,
-        uni-cliHostUrl: baseUrlValue,
-        uni-cliToken: input.uni-cliToken?.trim() || null,
+        uniCliHostUrl: baseUrlValue,
+        uniCliToken: input.uniCliToken?.trim() || null,
         displayName: input.displayName?.trim() || null,
         directory: input.directory?.trim() || null,
         remoteType,
@@ -3744,7 +3744,7 @@ export function SessionRoute() {
     <WorkspaceProvider
       client={opencodeClient}
       opencodeBaseUrl={opencodeBaseUrl}
-      uni-cliServerClient={selectedWorkspaceEndpoint?.client ?? null}
+      uniCliServerClient={selectedWorkspaceEndpoint?.client ?? null}
       workspaceId={selectedWorkspaceEndpoint?.workspaceId ?? ""}
       selectedWorkspaceRoot={selectedWorkspaceRoot}
     >
@@ -3765,7 +3765,7 @@ export function SessionRoute() {
         sessionId={selectedSessionId}
         activeSessionIds={activeSelectedWorkspaceSessionIds}
         opencodeBaseUrl={opencodeBaseUrl}
-        uni-cliToken={selectedWorkspaceServerToken}
+        uniCliToken={selectedWorkspaceServerToken}
         onSessionCreated={handleRuntimeSessionCreated}
         onSessionUpdated={handleRuntimeSessionUpdated}
         onSessionDeleted={handleRuntimeSessionDeleted}
@@ -3790,10 +3790,10 @@ export function SessionRoute() {
       opencodeBaseUrl={opencodeBaseUrl}
       workspaces={workspaces}
       clientConnected={canCreateTask}
-      uni-cliServerStatus={client ? "connected" : "disconnected"}
-      uni-cliServerClient={selectedWorkspaceEndpoint?.client ?? client}
+      uniCliServerStatus={client ? "connected" : "disconnected"}
+      uniCliServerClient={selectedWorkspaceEndpoint?.client ?? client}
       environmentClient={client}
-      uni-cliServerToken={selectedWorkspaceServerToken}
+      uniCliServerToken={selectedWorkspaceServerToken}
       developerMode={developerMode}
       headerStatus={
         canCreateTask || (activeComposerTargetsSession && !selectedWorkspaceError && activeComposerAvailability.status === "available")
@@ -3872,7 +3872,7 @@ export function SessionRoute() {
         <WorkspaceProvider
           client={opencodeClient}
           opencodeBaseUrl={opencodeBaseUrl}
-          uni-cliServerClient={dashboardEndpoint?.client ?? null}
+          uniCliServerClient={dashboardEndpoint?.client ?? null}
           workspaceId={dashboardEndpoint?.workspaceId ?? ""}
           selectedWorkspaceRoot={selectedWorkspaceRoot}
         >
@@ -3889,7 +3889,7 @@ export function SessionRoute() {
         <WorkspaceProvider
           client={opencodeClient}
           opencodeBaseUrl={opencodeBaseUrl}
-          uni-cliServerClient={dashboardEndpoint?.client ?? null}
+          uniCliServerClient={dashboardEndpoint?.client ?? null}
           workspaceId={dashboardEndpoint?.workspaceId ?? ""}
           selectedWorkspaceRoot={selectedWorkspaceRoot}
         >
@@ -4034,7 +4034,7 @@ export function SessionRoute() {
               remoteAccess:
                 isDesktopRuntime() && shareWorkspaceState.shareWorkspace?.workspaceType === "local"
                   ? {
-                      enabled: uni-cliServerSettings.remoteAccessEnabled === true,
+                      enabled: uniCliServerSettings.remoteAccessEnabled === true,
                       busy: remoteAccessRestart.busy,
                       error: remoteAccessRestart.error,
                       status: remoteAccessRestart.status,
@@ -4097,7 +4097,7 @@ export function SessionRoute() {
         // model surfaces in the composer where the person can act on it.
         reloadBusy: reloadCoordinator.reloadBusy,
         reloadError: reloadCoordinator.reloadError,
-        uni-cliConnectState: sessionMcpMaintenance,
+        uniCliConnectState: sessionMcpMaintenance,
       }}
       notFoundMessage={activityRouteActive ? null : gatedRouteNotFoundMessage}
       mainContentTakeover={
@@ -4287,7 +4287,7 @@ export function SessionRoute() {
         try {
           const current = await readManagedDisabledProviders({
             opencodeClient,
-            uni-cliClient: disabledProvidersEndpointClient,
+            uniCliClient: disabledProvidersEndpointClient,
             workspaceId: disabledProvidersWorkspaceId,
             workspaceType: disabledProvidersWorkspaceType,
           });
@@ -4296,7 +4296,7 @@ export function SessionRoute() {
             : [...current, providerId];
           const result = await updateManagedDisabledProviders({
             opencodeClient,
-            uni-cliClient: disabledProvidersEndpointClient,
+            uniCliClient: disabledProvidersEndpointClient,
             workspaceId: disabledProvidersWorkspaceId,
             workspaceType: disabledProvidersWorkspaceType,
             disabledProviders: next,
@@ -4316,8 +4316,8 @@ export function SessionRoute() {
         handleOpenSettings("/settings/general");
       }}
       onClose={() => { modelPicker.setOpen(false); modelPicker.setRecentProviderIds(new Set()); setModelPickerSessionId(null); }}
-      uni-cliModelsEntitled={uni-cliModelsEntitled}
-      uni-cliModelsSyncing={uni-cliModelsSyncing}
+      uniCliModelsEntitled={uniCliModelsEntitled}
+      uniCliModelsSyncing={uniCliModelsSyncing}
       onRefreshOrganizationModels={refreshOrganizationModelAccess}
       catalogState={modelPicker.catalogState}
       restrictToCloud={restrictToCloudProviders}

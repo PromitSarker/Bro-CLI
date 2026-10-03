@@ -1,4 +1,4 @@
-export const Uni-CLIDownloads = () => {
+export const UniCliDownloads = () => {
   const STABLE_RELEASES_URL = "https://api.github.com/repos/different-ai/uni-cli/releases?per_page=30";
   const ALPHA_RELEASE_URL = "https://api.github.com/repos/different-ai/uni-cli/releases/tags/alpha-macos-latest";
   const GITHUB_HEADERS = { Accept: "application/vnd.github+json" };

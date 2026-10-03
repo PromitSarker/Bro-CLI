@@ -10,7 +10,7 @@ export function shellQuote(value: string) {
   return `'${value.replace(/'/g, `'"'"'`)}'`
 }
 
-export type Uni-CLICheckpointConfig = {
+export type UniCliCheckpointConfig = {
   /** Persistent mount that receives `checkpoints/ckpt-*.tar`. */
   dataMountPath: string
   /** Where the running server keeps its state (checkpointed). */
@@ -23,7 +23,7 @@ export type Uni-CLICheckpointConfig = {
   keep: number
 }
 
-export type Uni-CLIBootstrapConfig = Uni-CLICheckpointConfig & {
+export type UniCliBootstrapConfig = UniCliCheckpointConfig & {
   /** Persistent mount exposed to the agent as the workspace volume. */
   workspaceMountPath: string
   port: number
@@ -42,23 +42,23 @@ export type Uni-CLIBootstrapConfig = Uni-CLICheckpointConfig & {
   rebuildHint: string
 }
 
-export function checkpointDirectory(config: Pick<Uni-CLICheckpointConfig, "dataMountPath">) {
+export function checkpointDirectory(config: Pick<UniCliCheckpointConfig, "dataMountPath">) {
   return `${config.dataMountPath}/checkpoints`
 }
 
-export function checkpointRestoreMarkerPath(config: Pick<Uni-CLICheckpointConfig, "runtimeDataPath">) {
+export function checkpointRestoreMarkerPath(config: Pick<UniCliCheckpointConfig, "runtimeDataPath">) {
   return `${config.runtimeDataPath}/.uni-cli-restore-marker`
 }
 
-function checkpointStateManifest(config: Uni-CLICheckpointConfig) {
+function checkpointStateManifest(config: UniCliCheckpointConfig) {
   return `${config.runtimeDataPath} ${config.runtimeWorkspacePath}`
 }
 
-function checkpointLastFlushMarkerPath(config: Uni-CLICheckpointConfig) {
+function checkpointLastFlushMarkerPath(config: UniCliCheckpointConfig) {
   return `${config.sidecarDir}/checkpoint.last-flush`
 }
 
-function checkpointEnvironmentScript(config: Uni-CLICheckpointConfig) {
+function checkpointEnvironmentScript(config: UniCliCheckpointConfig) {
   // The engine keeps its sessions in a SQLite database under its own data dir
   // (opencode.db), which lives on the container overlay rather than a volume.
   // It was missing from the checkpoint, so every recycle onto a new snapshot
@@ -73,7 +73,7 @@ DEN_CKPT_INTERVAL_SECONDS=\${DEN_CKPT_INTERVAL_SECONDS:-${shellQuote(String(conf
 DEN_CKPT_KEEP=\${DEN_CKPT_KEEP:-${shellQuote(String(config.keep))}}`
 }
 
-function checkpointFlushFunctions(config: Uni-CLICheckpointConfig, input: { failOnError: boolean }) {
+function checkpointFlushFunctions(config: UniCliCheckpointConfig, input: { failOnError: boolean }) {
   const failureReturn = input.failOnError ? "1" : "0"
   return `checkpoint_changed() {
   if [ ! -e "$LAST_FLUSH_MARKER" ]; then
@@ -137,7 +137,7 @@ flush_checkpoint() {
 }
 
 /** Flush the running server's state to the persistent checkpoint directory now. */
-export function renderCheckpointFlushCommand(config: Uni-CLICheckpointConfig) {
+export function renderCheckpointFlushCommand(config: UniCliCheckpointConfig) {
   return `set -u
 ${checkpointEnvironmentScript(config)}
 ${checkpointFlushFunctions(config, { failOnError: true })}
@@ -145,22 +145,22 @@ flush_checkpoint`
 }
 
 /** `test` succeeds when at least one checkpoint tar exists on the data mount. */
-export function renderCheckpointExistsCommand(config: Pick<Uni-CLICheckpointConfig, "dataMountPath">) {
+export function renderCheckpointExistsCommand(config: Pick<UniCliCheckpointConfig, "dataMountPath">) {
   return `test -n "$(find ${shellQuote(checkpointDirectory(config))} -maxdepth 1 -type f -name 'ckpt-*.tar' -print -quit 2>/dev/null)"`
 }
 
 /** `test` succeeds when the running instance hydrated from a checkpoint. */
-export function renderRestoreMarkerExistsCommand(config: Pick<Uni-CLICheckpointConfig, "runtimeDataPath">) {
+export function renderRestoreMarkerExistsCommand(config: Pick<UniCliCheckpointConfig, "runtimeDataPath">) {
   return `test -s ${shellQuote(checkpointRestoreMarkerPath(config))}`
 }
 
 /** The supervised Uni-CLI server process with checkpoint hydrate and flush, as a POSIX sh script. */
-export function renderUni-CLIBootstrapScript(config: Uni-CLIBootstrapConfig) {
+export function renderUniCliBootstrapScript(config: UniCliBootstrapConfig) {
   const verifyRuntimeStep = [
     `if ! command -v uni-cli-server >/dev/null 2>&1; then echo 'uni-cli-server binary missing from ${config.imageDescription}; ${config.rebuildHint}' >&2; exit 1; fi`,
     `if ! command -v opencode >/dev/null 2>&1; then echo 'opencode binary missing from ${config.imageDescription}; ${config.rebuildHint}' >&2; exit 1; fi`,
   ].join("; ")
-  const uni-cliServe = [
+  const uniCliServe = [
     "UNICLI_DATA_DIR=",
     shellQuote(config.runtimeDataPath),
     " UNICLI_SERVER_CONFIG=",
@@ -281,7 +281,7 @@ hydrate_checkpoint
 attempt=0
 while [ "$attempt" -lt 3 ]; do
   attempt=$((attempt + 1))
-  ${uni-cliServe} &
+  ${uniCliServe} &
   server_pid=$!
   checkpoint_loop &
   checkpoint_pid=$!

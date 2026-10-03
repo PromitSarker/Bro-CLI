@@ -22,9 +22,9 @@ const runtime = await launchHeadlessWeb({
     UNICLI_PORT: "8778", UNICLI_WEB_PORT: "5178", HOST: "127.0.0.1", VITE_HOST: "127.0.0.1",
   },
 });
-await writeFile("/opt/uni-cli-preview/services.json", JSON.stringify({ app: runtime.manifest.webUrl, engine: runtime.manifest.uni-cliUrl }), { mode: 0o600 });
+await writeFile("/opt/uni-cli-preview/services.json", JSON.stringify({ app: runtime.manifest.webUrl, engine: runtime.manifest.uniCliUrl }), { mode: 0o600 });
 await writeFile("/opt/uni-cli-preview/outputs.json", JSON.stringify({
-  uni-cliToken: { value: runtime.manifest.token, secret: true, group: "Uni-CLI" },
-  uni-cliHostToken: { value: runtime.manifest.hostToken, secret: true, group: "Uni-CLI" },
+  uniCliToken: { value: runtime.manifest.token, secret: true, group: "Uni-CLI" },
+  uniCliHostToken: { value: runtime.manifest.hostToken, secret: true, group: "Uni-CLI" },
 }), { mode: 0o600 });
 await runtime.detach();

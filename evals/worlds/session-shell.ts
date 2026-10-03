@@ -258,7 +258,7 @@ async function instantBoundaryController(app: Surface, workspaceId: string) {
   const endpoint = app.client.webSocketDebuggerUrl;
   if (!endpoint) throw new Error("Instant-send boundary observer requires the desktop CDP endpoint");
   const runtime = await evaluate(app.client, async () => {
-    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uniCliServerInfo");
     return {
       baseUrl: info?.running && info.baseUrl ? String(info.baseUrl) : "",
       rendererOrigin: window.location.origin,
@@ -542,7 +542,7 @@ async function configureWorkspaceProvider(
 ): Promise<void> {
   // TODO(primitive): seed.configureWorkspaceProvider should configure and reload a workspace model without raw renderer evaluation.
   const result = await seed.evalIn(app, browserScript(async (workspaceIds, smallModel, allowTools, providerId, modelId, modelName, baseUrl, defaultModel) => {
-    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uniCliServerInfo");
     if (!info?.running || !info.baseUrl) return { error: "local_server_unavailable" };
     const root = String(info.baseUrl).replace(/\/+$/, "");
     const headers = {
@@ -652,7 +652,7 @@ export async function sidebarExpansion(seed: Seed, mode: "workspace" | "group" |
   ]);
   // Persist real group state and manual order before reload; no component/store imports.
   await seed.evalIn(app, browserScript(async (workspaceId, groups, assignments, ids) => {
-    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
     if (!info?.baseUrl) throw new Error("Sidebar seed needs the local server");
     const response = await fetch(`${info.baseUrl.replace(/\/+$/, "")}/workspace/${encodeURIComponent(workspaceId)}/session-groups`, {
       method: "PUT", headers: { Authorization: `Bearer ${info.ownerToken ?? info.clientToken}`, "Content-Type": "application/json" },
@@ -731,7 +731,7 @@ export async function workspaceNewTask(seed: Seed, { place }: { place: Place }) 
   if (!unrelated || !existing) throw new Error("Instant-send world did not create both real v1 sessions.");
 
   const serverInfo = await seed.evalIn(app, async () => {
-    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uniCliServerInfo");
     return info?.running && info.baseUrl
       ? { baseUrl: String(info.baseUrl), token: String(info.ownerToken ?? info.clientToken ?? "") }
       : null;
@@ -871,7 +871,7 @@ export async function workspaceNewTask(seed: Seed, { place }: { place: Place }) 
       let serverInfoError: string | null = null;
       try {
         currentServerInfo = await seed.evalIn(app, async () => {
-          const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uni-cliServerInfo");
+          const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uniCliServerInfo");
           if (!info?.running || !info.baseUrl) return null;
           return {
             baseUrl: String(info.baseUrl),
@@ -1568,7 +1568,7 @@ export async function archiveActiveSessions(seed: Seed, { place }: { place: Plac
   // workspace PATCH also writes config.json, which its project loader ignores.
   // Use the native global config in this desktop's isolated profile instead.
   const commandSetup = await seed.evalIn(app, browserScript(async (workspaceId, model) => {
-    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
     if (!info.running || !info.baseUrl) throw new Error("Archive engine is unavailable");
     const base = `${info.baseUrl.replace(/\/+$/, "")}/workspace/${workspaceId}/opencode`;
     const headers = { Authorization: "Bearer " + (info.ownerToken ?? info.clientToken), "Content-Type": "application/json" };
@@ -1603,7 +1603,7 @@ export async function archiveActiveSessions(seed: Seed, { place }: { place: Plac
   // Seed each owning engine once; UI task creation can race route changes and create extra sessions.
   async function createSession(workspaceId: string, title: string, parentID?: string): Promise<ShellSession & { workspaceId: string }> {
     const result = await seed.evalIn(app, browserScript(async (workspaceId, title, parentID) => {
-      const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+      const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
       if (!info.running || !info.baseUrl) throw new Error("Archive engine is unavailable");
       const response = await fetch(info.baseUrl.replace(/\/+$/, "") + "/workspace/" + encodeURIComponent(workspaceId) + "/opencode/session", {
         method: "POST", headers: { Authorization: "Bearer " + (info.ownerToken ?? info.clientToken), "Content-Type": "application/json" },
@@ -1678,7 +1678,7 @@ export async function archiveActiveSessions(seed: Seed, { place }: { place: Plac
   }
 
   const upstreamOrigin = await seed.evalIn(app, async () => {
-    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+    const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
     if (!info.running || !info.baseUrl) throw new Error("Archive engine is unavailable");
     return new URL(info.baseUrl).origin;
   });
@@ -1863,7 +1863,7 @@ export async function archiveActiveSessions(seed: Seed, { place }: { place: Plac
 
   async function facts() {
     const result = await seed.evalIn(app, browserScript(async (workspaceIds) => {
-      const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+      const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
       if (!info.running || !info.baseUrl) throw new Error("Archive engine is unavailable");
       const headers = { Authorization: "Bearer " + (info.ownerToken ?? info.clientToken) };
       const sessions = [];
@@ -1947,7 +1947,7 @@ export async function archiveActiveSessions(seed: Seed, { place }: { place: Plac
     resize: (width: number, height: number) => app.client.send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: false }),
     networkFault,
     faultObservation: () => seed.evalIn(app, browserScript(async (workspaceIds) => {
-      const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+      const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
       if (!info.running || !info.baseUrl) throw new Error("Archive engine is unavailable");
       const root = info.baseUrl.replace(/\/+$/, "");
       const results = [];
@@ -1999,7 +1999,7 @@ export async function archiveActiveSessions(seed: Seed, { place }: { place: Plac
         && toast.getAnimations({ subtree: true }).every(animation => animation.playState !== "running");
     }),
     dispatchUnrelatedPrompt: (session: { workspaceId: string; sessionId: string }) => seed.evalIn(app, browserScript(async (session, providerID, modelID) => {
-      const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+      const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
       if (!info.running || !info.baseUrl) throw new Error("Archive engine is unavailable");
       const response = await fetch(`${info.baseUrl.replace(/\/+$/, "")}/workspace/${session.workspaceId}/opencode/session/${session.sessionId}/prompt_async`, {
         method: "POST", headers: { Authorization: "Bearer " + (info.ownerToken ?? info.clientToken), "Content-Type": "application/json" },
@@ -2026,7 +2026,7 @@ export async function archiveActiveSessions(seed: Seed, { place }: { place: Plac
     releaseRun: () => setHeld(false),
     holdRun: () => setHeld(true),
     transcript: (session: { workspaceId: string; sessionId: string }) => seed.evalIn(app, browserScript(async (workspaceId, sessionId) => {
-      const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uni-cliServerInfo");
+      const info = await window.__UNICLI_ELECTRON__.invokeDesktop("uniCliServerInfo");
       if (!info.running || !info.baseUrl) throw new Error("Archive engine is unavailable");
       const response = await window.__archiveNetwork.original(info.baseUrl.replace(/\/+$/, "") + "/workspace/" + workspaceId + "/opencode/session/" + sessionId + "/message", {
         headers: { Authorization: "Bearer " + (info.ownerToken ?? info.clientToken) }, signal: AbortSignal.timeout(15000),
@@ -2087,7 +2087,7 @@ export async function archiveSessionsInLinkedWorkspace(seed: Seed) {
     /** The directory the engine stamped on each session, read through the workspace mount. */
     engineDirectories: async (): Promise<Record<string, string>> => {
       const value = await seed.evalIn(app, browserScript(async (workspaceId) => {
-        const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uni-cliServerInfo");
+        const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uniCliServerInfo");
         if (!info?.running || !info.baseUrl) throw new Error("Uni-CLI server is unavailable");
         const response = await fetch(`${String(info.baseUrl).replace(/\/+$/, "")}/workspace/${encodeURIComponent(workspaceId)}/opencode/session?limit=200`, {
           headers: { Authorization: "Bearer " + String(info.ownerToken ?? info.clientToken ?? "") }, signal: AbortSignal.timeout(15000),
@@ -2141,7 +2141,7 @@ async function archiveWorld(seed: Seed, app: Surface, workspacePath: string, tit
   // TODO(primitive): probe.sessions should expose the workspace's native session list.
   async function archivedAt(): Promise<Record<string, number>> {
     const value = await seed.evalIn(app, browserScript(async (workspaceId, engine) => {
-      const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uni-cliServerInfo");
+      const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uniCliServerInfo");
       if (!info?.running || !info.baseUrl) throw new Error("Uni-CLI server is unavailable");
       const response = await fetch(
         String(info.baseUrl).replace(/\/+$/, "") + "/workspace/" + encodeURIComponent(workspaceId) + (engine === "v2" ? "/opencode2/api/session?limit=200" : "/opencode/session?limit=200"),
@@ -2208,7 +2208,7 @@ async function archiveWorld(seed: Seed, app: Surface, workspacePath: string, tit
   return { app, engine, workspace, workspacePath, candidate, neighbor, archivedAt, sidebar, undoToastSettled,
     // The rename UI rejects blank input; arrange persisted legacy titles through the native API.
     setCandidateTitle: (title: string) => seed.evalIn(app, browserScript(async (workspaceId, sessionId, title) => {
-      const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uni-cliServerInfo");
+      const info = await window.__UNICLI_ELECTRON__?.invokeDesktop?.("uniCliServerInfo");
       if (!info?.running || !info.baseUrl) throw new Error("Uni-CLI server is unavailable");
       const response = await fetch(`${info.baseUrl.replace(/\/+$/, "")}/workspace/${encodeURIComponent(workspaceId)}/opencode/session/${encodeURIComponent(sessionId)}`, {
         method: "PATCH",
@@ -2335,7 +2335,7 @@ export async function externalSessionVisibility(seed: Seed) {
     timeoutMs: 30_000,
     label: "model picker backdrop dismissed before sidebar interaction",
   });
-  const rawServerInfo = await seed.evalIn(app, () => (window.__UNICLI_ELECTRON__?.invokeDesktop?.("uni-cliServerInfo")), {
+  const rawServerInfo = await seed.evalIn(app, () => (window.__UNICLI_ELECTRON__?.invokeDesktop?.("uniCliServerInfo")), {
     awaitPromise: true,
     timeoutMs: 30_000,
   });

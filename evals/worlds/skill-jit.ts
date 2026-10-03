@@ -118,10 +118,10 @@ export async function skillJitWeb(seed: Seed, context: { place: Place }) {
   // owner reads use an owner bearer minted through this owned runtime's host API.
   const paths = resolveHeadlessWorldRuntimePaths(fileURLToPath(new URL("../../", import.meta.url)), app.handle.name);
   const runtime = await readHeadlessRuntimeManifest(paths.runtimeManifestPath);
-  if (!runtime || runtime.uni-cliUrl !== app.uni-cliUrl || runtime.workspace !== app.workspaceRoot) {
+  if (!runtime || runtime.uniCliUrl !== app.uniCliUrl || runtime.workspace !== app.workspaceRoot) {
     throw new Error("The skill fixture could not identify its owned headless runtime");
   }
-  const ownerResponse = await fetch(`${runtime.uni-cliUrl}/tokens`, {
+  const ownerResponse = await fetch(`${runtime.uniCliUrl}/tokens`, {
     method: "POST", headers: { "X-Uni-CLI-Host-Token": runtime.hostToken, "Content-Type": "application/json" },
     body: JSON.stringify({ scope: "owner", label: "skill-jit-owner" }), signal: AbortSignal.timeout(15_000),
   });
@@ -129,7 +129,7 @@ export async function skillJitWeb(seed: Seed, context: { place: Place }) {
   if (ownerResponse.status !== 201 || !isRecord(owner) || typeof owner.token !== "string") {
     throw new Error(`Could not arrange owner catalog probe: HTTP ${ownerResponse.status}`);
   }
-  const serverUrl = runtime.uni-cliUrl;
+  const serverUrl = runtime.uniCliUrl;
   const serverToken = owner.token;
   const request = async (path: string, init: { method?: string; body?: unknown; timeoutMs?: number; token?: string } = {}) => {
     const response = await fetch(serverUrl + path, {

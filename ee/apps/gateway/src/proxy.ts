@@ -18,7 +18,7 @@ import {
   safeAccessUrl,
 } from "./inference-reporting.js"
 import type { InferenceReporter } from "./inference-reporting.js"
-import { inferenceAuth, readUni-CLIKey } from "./middleware/inference-auth.js"
+import { inferenceAuth, readUniCliKey } from "./middleware/inference-auth.js"
 import { gatewayAuth } from "./middleware/gateway-auth.js"
 import type { findActiveGatewayKey } from "./keys.js"
 import type { InferenceAuthEnv, InferenceAuthVariables } from "./middleware/inference-auth.js"
@@ -66,7 +66,7 @@ function isSharedGatewayRequest(request: Request, path: string) {
     || (request.method === "POST" && Object.hasOwn(gatewayModelEndpoints, path))
   if (!shared) return false
   try {
-    return readUni-CLIKey(request)?.startsWith(GATEWAY_BEARER_KEY_PREFIX) === true
+    return readUniCliKey(request)?.startsWith(GATEWAY_BEARER_KEY_PREFIX) === true
   } catch {
     // Conflicting credentials are rejected by the Models authenticator.
     return false
@@ -213,13 +213,13 @@ function validateModelSelection(json: JsonObject) {
   return null
 }
 
-function sanitizeHeaders(request: Request, apiKey: string, uni-cliRequestId: string) {
+function sanitizeHeaders(request: Request, apiKey: string, uniCliRequestId: string) {
   const headers = new Headers()
   const accept = request.headers.get("accept")
   if (accept) headers.set("accept", accept)
   headers.set("authorization", `Bearer ${apiKey}`)
   headers.set("content-type", "application/json")
-  headers.set("x-uni-cli-request-id", uni-cliRequestId)
+  headers.set("x-uni-cli-request-id", uniCliRequestId)
   if (env.proxyBaseUrl) {
     headers.set("http-referer", env.proxyBaseUrl)
   }
@@ -238,7 +238,7 @@ function logProxyError(message: string, details: Record<string, unknown>) {
 async function logUpstreamError(input: {
   upstream: Response
   upstreamUrl: URL
-  uni-cliRequestId: string
+  uniCliRequestId: string
   organizationId: string
   orgMembershipId: string
   inferenceKeyId: string
@@ -255,7 +255,7 @@ async function logUpstreamError(input: {
     organizationId: input.organizationId,
     orgMembershipId: input.orgMembershipId,
     inferenceKeyId: input.inferenceKeyId,
-    uni-cliRequestId: input.uni-cliRequestId,
+    uniCliRequestId: input.uniCliRequestId,
     route: input.route,
     method: input.method,
     headers: input.headers,
@@ -293,7 +293,7 @@ async function prepareBody(request: Request, input: {
   organizationId: string
   orgMembershipId: string
   inferenceKeyId: string
-  uni-cliRequestId: string
+  uniCliRequestId: string
   route: string
   method: string
   headers: Record<string, string>
@@ -305,7 +305,7 @@ async function prepareBody(request: Request, input: {
       organizationId: input.organizationId,
       orgMembershipId: input.orgMembershipId,
       inferenceKeyId: input.inferenceKeyId,
-      uni-cliRequestId: input.uni-cliRequestId,
+      uniCliRequestId: input.uniCliRequestId,
       route: input.route,
       method: input.method,
       headers: input.headers,
@@ -319,7 +319,7 @@ async function prepareBody(request: Request, input: {
       organizationId: input.organizationId,
       orgMembershipId: input.orgMembershipId,
       inferenceKeyId: input.inferenceKeyId,
-      uni-cliRequestId: input.uni-cliRequestId,
+      uniCliRequestId: input.uniCliRequestId,
       route: input.route,
       method: input.method,
       headers: input.headers,
@@ -341,7 +341,7 @@ async function prepareBody(request: Request, input: {
       organizationId: input.organizationId,
       orgMembershipId: input.orgMembershipId,
       inferenceKeyId: input.inferenceKeyId,
-      uni-cliRequestId: input.uni-cliRequestId,
+      uniCliRequestId: input.uniCliRequestId,
       route: input.route,
       method: input.method,
       headers: input.headers,
@@ -351,7 +351,7 @@ async function prepareBody(request: Request, input: {
       payload: payloadLog.payload,
     })
     logProxyError("Invalid JSON inference request body", {
-      uni-cliRequestId: input.uni-cliRequestId,
+      uniCliRequestId: input.uniCliRequestId,
       organizationId: input.organizationId,
       orgMembershipId: input.orgMembershipId,
       inferenceKeyId: input.inferenceKeyId,
@@ -361,7 +361,7 @@ async function prepareBody(request: Request, input: {
       organizationId: input.organizationId,
       orgMembershipId: input.orgMembershipId,
       inferenceKeyId: input.inferenceKeyId,
-      uni-cliRequestId: input.uni-cliRequestId,
+      uniCliRequestId: input.uniCliRequestId,
       route: input.route,
       method: input.method,
       headers: input.headers,
@@ -379,7 +379,7 @@ async function prepareBody(request: Request, input: {
     organizationId: input.organizationId,
     orgMembershipId: input.orgMembershipId,
     inferenceKeyId: input.inferenceKeyId,
-    uni-cliRequestId: input.uni-cliRequestId,
+    uniCliRequestId: input.uniCliRequestId,
     route: input.route,
     method: input.method,
     headers: input.headers,
@@ -391,7 +391,7 @@ async function prepareBody(request: Request, input: {
 
   if (!isJsonObject(json)) {
     logProxyError("Missing model in JSON request body", {
-      uni-cliRequestId: input.uni-cliRequestId,
+      uniCliRequestId: input.uniCliRequestId,
       organizationId: input.organizationId,
       orgMembershipId: input.orgMembershipId,
       inferenceKeyId: input.inferenceKeyId,
@@ -401,7 +401,7 @@ async function prepareBody(request: Request, input: {
       organizationId: input.organizationId,
       orgMembershipId: input.orgMembershipId,
       inferenceKeyId: input.inferenceKeyId,
-      uni-cliRequestId: input.uni-cliRequestId,
+      uniCliRequestId: input.uniCliRequestId,
       route: input.route,
       method: input.method,
       headers: input.headers,
@@ -415,7 +415,7 @@ async function prepareBody(request: Request, input: {
   const blockedSelection = validateModelSelection(json)
   if (blockedSelection) {
     logProxyError("Unsupported OpenRouter model selection feature", {
-      uni-cliRequestId: input.uni-cliRequestId,
+      uniCliRequestId: input.uniCliRequestId,
       organizationId: input.organizationId,
       orgMembershipId: input.orgMembershipId,
       blockedSelection,
@@ -425,7 +425,7 @@ async function prepareBody(request: Request, input: {
       organizationId: input.organizationId,
       orgMembershipId: input.orgMembershipId,
       inferenceKeyId: input.inferenceKeyId,
-      uni-cliRequestId: input.uni-cliRequestId,
+      uniCliRequestId: input.uniCliRequestId,
       route: input.route,
       method: input.method,
       headers: input.headers,
@@ -438,7 +438,7 @@ async function prepareBody(request: Request, input: {
 
   if (requestedModel === null) {
     logProxyError("Missing model in JSON request body", {
-      uni-cliRequestId: input.uni-cliRequestId,
+      uniCliRequestId: input.uniCliRequestId,
       organizationId: input.organizationId,
       orgMembershipId: input.orgMembershipId,
       inferenceKeyId: input.inferenceKeyId,
@@ -448,7 +448,7 @@ async function prepareBody(request: Request, input: {
       organizationId: input.organizationId,
       orgMembershipId: input.orgMembershipId,
       inferenceKeyId: input.inferenceKeyId,
-      uni-cliRequestId: input.uni-cliRequestId,
+      uniCliRequestId: input.uniCliRequestId,
       route: input.route,
       method: input.method,
       headers: input.headers,
@@ -462,7 +462,7 @@ async function prepareBody(request: Request, input: {
   const body = json
   if (!model) {
     logProxyError("Unknown Uni-CLI model alias", {
-      uni-cliRequestId: input.uni-cliRequestId,
+      uniCliRequestId: input.uniCliRequestId,
       organizationId: input.organizationId,
       orgMembershipId: input.orgMembershipId,
       inferenceKeyId: input.inferenceKeyId,
@@ -472,7 +472,7 @@ async function prepareBody(request: Request, input: {
       organizationId: input.organizationId,
       orgMembershipId: input.orgMembershipId,
       inferenceKeyId: input.inferenceKeyId,
-      uni-cliRequestId: input.uni-cliRequestId,
+      uniCliRequestId: input.uniCliRequestId,
       route: input.route,
       method: input.method,
       headers: input.headers,
@@ -485,14 +485,14 @@ async function prepareBody(request: Request, input: {
 
   body.model = model.upstreamModel
   body.user = input.orgMembershipId
-  body.session_id = input.uni-cliRequestId
+  body.session_id = input.uniCliRequestId
   const trace = {
-    trace_id: input.uni-cliRequestId,
+    trace_id: input.uniCliRequestId,
     trace_name: "Uni-CLI Gateway",
     generation_name: model.alias,
     org_membership_id: input.orgMembershipId,
     inference_key_id: input.inferenceKeyId,
-    uni-cli_request_id: input.uni-cliRequestId,
+    uni-cli_request_id: input.uniCliRequestId,
   }
   if (stream) {
     body.stream_options = { ...(isJsonObject(body.stream_options) ? body.stream_options : {}), include_usage: true }
@@ -547,8 +547,8 @@ export function registerProxyRoutes(app: Hono, dependencies: ProxyDependencies =
   }
 
   async function handleApiRequest(c: Context<InferenceEnv>) {
-    const uni-cliRequestId = c.get("uni-cliRequestId")
-    c.header("x-uni-cli-request-id", uni-cliRequestId)
+    const uniCliRequestId = c.get("uniCliRequestId")
+    c.header("x-uni-cli-request-id", uniCliRequestId)
     c.header("cache-control", "no-store")
     const identity = c.get("inference")
     if (identity.kind !== "models") return openAiError(401, "invalid_api_key", "An Uni-CLI Models key is required.")
@@ -579,7 +579,7 @@ export function registerProxyRoutes(app: Hono, dependencies: ProxyDependencies =
     const startRecorder = (input: { incomingModel: string | null; upstreamModel: string | null; stream: boolean; requestBytes?: number }) => {
       recorder.start({
         identity: c.get("inference"),
-        uni-cliRequestId,
+        uniCliRequestId,
         route: "uni-cli_openrouter",
         protocol: "openai_chat",
         upstreamProviderId: "openrouter",
@@ -595,7 +595,7 @@ export function registerProxyRoutes(app: Hono, dependencies: ProxyDependencies =
     }
     const reject = (response: Response, errorCode: string) => {
       void recorder.finish({ status: response.status, outcome: "rejected", errorCode })
-      response.headers.set("x-uni-cli-request-id", uni-cliRequestId)
+      response.headers.set("x-uni-cli-request-id", uniCliRequestId)
       return response
     }
 
@@ -605,7 +605,7 @@ export function registerProxyRoutes(app: Hono, dependencies: ProxyDependencies =
         organizationId: inferenceKey.organization_id,
         orgMembershipId: inferenceKey.org_membership_id,
         inferenceKeyId: inferenceKey.id,
-        uni-cliRequestId,
+        uniCliRequestId,
         route: c.req.path,
         method: c.req.method,
         headers: incomingHeaders,
@@ -619,7 +619,7 @@ export function registerProxyRoutes(app: Hono, dependencies: ProxyDependencies =
         organizationId: inferenceKey.organization_id,
         orgMembershipId: inferenceKey.org_membership_id,
         inferenceKeyId: inferenceKey.id,
-        uni-cliRequestId,
+        uniCliRequestId,
         route: c.req.path,
         method: c.req.method,
         headers: incomingHeaders,
@@ -635,7 +635,7 @@ export function registerProxyRoutes(app: Hono, dependencies: ProxyDependencies =
       organizationId: inferenceKey.organization_id,
       orgMembershipId: inferenceKey.org_membership_id,
       inferenceKeyId: inferenceKey.id,
-      uni-cliRequestId,
+      uniCliRequestId,
       route: c.req.path,
       method: c.req.method,
       headers: incomingHeaders,
@@ -643,7 +643,7 @@ export function registerProxyRoutes(app: Hono, dependencies: ProxyDependencies =
     })
     if ("error" in prepared) {
       logProxyError("Invalid inference proxy request", {
-        uni-cliRequestId,
+        uniCliRequestId,
         path: c.req.path,
         organizationId: inferenceKey.organization_id,
         orgMembershipId: inferenceKey.org_membership_id,
@@ -685,14 +685,14 @@ export function registerProxyRoutes(app: Hono, dependencies: ProxyDependencies =
         organizationId: inferenceKey.organization_id,
         orgMembershipId: inferenceKey.org_membership_id,
         inferenceKeyId: inferenceKey.id,
-        uni-cliRequestId,
+        uniCliRequestId,
       })
       reporter.handledError({
         reason: "missing_provider_key",
         organizationId: inferenceKey.organization_id,
         orgMembershipId: inferenceKey.org_membership_id,
         inferenceKeyId: inferenceKey.id,
-        uni-cliRequestId,
+        uniCliRequestId,
         route: c.req.path,
         method: c.req.method,
         headers: incomingHeaders,
@@ -711,7 +711,7 @@ export function registerProxyRoutes(app: Hono, dependencies: ProxyDependencies =
     let timer: ReturnType<typeof setTimeout> | undefined
     const analytics = await Promise.race([
       (async () => {
-        const begin = await dependencies.analytics?.({ key: inferenceKey, request: c.req.raw, requestId: uni-cliRequestId, model: prepared.upstreamModel, startedAt: analyticsStartedAt })
+        const begin = await dependencies.analytics?.({ key: inferenceKey, request: c.req.raw, requestId: uniCliRequestId, model: prepared.upstreamModel, startedAt: analyticsStartedAt })
         return begin?.(prepared.stream) ?? null
       })().catch(() => null),
       new Promise<null>((resolve) => { timer = setTimeout(() => resolve(null), 250) }),
@@ -736,7 +736,7 @@ export function registerProxyRoutes(app: Hono, dependencies: ProxyDependencies =
       abort.signal.throwIfAborted()
       const upstreamInit: ProxyRequestInit = {
         method: c.req.method,
-        headers: sanitizeHeaders(c.req.raw, providerKey.encrypted_api_key, uni-cliRequestId),
+        headers: sanitizeHeaders(c.req.raw, providerKey.encrypted_api_key, uniCliRequestId),
         body: JSON.stringify({ ...prepared.body, trace: { ...prepared.body.trace, usage_started_at: limits.admittedAt.toISOString() } }),
         duplex: "half",
         signal: abort.signal,
@@ -758,7 +758,7 @@ export function registerProxyRoutes(app: Hono, dependencies: ProxyDependencies =
       finishAnalytics("failed")
       const error = abortError() ?? inferenceError("upstream_unreachable", "The selected model could not be reached. Your work is preserved; retry when the provider recovers.")
       logProxyError("Failed to reach OpenRouter upstream", {
-        uni-cliRequestId,
+        uniCliRequestId,
         organizationId: inferenceKey.organization_id,
         orgMembershipId: inferenceKey.org_membership_id,
         inferenceKeyId: inferenceKey.id,
@@ -771,7 +771,7 @@ export function registerProxyRoutes(app: Hono, dependencies: ProxyDependencies =
         organizationId: inferenceKey.organization_id,
         orgMembershipId: inferenceKey.org_membership_id,
         inferenceKeyId: inferenceKey.id,
-        uni-cliRequestId,
+        uniCliRequestId,
         route: c.req.path,
         method: c.req.method,
         headers: incomingHeaders,
@@ -790,7 +790,7 @@ export function registerProxyRoutes(app: Hono, dependencies: ProxyDependencies =
       await logUpstreamError({
         upstream,
         upstreamUrl,
-        uni-cliRequestId,
+        uniCliRequestId,
         organizationId: inferenceKey.organization_id,
         orgMembershipId: inferenceKey.org_membership_id,
         inferenceKeyId: inferenceKey.id,
@@ -804,7 +804,7 @@ export function registerProxyRoutes(app: Hono, dependencies: ProxyDependencies =
       })
     }
 
-    const headers = new Headers({ "x-uni-cli-request-id": uni-cliRequestId, "cache-control": "no-store" })
+    const headers = new Headers({ "x-uni-cli-request-id": uniCliRequestId, "cache-control": "no-store" })
     const retryAfter = upstream.headers.get("retry-after")
     if (retryAfter && (/^\d+$/.test(retryAfter) || Number.isFinite(Date.parse(retryAfter)))) headers.set("retry-after", retryAfter)
     if (!upstream.ok) {
@@ -855,7 +855,7 @@ export function registerProxyRoutes(app: Hono, dependencies: ProxyDependencies =
           recordUsage(recorder, usageParser.result(), "stream")
           void recorder.finish({ status: upstream.status, outcome: result.outcome === "completed" ? "ok" : result.outcome === "cancelled" ? "client_aborted" : "upstream_error", errorCode: result.code, responseBytes: result.responseBytes, upstreamRequestId: upstreamRequestId(upstream.headers) })
           try {
-            reporter.completion?.({ ...result, uni-cliRequestId, organizationId: inferenceKey.organization_id, orgMembershipId: inferenceKey.org_membership_id, modelAlias: prepared.modelAlias })
+            reporter.completion?.({ ...result, uniCliRequestId, organizationId: inferenceKey.organization_id, orgMembershipId: inferenceKey.org_membership_id, modelAlias: prepared.modelAlias })
           } catch { /* Completion reporting must not interrupt stream cleanup. */ }
         },
       }), { headers })

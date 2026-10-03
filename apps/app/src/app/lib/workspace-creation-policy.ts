@@ -1,5 +1,5 @@
-import { isuni-cliGatewayRuntime } from "./gateway-runtime";
+import { isuniCliGatewayRuntime } from "./gateway-runtime";
 
 export function canCreateWorkspaces() {
-  return !isuni-cliGatewayRuntime();
+  return !isuniCliGatewayRuntime();
 }

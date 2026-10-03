@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
-import { Uni-CLIMark } from "./uni-cli-mark";
+import { UniCliMark } from "./uni-cli-mark";
 import { DownloadLink } from "./download-link";
 import { LP_PRODUCTS } from "./lp-products";
 
@@ -78,7 +78,7 @@ export function SiteNav(props: Props) {
             className="group inline-flex items-center"
             onClick={() => setMobileOpen(false)}
           >
-            <Uni-CLIMark className="h-[30px] w-[38px] transition-opacity group-hover:opacity-80" />
+            <UniCliMark className="h-[30px] w-[38px] transition-opacity group-hover:opacity-80" />
           </Link>
 
           <nav className="hidden items-center justify-start gap-7 pl-10 text-[14px] font-normal lg:flex">

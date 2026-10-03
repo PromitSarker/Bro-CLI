@@ -7,10 +7,10 @@ import type { WorkerRouteVariables } from "./shared.js"
 import { canControlWorker, fetchWorkerRuntimeJson, getWorkerByIdForOrg, parseWorkerIdParam, workerControlForbiddenPayload, workerIdParamSchema } from "./shared.js"
 
 const workerRuntimeResponseSchema = z.object({}).passthrough().meta({ ref: "WorkerRuntimeResponse" })
-const uni-cliWebAccessRequiredSchema = z.object({
+const uniCliWebAccessRequiredSchema = z.object({
   error: z.literal("uni-cli_web_access_required"),
   message: z.string(),
-}).meta({ ref: "WorkerRuntimeUni-CLIWebAccessRequiredError" })
+}).meta({ ref: "WorkerRuntimeUniCliWebAccessRequiredError" })
 
 export function registerWorkerRuntimeRoutes<T extends { Variables: WorkerRouteVariables }>(app: Hono<T>) {
   app.get(
@@ -23,7 +23,7 @@ export function registerWorkerRuntimeRoutes<T extends { Variables: WorkerRouteVa
         200: jsonResponse("Worker runtime information returned successfully.", workerRuntimeResponseSchema),
         400: jsonResponse("The worker runtime path parameters were invalid.", invalidRequestSchema),
         401: jsonResponse("The caller must be signed in to read worker runtime information.", unauthorizedSchema),
-        403: jsonResponse("Cloud runtime access requires the worker owner and Uni-CLI Web access.", z.union([forbiddenSchema, uni-cliWebAccessRequiredSchema])),
+        403: jsonResponse("Cloud runtime access requires the worker owner and Uni-CLI Web access.", z.union([forbiddenSchema, uniCliWebAccessRequiredSchema])),
         404: jsonResponse("The worker could not be found.", notFoundSchema),
       },
     }),
@@ -77,7 +77,7 @@ export function registerWorkerRuntimeRoutes<T extends { Variables: WorkerRouteVa
         200: jsonResponse("Worker runtime upgrade request completed successfully.", workerRuntimeResponseSchema),
         400: jsonResponse("The runtime upgrade request was invalid.", invalidRequestSchema),
         401: jsonResponse("The caller must be signed in to upgrade a worker runtime.", unauthorizedSchema),
-        403: jsonResponse("Cloud runtime upgrades require the worker owner and Uni-CLI Web access.", z.union([forbiddenSchema, uni-cliWebAccessRequiredSchema])),
+        403: jsonResponse("Cloud runtime upgrades require the worker owner and Uni-CLI Web access.", z.union([forbiddenSchema, uniCliWebAccessRequiredSchema])),
         404: jsonResponse("The worker could not be found.", notFoundSchema),
       },
     }),

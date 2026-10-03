@@ -4,9 +4,9 @@ export type DenOrgMode = "single_org" | "multi_org";
 
 export type DenWebRuntimeConfig = {
   denApiUrl: string;
-  uni-cliAppConnectUrl: string;
-  uni-cliWebUrl: string;
-  uni-cliAuthCallbackUrl: string;
+  uniCliAppConnectUrl: string;
+  uniCliWebUrl: string;
+  uniCliAuthCallbackUrl: string;
   orgMode: DenOrgMode;
   singleOrgName: string;
   singleOrgSlug: string;
@@ -18,9 +18,9 @@ export const DEFAULT_UNICLI_WEB_URL = "https://web.uni-clilabs.com";
 
 export const EMPTY_RUNTIME_CONFIG: DenWebRuntimeConfig = {
   denApiUrl: "",
-  uni-cliAppConnectUrl: "",
-  uni-cliWebUrl: DEFAULT_UNICLI_WEB_URL,
-  uni-cliAuthCallbackUrl: "",
+  uniCliAppConnectUrl: "",
+  uniCliWebUrl: DEFAULT_UNICLI_WEB_URL,
+  uniCliAuthCallbackUrl: "",
   orgMode: "single_org",
   singleOrgName: "Uni-CLI",
   singleOrgSlug: "default",
@@ -52,9 +52,9 @@ function normalizeRuntimeConfig(value: unknown): DenWebRuntimeConfig {
   const singleOrgSlug = readStringProperty(value, "singleOrgSlug");
   return {
     denApiUrl: readStringProperty(value, "denApiUrl"),
-    uni-cliAppConnectUrl: readStringProperty(value, "uni-cliAppConnectUrl"),
-    uni-cliWebUrl: readStringProperty(value, "uni-cliWebUrl") || DEFAULT_UNICLI_WEB_URL,
-    uni-cliAuthCallbackUrl: readStringProperty(value, "uni-cliAuthCallbackUrl"),
+    uniCliAppConnectUrl: readStringProperty(value, "uniCliAppConnectUrl"),
+    uniCliWebUrl: readStringProperty(value, "uniCliWebUrl") || DEFAULT_UNICLI_WEB_URL,
+    uniCliAuthCallbackUrl: readStringProperty(value, "uniCliAuthCallbackUrl"),
     orgMode: normalizeOrgMode(readStringProperty(value, "orgMode")),
     singleOrgName: singleOrgName || "Uni-CLI",
     singleOrgSlug: singleOrgSlug || "default",

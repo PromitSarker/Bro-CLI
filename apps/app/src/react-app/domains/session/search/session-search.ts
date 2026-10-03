@@ -1,4 +1,4 @@
-import type { uni-cliSessionMessage } from "@/app/lib/uni-cli-server";
+import type { uniCliSessionMessage } from "@/app/lib/uni-cli-server";
 
 /** A session that can be deep-searched. */
 export type SearchableSession = {
@@ -55,7 +55,7 @@ type CacheEntry = {
 export type SessionMessageFetcher = (
   workspaceId: string,
   sessionId: string,
-) => Promise<uni-cliSessionMessage[]>;
+) => Promise<uniCliSessionMessage[]>;
 
 const SNIPPET_BEFORE = 36;
 const SNIPPET_AFTER = 72;
@@ -75,7 +75,7 @@ export function buildSnippet(text: string, index: number, length: number): Sessi
   return { before, match: text.slice(index, index + length), after };
 }
 
-function toCacheEntry(updatedAt: number, messages: uni-cliSessionMessage[]): CacheEntry {
+function toCacheEntry(updatedAt: number, messages: uniCliSessionMessage[]): CacheEntry {
   const texts: CacheEntry["texts"] = [];
   for (const message of messages) {
     const role = message.info.role;

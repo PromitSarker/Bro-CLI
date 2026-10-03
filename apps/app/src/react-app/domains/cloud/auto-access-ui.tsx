@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useSyncExternalStore } from "react";
-import type { uni-cliServerClient } from "@/app/lib/uni-cli-server";
+import type { uniCliServerClient } from "@/app/lib/uni-cli-server";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { TaskRecovery } from "@/components/chat/task-recovery";
 import { Button } from "@/components/ui/button";
@@ -49,14 +49,14 @@ export function autoAccessStatusQueryKey(auth: Pick<DenAuthStore, "status" | "ve
   return ["auto-access", baseUrl, workspaceId, auth.status, auth.verifiedIdentity];
 }
 
-export type AutoAccessWorkspace = { uni-cliServerClient: uni-cliServerClient | null; workspaceId: string };
+export type AutoAccessWorkspace = { uniCliServerClient: uniCliServerClient | null; workspaceId: string };
 
 export function useObservedAutoAccessSnapshot(override?: AutoAccessWorkspace) {
   const context = useWorkspaceMaybe();
   const workspace = override ?? context;
   const auth = useDenAuth();
   const client = useQueryClient();
-  const queryKey = autoAccessStatusQueryKey(auth, workspace?.uni-cliServerClient?.baseUrl, workspace?.workspaceId);
+  const queryKey = autoAccessStatusQueryKey(auth, workspace?.uniCliServerClient?.baseUrl, workspace?.workspaceId);
   const subscribe = useCallback((onChange: () => void) => client.getQueryCache().subscribe(onChange), [client]);
   return useSyncExternalStore(subscribe, () => client.getQueryState<DesktopFreeAccessStatus>(queryKey), () => undefined);
 }
@@ -88,9 +88,9 @@ export function AutoPickerRecovery({ state, code, resetsAt, onRetry, onReload, h
   };
   const retry = async () => {
     await onRetry?.();
-    await client.refetchQueries({ queryKey: autoAccessStatusQueryKey(auth, workspace?.uni-cliServerClient?.baseUrl, workspace?.workspaceId), exact: true, type: "active" });
+    await client.refetchQueries({ queryKey: autoAccessStatusQueryKey(auth, workspace?.uniCliServerClient?.baseUrl, workspace?.workspaceId), exact: true, type: "active" });
   };
-  const reloadWorkspace = onReload ?? (workspace?.uni-cliServerClient && workspace.workspaceId ? () => workspace.uni-cliServerClient!.reloadEngine(workspace.workspaceId) : undefined);
+  const reloadWorkspace = onReload ?? (workspace?.uniCliServerClient && workspace.workspaceId ? () => workspace.uniCliServerClient!.reloadEngine(workspace.workspaceId) : undefined);
   const reload = reloadWorkspace ? async () => { await reloadWorkspace(); await retry(); } : undefined;
   if (state === "ready" || freeAutoSwitchedOff(observed)) return null;
   return <PickerNotice testId="auto-picker-recovery" action={<>
@@ -114,7 +114,7 @@ export function useAutoAccess(available: boolean, override?: AutoAccessWorkspace
   const context = useWorkspaceMaybe();
   const workspace = override ?? context;
   const auth = useDenAuth();
-  const client = workspace?.uni-cliServerClient;
+  const client = workspace?.uniCliServerClient;
   const query = useQuery({
     queryKey: autoAccessStatusQueryKey(auth, client?.baseUrl, workspace?.workspaceId),
     enabled: available && isDesktopRuntime() && Boolean(client),

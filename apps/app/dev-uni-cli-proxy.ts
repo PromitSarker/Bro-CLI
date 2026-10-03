@@ -1,11 +1,11 @@
-interface Devuni-cliProxyOptions {
+interface DevuniCliProxyOptions {
   target: string;
   changeOrigin: boolean;
   ws: boolean;
   rewrite: (path: string) => string;
 }
 
-export function devuni-cliProxy(env: NodeJS.ProcessEnv): Record<string, Devuni-cliProxyOptions> {
+export function devuniCliProxy(env: NodeJS.ProcessEnv): Record<string, DevuniCliProxyOptions> {
   if (env.UNICLI_DEV_MODE !== "1" || !env.UNICLI_DEV_UNICLI_PROXY_TARGET) return {};
   const target = new URL(env.UNICLI_DEV_UNICLI_PROXY_TARGET);
   if (target.protocol !== "http:" || target.hostname !== "127.0.0.1" || !target.port

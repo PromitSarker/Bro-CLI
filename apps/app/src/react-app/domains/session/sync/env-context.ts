@@ -1,14 +1,14 @@
 import { sideChatSystemContext } from "../chat/workbench-store";
-import type { uni-cliServerClient } from "../../../../app/lib/uni-cli-server";
-import { readuni-cliEnvPendingChanges } from "../../../../app/lib/uni-cli-env-runtime";
-import { readuni-cliRuntimeFacts, renderuni-cliRuntimeContext } from "./runtime-context";
+import type { uniCliServerClient } from "../../../../app/lib/uni-cli-server";
+import { readuniCliEnvPendingChanges } from "../../../../app/lib/uni-cli-env-runtime";
+import { readuniCliRuntimeFacts, renderuniCliRuntimeContext } from "./runtime-context";
 
 const DEFAULT_CACHE_KEY = "__uni-cli_env_default__";
 const MAX_CONTEXT_CACHE_ENTRIES = 100;
 
 const envSystemContextCache = new Map<string, string | undefined>();
 
-export function clearuni-cliEnvSystemContextCache(): void {
+export function clearuniCliEnvSystemContextCache(): void {
   envSystemContextCache.clear();
 }
 
@@ -23,8 +23,8 @@ function normalizeEnvKeys(keys: string[]): string[] {
   ).sort((a, b) => a.localeCompare(b));
 }
 
-export async function builduni-cliEnvSystemContext(
-  client: uni-cliServerClient | null,
+export async function builduniCliEnvSystemContext(
+  client: uniCliServerClient | null,
   options: {
     cacheKey?: string;
     runtimeKey?: string | null;
@@ -34,7 +34,7 @@ export async function builduni-cliEnvSystemContext(
 ): Promise<string | undefined> {
   if (!client) return undefined;
   const readPendingChanges = options.readPendingChanges ??
-    (() => readuni-cliEnvPendingChanges(options.runtimeKey));
+    (() => readuniCliEnvPendingChanges(options.runtimeKey));
   if (readPendingChanges()) return undefined;
 
   const cacheKey = `${client.baseUrl}:${options.cacheKey ?? DEFAULT_CACHE_KEY}`;
@@ -78,8 +78,8 @@ function rememberEnvSystemContext(cacheKey: string, context: string | undefined)
  * crosses midnight correctly), followed by the cached environment-key names
  * when the workspace has any.
  */
-export async function builduni-cliSessionSystemContext(
-  client: uni-cliServerClient | null,
+export async function builduniCliSessionSystemContext(
+  client: uniCliServerClient | null,
   options: {
     workspaceId?: string;
     cacheKey?: string;
@@ -88,8 +88,8 @@ export async function builduni-cliSessionSystemContext(
     desktopTransport?: "main";
   } = {},
 ): Promise<string> {
-  const envContext = await builduni-cliEnvSystemContext(client, options);
-  const runtimeContext = renderuni-cliRuntimeContext(readuni-cliRuntimeFacts());
+  const envContext = await builduniCliEnvSystemContext(client, options);
+  const runtimeContext = renderuniCliRuntimeContext(readuniCliRuntimeFacts());
   const sideChatContext = options.workspaceId && options.cacheKey
     ? sideChatSystemContext(options.workspaceId, options.cacheKey) : undefined;
   return [runtimeContext, envContext, sideChatContext].filter(Boolean).join("\n\n");

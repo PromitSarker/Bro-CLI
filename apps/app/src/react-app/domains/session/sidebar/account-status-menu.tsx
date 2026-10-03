@@ -30,9 +30,9 @@ import { usePlatform } from "../../../kernel/platform";
 import { isDenSessionRestoring, useDenAuth } from "../../cloud/den-auth-provider";
 import { useDesktopRestriction } from "../../cloud/desktop-config-provider";
 import { GatewayUsageMenuItem } from "../../cloud/gateway-usage-panel";
-import { useControlAction, type uni-cliControlAction } from "../../../shell/control/control-provider";
+import { useControlAction, type uniCliControlAction } from "../../../shell/control/control-provider";
 import { useShellConfig } from "../../../shell/shell-config";
-import type { uni-cliServerStatus } from "../../../../app/lib/uni-cli-server";
+import type { uniCliServerStatus } from "../../../../app/lib/uni-cli-server";
 import {
   buildDenAuthUrl,
   clearDenSession,
@@ -44,18 +44,18 @@ import { markDesktopSignInInitiated } from "../../../../app/lib/den-sign-in-inte
 import { exchangeHandoffAndSignIn } from "../../../../app/lib/den-handoff";
 import { parseManualAuthInput } from "../../../../app/lib/manual-auth-input";
 import {
-  uni-cliConnectAttentionTitle,
-  resolveUni-CLIConnectStatus,
-  type Uni-CLIConnectStatus,
+  uniCliConnectAttentionTitle,
+  resolveUniCliConnectStatus,
+  type UniCliConnectStatus,
 } from "../../connections/uni-cli-connect-status";
 import type { SessionCloudMcpMaintenanceState } from "../../connections/use-session-mcp-maintenance";
 import {
-  getUni-CLIModelsActionUrl,
-  hasUni-CLIModelsProvider,
-  hideUni-CLIModelsPromo,
-  isUni-CLIModelsPromoHidden,
-  uni-cliModelsPromoChangedEvent,
-  useUni-CLIModelsPromoEligibility,
+  getUniCliModelsActionUrl,
+  hasUniCliModelsProvider,
+  hideUniCliModelsPromo,
+  isUniCliModelsPromoHidden,
+  uniCliModelsPromoChangedEvent,
+  useUniCliModelsPromoEligibility,
 } from "../../cloud/uni-cli-models-promo";
 
 const DOCS_URL = "https://uni-clilabs.com/docs";
@@ -91,7 +91,7 @@ type RuntimeStatus = {
 
 type RuntimeStatusInput = {
   clientConnected: boolean;
-  uni-cliServerStatus: uni-cliServerStatus;
+  uniCliServerStatus: uniCliServerStatus;
   initializing: boolean;
   reloadBusy?: boolean;
   reloadError?: string | null;
@@ -111,7 +111,7 @@ export function resolveRuntimeStatus(input: RuntimeStatusInput): RuntimeStatus {
   // This row renders app-scoped facts only. Per-session loading (messages
   // still fetching, a model verdict still pending) stays in the pane and the
   // composer — one session's state must not paint the whole app as booting.
-  if (input.uni-cliServerStatus === "disconnected" && input.initializing) {
+  if (input.uniCliServerStatus === "disconnected" && input.initializing) {
     return {
       variant: "loading",
       label: t("session.preparing_workspace"),
@@ -121,7 +121,7 @@ export function resolveRuntimeStatus(input: RuntimeStatusInput): RuntimeStatus {
   if (input.clientConnected) {
     return { variant: "connected", label: t("status.ready_for_tasks"), detail: null };
   }
-  if (input.uni-cliServerStatus === "limited") {
+  if (input.uniCliServerStatus === "limited") {
     return { variant: "partial", label: t("status.limited_mode"), detail: t("status.limited_hint") };
   }
   return {
@@ -131,7 +131,7 @@ export function resolveRuntimeStatus(input: RuntimeStatusInput): RuntimeStatus {
   };
 }
 
-function connectDotVariant(status: Uni-CLIConnectStatus): StatusDotVariant {
+function connectDotVariant(status: UniCliConnectStatus): StatusDotVariant {
   if (status.state === "ready") return "connected";
   if (status.state === "checking") return "loading";
   return "disconnected";
@@ -144,7 +144,7 @@ function connectDotVariant(status: Uni-CLIConnectStatus): StatusDotVariant {
  */
 export function resolveCollapsedStatus(
   runtime: RuntimeStatus | null,
-  connect: Uni-CLIConnectStatus | null,
+  connect: UniCliConnectStatus | null,
 ): RuntimeStatus | null {
   if (runtime && runtime.variant !== "connected") return runtime;
   if (connect && connect.state === "needs_attention") {
@@ -173,23 +173,23 @@ function accountInitials(name: string | null, email: string) {
   return (parts[0][0] + parts[1][0]).toUpperCase();
 }
 
-function useUni-CLIModelsPromoVisible(hasUni-CLIModels: boolean) {
+function useUniCliModelsPromoVisible(hasUniCliModels: boolean) {
   const { config } = useShellConfig();
-  const eligible = useUni-CLIModelsPromoEligibility();
-  const [hidden, setHidden] = useState(isUni-CLIModelsPromoHidden);
+  const eligible = useUniCliModelsPromoEligibility();
+  const [hidden, setHidden] = useState(isUniCliModelsPromoHidden);
 
   useEffect(() => {
-    const sync = () => setHidden(isUni-CLIModelsPromoHidden());
-    window.addEventListener(uni-cliModelsPromoChangedEvent, sync);
-    return () => window.removeEventListener(uni-cliModelsPromoChangedEvent, sync);
+    const sync = () => setHidden(isUniCliModelsPromoHidden());
+    window.addEventListener(uniCliModelsPromoChangedEvent, sync);
+    return () => window.removeEventListener(uniCliModelsPromoChangedEvent, sync);
   }, []);
 
-  return eligible && config.cloudSignin && !hasUni-CLIModels && !hidden;
+  return eligible && config.cloudSignin && !hasUniCliModels && !hidden;
 }
 
 export type AccountStatusMenuProps = {
   clientConnected: boolean;
-  uni-cliServerStatus: uni-cliServerStatus;
+  uniCliServerStatus: uniCliServerStatus;
   developerMode: boolean;
   /** Hidden until a workspace is selected, matching the old status bar. */
   showConnectionStatus: boolean;
@@ -197,7 +197,7 @@ export type AccountStatusMenuProps = {
   mcpConnectedCount: number;
   reloadBusy?: boolean;
   reloadError?: string | null;
-  uni-cliConnectState?: SessionCloudMcpMaintenanceState;
+  uniCliConnectState?: SessionCloudMcpMaintenanceState;
   showSettingsButton?: boolean;
   onOpenAccountSettings?: () => void;
   onSendFeedback?: () => void;
@@ -221,11 +221,11 @@ export function AccountStatusMenu(props: AccountStatusMenuProps) {
     () => Date.now() - BOOT_STARTED_AT < INITIALIZING_MS,
   );
 
-  const hasUni-CLIModels = useMemo(
-    () => hasUni-CLIModelsProvider(props.providerConnectedIds),
+  const hasUniCliModels = useMemo(
+    () => hasUniCliModelsProvider(props.providerConnectedIds),
     [props.providerConnectedIds],
   );
-  const promoVisible = useUni-CLIModelsPromoVisible(hasUni-CLIModels);
+  const promoVisible = useUniCliModelsPromoVisible(hasUniCliModels);
 
   useEffect(() => {
     if (!initializing) return;
@@ -243,7 +243,7 @@ export function AccountStatusMenu(props: AccountStatusMenuProps) {
   // no new response field is required. Missing values retain the hook’s default.
   const controlSettingsBlocked = useDesktopRestriction("allowControlSettings");
 
-  const docsControlAction = useMemo<uni-cliControlAction>(() => ({
+  const docsControlAction = useMemo<uniCliControlAction>(() => ({
     id: "status.docs.open",
     label: "Open Uni-CLI docs",
     description: "Open the documentation from the account menu.",
@@ -253,7 +253,7 @@ export function AccountStatusMenu(props: AccountStatusMenuProps) {
   }), [openDocs]);
   useControlAction(docsControlAction);
 
-  const feedbackControlAction = useMemo<uni-cliControlAction>(() => ({
+  const feedbackControlAction = useMemo<uniCliControlAction>(() => ({
     id: "status.feedback.open",
     label: "Send feedback",
     description: "Open the Uni-CLI feedback surface from the account menu.",
@@ -264,7 +264,7 @@ export function AccountStatusMenu(props: AccountStatusMenuProps) {
   }), [props.onSendFeedback]);
   useControlAction(feedbackControlAction);
 
-  const settingsControlAction = useMemo<uni-cliControlAction>(() => ({
+  const settingsControlAction = useMemo<uniCliControlAction>(() => ({
     id: "status.settings.open",
     label: "Open settings from the account menu",
     description: "Use the account menu in the sidebar footer.",
@@ -297,16 +297,16 @@ export function AccountStatusMenu(props: AccountStatusMenuProps) {
   const runtimeStatus = props.showConnectionStatus
     ? resolveRuntimeStatus({
       clientConnected: props.clientConnected,
-      uni-cliServerStatus: props.uni-cliServerStatus,
+      uniCliServerStatus: props.uniCliServerStatus,
       initializing,
       reloadBusy: props.reloadBusy,
       reloadError: props.reloadError,
     })
     : null;
-  const connectStatus = resolveUni-CLIConnectStatus(
+  const connectStatus = resolveUniCliConnectStatus(
     denAuth.isSignedIn
       || (denAuth.status === "checking" && Boolean(readDenSettings().authToken?.trim())),
-    props.uni-cliConnectState,
+    props.uniCliConnectState,
   );
   const connectNeedsAttention = connectStatus?.state === "needs_attention";
   const collapsedStatus = resolveCollapsedStatus(runtimeStatus, connectStatus);
@@ -370,7 +370,7 @@ export function AccountStatusMenu(props: AccountStatusMenuProps) {
             className="flex min-w-0 flex-1 items-center gap-2 rounded-lg ps-1.5 pe-2 py-1.5 text-left transition-colors hover:bg-sidebar-accent max-lg:min-h-11"
             aria-label={signedIn ? `${accountLabel} — account and status` : "Account and status"}
             title={connectNeedsAttention
-              ? uni-cliConnectAttentionTitle(connectStatus.description)
+              ? uniCliConnectAttentionTitle(connectStatus.description)
               : connectStatus
                 ? `${runtimeStatus ? `${runtimeStatus.label} · ` : ""}Uni-CLI Connect: ${connectStatus.label}`
                 : runtimeStatus?.label}
@@ -482,12 +482,12 @@ export function AccountStatusMenu(props: AccountStatusMenuProps) {
         {promoVisible ? (
           <DropdownMenuItem
             onClick={() => {
-              hideUni-CLIModelsPromo();
+              hideUniCliModelsPromo();
               if (!denAuth.isSignedIn) {
                 navigate("/settings/cloud-account");
                 markDesktopSignInInitiated();
               }
-              platform.openLink(getUni-CLIModelsActionUrl(denAuth.isSignedIn));
+              platform.openLink(getUniCliModelsActionUrl(denAuth.isSignedIn));
             }}
           >
             <Sparkles className="size-3.5 text-blue-11" />

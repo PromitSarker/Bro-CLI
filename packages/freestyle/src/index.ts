@@ -177,7 +177,7 @@ export async function launchPreview(
       }
       stage = "read-outputs";
       outputs = parsePreviewOutputs(JSON.parse(await vm.fs.readTextFile("/opt/uni-cli-preview/outputs.json")));
-      const serviceKeys: Record<string, string> = { app: "webUrl", den: "denWeb", api: "denApi", engine: "uni-cliUrl", gateway: "gatewayUrl" };
+      const serviceKeys: Record<string, string> = { app: "webUrl", den: "denWeb", api: "denApi", engine: "uniCliUrl", gateway: "gatewayUrl" };
       // Link the noVNC viewer only when this snapshot started the desktop display.
       if (outputs.desktopStatus && outputs.desktopStatus.value !== "unavailable") serviceKeys.desktop = "desktopUrl";
       for (const [name, key] of Object.entries(serviceKeys)) {

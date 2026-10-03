@@ -1,7 +1,7 @@
-import { uni-cliPluginPath } from "./uni-cli-extensions-plugin-path.js";
+import { uniCliPluginPath } from "./uni-cli-extensions-plugin-path.js";
 import { fileURLToPath } from "node:url";
 export function managedPolicyPluginPath(next = false): string {
-  return uni-cliPluginPath(next ? "managed-policy-next" : "managed-policy");
+  return uniCliPluginPath(next ? "managed-policy-next" : "managed-policy");
 }
 
 // Remove only our own registrations, including file-URL copies persisted by

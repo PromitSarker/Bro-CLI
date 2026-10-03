@@ -37,7 +37,7 @@ import { LazyMotion, MotionContext, Reorder, domMax, m, useDragControls } from "
 
 import { getDisplaySessionTitle } from "../../../../app/lib/session-title";
 import type { WorkspaceInfo } from "../../../../app/lib/desktop";
-import { Uni-CLIDenHelpLink } from "../../workspace/uni-cli-den-help-link";
+import { UniCliDenHelpLink } from "../../workspace/uni-cli-den-help-link";
 import { SidebarActions, SidebarTitlebar, type ConversationHistoryControls } from "./sidebar-chrome";
 import { useUiStateStore } from "../../../shell/ui-state-store";
 import type {
@@ -647,7 +647,7 @@ function RemoteConnectionIssueCard(props: {
           <div className="min-w-0 flex-1">
             <TaskRecovery compact title={t("workspace_list.remote_worker_unavailable")}
               description={t("workspace_list.remote_worker_unavailable_hint")} technicalDetails={props.message} />
-            <Uni-CLIDenHelpLink />
+            <UniCliDenHelpLink />
             <div className="mt-2 flex flex-wrap gap-1.5">
               {props.canRecover ? (
                 <Button

@@ -17,14 +17,14 @@ function normalizeIdentifier(value) {
   return trimmed || null;
 }
 
-export function resolveuni-cliSentryAppVersion({ app, packageMetadata }) {
+export function resolveuniCliSentryAppVersion({ app, packageMetadata }) {
   const electronAppVersion = normalizeIdentifier(app?.getVersion?.());
   const packageVersion = normalizeIdentifier(packageMetadata?.version);
   if (app?.isPackaged) return electronAppVersion || packageVersion || "unknown";
   return packageVersion || electronAppVersion || "unknown";
 }
 
-export function resolveuni-cliSentryRelease({ appVersion, environmentRelease = process.env.SENTRY_RELEASE }) {
+export function resolveuniCliSentryRelease({ appVersion, environmentRelease = process.env.SENTRY_RELEASE }) {
   return normalizeIdentifier(environmentRelease) || `uni-cli-desktop@${normalizeIdentifier(appVersion) || "unknown"}`;
 }
 
@@ -51,14 +51,14 @@ function readBuildConfig(app) {
   return parseBuildConfig(resolve(__dirname, "..", ".electron-runtime", "uni-cli-sentry.json"));
 }
 
-export async function inituni-cliSentry({ app, distribution, packageMetadata }) {
+export async function inituniCliSentry({ app, distribution, packageMetadata }) {
   const buildConfig = readBuildConfig(app);
   const dsn = buildConfig.dsn;
   if (!dsn || envFlagEnabled("UNICLI_DESKTOP_SENTRY_DISABLED")) return false;
 
   sentry = await import("@sentry/electron/main");
-  const appVersion = resolveuni-cliSentryAppVersion({ app, packageMetadata });
-  const release = resolveuni-cliSentryRelease({ appVersion });
+  const appVersion = resolveuniCliSentryAppVersion({ app, packageMetadata });
+  const release = resolveuniCliSentryRelease({ appVersion });
   const sampleRate = buildConfig.tracesSampleRate;
 
   sentry.init({
@@ -92,13 +92,13 @@ export async function inituni-cliSentry({ app, distribution, packageMetadata }) 
   initialized = true;
   globalThis.__uni-cliDesktopTelemetry = {
     captureException,
-    clearSession: clearuni-cliSentrySession,
-    setSession: setuni-cliSentrySession,
+    clearSession: clearuniCliSentrySession,
+    setSession: setuniCliSentrySession,
   };
   return true;
 }
 
-export function setuni-cliSentrySession(input) {
+export function setuniCliSentrySession(input) {
   const userId = normalizeIdentifier(input?.userId);
   const orgId = normalizeIdentifier(input?.orgId);
   if (!initialized || !sentry || !userId || !orgId) return false;
@@ -113,7 +113,7 @@ export function setuni-cliSentrySession(input) {
   return true;
 }
 
-export function clearuni-cliSentrySession() {
+export function clearuniCliSentrySession() {
   telemetryActive = false;
   if (!initialized || !sentry) return false;
 

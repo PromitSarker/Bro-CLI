@@ -6,25 +6,25 @@ import {
   type ReactNode,
 } from "react";
 
-import type { uni-cliServerStore } from "./uni-cli-server-store";
+import type { uniCliServerStore } from "./uni-cli-server-store";
 
-const uni-cliServerContext = createContext<uni-cliServerStore | null>(null);
+const uniCliServerContext = createContext<uniCliServerStore | null>(null);
 
-export function uni-cliServerProvider(props: {
-  store: uni-cliServerStore;
+export function uniCliServerProvider(props: {
+  store: uniCliServerStore;
   children: ReactNode;
 }) {
   return (
-    <uni-cliServerContext.Provider value={props.store}>
+    <uniCliServerContext.Provider value={props.store}>
       {props.children}
-    </uni-cliServerContext.Provider>
+    </uniCliServerContext.Provider>
   );
 }
 
-export function useuni-cliServer() {
-  const store = use(uni-cliServerContext);
+export function useuniCliServer() {
+  const store = use(uniCliServerContext);
   if (!store) {
-    throw new Error("useuni-cliServer must be used within an uni-cliServerProvider");
+    throw new Error("useuniCliServer must be used within an uniCliServerProvider");
   }
 
   useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);

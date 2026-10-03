@@ -4,7 +4,7 @@ import { useEffect, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
 
 import { isWebDeployment } from "@/app/lib/uni-cli-deployment";
-import { hydrateuni-cliServerSettingsFromEnv } from "@/app/lib/uni-cli-server";
+import { hydrateuniCliServerSettingsFromEnv } from "@/app/lib/uni-cli-server";
 import { isDesktopRuntime } from "@/app/utils";
 import { ConnectLinkProvider } from "@/react-app/domains/cloud/connect-link-provider";
 import { DenAuthProvider } from "@/react-app/domains/cloud/den-auth-provider";
@@ -20,21 +20,21 @@ import { ArchitectureMismatchGate } from "./architecture-mismatch-gate";
 import { BootStateProvider } from "./boot-state";
 import { DesktopRuntimeBoot } from "./desktop-runtime-boot";
 import { startDebugLogger, stopDebugLogger } from "./debug-logger";
-import { resolveuni-cliConnection } from "./uni-cli-connection";
+import { resolveuniCliConnection } from "./uni-cli-connection";
 import { ReloadCoordinatorProvider } from "./reload-coordinator";
 import { LinkOpenDialog } from "./link-open-dialog";
 
 export function resolveDefaultServerUrl(): string {
   if (isDesktopRuntime()) return "http://127.0.0.1:4096";
 
-  const uni-cliUrl =
+  const uniCliUrl =
     typeof import.meta.env?.VITE_UNICLI_URL === "string"
       ? import.meta.env.VITE_UNICLI_URL.trim()
       : "";
-  if (uni-cliUrl) {
-    const baseUrl = uni-cliUrl === "/api/uni-cli" && typeof window !== "undefined"
-      ? new URL(uni-cliUrl, window.location.origin).href
-      : uni-cliUrl;
+  if (uniCliUrl) {
+    const baseUrl = uniCliUrl === "/api/uni-cli" && typeof window !== "undefined"
+      ? new URL(uniCliUrl, window.location.origin).href
+      : uniCliUrl;
     return `${baseUrl.replace(/\/+$/, "")}/opencode`;
   }
 
@@ -83,14 +83,14 @@ export function EnterpriseAwareAppProviders({ children }: AppProvidersProps) {
 }
 
 export function AppProviders({ children }: AppProvidersProps) {
-  hydrateuni-cliServerSettingsFromEnv();
+  hydrateuniCliServerSettingsFromEnv();
 
   useEffect(() => {
     // Start the dev observability forwarder. Reads the current uni-cli-server
     // URL on every flush so reconnects after port changes still work. In prod
     // builds `startDebugLogger` is a no-op.
     startDebugLogger({
-      serverUrl: async () => (await resolveuni-cliConnection()).normalizedBaseUrl,
+      serverUrl: async () => (await resolveuniCliConnection()).normalizedBaseUrl,
     });
     return () => {
       stopDebugLogger();

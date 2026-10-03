@@ -27,13 +27,13 @@ import {
   workspaceBootstrap,
   workspaceSetRuntimeActive,
   workspaceSetSelected,
-  type uni-cliServerInfo,
+  type uniCliServerInfo,
   type WorkspaceList,
 } from "@/app/lib/desktop";
 import { createClient, unwrap } from "@/app/lib/opencode";
 import { createClientV2 } from "@/app/lib/opencode-v2-adapter";
 import { getNativeSession } from "@/app/lib/opencode-session-native";
-import { createuni-cliServerClient, uni-cliServerError, type uni-cliServerClient } from "@/app/lib/uni-cli-server";
+import { createuniCliServerClient, uniCliServerError, type uniCliServerClient } from "@/app/lib/uni-cli-server";
 import { isDesktopRuntime } from "@/app/lib/runtime-env";
 import type { ResolvedWorkspaceEndpoint } from "@/app/lib/workspace-endpoint";
 import type { WorkspaceConnectionState } from "@/app/types";
@@ -52,10 +52,10 @@ import { useLocal } from "@/react-app/kernel/local-provider";
 import { useDenAuth } from "@/react-app/domains/cloud/den-auth-provider";
 import { useBootState } from "./boot-state";
 import {
-  ensureDesktopLocaluni-cliConnection,
+  ensureDesktopLocaluniCliConnection,
   shouldAttemptDesktopLocalReconnect,
 } from "./desktop-local-uni-cli";
-import { resolveuni-cliConnection } from "./uni-cli-connection";
+import { resolveuniCliConnection } from "./uni-cli-connection";
 import { createEngineRoutingPoller } from "./engine-routing-poller";
 import {
   commitRouteWorkspaceSelection,
@@ -105,7 +105,7 @@ export type UseWorkspaceRouteStateInput = {
   /** Invoked when the uni-cli-server settings-changed event fires (the route bumps its settings version). */
   onServerSettingsChanged: () => void;
   /** Receives the local uni-cli-server host info discovered during refresh. */
-  onHostInfo: (info: uni-cliServerInfo | null) => void;
+  onHostInfo: (info: uniCliServerInfo | null) => void;
 };
 
 type SessionReferenceLoad = {
@@ -209,7 +209,7 @@ export function useWorkspaceRouteState(input: UseWorkspaceRouteStateInput) {
     routeReady: bootRouteReady,
   } = useBootState();
   const [loading, setLoading] = useState(true);
-  const [client, setClient] = useState<uni-cliServerClient | null>(null);
+  const [client, setClient] = useState<uniCliServerClient | null>(null);
   const [baseUrl, setBaseUrl] = useState("");
   const [token, setToken] = useState("");
   const [engineRoutingByServer, setEngineRoutingByServer] = useState<Record<string, boolean>>({});
@@ -455,7 +455,7 @@ export function useWorkspaceRouteState(input: UseWorkspaceRouteStateInput) {
           };
           const fetchWithRetries = async (attempt: number): Promise<void> => {
             if (!isCurrent()) return;
-            const isRemoteuni-cliWorkspace = workspace.workspaceType === "remote" && workspace.remoteType !== "opencode";
+            const isRemoteuniCliWorkspace = workspace.workspaceType === "remote" && workspace.remoteType !== "opencode";
             if (!endpoint) {
               if (workspace.workspaceType === "remote") {
                 const message = "Remote worker URL is missing. Edit connection and add a server URL.";
@@ -474,7 +474,7 @@ export function useWorkspaceRouteState(input: UseWorkspaceRouteStateInput) {
               }
               return;
             }
-            if (isRemoteuni-cliWorkspace) {
+            if (isRemoteuniCliWorkspace) {
               setWorkspaceConnectionOverrides((current) => ({
                 ...current,
                 [workspace.id]: {
@@ -491,7 +491,7 @@ export function useWorkspaceRouteState(input: UseWorkspaceRouteStateInput) {
                 : await listRouteSessions(endpoint);
               if (!isCurrent()) return;
               const workspaceRoot = normalizeDirectoryPath(workspace.path ?? "");
-              let items = workspaceRoot && !isRemoteuni-cliWorkspace
+              let items = workspaceRoot && !isRemoteuniCliWorkspace
                 ? fetchedItems.filter((session) =>
                     normalizeDirectoryPath(session?.directory ?? "") === workspaceRoot,
                   )
@@ -518,7 +518,7 @@ export function useWorkspaceRouteState(input: UseWorkspaceRouteStateInput) {
               loadedWorkspaceIdsRef.current.add(workspace.id);
               setErrorsByWorkspaceId((current) => ({ ...current, [workspace.id]: null }));
               setWorkspaceConnectionOverrides((current) => {
-                if (isRemoteuni-cliWorkspace) {
+                if (isRemoteuniCliWorkspace) {
                   return {
                     ...current,
                     [workspace.id]: {
@@ -646,7 +646,7 @@ export function useWorkspaceRouteState(input: UseWorkspaceRouteStateInput) {
       if (!attempt.isCurrent()) return;
 
       const { normalizedBaseUrl, resolvedToken, resolvedHostToken, hostInfo } = await withRouteRefreshTimeout(
-        resolveuni-cliConnection(),
+        resolveuniCliConnection(),
         "Uni-CLI server connection",
       );
       if (!attempt.isCurrent()) return;
@@ -702,13 +702,13 @@ export function useWorkspaceRouteState(input: UseWorkspaceRouteStateInput) {
       // is awaited. Old inventory reads must immediately become stale.
       updateLocalServer({ baseUrl: normalizedBaseUrl, token: resolvedToken });
 
-      const uni-cliClient = createuni-cliServerClient({
+      const uniCliClient = createuniCliServerClient({
         baseUrl: normalizedBaseUrl,
         token: resolvedToken,
         hostToken: resolvedHostToken || undefined,
       });
       const workspaceListState = await refreshRouteWorkspaceListState({
-        load: () => withRouteRefreshTimeout(uni-cliClient.listWorkspaces(), "Workspace list"),
+        load: () => withRouteRefreshTimeout(uniCliClient.listWorkspaces(), "Workspace list"),
         desktopWorkspaces,
         previousWorkspaces: workspacesRef.current,
         orderIds: workspaceOrderIdsRef.current,
@@ -775,7 +775,7 @@ export function useWorkspaceRouteState(input: UseWorkspaceRouteStateInput) {
       updateLocalServer({ baseUrl: normalizedBaseUrl, token: resolvedToken });
 
       setConnectionPending(false);
-      setClient(uni-cliClient);
+      setClient(uniCliClient);
       setBaseUrl(normalizedBaseUrl);
       setToken(resolvedToken);
       // Publish host credentials/generation with their endpoint, never before
@@ -912,11 +912,11 @@ export function useWorkspaceRouteState(input: UseWorkspaceRouteStateInput) {
     };
   }, [loadWorkspaceSessionsInBackground, routeWorkspaceId, routeWorkspaceKnown]);
   const createWorkspaceSessionMetadataCallbacks = useCallback((runtime: SessionMetadataRuntime): SessionMetadataCallbacks => {
-    const { workspaceId, runtimeWorkspaceId, opencodeBaseUrl, uni-cliToken } = runtime;
+    const { workspaceId, runtimeWorkspaceId, opencodeBaseUrl, uniCliToken } = runtime;
     const workspace = sessionReferenceAccessRef.current.workspaces.get(workspaceId);
     const scope = workspace ? sessionLoadScopeForWorkspace(workspace) : null;
     const generation = sessionMetadataGenerationsRef.current.get(workspaceId) ?? 0;
-    const key = JSON.stringify([scope, generation, runtimeWorkspaceId, opencodeBaseUrl, uni-cliToken]);
+    const key = JSON.stringify([scope, generation, runtimeWorkspaceId, opencodeBaseUrl, uniCliToken]);
     const cached = sessionMetadataCallbacksRef.current.get(workspaceId);
     if (cached?.key === key) return cached.callbacks;
     const isCurrent = (mode: "publish" | "journal" = "publish") => {
@@ -931,7 +931,7 @@ export function useWorkspaceRouteState(input: UseWorkspaceRouteStateInput) {
         || generation !== (sessionMetadataGenerationsRef.current.get(workspaceId) ?? 0)
         || scope === null || sessionLoadScopeForWorkspace(currentWorkspace) !== scope) return false;
       const endpoint = endpointForWorkspace(currentWorkspace);
-      if (!endpoint || endpoint.workspaceId !== runtimeWorkspaceId || endpoint.token !== uni-cliToken) return false;
+      if (!endpoint || endpoint.workspaceId !== runtimeWorkspaceId || endpoint.token !== uniCliToken) return false;
       const v2 = engineRoutingByServerRef.current[JSON.stringify([endpoint.baseUrl, endpoint.token])] === true;
       return opencodeBaseUrl === (v2 ? `${endpoint.mountedBaseUrl}/opencode2` : endpoint.opencodeBaseUrl);
     };
@@ -1216,7 +1216,7 @@ export function useWorkspaceRouteState(input: UseWorkspaceRouteStateInput) {
     if (!workspaceId || reconnectAttemptedWorkspaceIdRef.current === workspaceId) return;
     reconnectAttemptedWorkspaceIdRef.current = workspaceId;
 
-    void ensureDesktopLocaluni-cliConnection({
+    void ensureDesktopLocaluniCliConnection({
       route: "session",
       workspace: selectedWorkspace,
       allWorkspaces: workspaces,
@@ -1261,14 +1261,14 @@ export function useWorkspaceRouteState(input: UseWorkspaceRouteStateInput) {
       const key = JSON.stringify([server.baseUrl, server.token]);
       if (!server.baseUrl || serverKeys.has(key)) continue;
       serverKeys.add(key);
-      const uni-cliClient = createuni-cliServerClient(server);
+      const uniCliClient = createuniCliServerClient(server);
       sources.push({ key, read: async () => {
         try {
-          const status = await withRouteRefreshTimeout(uni-cliClient.getEngineV2PreviewStatus(), "Engine routing status");
+          const status = await withRouteRefreshTimeout(uniCliClient.getEngineV2PreviewStatus(), "Engine routing status");
           return status.enabled && status.chatRouting;
         } catch (error) {
           // Only a legacy server's 404 establishes v1; transient failures stay unknown.
-          if (error instanceof uni-cliServerError && error.status === 404) return false;
+          if (error instanceof uniCliServerError && error.status === 404) return false;
           throw error;
         }
       } });
@@ -1541,7 +1541,7 @@ export function useWorkspaceRouteState(input: UseWorkspaceRouteStateInput) {
     workspaceId: selectedWorkspaceId,
     runtimeWorkspaceId: selectedWorkspaceEndpoint?.workspaceId ?? "",
     opencodeBaseUrl,
-    uni-cliToken: selectedWorkspaceServerToken,
+    uniCliToken: selectedWorkspaceServerToken,
   }), [createWorkspaceSessionMetadataCallbacks, selectedWorkspaceId, selectedWorkspaceEndpoint?.workspaceId, opencodeBaseUrl, selectedWorkspaceServerToken, sessionReferenceRevision]);
 
   return {

@@ -2,10 +2,10 @@ import type { createOpencodeClient } from "@opencode-ai/sdk/v2/client";
 import {
   isTrustedCloudMcpEndpointForGlobalPersist,
   UNICLI_CLOUD_MCP_NAME,
-  readuni-cliCloudMcpHealth,
-  reconcileuni-cliCloudMcp,
-  refreshuni-cliCloudMcpEngine,
-  refreshuni-cliCloudMcpCatalog,
+  readuniCliCloudMcpHealth,
+  reconcileuniCliCloudMcp,
+  refreshuniCliCloudMcpEngine,
+  refreshuniCliCloudMcpCatalog,
   type CloudMcpServerMetadata,
   type CloudMcpNativeEngineResolver,
   type CloudMcpProviderModelContext,
@@ -101,7 +101,7 @@ export function registerCloudMcpRoutes(options: RegisterCloudMcpRoutesOptions): 
   addRoute(routes, "GET", "/workspace/:id/mcp/uni-cli-cloud/health", "client", async (ctx) => {
     const workspace = await resolveWorkspace(config, ctx.params.id);
     assertExactWorkspace(ctx.params.id, workspace);
-    const health = await readuni-cliCloudMcpHealth({
+    const health = await readuniCliCloudMcpHealth({
       config,
       workspace,
       directory: resolveOpencodeDirectory(workspace),
@@ -138,7 +138,7 @@ export function registerCloudMcpRoutes(options: RegisterCloudMcpRoutesOptions): 
       body = parsed;
     }
     assertStrictBody(body, workspace);
-    const result = await refreshuni-cliCloudMcpEngine({
+    const result = await refreshuniCliCloudMcpEngine({
       config,
       workspace,
       directory: resolveOpencodeDirectory(workspace),
@@ -167,7 +167,7 @@ export function registerCloudMcpRoutes(options: RegisterCloudMcpRoutesOptions): 
       if (Object.keys(body).some((key) => !["mode", "workspaceId", "name", "provider", "model"].includes(key))) {
         throw new ApiError(400, "invalid_payload", "Catalog refresh uses only the persisted Cloud configuration");
       }
-      return jsonResponse(await refreshuni-cliCloudMcpCatalog({
+      return jsonResponse(await refreshuniCliCloudMcpCatalog({
         config,
         workspace,
         directory: resolveOpencodeDirectory(workspace),
@@ -187,7 +187,7 @@ export function registerCloudMcpRoutes(options: RegisterCloudMcpRoutesOptions): 
     if (!await isTrustedCloudMcpEndpointForGlobalPersist(endpointUrl)) {
       requireClientScope(ctx, "owner");
     }
-    const health = await reconcileuni-cliCloudMcp({
+    const health = await reconcileuniCliCloudMcp({
       config,
       workspace,
       directory: resolveOpencodeDirectory(workspace),

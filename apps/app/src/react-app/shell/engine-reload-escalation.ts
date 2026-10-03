@@ -8,20 +8,20 @@
 // here: the server reports it while a dispose is still tearing down, and
 // restarting mid-teardown would kill the very sessions being drained.
 import { engineRestart } from "@/app/lib/desktop";
-import { uni-cliServerError, type uni-cliServerClient } from "@/app/lib/uni-cli-server";
+import { uniCliServerError, type uniCliServerClient } from "@/app/lib/uni-cli-server";
 import { isDesktopRuntime } from "@/app/lib/runtime-env";
 
 const UNREACHABLE_RETRY_DELAY_MS = 1500;
 
 export function canRestartDesktopForReloadError(error: unknown) {
   return (
-    error instanceof uni-cliServerError &&
+    error instanceof uniCliServerError &&
     (error.code === "opencode_engine_unreachable" || error.code === "opencode_unconfigured")
   );
 }
 
 function isEngineUnreachableError(error: unknown) {
-  return error instanceof uni-cliServerError && error.code === "opencode_engine_unreachable";
+  return error instanceof uniCliServerError && error.code === "opencode_engine_unreachable";
 }
 
 /**
@@ -60,7 +60,7 @@ export type ReloadEngineFallbackOptions = {
  * answers the second attempt, no session is disturbed.
  */
 export async function reloadEngineWithDesktopFallback(
-  client: Pick<uni-cliServerClient, "reloadEngine">,
+  client: Pick<uniCliServerClient, "reloadEngine">,
   workspaceId: string,
   options?: ReloadEngineFallbackOptions,
 ): Promise<ReloadEngineFallbackResult> {

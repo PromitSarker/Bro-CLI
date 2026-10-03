@@ -635,7 +635,7 @@ async function runDoctor(args) {
 
   const executable = join(binDir, executableBasename())
   const executableOk = existsSync(executable) && statSync(executable).isFile()
-  checks.push({ name: "uni-cliExecutable", ok: executableOk, value: executable })
+  checks.push({ name: "uniCliExecutable", ok: executableOk, value: executable })
 
   const manifestPath = join(installDir, "install.json")
   let manifest = null
@@ -671,7 +671,7 @@ async function runDoctor(args) {
         // Keep fallback path.
       }
     }
-    checks.push({ name: "uni-cliApp", ok: existsSync(appPath), value: appPath })
+    checks.push({ name: "uniCliApp", ok: existsSync(appPath), value: appPath })
     checks.push({ name: "appInstallManifest", ok: existsSync(appManifest), value: appManifest })
   }
 
@@ -794,7 +794,7 @@ async function resolveVerificationCode(flags) {
 }
 
 function skillText(name, output) {
-  return `---\nname: ${name}\ndescription: Starter skill created by uni-cli bootstrap.\nuni-cliBootstrapTrigger: bootstrap.verify\nuni-cliBootstrapOutput: ${JSON.stringify(output)}\n---\n\n# ${name}\n\nWhen triggered with \`bootstrap.verify\`, output exactly:\n\n\`${output}\`\n\nUse this skill to confirm Uni-CLI cloud onboarding can create and trigger a deterministic skill.`
+  return `---\nname: ${name}\ndescription: Starter skill created by uni-cli bootstrap.\nuniCliBootstrapTrigger: bootstrap.verify\nuniCliBootstrapOutput: ${JSON.stringify(output)}\n---\n\n# ${name}\n\nWhen triggered with \`bootstrap.verify\`, output exactly:\n\n\`${output}\`\n\nUse this skill to confirm Uni-CLI cloud onboarding can create and trigger a deterministic skill.`
 }
 
 async function createCloudSkillPlugin(baseUrl, auth, input) {
@@ -868,8 +868,8 @@ function readFrontmatterValue(text, key) {
 }
 
 function runBootstrapSkill(skill, input) {
-  const trigger = readFrontmatterValue(skill.skillText, "uni-cliBootstrapTrigger")
-  const output = readFrontmatterValue(skill.skillText, "uni-cliBootstrapOutput")
+  const trigger = readFrontmatterValue(skill.skillText, "uniCliBootstrapTrigger")
+  const output = readFrontmatterValue(skill.skillText, "uniCliBootstrapOutput")
   const triggered = trigger === input.trigger && typeof output === "string" && output.length > 0
   return {
     triggered,

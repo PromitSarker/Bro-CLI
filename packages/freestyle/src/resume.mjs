@@ -20,7 +20,7 @@ if (!login.ok) throw new Error("Could not renew the restored demo session");
 const account = await login.json();
 if (typeof account.token !== "string") throw new Error("Missing renewed demo token");
 const synced = await fetch(`${services.engine}/den-session`, {
-  method: "PUT", headers: { "x-uni-cli-host-token": outputs.uni-cliHostToken.value, "content-type": "application/json" },
+  method: "PUT", headers: { "x-uni-cli-host-token": outputs.uniCliHostToken.value, "content-type": "application/json" },
   body: JSON.stringify({ baseUrl: services.api, token: account.token, orgId: outputs.orgId.value }),
   signal: AbortSignal.timeout(10_000),
 });

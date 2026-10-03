@@ -46,7 +46,7 @@ const ACTIVATED_BOOTSTRAP = {
 const GATED_DESKTOP_COMMANDS = new Set([
   "workspaceBootstrap",
   "runtimeBootstrap",
-  "uni-cliServerRestart",
+  "uniCliServerRestart",
   "engineStart",
   "automationRunnerConfigure",
 ]);

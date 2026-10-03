@@ -23,7 +23,7 @@ export interface CloudModelInfraWorld {
   org: DenOrgHandle;
 }
 
-async function grantUni-CLIWebAccess(admin: DenSession, organizationId: string): Promise<void> {
+async function grantUniCliWebAccess(admin: DenSession, organizationId: string): Promise<void> {
   // Cloud is entitled by Uni-CLI Web access (paid subscription or the
   // platform-admin complimentary grant); there is no per-organization Cloud flag.
   const route = `/v1/admin/organizations/${organizationId}/uni-cli-web-access`;
@@ -79,7 +79,7 @@ export async function bootCloudModelInfra(
     email: CLOUD_MODEL_INFRA_ADMIN_EMAIL,
   });
   const org = stack.use(await createOrg(den, CLOUD_MODEL_INFRA_ORG));
-  await grantUni-CLIWebAccess(admin, org.id);
+  await grantUniCliWebAccess(admin, org.id);
   return { den, admin, org };
 }
 

@@ -9,7 +9,7 @@ import { randomBytes } from "node:crypto";
 import { chmod, mkdir, mkdtemp, readFile, readdir, rename, rm, stat, writeFile } from "node:fs/promises";
 import { homedir, tmpdir } from "node:os";
 import { basename, dirname, join, relative, resolve } from "node:path";
-import { uni-cliServerDataDir } from "@uni-cli/paths";
+import { uniCliServerDataDir } from "@uni-cli/paths";
 
 export const OPENCODE_GITHUB_REPO = "anomalyco/opencode";
 const NPM_PACKAGE = "uni-cli-server";
@@ -195,7 +195,7 @@ export async function ensureManagedEngine(input: {
     return { bin: explicit, installedVersion: readBinaryVersion(explicit), source: "env" };
   }
   const version = input.expectedVersion.replace(/^v/, "");
-  const dataDir = input.dataDir ?? uni-cliServerDataDir({ env: input.env });
+  const dataDir = input.dataDir ?? uniCliServerDataDir({ env: input.env });
   const installDir = engineInstallDir(dataDir, version);
   const binaryName = (input.platform ?? process.platform) === "win32" ? "opencode.exe" : "opencode";
   const bin = join(installDir, binaryName);
@@ -319,7 +319,7 @@ export async function loadOrCreateWebTokens(input: {
   env: NodeJS.ProcessEnv;
   dataDir?: string;
 }): Promise<PersistedTokens & { path: string; created: boolean }> {
-  const dataDir = input.dataDir ?? uni-cliServerDataDir({ env: input.env });
+  const dataDir = input.dataDir ?? uniCliServerDataDir({ env: input.env });
   const path = join(dataDir, "web-tokens.json");
   try {
     const parsed: unknown = JSON.parse(await readFile(path, "utf8"));

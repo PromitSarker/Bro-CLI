@@ -8,21 +8,21 @@ import {
   readDenSettings,
 } from "@/app/lib/den";
 import { denSettingsChangedEvent } from "@/app/lib/den-session-events";
-import { isuni-cliGatewayRuntime } from "@/app/lib/gateway-runtime";
+import { isuniCliGatewayRuntime } from "@/app/lib/gateway-runtime";
 import { Button } from "@/components/ui/button";
 import { usePlatform } from "@/react-app/kernel/platform";
 import { WebStartupScreen } from "@/react-app/shell/workspace-startup-status";
 import { useDenAuth } from "./den-auth-provider";
 import {
-  resolveUni-CLIWebAccessGateState,
-  type Uni-CLIWebAccessCheck,
-  type Uni-CLIWebAccessGateState,
+  resolveUniCliWebAccessGateState,
+  type UniCliWebAccessCheck,
+  type UniCliWebAccessGateState,
 } from "./uni-cli-web-access-state";
 
 export {
-  resolveUni-CLIWebAccessGateState,
-  type Uni-CLIWebAccessCheck,
-  type Uni-CLIWebAccessGateState,
+  resolveUniCliWebAccessGateState,
+  type UniCliWebAccessCheck,
+  type UniCliWebAccessGateState,
 } from "./uni-cli-web-access-state";
 
 function readDenSettingsSnapshot() {
@@ -49,8 +49,8 @@ export function denWebBillingUrl(baseUrl: string) {
   }
 }
 
-export function Uni-CLIWebAccessGateScreen(props: {
-  state: Exclude<Uni-CLIWebAccessGateState, "inactive" | "granted">;
+export function UniCliWebAccessGateScreen(props: {
+  state: Exclude<UniCliWebAccessGateState, "inactive" | "granted">;
   organizationName: string;
   onManageAccess: () => void;
   onRetry: () => void;
@@ -111,10 +111,10 @@ export function Uni-CLIWebAccessGateScreen(props: {
   );
 }
 
-export function Uni-CLIWebAccessGate({ children }: { children: ReactNode }) {
+export function UniCliWebAccessGate({ children }: { children: ReactNode }) {
   const denAuth = useDenAuth();
   const platform = usePlatform();
-  const gatewayMode = isuni-cliGatewayRuntime();
+  const gatewayMode = isuniCliGatewayRuntime();
   const settingsSnapshot = useSyncExternalStore(
     subscribeToDenSettings,
     readDenSettingsSnapshot,
@@ -133,7 +133,7 @@ export function Uni-CLIWebAccessGate({ children }: { children: ReactNode }) {
     && verifiedOrganizationId === organizationId
       ? `${principalId}\u0000${organizationId}\u0000${authToken}`
       : null;
-  const [check, setCheck] = useState<Uni-CLIWebAccessCheck | null>(null);
+  const [check, setCheck] = useState<UniCliWebAccessCheck | null>(null);
   const [retry, setRetry] = useState(0);
 
   useEffect(() => {
@@ -148,7 +148,7 @@ export function Uni-CLIWebAccessGate({ children }: { children: ReactNode }) {
 
     let cancelled = false;
     const client = createDenClient({ baseUrl: settings.baseUrl, token: authToken });
-    void client.getUni-CLIWebAccess(organizationId).then(
+    void client.getUniCliWebAccess(organizationId).then(
       (access) => {
         if (cancelled) return;
         setCheck({
@@ -168,7 +168,7 @@ export function Uni-CLIWebAccessGate({ children }: { children: ReactNode }) {
     };
   }, [authToken, denAuth.status, expectedScope, organizationId, retry, settings.baseUrl]);
 
-  const state = resolveUni-CLIWebAccessGateState({
+  const state = resolveUniCliWebAccessGateState({
     gatewayMode,
     authStatus: denAuth.status,
     authToken,
@@ -189,7 +189,7 @@ export function Uni-CLIWebAccessGate({ children }: { children: ReactNode }) {
   };
 
   return (
-    <Uni-CLIWebAccessGateScreen
+    <UniCliWebAccessGateScreen
       state={state}
       organizationName={settings.activeOrgName?.trim() ?? ""}
       onManageAccess={() => platform.openLink(denWebBillingUrl(settings.baseUrl))}
