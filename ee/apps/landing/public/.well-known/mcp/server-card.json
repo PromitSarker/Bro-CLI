@@ -27,9 +27,9 @@
     "subfolder": "ee/apps/den-api"
   },
   "install": {
-    "claude-code": "claude mcp add --transport http uni-cli https://api.uni-clilabs.com/mcp/agent",
-    "codex": "codex mcp add uni-cli --url https://api.uni-clilabs.com/mcp/agent && codex mcp login uni-cli",
-    "gemini-cli": "gemini mcp add --transport http uni-cli https://api.uni-clilabs.com/mcp/agent",
-    "opencode": "opencode mcp add uni-cli --url https://api.uni-clilabs.com/mcp/agent && opencode mcp auth uni-cli"
+    "claude-code": "claude mcp add --transport http uniCli https://api.uni-clilabs.com/mcp/agent",
+    "codex": "codex mcp add uniCli --url https://api.uni-clilabs.com/mcp/agent && codex mcp login uni-cli",
+    "gemini-cli": "gemini mcp add --transport http uniCli https://api.uni-clilabs.com/mcp/agent",
+    "opencode": "opencode mcp add uniCli --url https://api.uni-clilabs.com/mcp/agent && opencode mcp auth uni-cli"
   }
 }

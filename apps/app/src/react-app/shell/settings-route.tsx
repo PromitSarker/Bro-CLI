@@ -1029,7 +1029,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     [providerAuthSnapshot.cloudOrgProviders, providerAuthSnapshot.importedCloudProviders],
   );
   // Entitled = Den/import says Uni-CLI Models is included. Available = local
-  // engine actually exposes selectable uni-cli models.
+  // engine actually exposes selectable uniCli models.
   const uniCliModelsEntitled = cloudSession.isSignedIn && hasUniCliCloudProvider;
   const uniCliModelsAvailable = hasUniCliModelsAvailable({
     providerConnectedIds,

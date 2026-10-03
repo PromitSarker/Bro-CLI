@@ -44,7 +44,7 @@ export const PRECLAIM_ACCESS_TOKEN_TTL_SECONDS = 15 * 60
 export const CLAIM_CODE_TTL_SECONDS = 15 * 60
 export const CLAIM_CODE_POLL_INTERVAL_SECONDS = 5
 /** Reserved domain: agent users can never receive mail or sign in. */
-export const PRECLAIM_AGENT_EMAIL_DOMAIN = "agents.uni-cli.invalid"
+export const PRECLAIM_AGENT_EMAIL_DOMAIN = "agents.uniCli.invalid"
 export const PRECLAIM_CLIENT_ID = "uni-cli-preclaim"
 
 const USER_CODE_CHARSET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"

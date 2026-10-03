@@ -83,7 +83,7 @@ function hasFixtureText(text, marker) {
 }
 
 function hasBuiltInBrowserPrompt(promptText) {
-  return ["built-in uni-cli browser", "uni-cli browser", "example.com"]
+  return ["built-in uniCli browser", "uni-cli browser", "example.com"]
     .some((marker) => hasFixtureText(promptText, marker));
 }
 

@@ -1018,7 +1018,7 @@ if (remoteDebugPort > 0) {
 process.env.UNICLI_ELECTRON_REMOTE_DEBUG_PORT = String(remoteDebugPort);
 if (isDevMode && !app.isPackaged) {
   const cdpAddress = remoteDebugPort > 0 ? `http://127.0.0.1:${remoteDebugPort}` : "disabled";
-  console.log(`[uni-cli] dev profile=${app.getPath("userData")} cdp=${cdpAddress}`);
+  console.log(`[uniCli] dev profile=${app.getPath("userData")} cdp=${cdpAddress}`);
 }
 
 // Apply extra Chromium flags from ELECTRON_EXTRA_LAUNCH_ARGS.
@@ -2862,7 +2862,7 @@ const { ensureAutoUpdater } = registerUpdaterIpc({
 
 if (!app.requestSingleInstanceLock()) {
   if (isDevMode && !app.isPackaged) {
-    console.error(`[uni-cli] Another Uni-CLI dev instance already holds this profile directory:
+    console.error(`[uniCli] Another Uni-CLI dev instance already holds this profile directory:
   ${app.getPath("userData")}
 The second process is exiting so its CDP port is released.
 Run this worktree with an isolated profile: UNICLI_DEV_PROFILE=auto pnpm dev

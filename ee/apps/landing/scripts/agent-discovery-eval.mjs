@@ -34,7 +34,7 @@ const agents = option("--agents", "codex,gemini,opencode").split(",").map((agent
 mkdirSync(outDir, { recursive: true });
 
 const MCP_URL = "https://api.uni-clilabs.com/mcp/agent";
-const CLAUDE_ADD = new RegExp(`claude mcp add --transport http uni-cli ${MCP_URL.replaceAll(".", "\\.")}`);
+const CLAUDE_ADD = new RegExp(`claude mcp add --transport http uniCli ${MCP_URL.replaceAll(".", "\\.")}`);
 
 // llms.txt links use production URLs; point the agent at the local build.
 const preamble = `You are helping a user. Only use ${baseUrl}/llms.txt and pages it links to (fetch each one with \`curl -sL <url>\`). This is a pre-release build: any https://uni-clilabs.com/... URL except /docs is served at ${baseUrl}/... - fetch it from there. Do not install anything and do not create accounts. Answer with exact commands and URLs.`;
@@ -54,14 +54,14 @@ const prompts = [
     checks: [
       ["signup URL", (text) => /app\.uni-clilabs\.com\/?\?mode=sign-up/.test(text)],
       ["shared skill path (Plugin Directory / Collection / skill)", (text) => /Plugin Directory|Collection/i.test(text)],
-      ["desktop install for members", (text) => /brew install --cask uni-cli|uni-clilabs\.com\/download/.test(text)],
+      ["desktop install for members", (text) => /brew install --cask uniCli|uni-clilabs\.com\/download/.test(text)],
     ],
   },
 ];
 
 // A mention is fine when it, or a line just above it (e.g. "Do not use:" before a code block), warns against it.
 const NEGATION = /not|don't|never|avoid|different|unrelated|wrong/i;
-const noNpx = ["does not recommend `npx uni-cli`", (text) => text.split("\n").every((line, index, lines) => !/npx uni-cli|npm (i|install)( -g)? uni-cli\b/.test(line) || lines.slice(Math.max(0, index - 3), index + 1).some((near) => NEGATION.test(near)))];
+const noNpx = ["does not recommend `npx uni-cli`", (text) => text.split("\n").every((line, index, lines) => !/npx uniCli|npm (i|install)( -g)? uniCli\b/.test(line) || lines.slice(Math.max(0, index - 3), index + 1).some((near) => NEGATION.test(near)))];
 
 // The agents below run shell commands with network access. Hand each one only
 // the variables it needs, never the caller's whole environment.
@@ -244,9 +244,9 @@ if (executor && run("claude", ["--version"]).code === 0) {
   writeRedacted(join(outDir, `${executor}-execute-claude-mcp-add.answer.md`), answer);
   const list = run("claude", ["mcp", "list"], { cwd: home, env: agentEnv("claude", { HOME: home }), timeout: 120000 });
   const get = run("claude", ["mcp", "get", "uni-cli"], { cwd: home, env: agentEnv("claude", { HOME: home }), timeout: 120000 });
-  writeRedacted(join(outDir, "claude-mcp-list.txt"), `$ claude mcp list\n${list.stdout}${list.stderr}\n$ claude mcp get uni-cli\n${get.stdout}${get.stderr}`);
+  writeRedacted(join(outDir, "claude-mcp-list.txt"), `$ claude mcp list\n${list.stdout}${list.stderr}\n$ claude mcp get uniCli\n${get.stdout}${get.stderr}`);
   const ok = /uni-cli/.test(list.stdout) && get.stdout.includes(MCP_URL);
-  summary.push({ agent: executor, test: "execute-claude-mcp-add", verdict: ok ? "pass" : "fail", note: ok ? "`claude mcp list` shows uni-cli -> /mcp/agent" : "uni-cli not registered" });
+  summary.push({ agent: executor, test: "execute-claude-mcp-add", verdict: ok ? "pass" : "fail", note: ok ? "`claude mcp list` shows uniCli -> /mcp/agent" : "uni-cli not registered" });
   rmSync(home, { recursive: true, force: true });
 } else {
   summary.push({ agent: executor ?? "-", test: "execute-claude-mcp-add", verdict: "skip", note: "needs a signed-in codex or opencode and the claude CLI" });

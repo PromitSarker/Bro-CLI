@@ -3,8 +3,8 @@ import { spec } from "@uni-cli/testkit";
 import { compatibleReleaseWorld } from "../worlds/first-run.ts";
 
 const test = spec.world(compatibleReleaseWorld);
-const currentArtifact = "https://releases.uni-cli.test/v2.4.0/Uni-CLI-darwin-arm64.dmg";
-const previousArtifact = "https://releases.uni-cli.test/v2.3.1/Uni-CLI-darwin-arm64.dmg";
+const currentArtifact = "https://releases.uniCli.test/v2.4.0/Uni-CLI-darwin-arm64.dmg";
+const previousArtifact = "https://releases.uniCli.test/v2.3.1/Uni-CLI-darwin-arm64.dmg";
 
 function stringField(value: unknown, key: string): string | null {
   if (typeof value !== "object" || value === null) return null;

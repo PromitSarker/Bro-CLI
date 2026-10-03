@@ -124,7 +124,7 @@ function isWebAppHost(hostname: string) {
   }
 
   return normalized === "app.uni-clilabs.com"
-    || normalized === "app.uni-cli.software"
+    || normalized === "app.uniCli.software"
     || normalized.startsWith("app.")
     // Cloud Run hostnames serve the den-web frontend, which only exposes the
     // Den API behind its /api/den proxy path (see #1807).

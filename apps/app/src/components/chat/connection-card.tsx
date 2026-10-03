@@ -20,7 +20,7 @@ const ACTION_OWNER = {
   organization_admin: "Your organization admin",
   provider_admin: "The provider admin",
   network_admin: "Your network admin",
-  uni-cli: "Uni-CLI support",
+  uniCli: "Uni-CLI support",
 }
 
 const BLOCKED_VERB: Partial<Record<ConnectionActionType, string>> = {

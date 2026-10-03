@@ -202,7 +202,7 @@ export function cloudMcpAdvancedRows(health: uniCliCloudMcpHealth | null): Cloud
   const compatibility = health.compatibility;
   rows.push({
     label: "Versions",
-    value: `app ${describeCloudMcpErrorDetail(compatibility.uni-cli.app?.version) ?? "unknown"} · server ${compatibility.uni-cli.serverVersion ?? "unknown"} · engine ${compatibility.opencode.actualVersion ?? "unknown"}${compatibility.opencode.expectedVersion ? ` (expected ${compatibility.opencode.expectedVersion})` : ""}`,
+    value: `app ${describeCloudMcpErrorDetail(compatibility.uniCli.app?.version) ?? "unknown"} · server ${compatibility.uniCli.serverVersion ?? "unknown"} · engine ${compatibility.opencode.actualVersion ?? "unknown"}${compatibility.opencode.expectedVersion ? ` (expected ${compatibility.opencode.expectedVersion})` : ""}`,
     tone: "muted",
   });
   rows.push({

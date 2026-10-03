@@ -10,7 +10,7 @@ type UniCliSupport = "check" | "soon";
 type ParityRow = {
   capability: string;
   cowork: CoworkSupport;
-  uni-cli?: UniCliSupport;
+  uniCli?: UniCliSupport;
   badge?: "alpha" | "uni-cli";
   highlighted?: boolean;
 };
@@ -23,12 +23,12 @@ const rows: ParityRow[] = [
   {
     capability: "Dispatch: assign tasks from your phone",
     cowork: "check",
-    uni-cli: "soon"
+    uniCli: "soon"
   },
   {
     capability: "Live artifacts: auto-refreshing dashboards",
     cowork: "check",
-    uni-cli: "soon"
+    uniCli: "soon"
   },
   { capability: "Browser automation", cowork: "limited" },
   { capability: "Anthropic-compatible plugins and skills", cowork: "check" },
@@ -124,7 +124,7 @@ export function LpParityTable() {
                   <UniCliMark className="h-3.5 w-3.5 object-contain" />
                   Uni-CLI
                 </div>
-                <UniCliCell support={row.uni-cli} />
+                <UniCliCell support={row.uniCli} />
               </div>
               <div>
                 <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--lp-muted)]">
@@ -162,7 +162,7 @@ export function LpParityTable() {
               <Capability row={row} />
             </div>
             <div className="flex w-40 justify-center">
-              <UniCliCell support={row.uni-cli} />
+              <UniCliCell support={row.uniCli} />
             </div>
             <div className="flex w-40 justify-center">
               <CoworkCell support={row.cowork} />

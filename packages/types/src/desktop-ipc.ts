@@ -497,7 +497,7 @@ export type DesktopCommandMap = {
   // Sandbox
   sandboxCleanupuniCliContainers: { args: []; result: uniCliDockerCleanupResult };
 
-  // uni-cli server sidecar
+  // uniCli server sidecar
   uniCliServerInfo: { args: []; result: uniCliServerInfo };
   automationRunnerConfigure: {
     args: [configuration: { baseUrl: string; token: string; runnerId: string } | null];

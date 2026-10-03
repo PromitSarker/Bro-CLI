@@ -78,7 +78,7 @@ function toolCallProviderMetadata(part: ToolPart): ProviderMetadata {
     : null;
   const toolCompletedAt = appBuilder && "time" in part.state && "end" in part.state.time && typeof part.state.time.end === "number"
     && Number.isFinite(part.state.time.end) ? part.state.time.end : null;
-  const uni-cli = {
+  const uniCli = {
     ...(part.id !== part.callID ? { sourcePartId: part.id } : {}),
     ...(mcpResult ? { mcpResult } : {}),
     ...(childSessionId ? { childSessionId } : {}),
@@ -92,7 +92,7 @@ function toolCallProviderMetadata(part: ToolPart): ProviderMetadata {
   };
   return {
     opencode: { partId: part.id },
-    ...(Object.keys(uni-cli).length > 0 ? { uni-cli } : {}),
+    ...(Object.keys(uniCli).length > 0 ? { uniCli } : {}),
   };
 }
 

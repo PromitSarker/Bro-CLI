@@ -69,14 +69,14 @@ export const capabilityGroups: CapabilityGroup[] = [
     rows: [
       {
         label: "Desktop app for macOS and Windows",
-        cells: { enterprise: yes(A.matrix), thirdParty: yes(A.install), uni-cli: yes("/docs/start-here/downloads") }
+        cells: { enterprise: yes(A.matrix), thirdParty: yes(A.install), uniCli: yes("/docs/start-here/downloads") }
       },
       {
         label: "Desktop app for Linux",
         cells: {
           enterprise: partial(A.linux, "Claude Desktop on Linux is in beta."),
           thirdParty: partial(A.config, "Linux settings are documented, but the 3P install guide lists only macOS and Windows."),
-          uni-cli: yes("/docs/start-here/enterprise-desktop-deployment")
+          uniCli: yes("/docs/start-here/enterprise-desktop-deployment")
         }
       },
       {
@@ -84,19 +84,19 @@ export const capabilityGroups: CapabilityGroup[] = [
         cells: {
           enterprise: yes(A.matrix),
           thirdParty: no(A.matrix),
-          uni-cli: planned(partial("/docs/cloud/run-in-the-cloud/open-cloud-in-browser", "Uni-CLI Web is in preview as a paid add-on."))
+          uniCli: planned(partial("/docs/cloud/run-in-the-cloud/open-cloud-in-browser", "Uni-CLI Web is in preview as a paid add-on."))
         }
       },
       {
         label: "Start work from your phone or Slack",
-        cells: { enterprise: yes(A.matrix), thirdParty: no(A.matrix), uni-cli: planned(no("/roadmap")) }
+        cells: { enterprise: yes(A.matrix), thirdParty: no(A.matrix), uniCli: planned(no("/roadmap")) }
       },
       {
         label: "Your skills and connections inside Claude Code, Codex, and Cursor",
         cells: {
           enterprise: no(A.matrix),
           thirdParty: no(A.matrix),
-          uni-cli: yes("/docs/start-here/connect-uni-cli-mcp", "One MCP URL carries your organization's skills and connections.")
+          uniCli: yes("/docs/start-here/connect-uni-cli-mcp", "One MCP URL carries your organization's skills and connections.")
         }
       }
     ]
@@ -106,26 +106,26 @@ export const capabilityGroups: CapabilityGroup[] = [
     rows: [
       {
         label: "SKILL.md skills and Claude-format plugins",
-        cells: { enterprise: yes(A.matrix), thirdParty: yes(A.matrix), uni-cli: yes("/docs/start-here/do-work-with-it/skills-plugins-and-mcp") }
+        cells: { enterprise: yes(A.matrix), thirdParty: yes(A.matrix), uniCli: yes("/docs/start-here/do-work-with-it/skills-plugins-and-mcp") }
       },
       {
         label: "MCP connectors with OAuth, set up once for everyone",
         cells: {
           enterprise: yes(A.matrix),
           thirdParty: yes(A.extensions, "Admins push managed MCP servers, including OAuth, by console or MDM."),
-          uni-cli: yes("/docs/cloud/share-with-your-team/shared-mcp-connections")
+          uniCli: yes("/docs/cloud/share-with-your-team/shared-mcp-connections")
         }
       },
       {
         label: "Built-in browser the agent drives",
-        cells: { enterprise: yes(A.matrix), thirdParty: yes(A.matrix), uni-cli: yes("/docs/start-here/do-work-with-it/control-the-browser") }
+        cells: { enterprise: yes(A.matrix), thirdParty: yes(A.matrix), uniCli: yes("/docs/start-here/do-work-with-it/control-the-browser") }
       },
       {
         label: "Artifacts and interactive app views",
         cells: {
           enterprise: yes(A.matrix),
           thirdParty: yes(A.matrix),
-          uni-cli: planned(partial("/roadmap", "Artifacts ship today; live artifacts and MCP Apps are in preview."))
+          uniCli: planned(partial("/roadmap", "Artifacts ship today; live artifacts and MCP Apps are in preview."))
         }
       },
       {
@@ -133,7 +133,7 @@ export const capabilityGroups: CapabilityGroup[] = [
         cells: {
           enterprise: yes(A.matrix),
           thirdParty: yes(A.matrix, "Stored on the device. Chat-history search is not available on 3P."),
-          uni-cli: partial("/docs/start-here/do-work-with-it/cross-chat-memory", "The agent can search and read past chats when asked; nothing is remembered automatically.")
+          uniCli: partial("/docs/start-here/do-work-with-it/cross-chat-memory", "The agent can search and read past chats when asked; nothing is remembered automatically.")
         }
       },
       {
@@ -141,7 +141,7 @@ export const capabilityGroups: CapabilityGroup[] = [
         cells: {
           enterprise: yes(A.overview),
           thirdParty: yes(A.overview),
-          uni-cli: partial("/roadmap", "Docker or microsandbox workspaces, with platform and setup limits.")
+          uniCli: partial("/roadmap", "Docker or microsandbox workspaces, with platform and setup limits.")
         }
       }
     ]
@@ -154,7 +154,7 @@ export const capabilityGroups: CapabilityGroup[] = [
         cells: {
           enterprise: yes(A.matrix),
           thirdParty: yes(A.matrix),
-          uni-cli: planned(partial("/docs/changelog", "Automations run on a schedule; event triggers are next."))
+          uniCli: planned(partial("/docs/changelog", "Automations run on a schedule; event triggers are next."))
         }
       },
       {
@@ -162,7 +162,7 @@ export const capabilityGroups: CapabilityGroup[] = [
         cells: {
           enterprise: yes(A.changelog, "Scheduled tasks can move to the cloud."),
           thirdParty: no(A.overview, "Sessions run on the device."),
-          uni-cli: planned(partial("/docs/changelog", "Automations can run in Uni-CLI Cloud where enabled; hosted workspaces are in progress."))
+          uniCli: planned(partial("/docs/changelog", "Automations can run in Uni-CLI Cloud where enabled; hosted workspaces are in progress."))
         }
       },
       {
@@ -170,7 +170,7 @@ export const capabilityGroups: CapabilityGroup[] = [
         cells: {
           enterprise: yes(A.changelog),
           thirdParty: yes(A.changelog),
-          uni-cli: planned(partial("/docs/changelog", "Automations keep receipts and recover missed runs; full run history and approvals are next."))
+          uniCli: planned(partial("/docs/changelog", "Automations keep receipts and recover missed runs; full run history and approvals are next."))
         }
       }
     ]
@@ -183,7 +183,7 @@ export const capabilityGroups: CapabilityGroup[] = [
         cells: {
           enterprise: no(A.pricing),
           thirdParty: partial(A.gateway, "Claude models; others only through an Anthropic-compatible gateway you run."),
-          uni-cli: yes("/docs/start-here/connect-your-stack/use-local-models")
+          uniCli: yes("/docs/start-here/connect-your-stack/use-local-models")
         }
       },
       {
@@ -191,7 +191,7 @@ export const capabilityGroups: CapabilityGroup[] = [
         cells: {
           enterprise: no(A.overview, "Inference runs on Anthropic's API."),
           thirdParty: yes(A.telemetry, "On Bedrock or Vertex. On Foundry, Anthropic processes conversations."),
-          uni-cli: yes("/docs/start-here/outbound-network-access")
+          uniCli: yes("/docs/start-here/outbound-network-access")
         }
       },
       {
@@ -199,7 +199,7 @@ export const capabilityGroups: CapabilityGroup[] = [
         cells: {
           enterprise: yes(A.matrix),
           thirdParty: partial(A.extensions, "Through a plugin marketplace you host in git or over HTTPS, plus MDM."),
-          uni-cli: yes("/docs/cloud/share-with-your-team/collections")
+          uniCli: yes("/docs/cloud/share-with-your-team/collections")
         }
       },
       {
@@ -207,7 +207,7 @@ export const capabilityGroups: CapabilityGroup[] = [
         cells: {
           enterprise: yes(A.matrix),
           thirdParty: partial(A.adminConsole, "Through the Enterprise Admin Console, which is in beta and hosted by Anthropic."),
-          uni-cli: yes("/docs/cloud/members-and-rbac")
+          uniCli: yes("/docs/cloud/members-and-rbac")
         }
       },
       {
@@ -215,7 +215,7 @@ export const capabilityGroups: CapabilityGroup[] = [
         cells: {
           enterprise: yes(A.matrix),
           thirdParty: yes(A.config),
-          uni-cli: planned(
+          uniCli: planned(
             partial("/docs/changelog", "Allowed desktop versions are enforced; other policies are paused while they are redesigned.")
           )
         }
@@ -225,7 +225,7 @@ export const capabilityGroups: CapabilityGroup[] = [
         cells: {
           enterprise: yes(A.matrix),
           thirdParty: partial(A.adminConsole, "Per-user token limits; dollar budgets live in your cloud or gateway."),
-          uni-cli: yes("/docs/ai-gateway/overview")
+          uniCli: yes("/docs/ai-gateway/overview")
         }
       },
       {
@@ -233,12 +233,12 @@ export const capabilityGroups: CapabilityGroup[] = [
         cells: {
           enterprise: yes(A.matrix),
           thirdParty: partial(A.matrix, "OpenTelemetry export; no Analytics or Compliance API."),
-          uni-cli: planned(partial("/docs/cloud/security-and-operations", "Usage analytics and audit events ship; OpenTelemetry coverage is in progress."))
+          uniCli: planned(partial("/docs/cloud/security-and-operations", "Usage analytics and audit events ship; OpenTelemetry coverage is in progress."))
         }
       },
       {
         label: "Self-host the control plane, with open source code",
-        cells: { enterprise: no(A.overview), thirdParty: no(A.adminConsole), uni-cli: yes("/docs/start-here/self-host") }
+        cells: { enterprise: no(A.overview), thirdParty: no(A.adminConsole), uniCli: yes("/docs/start-here/self-host") }
       }
     ]
   }
@@ -248,7 +248,7 @@ export const capabilityGroups: CapabilityGroup[] = [
 export const seatPrice: Record<ProductKey, string> = {
   enterprise: "$20 + usage",
   thirdParty: "No seat fee",
-  uni-cli: "Free, or from $10"
+  uniCli: "Free, or from $10"
 };
 
 export const capabilitySources: CompareSource[] = [

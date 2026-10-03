@@ -120,11 +120,11 @@ function normalizeMcpAppHeight(height: number, minimum: number): number {
 
 function preservedResult(part: DynamicToolUIPart): PreservedMcpAppResult | null {
   if (isConnectionDiscoveryTool(part.toolName) && (!isRecord(part.input) || (part.input.intent !== "connect" && part.input.type !== "connectors"))) return null
-  const uni-cli = isRecord(part.callProviderMetadata?.uni-cli) ? part.callProviderMetadata.uni-cli : null
-  const result = uni-cli && isRecord(uni-cli.mcpResult)
-    ? uni-cli.mcpResult
-    : uni-cli && isRecord(uni-cli.mcpApp)
-      ? uni-cli.mcpApp
+  const uniCli = isRecord(part.callProviderMetadata?.uniCli) ? part.callProviderMetadata.uniCli : null
+  const result = uniCli && isRecord(uniCli.mcpResult)
+    ? uniCli.mcpResult
+    : uniCli && isRecord(uniCli.mcpApp)
+      ? uniCli.mcpApp
       : null
   if (!result || !Array.isArray(result.content)) return null
   const content = result.content.filter(isRecord) as Array<Record<string, unknown>>

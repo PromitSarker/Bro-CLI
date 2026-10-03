@@ -27,7 +27,7 @@ test("Render uses Uni-CLI’s OAuth app without credential entry and a custom se
     expect(authorize.origin).toBe("https://api.render.com");
     expect(authorize.searchParams.get("client_id")).toBe("uni-cli");
     expect(authorize.searchParams.get("code_challenge_method")).toBe("S256");
-    evidence.recordAssertionEvidence("Render is preconfigured with Uni-CLI's public OAuth client", "The real Den connect/start returned Render's authorization URL with client_id=uni-cli and PKCE S256; no Render account was signed in.", true);
+    evidence.recordAssertionEvidence("Render is preconfigured with Uni-CLI's public OAuth client", "The real Den connect/start returned Render's authorization URL with client_id=uniCli and PKCE S256; no Render account was signed in.", true);
   });
 
   await step("the Render setup offers Sign in without an API key or OAuth app form", async () => {
@@ -40,7 +40,7 @@ test("Render uses Uni-CLI’s OAuth app without credential entry and a custom se
     const connections = await probe.api(world.den.admin, "/v1/mcp-connections?scope=manageable");
     const saved = isRecord(connections.body) ? records(connections.body.connections).find((entry) => entry.id === world.presetConnectionId) : undefined;
     expect(saved).toMatchObject({ authType: "oauth", oauthClientId: "uni-cli", oauthClientConfigured: true, connectedForMe: false });
-    evidence.recordAssertionEvidence("Render needs no pasted credentials", "Step two offers personal sign-in with no key or client fields. Den saved the uni-cli client; the user is not connected before consent.", true);
+    evidence.recordAssertionEvidence("Render needs no pasted credentials", "Step two offers personal sign-in with no key or client fields. Den saved the uniCli client; the user is not connected before consent.", true);
     await user.screenshot();
   });
 

@@ -819,13 +819,13 @@ function managedProviderMap(providers: Record<string, Record<string, unknown>>, 
   return Object.fromEntries(Object.entries(providers).filter(([providerId]) => ownedIds.has(providerId)));
 }
 
-function removeCloudProviderImportBaselines(uni-cli: JsonRecord): JsonRecord | null {
-  if (!isRecord(uni-cli.cloudImports) || !isRecord(uni-cli.cloudImports.providers)) return null;
-  if (Object.keys(uni-cli.cloudImports.providers).length === 0) return null;
+function removeCloudProviderImportBaselines(uniCli: JsonRecord): JsonRecord | null {
+  if (!isRecord(uniCli.cloudImports) || !isRecord(uniCli.cloudImports.providers)) return null;
+  if (Object.keys(uniCli.cloudImports.providers).length === 0) return null;
   return {
-    ...uni-cli,
+    ...uniCli,
     cloudImports: {
-      ...uni-cli.cloudImports,
+      ...uniCli.cloudImports,
       providers: {},
     },
   };
@@ -1436,13 +1436,13 @@ export class CloudProviderSync {
       }
 
       const hasStoredConfig = await hasuniCliWorkspaceConfig(this.config, workspace.id);
-      const uni-cli = hasStoredConfig
+      const uniCli = hasStoredConfig
         ? await readuniCliWorkspaceConfig(this.config, workspace.id)
         : workspace.workspaceType !== "remote" && workspace.path.trim().length > 0
           ? await readLegacyuniCliConfig(uniCliConfigPath(workspace.path))
           : null;
-      if (!uni-cli) continue;
-      const next = removeCloudProviderImportBaselines(uni-cli);
+      if (!uniCli) continue;
+      const next = removeCloudProviderImportBaselines(uniCli);
       if (!next) continue;
       await writeuniCliWorkspaceConfig(this.config, workspace.id, () => next);
       changed = true;

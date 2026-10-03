@@ -96,8 +96,8 @@ export function LpDemoMcp() {
           <span className="text-[var(--lp-ink)]">&gt; Draft this week&apos;s update for #launch</span>
           {weeklyShared ? (
             <>
-              <span className="text-[#047857]">● uni-cli · Used Weekly update skill</span>
-              <span className="text-[#047857]">● uni-cli · Searched issues · Linear</span>
+              <span className="text-[#047857]">● uniCli · Used Weekly update skill</span>
+              <span className="text-[#047857]">● uniCli · Searched issues · Linear</span>
               <span className="text-[var(--lp-ink)]">Draft ready: 23 issues closed this week…</span>
             </>
           ) : (

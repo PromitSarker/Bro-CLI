@@ -103,7 +103,7 @@ export function LaunchPreview({ id, connected }: { id: string; connected: boolea
         || Date.parse(data.expiresAt) <= Date.now()
         || !("world" in data) || data.world !== requestedWorld) throw new Error("The launch could not be verified. Try again.");
       const url = new URL(data.url);
-      const host = world === "desktop" ? /^desktop-[a-f0-9]{32}\.(?:style\.dev|preview\.uni-cli\.software)$/ : /^ow-[a-f0-9]{32}\.(?:style\.dev|preview\.uni-cli\.software)$/;
+      const host = world === "desktop" ? /^desktop-[a-f0-9]{32}\.(?:style\.dev|preview\.uniCli\.software)$/ : /^ow-[a-f0-9]{32}\.(?:style\.dev|preview\.uniCli\.software)$/;
       if (url.protocol !== "https:" || !host.test(url.hostname)) throw new Error("The launch could not be verified. Try again.");
       const outputs = parsePreviewOutputs("outputs" in data ? data.outputs : {});
       if (desktop && !outputs.desktopUrl) throw new Error("The desktop could not launch. Try again.");

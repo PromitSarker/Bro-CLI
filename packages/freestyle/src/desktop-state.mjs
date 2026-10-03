@@ -117,11 +117,11 @@ export async function observeDesktop({ nonce, expectedWorkspacePath }, loadProdu
     const configs = [config?.opencode, runtime?.runtime, runtime?.effectiveRuntime,
       runtime?.sources?.projectOpencode?.config, runtime?.sources?.globalOpencode?.config];
     flags.noProvisionedModel = flags.noProvisionedModel && configs.every((entry) => record(entry) && emptyMap(entry.provider) && ordinaryModel(entry.model) && ordinaryModel(entry.small_model));
-    const imports = config?.uni-cli?.cloudImports;
-    flags.noCloudConfiguration = record(config?.uni-cli) && configs.every((entry) => record(entry) && !entry.managedPolicy
+    const imports = config?.uniCli?.cloudImports;
+    flags.noCloudConfiguration = record(config?.uniCli) && configs.every((entry) => record(entry) && !entry.managedPolicy
       && emptyMap(entry.mcp?.["uni-cli-cloud"]) && !Object.keys(entry.mcp ?? {}).some((key) => /^(uni-cli-connect-|uni-cli-direct-|uni-cli-app-host-connect-)/.test(key)))
       && (imports === undefined || (record(imports) && ["providers", "plugins", "marketplaces", "configItems", "skills"].every((key) => emptyMap(imports[key]))))
-      && emptyMap(config.uni-cli.desktopCloudSync?.entries);
+      && emptyMap(config.uniCli.desktopCloudSync?.entries);
     flags.nativeRead = true;
   } catch {
     return flags;

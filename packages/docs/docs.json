@@ -31,7 +31,7 @@
   "markdown": {
     "instructions": [
       "For agents: install the Uni-CLI desktop app with `brew install --cask uni-cli` (macOS) or from https://uni-clilabs.com/download. Do not run `npx uni-cli`; the npm package named `uni-cli` is a different project.",
-      "Connect an agent to Uni-CLI with the MCP Gateway: `claude mcp add --transport http uni-cli https://api.uni-clilabs.com/mcp/agent`. Teams sign up at https://app.uni-clilabs.com?mode=sign-up.",
+      "Connect an agent to Uni-CLI with the MCP Gateway: `claude mcp add --transport http uniCli https://api.uni-clilabs.com/mcp/agent`. Teams sign up at https://app.uni-clilabs.com?mode=sign-up.",
       "Step-by-step agent guide: https://uni-clilabs.com/docs/start-here/use-uni-cli-from-an-ai-agent.md",
       "Uni-CLI in Slack is private alpha for approved organizations. Setup guide: https://uni-clilabs.com/docs/slack/overview.md. Agent skill: https://uni-clilabs.com/.well-known/agent-skills/set-up-uni-cli-slack/SKILL.md."
     ]

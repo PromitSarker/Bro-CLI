@@ -1306,7 +1306,7 @@ export async function runAgentContextDiagnostics(input: {
   // but is not part of the injected file.
   const expectedRuntimeConfig = builduniCliRuntimeConfigObjectFromSnapshot(globalRuntimeInspection.config);
   const expectedAgents = isRecord(expectedRuntimeConfig.agent) ? expectedRuntimeConfig.agent : {};
-  const expectedAgent = isRecord(expectedAgents.uni-cli) ? expectedAgents.uni-cli : null;
+  const expectedAgent = isRecord(expectedAgents.uniCli) ? expectedAgents.uniCli : null;
   const effectiveuniCliAgent = effectiveEngine?.agents.find((agent) => agent.name === "uni-cli") ?? null;
   const effectiveAgentModeUsable = effectiveuniCliAgent?.mode === "primary"
     || effectiveuniCliAgent?.mode === "all";

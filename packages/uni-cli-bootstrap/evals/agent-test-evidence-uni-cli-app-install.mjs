@@ -73,7 +73,7 @@ try {
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
 <key>CFBundleExecutable</key><string>Uni-CLI</string>
-<key>CFBundleIdentifier</key><string>com.uni-cli.fixture</string>
+<key>CFBundleIdentifier</key><string>com.uniCli.fixture</string>
 <key>CFBundleName</key><string>Uni-CLI</string>
 <key>CFBundlePackageType</key><string>APPL</string>
 <key>CFBundleShortVersionString</key><string>0.0.0-fixture</string>
@@ -107,7 +107,7 @@ try {
   const installCli = run(process.execPath, [cli, "install", "--install-dir", installDir, "--bin-dir", binDir, "--json"])
   prove("The bootstrap CLI can be installed from a script", {
     action: "node bin/uni-cli.mjs install --install-dir <tmp> --bin-dir <tmp>/bin --json",
-    assert: "exit 0 and an uni-cli executable exists",
+    assert: "exit 0 and an uniCli executable exists",
     evidence: { status: installCli.status, body: installCli.json },
   }, installCli.status === 0 && existsSync(installeduniCli))
 

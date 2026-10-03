@@ -12,7 +12,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <body>
         <header className="masthead">
           <a href="/">
-            uni-cli<span>/ review</span>
+            uniCli<span>/ review</span>
           </a>
         </header>
         {children}

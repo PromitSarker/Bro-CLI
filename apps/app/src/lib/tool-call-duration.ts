@@ -39,7 +39,7 @@ export function trackToolCallDuration(part: AnyToolPart): string | null {
 export function getToolCallStartedAt(part: AnyToolPart): number | null {
   if (!isToolPartInFlight(part)) return null
   const callId = part.toolCallId
-  const persisted = part.callProviderMetadata?.uni-cli?.toolStartedAt
+  const persisted = part.callProviderMetadata?.uniCli?.toolStartedAt
   if (typeof persisted === "number" && Number.isFinite(persisted)) {
     startedAtByCallId.set(callId, persisted)
     return persisted

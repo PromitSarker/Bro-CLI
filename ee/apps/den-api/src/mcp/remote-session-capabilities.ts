@@ -192,7 +192,7 @@ const REMOTE_SESSION_DEFINITIONS: RemoteSessionDefinition[] = [
     summary:
       "Start a remote session: a native Uni-CLI chat on your Uni-CLI Web instance (runs in the cloud, visible in the browser). Automatically sets up your workspace on first use; on cloud_runtime_provisioning, wait retryAfterMs before retrying with the same arguments. Give it the task to run as prompt. target \"desktop\" runs it on your connected Uni-CLI desktop instead; to choose which computer, workspace or model, call remote-session:targets first and pass computerId and workspaceId from it.",
     searchExtraTokens:
-      "remote session sessions chat thread cloud web instance browser uni-cli desktop create start new open run do task work delegate hand off handoff background continue workspace",
+      "remote session sessions chat thread cloud web instance browser uniCli desktop create start new open run do task work delegate hand off handoff background continue workspace",
     argumentsSchema: {
       type: "object",
       properties: {

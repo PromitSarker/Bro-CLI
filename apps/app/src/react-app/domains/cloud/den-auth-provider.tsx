@@ -179,7 +179,7 @@ function pendingServerSwitchForDeepLink(input: {
   const bootstrap = readDenBootstrapConfig();
   // An enterprise activation permanently binds the installation to the issuing
   // Den, so confirm a control-plane change even when no bootstrap file
-  // provisioned one. Otherwise any uni-cli://den-auth link can repoint the
+  // provisioned one. Otherwise any uniCli://den-auth link can repoint the
   // control plane and activate the app in a single unattended step.
   if (bootstrap.source !== "file" && !input.isEnterpriseActivation) return null;
 

@@ -432,8 +432,8 @@ async function main() {
 
   const den = await bootstrapDen(denApiUrl);
   const proxy = await startDelayProxy(denApiUrl, proxyPort);
-  const uni-cli = await startuniCliServer(paths, serverPort, opencodeBin);
-  const workspaces = await serverJson(uni-cli.baseUrl, "/workspaces");
+  const uniCli = await startuniCliServer(paths, serverPort, opencodeBin);
+  const workspaces = await serverJson(uniCli.baseUrl, "/workspaces");
   const workspaceId = firstWorkspaceId(workspaces);
   log(`Using workspace ${workspaceId}`);
 
@@ -461,24 +461,24 @@ async function main() {
   const armed = await armProxy(proxyPort, delayMs, activeWindowMs);
   const armedUntilMs = Number(own(armed, "armedUntilMs"));
   if (!Number.isFinite(armedUntilMs)) throw new Error(`Proxy arm response did not include armedUntilMs: ${JSON.stringify(armed)}`);
-  const seedReconcile = await serverJson(uni-cli.baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/mcp/uni-cli-cloud/reconcile`, {
+  const seedReconcile = await serverJson(uniCli.baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/mcp/uni-cli-cloud/reconcile`, {
     method: "POST",
     body: JSON.stringify(reconcilePayload),
   });
-  const seedMcp = await serverJson(uni-cli.baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/mcp`);
-  const seedHealth = await serverJson(uni-cli.baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/mcp/uni-cli-cloud/health`);
+  const seedMcp = await serverJson(uniCli.baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/mcp`);
+  const seedHealth = await serverJson(uniCli.baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/mcp/uni-cli-cloud/health`);
 
   log("PHASE 2: waiting for delayed Den MCP handshake to heal live engine state");
   await sleep(armedUntilMs + 8000 - Date.now());
-  const healedHealth = await pollHealedHealth(uni-cli.baseUrl, workspaceId);
-  const healedMcp = await serverJson(uni-cli.baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/mcp`);
+  const healedHealth = await pollHealedHealth(uniCli.baseUrl, workspaceId);
+  const healedMcp = await serverJson(uniCli.baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/mcp`);
 
   log("PHASE 3: collecting agent-context diagnostics");
   const diagnosticsRequest = {
     organizationConnectionsProbe: { status: "observed", code: null, totalCount: 0, truncated: false },
     organizationConnections: [],
   };
-  const diagnosticsReport = await serverJson(uni-cli.baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/diagnostics/agent-context`, {
+  const diagnosticsReport = await serverJson(uniCli.baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/diagnostics/agent-context`, {
     method: "POST",
     body: JSON.stringify(diagnosticsRequest),
   });

@@ -193,7 +193,7 @@ function parseSyncStatus(payload: Record<string, unknown>): SyncStatusFacts {
 
 // The desktop local server's GET /cloud-provider-sync/status is registered
 // with "client" auth (apps/server/src/server.ts:2108), so the renderer's own
-// persisted credentials (localStorage uni-cli.server.port/uni-cli.server.token)
+// persisted credentials (localStorage uniCli.server.port/uni-cli.server.token)
 // reach it with a plain Bearer fetch to 127.0.0.1.
 async function readSyncStatusPayload(surface: Parameters<typeof evalIn>[0]): Promise<Record<string, unknown>> {
   const value = await evalIn(surface, async () => {

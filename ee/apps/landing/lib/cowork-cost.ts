@@ -181,7 +181,7 @@ export type CumulativeCosts = {
   users: number;
   months: number;
   claude: CostSeries;
-  uni-cli: CostSeries;
+  uniCli: CostSeries;
   /** Uni-CLI on the model mix; null when no mix or a zero open-model share. */
   mix: CostSeries | null;
   claude3p: CostSeries;
@@ -259,7 +259,7 @@ export function cumulativeCosts(inputs: CumulativeInputs): CumulativeCosts {
     seatsMonthly: uniCliSeatsMonthly,
     tokensIncluded: false
   };
-  const uni-cli = series({ ...uniCliBase, modelLabel: inputs.model.label, tokensMonthly: tokens }, months);
+  const uniCli = series({ ...uniCliBase, modelLabel: inputs.model.label, tokensMonthly: tokens }, months);
   const mixInput = inputs.mix && inputs.mix.openShare > 0 ? inputs.mix : null;
   const mix = mixInput
     ? series(
@@ -290,12 +290,12 @@ export function cumulativeCosts(inputs: CumulativeInputs): CumulativeCosts {
     users,
     months,
     claude,
-    uni-cli,
+    uniCli,
     mix,
     claude3p,
     claudeTeamUnavailable,
     claudeTeamSeat: useClaudeTeam ? (premium ? "premium" : "standard") : null,
-    savings: claude.total - uni-cli.total,
+    savings: claude.total - uniCli.total,
     mixSavings: mix ? claude.total - mix.total : null
   };
 }

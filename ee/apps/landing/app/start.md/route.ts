@@ -97,7 +97,7 @@ const startMarkdown = [
   "3. For Codex, run:",
   "",
   "```bash",
-  "codex mcp add uni-cli --url https://api.uni-clilabs.com/mcp/agent",
+  "codex mcp add uniCli --url https://api.uni-clilabs.com/mcp/agent",
   "codex mcp login uni-cli",
   "```",
   "",

@@ -76,7 +76,7 @@ export function parseRecord(value: unknown): Record<string, unknown> | null {
 }
 
 /** Brand names whose casing a plain title case would get wrong. */
-const BRAND_WORDS: Record<string, string> = { uni-cli: "Uni-CLI", github: "GitHub", gitlab: "GitLab", hubspot: "HubSpot" }
+const BRAND_WORDS: Record<string, string> = { uniCli: "Uni-CLI", github: "GitHub", gitlab: "GitLab", hubspot: "HubSpot" }
 
 function titleCase(slug: string): string {
   return slug

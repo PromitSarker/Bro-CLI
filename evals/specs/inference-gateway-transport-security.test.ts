@@ -51,7 +51,7 @@ async function fixture(config: Record<string, unknown> = {}, timeoutMs = 30_000,
       const body = path.startsWith("/models/") ? '{"contents":[]}' : path.startsWith("/model/") ? '{"messages":[]}' : path.startsWith("/chat/") ? '{"model":"x","messages":[]}' : '{"model":"x","input":"inline text"}'
       return fetch(`${url}${gatewayPath}${path}`, { method: "POST", headers: { "x-goog-api-key": gatewayKey, "content-type": "application/json" }, body, signal: AbortSignal.timeout(10_000), ...init })
     },
-    async uni-cli(init: RequestInit = {}) {
+    async uniCli(init: RequestInit = {}) {
       return fetch(`${url}/api/v1/chat/completions`, { method: "POST", headers: { authorization: "Bearer ow_inf_fixture", "content-type": "application/json" }, body: '{"model":"z-ai/glm-5.2","messages":[]}', signal: AbortSignal.timeout(10_000), ...init })
     },
     async state() { return readState(url) },
@@ -204,7 +204,7 @@ test("both routes record semantic stream errors; Models sanitizes the provider e
     await using f = await fixture({ mode: "semantic-error" })
     const response = await (route === "gateway"
       ? f.request("/chat/completions", { headers: { "api-key": gatewayKey, "content-type": "application/json" }, body: '{"model":"x","stream":true}' })
-      : f.uni-cli({ body: '{"model":"z-ai/glm-5.2","messages":[],"stream":true}' }))
+      : f.uniCli({ body: '{"model":"z-ai/glm-5.2","messages":[],"stream":true}' }))
     expect(response.status).toBe(200)
     const text = await response.text()
     if (route === "gateway") expect(text).toBe('data: {"id":"body-request-id","error":{"message":"redacted-provider-error"}}\n\n')
@@ -382,7 +382,7 @@ test("operator upstream timeout also stops a provider that never sends headers",
 test("error responses are not buffered for logging and response cancellation closes the provider", async () => {
   for (const route of ["gateway", "uni-cli"]) {
     await using f = await fixture({ mode: "error-hang" })
-    const response = await (route === "gateway" ? f.request() : f.uni-cli())
+    const response = await (route === "gateway" ? f.request() : f.uniCli())
     expect(response.status).toBe(429)
     if (route === "gateway") {
       const reader = response.body!.getReader()
@@ -413,12 +413,12 @@ test("invalid UTF-8 JSON and malformed event-stream responses retain every origi
 
 test("Uni-CLI rejects bodyless or broken completions and supports cancellation before headers", async () => {
   await using bodyless = await fixture({ mode: "bodyless" })
-  const empty = await bodyless.uni-cli()
+  const empty = await bodyless.uniCli()
   expect(empty.status).toBe(502)
   expect(await empty.json()).toMatchObject({ error: { code: "upstream_malformed_response" } })
   await bodyless.waitFor((s) => Boolean(s.rows[0]?.completed_at))
   await using broken = await fixture({ mode: "json-failure" })
-  const pendingResponse = broken.uni-cli()
+  const pendingResponse = broken.uniCli()
   await broken.waitFor((s) => s.requests.length === 1)
   await broken.release()
   const response = await pendingResponse
@@ -427,7 +427,7 @@ test("Uni-CLI rejects bodyless or broken completions and supports cancellation b
   expect((await broken.waitFor((s) => Boolean(s.rows[0]?.completed_at))).rows[0].outcome).toBe("upstream_error")
   await using waiting = await fixture({ mode: "headers-hang" })
   const abort = new AbortController()
-  const pending = waiting.uni-cli({ signal: abort.signal }).catch(() => null)
+  const pending = waiting.uniCli({ signal: abort.signal }).catch(() => null)
   await waiting.waitFor((s) => s.requests.length === 1)
   abort.abort()
   expect(await pending).toBeNull()

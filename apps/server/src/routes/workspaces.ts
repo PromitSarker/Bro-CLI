@@ -285,7 +285,7 @@ export function registerWorkspaceRoutes(options: RegisterWorkspaceRoutesOptions)
     await ensureWorkspaceFiles(workspacePath, preset);
 
     const workspaceId = workspaceIdForPath(workspacePath);
-    // Seed the per-workspace uni-cli config in the runtime DB (replaces the
+    // Seed the per-workspace uniCli config in the runtime DB (replaces the
     // legacy `.opencode/uni-cli.json` file). No-op if a row already exists.
     await seeduniCliWorkspaceConfigIfEmpty(
       config,

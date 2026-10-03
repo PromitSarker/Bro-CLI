@@ -15,12 +15,12 @@ export { MCP_SERVER_URL };
 // One-click install links, the same ones the docs publish
 // (packages/docs/model-context-protocol/cursor.mdx and vs-code.mdx).
 export const CURSOR_INSTALL_LINK =
-  "cursor://anysphere.cursor-deeplink/mcp/install?name=uni-cli&config=eyJ1cmwiOiJodHRwczovL2FwaS5vcGVud29ya2xhYnMuY29tL21jcC9hZ2VudCJ9";
+  "cursor://anysphere.cursor-deeplink/mcp/install?name=uniCli&config=eyJ1cmwiOiJodHRwczovL2FwaS5vcGVud29ya2xhYnMuY29tL21jcC9hZ2VudCJ9";
 export const VS_CODE_INSTALL_LINK =
   "vscode:mcp/install?%7B%22name%22%3A%22uni-cli%22%2C%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fapi.uni-clilabs.com%2Fmcp%2Fagent%22%7D";
 
-export const OPENCODE_ADD_COMMAND = `opencode mcp add uni-cli --url ${MCP_SERVER_URL}`;
-export const GEMINI_ADD_COMMAND = `gemini mcp add --transport http uni-cli ${MCP_SERVER_URL}`;
+export const OPENCODE_ADD_COMMAND = `opencode mcp add uniCli --url ${MCP_SERVER_URL}`;
+export const GEMINI_ADD_COMMAND = `gemini mcp add --transport http uniCli ${MCP_SERVER_URL}`;
 
 export type McpClient = {
   id: string;
@@ -42,14 +42,14 @@ export const MCP_CLIENTS: McpClient[] = [
     name: "Claude Code",
     mark: <BrandLogo name="claude" className={`${markClass} text-[#D97757]`} />,
     command: CLAUDE_CODE_COMMAND,
-    next: "Then run /mcp, pick uni-cli, and sign up in the browser."
+    next: "Then run /mcp, pick uniCli, and sign up in the browser."
   },
   {
     id: "codex",
     name: "Codex",
     mark: <TerminalMark className={markClass} />,
     command: CODEX_COMMAND,
-    next: "Then run codex mcp login uni-cli and sign up in the browser."
+    next: "Then run codex mcp login uniCli and sign up in the browser."
   },
   {
     id: "cursor",
@@ -64,21 +64,21 @@ export const MCP_CLIENTS: McpClient[] = [
     mark: <VsCodeMark className={markClass} />,
     command: VS_CODE_COMMAND,
     link: { href: VS_CODE_INSTALL_LINK, label: "Add to VS Code" },
-    next: "Then open MCP: List Servers, pick uni-cli, and start it."
+    next: "Then open MCP: List Servers, pick uniCli, and start it."
   },
   {
     id: "opencode",
     name: "OpenCode",
     mark: <OpenCodeMark className={markClass} />,
     command: OPENCODE_ADD_COMMAND,
-    next: "Then run opencode mcp auth uni-cli."
+    next: "Then run opencode mcp auth uniCli."
   },
   {
     id: "gemini",
     name: "Gemini CLI",
     mark: <BrandLogo name="gemini" className={`${markClass} text-[#4285F4]`} />,
     command: GEMINI_ADD_COMMAND,
-    next: "Then run /mcp auth uni-cli."
+    next: "Then run /mcp auth uniCli."
   },
   {
     id: "chatgpt",

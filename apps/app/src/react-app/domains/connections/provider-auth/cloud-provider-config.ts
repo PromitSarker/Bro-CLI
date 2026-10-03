@@ -328,7 +328,7 @@ export const buildCloudProviderConfig = (
 
   // Uni-CLI Models are catalog-backed via OPENCODE_MODELS_URL. Den provisions
   // the provider + key with zero model rows — writing `models: {}` can prevent
-  // the engine from keeping catalog models, so omit an empty map for uni-cli.
+  // the engine from keeping catalog models, so omit an empty map for uniCli.
   if (Object.keys(models).length > 0 || provider.source !== "uni-cli") {
     next.models = models;
   }

@@ -51,7 +51,7 @@ No. Desktop mode keeps files local; prompts go directly to your chosen LLM provi
 - llms.txt — \`/llms.txt\`
 - API catalog (RFC 9727) — \`/.well-known/api-catalog\`
 - MCP server card — \`/.well-known/mcp/server-card.json\`
-- Install the app — \`brew install --cask uni-cli\` or [download](https://uni-clilabs.com/download) (not \`npx uni-cli\`, which is a different project)
+- Install the app — \`brew install --cask uniCli\` or [download](https://uni-clilabs.com/download) (not \`npx uniCli\`, which is a different project)
 - Sitemap — \`/sitemap.xml\`
 
 Backed by Y Combinator.
@@ -189,11 +189,11 @@ const download = `# Download Uni-CLI
 
 > Free and open source desktop app for macOS, Windows, and Linux. No account required.
 
-Do not run \`npx uni-cli\` or \`npm install uni-cli\`: the npm package named \`uni-cli\` is a different project.
+Do not run \`npx uniCli\` or \`npm install uniCli\`: the npm package named \`uni-cli\` is a different project.
 
 ## Install
 
-- macOS (Homebrew): \`brew install --cask uni-cli\`
+- macOS (Homebrew): \`brew install --cask uniCli\`
 - macOS Apple Silicon (.dmg): https://uni-clilabs.com/download/mac-arm64
 - macOS Intel (.dmg): https://uni-clilabs.com/download/mac-x64
 - Windows x64 (.exe): https://uni-clilabs.com/download/win-x64
@@ -236,10 +236,10 @@ const connect = `# Uni-CLI Connect
 
 MCP server URL: \`https://api.uni-clilabs.com/mcp/agent\` (Streamable HTTP, OAuth sign-in).
 
-- Claude Code: \`claude mcp add --transport http uni-cli https://api.uni-clilabs.com/mcp/agent\`
-- Codex: \`codex mcp add uni-cli --url https://api.uni-clilabs.com/mcp/agent\` then \`codex mcp login uni-cli\`
-- Gemini CLI: \`gemini mcp add --transport http uni-cli https://api.uni-clilabs.com/mcp/agent\`
-- OpenCode: \`opencode mcp add uni-cli --url https://api.uni-clilabs.com/mcp/agent\` then \`opencode mcp auth uni-cli\`
+- Claude Code: \`claude mcp add --transport http uniCli https://api.uni-clilabs.com/mcp/agent\`
+- Codex: \`codex mcp add uniCli --url https://api.uni-clilabs.com/mcp/agent\` then \`codex mcp login uniCli\`
+- Gemini CLI: \`gemini mcp add --transport http uniCli https://api.uni-clilabs.com/mcp/agent\`
+- OpenCode: \`opencode mcp add uniCli --url https://api.uni-clilabs.com/mcp/agent\` then \`opencode mcp auth uniCli\`
 - Other clients: [Connect Uni-CLI MCP](https://uni-clilabs.com/docs/start-here/connect-uni-cli-mcp)
 - [MCP server card](https://uni-clilabs.com/.well-known/mcp/server-card.json)
 `

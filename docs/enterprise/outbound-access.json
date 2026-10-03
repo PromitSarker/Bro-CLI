@@ -46,7 +46,7 @@
       "override": null
     },
     {
-      "host": "api.uni-cli.software",
+      "host": "api.uniCli.software",
       "kind": "fetched",
       "components": ["server"],
       "purpose": "Legacy hosted Uni-CLI Connect API origin retained for older Cloud configurations.",
@@ -73,7 +73,7 @@
       "override": "desktop apiBaseUrl / self-hosted Den API origin"
     },
     {
-      "host": "app.uni-cli.software",
+      "host": "app.uniCli.software",
       "kind": "fetched",
       "components": ["server"],
       "purpose": "Legacy hosted Uni-CLI Cloud web origin retained for older desktop configurations.",

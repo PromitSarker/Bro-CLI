@@ -234,7 +234,7 @@ function normalizeDebugDeepLinkInput(rawValue: string): string {
   const trimmed = rawValue.trim();
   if (!trimmed) return "";
 
-  const directMatch = trimmed.match(/(?:uni-cli-dev|uni-cli|https?):\/\/[^\s"'<>]+/i);
+  const directMatch = trimmed.match(/(?:uni-cli-dev|uniCli|https?):\/\/[^\s"'<>]+/i);
   if (directMatch) return directMatch[0];
 
   return trimmed;

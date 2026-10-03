@@ -7,7 +7,7 @@ for (const dir of ["home", "cache", "config/uni-cli", "config/opencode", "data/u
 }
 const runtime = await launchHeadlessWeb({
   repoRoot: "/workspace", name: "freestyle-preview", state: "isolated",
-  workspace: `${root}/workspace`, browserHostSuffix: ".preview.uni-cli.software",
+  workspace: `${root}/workspace`, browserHostSuffix: ".preview.uniCli.software",
   env: {
     PATH: process.env.PATH,
     // Dependencies were verified before snapshotting; changing HOME must not trigger a reinstall.

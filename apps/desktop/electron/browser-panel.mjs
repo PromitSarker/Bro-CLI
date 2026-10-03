@@ -814,7 +814,7 @@ export function createBrowserPanel({ getWindow, remoteDebugPort, onDeepLink, che
       // data: loads are internal plumbing (CDP target-marker pages), not
       // user-visible navigations — don't surface the panel for them.
       if (target === "about:blank" || target.startsWith("data:")) return;
-      // Intercept uni-cli:// deep links (e.g. den-auth handoff grants) so
+      // Intercept uniCli:// deep links (e.g. den-auth handoff grants) so
       // in-app browser auth works without the system protocol handler.
       if (target.startsWith("uni-cli://") || target.startsWith("uni-cli-dev://")) {
         if (typeof onDeepLink === "function") {

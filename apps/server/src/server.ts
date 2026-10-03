@@ -2796,7 +2796,7 @@ function createRoutes(
 
   addRoute(routes, "GET", "/workspace/:id/config", "client", async (ctx) => {
     const workspace = await resolveWorkspace(config, ctx.params.id);
-    const uni-cli = await readuniCliConfigForWorkspace(config, workspace);
+    const uniCli = await readuniCliConfigForWorkspace(config, workspace);
     // Effective runtime view (ENGINE_GLOBAL ⊕ workspace row): providers,
     // plugins, and authorized folders live in the global row now, and the UI
     // must keep seeing them after migration.
@@ -2805,13 +2805,13 @@ function createRoutes(
       await readEffectiveRuntimeOpencodeConfig(config, workspace.id),
     );
     const lastAudit = await readLastAudit(workspace.path, workspace.id);
-    return jsonResponse({ opencode, uni-cli, updatedAt: lastAudit?.timestamp ?? null });
+    return jsonResponse({ opencode, uniCli, updatedAt: lastAudit?.timestamp ?? null });
   });
 
   addRoute(routes, "GET", "/workspace/:id/desktop-cloud-sync", "client", async (ctx) => {
     const workspace = await resolveWorkspace(config, ctx.params.id);
-    const uni-cli = await readuniCliConfigForWorkspace(config, workspace);
-    return jsonResponse(readDesktopCloudSyncState(uni-cli));
+    const uniCli = await readuniCliConfigForWorkspace(config, workspace);
+    return jsonResponse(readDesktopCloudSyncState(uniCli));
   });
 
   addRoute(routes, "POST", "/workspace/:id/desktop-cloud-sync", "client", async (ctx) => {
@@ -2825,13 +2825,13 @@ function createRoutes(
     }
 
     const result = await enqueueDesktopCloudSync(async () => {
-      const uni-cli = await readuniCliConfigForWorkspace(config, workspace);
+      const uniCli = await readuniCliConfigForWorkspace(config, workspace);
       const installed = await readInstalledCloudPlugins(config, workspace.id);
       const cloudImports = {
         ...installed,
-        providers: readWorkspaceCloudImports(uni-cli).providers,
+        providers: readWorkspaceCloudImports(uniCli).providers,
       };
-      const next = syncDesktopCloudResources({ uni-cli: { ...uni-cli, cloudImports }, snapshot });
+      const next = syncDesktopCloudResources({ uniCli: { ...uniCli, cloudImports }, snapshot });
       // The plugin DB owns plugins/marketplaces, but provider import baselines live in
       // the workspace config. Writing the merged cloudImports back erased providers
       // and drove the provider-sync dispose/create loop.
@@ -3159,7 +3159,7 @@ function createRoutes(
       agent: agent.name,
       rows: summarizeEffectivePermissions(agent.permission, {
         global: globalConfig.permission,
-        uni-cli: injected.permission,
+        uniCli: injected.permission,
         workspace: workspaceConfig.permission,
       }),
       files: { workspace: opencodeConfigPath(workspace.path), global: globalPath },
@@ -3574,18 +3574,18 @@ function createRoutes(
     const workspace = await resolveWorkspace(config, ctx.params.id);
     const body = await readJsonBody(ctx.request);
     const opencode = body.opencode as Record<string, unknown> | undefined;
-    const uni-cli = body.uni-cli as Record<string, unknown> | undefined;
+    const uniCli = body.uniCli as Record<string, unknown> | undefined;
     let runtimeChanged = false;
 
-    if (!opencode && !uni-cli) {
-      throw new ApiError(400, "invalid_payload", "opencode or uni-cli updates required");
+    if (!opencode && !uniCli) {
+      throw new ApiError(400, "invalid_payload", "opencode or uniCli updates required");
     }
 
     await requireApproval(ctx, {
       workspaceId: workspace.id,
       action: "config.patch",
       summary: "Patch workspace config",
-      paths: [opencode || uni-cli ? uniCliConfigPath(workspace.path) : null].filter(Boolean) as string[],
+      paths: [opencode || uniCli ? uniCliConfigPath(workspace.path) : null].filter(Boolean) as string[],
     });
 
     if (opencode) {
@@ -3647,10 +3647,10 @@ function createRoutes(
         runtimeChanged = result.changed || runtimeChanged;
       }
     }
-    if (uni-cli) {
+    if (uniCli) {
       await writeuniCliWorkspaceConfig(config, workspace.id, (current) => ({
         ...current,
-        ...uni-cli,
+        ...uniCli,
       }));
     }
 
@@ -4766,7 +4766,7 @@ async function readuniCliConfig(workspaceRoot: string): Promise<Record<string, u
     const raw = await readFile(path, "utf8");
     return JSON.parse(raw) as Record<string, unknown>;
   } catch {
-    throw new ApiError(422, "invalid_json", "Failed to parse uni-cli.json");
+    throw new ApiError(422, "invalid_json", "Failed to parse uniCli.json");
   }
 }
 
@@ -4785,7 +4785,7 @@ async function readuniCliConfigForStatus(workspaceRoot: string): Promise<{
 }
 
 /**
- * Resolve the effective per-workspace uni-cli config from the runtime DB,
+ * Resolve the effective per-workspace uniCli config from the runtime DB,
  * migrating a legacy `.opencode/uni-cli.json` file into the DB on first read.
  *
  * The DB is the source of truth. The file is only consulted to seed the DB
@@ -4818,7 +4818,7 @@ async function readuniCliConfigForWorkspace(
 }
 
 /**
- * Persist a full uni-cli config document for a workspace to the runtime DB.
+ * Persist a full uniCli config document for a workspace to the runtime DB.
  * Replaces the legacy file write path; the file is no longer written.
  */
 async function writeuniCliConfigForWorkspace(
@@ -6600,7 +6600,7 @@ async function exportWorkspace(
   const sensitiveMode = options?.sensitiveMode ?? "auto";
   const rawOpencode = await readOpencodeConfig(workspace.path);
   let opencode = sanitizePortableOpencodeConfig(rawOpencode);
-  const uni-cli = sanitizeuniCliTemplateConfig(await readuniCliConfigForWorkspace(config, workspace));
+  const uniCli = sanitizeuniCliTemplateConfig(await readuniCliConfigForWorkspace(config, workspace));
   const skills = await listSkills(workspace.path, false);
   const commands = await listCommands(workspace.path, "workspace");
   let files = await listPortableFiles(workspace.path);
@@ -6637,7 +6637,7 @@ async function exportWorkspace(
     workspaceId: workspace.id,
     exportedAt: Date.now(),
     opencode,
-    uni-cli,
+    uniCli,
     skills: skillContents,
     commands: commandContents,
     ...(files.length ? { files } : {}),

@@ -22,7 +22,7 @@ export async function readLocalProviderApiKeys(path = join(opencodeDataDirs()[0]
 /** Obtain trusted built-in metadata for locally connected providers that have
  * no custom runtime definition. Credentials never come from catalog responses. */
 export async function localProviderDefinitions(config: ServerConfig, keys: ReadonlyMap<string, string>, configured: Record<string, unknown>): Promise<Record<string, unknown>> {
-  const missing = [...keys.keys()].filter(id => !(id in configured) && !/^(?:lpr_|ipr_|uni-cli$)/.test(id));
+  const missing = [...keys.keys()].filter(id => !(id in configured) && !/^(?:lpr_|ipr_|uniCli$)/.test(id));
   if (!missing.length || !config.opencodeBaseUrl) return {};
   const url = new URL("/provider", config.opencodeBaseUrl);
   const response = await loopbackFetch(url.toString(), { headers: {

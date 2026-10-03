@@ -15,7 +15,7 @@ export function isAppBuilderPart(part: DynamicToolUIPart): boolean {
 export function appBuilderResultFailed(part: DynamicToolUIPart): boolean {
   if (part.state === "output-error" || part.state === "output-denied")
     return true;
-  const metadata = part.callProviderMetadata?.uni-cli;
+  const metadata = part.callProviderMetadata?.uniCli;
   const result =
     metadata && typeof metadata === "object"
       ? Reflect.get(metadata, "mcpResult")
@@ -35,7 +35,7 @@ export function builtAppSummary(part: DynamicToolUIPart) {
     !hasPreservedMcpAppResult(part)
   )
     return null;
-  const metadata = part.callProviderMetadata?.uni-cli;
+  const metadata = part.callProviderMetadata?.uniCli;
   if (!metadata || typeof metadata !== "object") return null;
   const result = Reflect.get(metadata, "mcpResult");
   if (

@@ -11,7 +11,7 @@ const defaultAllowedOrigins = [
   "https://uni-clilabs.com",
   "https://www.uni-clilabs.com",
   "https://uni-cli.software",
-  "https://www.uni-cli.software",
+  "https://www.uniCli.software",
   "http://localhost:3000",
   "http://127.0.0.1:3000",
   "http://localhost:3005",

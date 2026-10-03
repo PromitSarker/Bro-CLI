@@ -118,7 +118,7 @@ try {
     },
   }, null, 2))
   prove("A Linux app artifact manifest is available without shipping to production", {
-    action: "Create local uni-cli tar.gz artifact and manifest with SHA-256",
+    action: "Create local uniCli tar.gz artifact and manifest with SHA-256",
     assert: "manifest and tar.gz exist on the host and are mounted into Linux container",
     evidence: { manifestPath, artifactPath, sha256: digest },
   }, existsSync(manifestPath) && existsSync(artifactPath) && digest.length === 64)
@@ -137,7 +137,7 @@ try {
     "/tmp/uni-cli/bin/uni-cli-bootstrap doctor --install-dir /tmp/uni-cli/install --bin-dir /tmp/uni-cli/bin --app --app-dir /tmp/uni-cli/apps --json",
   ].join(" && "), { timeout: 60_000 })
   prove("Linux can install the CLI and app artifact, then doctor the app", {
-    action: "Run uni-cli install, uni-cli install app, and uni-cli doctor --app inside Linux",
+    action: "Run uniCli install, uniCli install app, and uniCli doctor --app inside Linux",
     assert: "all commands exit 0; final doctor JSON returns ok true",
     evidence: installAndDoctor,
   }, installAndDoctor.status === 0 && installAndDoctor.json?.ok === true)
@@ -156,7 +156,7 @@ try {
     timeout: 90_000,
   })
   prove("Linux installed CLI can complete live cloud onboarding", {
-    action: "Run uni-cli cloud onboard from inside Linux against live Den API",
+    action: "Run uniCli cloud onboard from inside Linux against live Den API",
     assert: "exit 0 and returns prepared desktop bootstrap with user, organization, invitation, skill, and triggered skill output from live API",
     evidence: onboard,
   }, onboard.status === 0 && onboard.json?.onboard?.ok === true && onboard.json?.onboard?.organization?.id && onboard.json?.onboard?.invitation?.invitationId && onboard.json?.onboard?.skill?.id && onboard.json?.onboard?.skill?.title === skillName && onboard.json?.onboard?.skillRun?.triggered === true && onboard.json?.onboard?.skillRun?.output === "UNICLI_BOOTSTRAP_SKILL_TRIGGERED" && onboard.json?.onboard?.desktop?.prepared === true && onboard.json?.onboard?.desktop?.bootstrapPath && onboard.json?.onboard?.desktop?.skillPath && onboard.json?.doctor?.ok === true && onboard.json?.doctor?.checks?.some((check) => check.name === "desktopBootstrap" && check.ok === true) && onboard.json?.doctor?.checks?.some((check) => check.name === "desktopBootstrapHandoff" && check.ok === true))

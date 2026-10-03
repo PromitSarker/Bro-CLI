@@ -1,12 +1,12 @@
 export const UniCliConnectInstaller = () => {
   const MCP_SERVER_URL = "https://api.uni-clilabs.com/mcp/agent";
-  const CURSOR_INSTALL_LINK = "cursor://anysphere.cursor-deeplink/mcp/install?name=uni-cli&config=eyJ1cmwiOiJodHRwczovL2FwaS5vcGVud29ya2xhYnMuY29tL21jcC9hZ2VudCJ9";
+  const CURSOR_INSTALL_LINK = "cursor://anysphere.cursor-deeplink/mcp/install?name=uniCli&config=eyJ1cmwiOiJodHRwczovL2FwaS5vcGVud29ya2xhYnMuY29tL21jcC9hZ2VudCJ9";
   const VS_CODE_INSTALL_LINK = "vscode:mcp/install?%7B%22name%22%3A%22uni-cli%22%2C%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fapi.uni-clilabs.com%2Fmcp%2Fagent%22%7D";
   const CODEX_LOGIN_COMMAND = "codex mcp login uni-cli";
-  const CODEX_RECONNECT_COMMAND = `codex mcp logout uni-cli
+  const CODEX_RECONNECT_COMMAND = `codex mcp logout uniCli
 codex mcp login uni-cli`;
   const OPENCODE_AUTH_COMMAND = "opencode mcp auth uni-cli";
-  const OPENCODE_RECONNECT_COMMAND = `opencode mcp logout uni-cli
+  const OPENCODE_RECONNECT_COMMAND = `opencode mcp logout uniCli
 opencode mcp auth uni-cli`;
   const installs = [
     {
@@ -26,8 +26,8 @@ opencode mcp auth uni-cli`;
       eyebrow: "Codex desktop, CLI, and IDE",
       helper: "Add Uni-CLI once, then sign in with Codex's MCP login command.",
       supportStatus: "Setup only",
-      supportExplanation: "Setup guide only: add Uni-CLI, run codex mcp login uni-cli, and reconnect with logout then login. Native proof must be rerun on this exact branch.",
-      copyText: `codex mcp add uni-cli --url ${MCP_SERVER_URL}`,
+      supportExplanation: "Setup guide only: add Uni-CLI, run codex mcp login uniCli, and reconnect with logout then login. Native proof must be rerun on this exact branch.",
+      copyText: `codex mcp add uniCli --url ${MCP_SERVER_URL}`,
       authText: CODEX_LOGIN_COMMAND,
       reconnectText: CODEX_RECONNECT_COMMAND,
     },
@@ -47,7 +47,7 @@ opencode mcp auth uni-cli`;
       helper: "Add the remote HTTP server, then use /mcp in Claude Code and follow the client auth flow.",
       supportStatus: "Setup only",
       supportExplanation: "Setup guide only: add the server, then use /mcp in Claude Code to run the client auth flow. Native proof is not complete.",
-      copyText: `claude mcp add --transport http uni-cli ${MCP_SERVER_URL}`,
+      copyText: `claude mcp add --transport http uniCli ${MCP_SERVER_URL}`,
     },
     {
       id: "opencode",

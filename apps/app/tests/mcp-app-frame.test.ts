@@ -1113,7 +1113,7 @@ describe("MCP App resolution", () => {
     const errorSpy = spyOn(console, "error").mockImplementation(() => {})
     const part: DynamicToolUIPart = {
       type: "dynamic-tool", toolName: "fixture_render", toolCallId: "launch", state: "output-available",
-      input: {}, output: "Provider fallback", callProviderMetadata: { uni-cli: { mcpResult: {
+      input: {}, output: "Provider fallback", callProviderMetadata: { uniCli: { mcpResult: {
         content: [{ type: "text", text: "Provider fallback" }],
         ...(explicit ? { _meta: { "uni-cli/mcpApp": {
           connectionId: "emc_fixture", toolName: "render", resourceUri: "ui://fixture/view.html", arguments: {},
@@ -1236,7 +1236,7 @@ describe("MCP App resolution", () => {
     try {
       const part: DynamicToolUIPart = {
         ...host.part, toolName: "uni-cli-cloud_search_capabilities", input: { type: "connectors", query: "Slack" },
-        callProviderMetadata: { uni-cli: { mcpResult: {
+        callProviderMetadata: { uniCli: { mcpResult: {
           content: [{ type: "text", text: "Catalog history" }],
           structuredContent: { connectorCatalog: { version: 1, selectedIds: ["slack"], entries: [{ id: "slack", name: "Slack", description: "Work chat", setup: "oauth_client", serviceUrl: "https://slack.com", setupUrl: "https://example.com/dashboard/mcp-connections?quickAdd=slack" }] } },
         } } },
@@ -1261,7 +1261,7 @@ describe("MCP App resolution", () => {
     const launch = { toolName, resourceUri, arguments: {} }
     const part: DynamicToolUIPart = {
       ...host.part, toolName,
-      callProviderMetadata: { uni-cli: { mcpResult: {
+      callProviderMetadata: { uniCli: { mcpResult: {
         content: [{ type: "text", text: "App result retained" }],
         structuredContent: { artifact: { title: "Fixture preview", receiptId: "receipt_fixture" } },
         _meta: {
@@ -1310,7 +1310,7 @@ describe("MCP App resolution", () => {
     try {
       await host.render({
         ...host.part, toolName: `uni-cli-cloud_${toolName}`,
-        callProviderMetadata: { uni-cli: { [alias]: {
+        callProviderMetadata: { uniCli: { [alias]: {
           content: [], structuredContent: { artifact: { receiptId: "live-receipt" } },
           _meta: { "uni-cli/appDraft": { appId: "arv_fixture", revisionId: "avr_fixture", title: "Draft" } },
         } } },
@@ -1341,7 +1341,7 @@ describe("MCP App resolution", () => {
     try {
       await host.render({
         ...host.part, toolName: `${prefix}execute_capability`,
-        callProviderMetadata: { uni-cli: { [alias]: {
+        callProviderMetadata: { uniCli: { [alias]: {
           content: [{ type: "text", text: "Historical result" }],
           _meta: { "uni-cli/mcpApp": { toolName: "historical", resourceUri: `ui://uni-cli/${resource}/v1/view.html`, arguments: {} } },
         } } },
@@ -1367,7 +1367,7 @@ describe("MCP App resolution", () => {
     try {
       await host.render({
         ...host.part, toolName,
-        callProviderMetadata: { uni-cli: { mcpResult: {
+        callProviderMetadata: { uniCli: { mcpResult: {
           content: [], _meta: { "uni-cli/mcpApp": { toolName: "render", resourceUri, arguments: {}, ...(connectionId ? { connectionId } : {}) } },
         } } },
       })
@@ -1392,7 +1392,7 @@ describe("MCP App resolution", () => {
     try {
       await host.render({
         ...host.part, toolName,
-        callProviderMetadata: { uni-cli: { mcpResult: {
+        callProviderMetadata: { uniCli: { mcpResult: {
           content: [], _meta: { "uni-cli/mcpApp": { toolName: "render", resourceUri, arguments: {}, ...(connectionId !== undefined ? { connectionId } : {}) } },
         } } },
       })
@@ -1410,7 +1410,7 @@ describe("MCP App resolution", () => {
     host.resolveSpy.mockResolvedValue({ app: fixture({ resourceUri }) })
     const part: DynamicToolUIPart = {
       ...host.part, toolName: `${prefix}${name}`,
-      callProviderMetadata: { uni-cli: { [alias]: {
+      callProviderMetadata: { uniCli: { [alias]: {
         content: [{ type: "text", text: "Created successfully" }],
         _meta: { ui: { resourceUri }, ...(launch ? { "uni-cli/mcpApp": { toolName: name, resourceUri, arguments: {} } } : {}) },
       } } },
@@ -1436,7 +1436,7 @@ describe("MCP App resolution", () => {
     try {
       await host.render({
         ...host.part, toolName,
-        callProviderMetadata: { uni-cli: { mcpResult: {
+        callProviderMetadata: { uniCli: { mcpResult: {
           content: [], _meta: { "uni-cli/mcpApp": {
             toolName: "render", resourceUri: "ui://uni-cli/skill-created/v1/view.html", arguments: args,
             ...(connectionId !== undefined ? { connectionId } : {}),
@@ -1472,7 +1472,7 @@ describe("MCP App resolution", () => {
     const launch = { toolName: "connection_action", resourceUri: "ui://uni-cli/connection-action/v2/view.html", arguments: { connectionId: "connection" } }
     const part: DynamicToolUIPart = { type: "dynamic-tool", toolName: `uni-cli-cloud_${toolName}`, toolCallId: `connection-native-${toolName}`,
       state: "output-available", input: {}, output: connection,
-      callProviderMetadata: { uni-cli: { mcpResult: { content: [], isError: true, structuredContent: connection, _meta: { "uni-cli/mcpApp": launch } } } } }
+      callProviderMetadata: { uniCli: { mcpResult: { content: [], isError: true, structuredContent: connection, _meta: { "uni-cli/mcpApp": launch } } } } }
     expect(hasPreservedMcpAppResult(part)).toBe(true)
     expect(isNativeConnectionAppLaunch(part)).toBe(true)
     expect(isNativeConnectionAppLaunch({ ...part, toolName: `uni-cli_${toolName}` })).toBe(true)
@@ -1510,7 +1510,7 @@ describe("MCP App resolution", () => {
     host.resolveSpy.mockResolvedValue({ app: fixture({ resourceUri }) })
     const part: DynamicToolUIPart = {
       ...host.part, toolName,
-      callProviderMetadata: { uni-cli: { mcpResult: {
+      callProviderMetadata: { uniCli: { mcpResult: {
         content: [], _meta: { "uni-cli/mcpApp": { toolName: "render", resourceUri, arguments: {}, ...(connectionId ? { connectionId } : {}) } },
       } } },
     }
@@ -1544,7 +1544,7 @@ describe("MCP App iframe policy", () => {
     const result = { content: [{ type: "text", text: "initial result" }], isError: false }
     const part: DynamicToolUIPart = {
       type: "dynamic-tool", toolName: "render-0", toolCallId: "launch", state: "output-available",
-      input, output: "initial result", callProviderMetadata: { uni-cli: { mcpResult: result } },
+      input, output: "initial result", callProviderMetadata: { uniCli: { mcpResult: result } },
     }
     const nextInput = change === "input" ? { query: "updated input" } : input
     const nextResult = change === "result" ? { ...result, content: [{ type: "text", text: "updated result" }], isError: true } : result
@@ -1563,7 +1563,7 @@ describe("MCP App iframe policy", () => {
       onMcpReopenAuthorization: async () => {},
       children: createElement(McpAppFrame, { part: updated ? {
         ...part, toolCallId: change === "tool-call" ? "updated-call" : part.toolCallId,
-        input: structuredClone(nextInput), callProviderMetadata: { uni-cli: { mcpResult: structuredClone(nextResult) } },
+        input: structuredClone(nextInput), callProviderMetadata: { uniCli: { mcpResult: structuredClone(nextResult) } },
       } : part }),
     }))
     try {
@@ -1670,7 +1670,7 @@ describe("MCP App iframe policy", () => {
     }
     const part: DynamicToolUIPart = {
       type: "dynamic-tool", toolName: "fixture_render", toolCallId: "launch", state: "output-available",
-      input, output: "Provider fallback", callProviderMetadata: { uni-cli: { mcpResult: result } },
+      input, output: "Provider fallback", callProviderMetadata: { uniCli: { mcpResult: result } },
     }
     const previewOrigin = { client, workspaceId: "fixture", sessionId: null, readOnly: true }
     const render = async (nextPart = part) => {
@@ -1693,7 +1693,7 @@ describe("MCP App iframe policy", () => {
             }),
       })))
     }
-    const refresh = () => render({ ...part, input: structuredClone(input), callProviderMetadata: { uni-cli: { mcpResult: structuredClone(result) } } })
+    const refresh = () => render({ ...part, input: structuredClone(input), callProviderMetadata: { uniCli: { mcpResult: structuredClone(result) } } })
     try {
       await viewTransport.start()
       await render()
@@ -1820,7 +1820,7 @@ describe("MCP App iframe policy", () => {
     const part: DynamicToolUIPart = {
       type: "dynamic-tool", toolName: "uni-cli-cloud_execute_capability", toolCallId: "old-status-probe",
       state: "output-available", input: {}, output: {},
-      callProviderMetadata: { uni-cli: { mcpResult: { content: [], _meta: { "uni-cli/mcpApp": {
+      callProviderMetadata: { uniCli: { mcpResult: { content: [], _meta: { "uni-cli/mcpApp": {
         toolName: "connection_action", resourceUri: "ui://uni-cli/connection-action/v1/view.html", arguments: { connectionId: "emc_notes" },
       } } } } },
     }
@@ -1997,8 +1997,8 @@ test.each([
 test.each(["mcpResult", "mcpApp"])("preserves the generic %s metadata alias without interpreting its payload", alias => {
   const part: DynamicToolUIPart = {
     type: "dynamic-tool", toolName: "provider_render", toolCallId: "alias", state: "output-available", input: {}, output: "fallback",
-    callProviderMetadata: { uni-cli: { [alias]: { content: [{ type: "text", text: "fallback" }], structuredContent: { provider: true } } } },
+    callProviderMetadata: { uniCli: { [alias]: { content: [{ type: "text", text: "fallback" }], structuredContent: { provider: true } } } },
   };
   expect(hasPreservedMcpAppResult(part)).toBe(true);
-  expect(hasPreservedMcpAppResult({ ...part, callProviderMetadata: { uni-cli: { [alias]: { content: [null] } } } })).toBe(false);
+  expect(hasPreservedMcpAppResult({ ...part, callProviderMetadata: { uniCli: { [alias]: { content: [null] } } } })).toBe(false);
 });

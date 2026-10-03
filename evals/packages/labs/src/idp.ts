@@ -440,7 +440,7 @@ export function buildOidcClaims(input: {
     email_verified: true,
     name: input.subject.name,
     preferred_username: input.subject.email,
-    picture: `https://avatar.uni-cli.test/${encodeURIComponent(input.subject.email)}`,
+    picture: `https://avatar.uniCli.test/${encodeURIComponent(input.subject.email)}`,
     department: "Enterprise Lab",
   };
   if (input.nonce) {

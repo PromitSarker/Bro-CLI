@@ -170,7 +170,7 @@ export type CloudMcpServerMetadata = {
 };
 
 export type CloudMcpCompatibilitySnapshot = {
-  uni-cli: {
+  uniCli: {
     serverVersion: string | null;
     app: Record<string, string | number | boolean | null> | null;
   };
@@ -2207,7 +2207,7 @@ async function compatibilitySnapshot(input: {
     expectedVersion: input.inspection.opencodeVersion.expectedVersion ?? input.serverMetadata?.expectedOpencodeVersion ?? null,
   };
   return {
-    uni-cli: {
+    uniCli: {
       serverVersion: input.serverMetadata?.serverVersion ?? null,
       app: input.appMetadata ?? null,
     },

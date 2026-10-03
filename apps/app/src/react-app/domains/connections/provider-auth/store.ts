@@ -676,7 +676,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
 
     if (canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
       const config = await uniCliClient.getConfig(uniCliWorkspaceId);
-      return config.uni-cli ?? {};
+      return config.uniCli ?? {};
     }
 
     if (hasuniCliTarget) {
@@ -704,7 +704,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
     if (!isCurrent()) return false;
 
     if (canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
-      await uniCliClient.patchConfig(uniCliWorkspaceId, { uni-cli: config });
+      await uniCliClient.patchConfig(uniCliWorkspaceId, { uniCli: config });
       return true;
     }
 
@@ -930,7 +930,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
     });
     await uniCliClient.patchConfig(uniCliWorkspaceId, {
       opencode: { provider: providerUpdate },
-      uni-cli: nextConfig,
+      uniCli: nextConfig,
     });
     setStateField("importedCloudProviders", nextProviders);
   };

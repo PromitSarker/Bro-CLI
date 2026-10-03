@@ -98,7 +98,7 @@ const CONNECTION_ACTION_LABELS = {
 }
 
 function isConnectionTool(toolName: string): boolean {
-  return UNICLI_CLOUD_CAPABILITY_TOOLS.has(toolName) || /^uni-cli(?:-cloud)?_run_artifact_[A-Za-z0-9_-]+$/.test(toolName)
+  return UNICLI_CLOUD_CAPABILITY_TOOLS.has(toolName) || /^uniCli(?:-cloud)?_run_artifact_[A-Za-z0-9_-]+$/.test(toolName)
 }
 
 /**
@@ -193,7 +193,7 @@ export function reconnectActionFromChatToolResult(
 export function connectionResultFromChatToolPart(part: DynamicToolUIPart, options?: ChatConnectionTargetOptions): unknown {
   if (!isConnectionTool(part.toolName) || (part.state !== "output-error" && part.state !== "output-available")) return undefined
   const raw = part.state === "output-error" ? part.errorText : part.output
-  const metadata = part.callProviderMetadata?.uni-cli
+  const metadata = part.callProviderMetadata?.uniCli
   const preserved = isRecord(metadata) ? [metadata.mcpResult, metadata.mcpApp] : []
   const records = [raw, ...preserved.flatMap(result => isRecord(result) ? [result.structuredContent] : [])]
     .map(parseResultRecord).filter(isRecord)

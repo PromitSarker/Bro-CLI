@@ -39,7 +39,7 @@ function errorStringField(error: unknown, field: "code" | "path" | "syscall"): s
 }
 
 /**
- * Build the default per-workspace uni-cli config metadata. The uni-cli
+ * Build the default per-workspace uniCli config metadata. The uniCli
  * config is now stored in the runtime DB (see
  * `seeduniCliWorkspaceConfigIfEmpty`), not in `.opencode/uni-cli.json`, so
  * this no longer writes a file. Exposed so the workspace-creation route can
@@ -83,7 +83,7 @@ export async function ensureWorkspaceFiles(workspaceRoot: string, presetInput: s
   }
   const reloadReasons = new Set<ReloadReason>();
   if (await ensureOpencodeConfig(workspaceRoot)) reloadReasons.add("config");
-  // uni-cli config is seeded into the runtime DB by the caller, not written
+  // uniCli config is seeded into the runtime DB by the caller, not written
   // as a file here.
   void preset;
   return {

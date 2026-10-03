@@ -256,7 +256,7 @@ test("signup distinguishes joining, personal work, and restricted team setup wit
       const invitations = await invitationsFor(flexibleId);
       throw new Error(`First invitation did not show success. Form: ${formText.slice(0, 3000)}\nPersisted invitations: ${JSON.stringify(invitations)}`, { cause: error });
     }
-    await user.see({ text: "This workspace only allows uni-cli.test email addresses." });
+    await user.see({ text: "This workspace only allows uniCli.test email addresses." });
     await user.see({ role: "textbox", label: "Teammate email 2" }, { value: world.rejectedEmail, editable: true });
     expect(await invitationsFor(flexibleId)).toEqual([{ email: world.invitees[0], role: "member", status: "pending" }]);
     expect((await inviteEmails()).filter((email) => email === world.invitees[0])).toHaveLength(1);
@@ -469,7 +469,7 @@ desktopTest("desktop-origin signup completes the questions before issuing a fres
       expect(rejected.body).not.toHaveProperty("grant");
       expect(rejected.body).not.toHaveProperty("uniCliUrl");
     }
-    evidence.recordAssertionEvidence("Untrusted desktop schemes cannot obtain a grant or return URL", "Direct authenticated grant requests for an arbitrary app, HTTPS, and an Uni-CLI lookalike scheme all returned 400 without a grant or URL. The browser also began with an untrusted scheme query parameter; normal completion below must still dispatch only to uni-cli.", true);
+    evidence.recordAssertionEvidence("Untrusted desktop schemes cannot obtain a grant or return URL", "Direct authenticated grant requests for an arbitrary app, HTTPS, and an Uni-CLI lookalike scheme all returned 400 without a grant or URL. The browser also began with an untrusted scheme query parameter; normal completion below must still dispatch only to uniCli.", true);
   });
 
   await step("resuming People and reloading Tools restore the setup org after a shared-session switch", async () => {

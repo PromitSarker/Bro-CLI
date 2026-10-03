@@ -149,7 +149,7 @@ export type GatewayListedModel = {
   /** The upstream provider type, such as "anthropic" or "openai". */
   owned_by: string
   name: string
-  uni-cli: {
+  uniCli: {
     /** The ipr_ id that goes in /api/v1/providers/{provider_id}/... to call this model. */
     provider_id: string
     provider_name: string
@@ -169,10 +169,10 @@ export function listGatewayModels(rows: GatewayMemberAccessRow[]): { object: "li
       created: Math.floor(row.model.created_at.getTime() / 1000),
       owned_by: row.provider.provider_id,
       name: `${row.model.name} (${row.group.name} / ${row.credentialSet.name})`,
-      uni-cli: { provider_id: row.provider.id, provider_name: row.provider.name, upstream_model_id: row.model.model_id },
+      uniCli: { provider_id: row.provider.id, provider_name: row.provider.name, upstream_model_id: row.model.model_id },
     })
   }
   const data = [...models.values()].sort((a, b) =>
-    a.uni-cli.provider_name.localeCompare(b.uni-cli.provider_name) || a.name.localeCompare(b.name) || a.id.localeCompare(b.id))
+    a.uniCli.provider_name.localeCompare(b.uniCli.provider_name) || a.name.localeCompare(b.name) || a.id.localeCompare(b.id))
   return { object: "list", data }
 }

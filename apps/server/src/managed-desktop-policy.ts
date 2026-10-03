@@ -11,7 +11,7 @@ import { policyDenial, policyRequestActions, type ManagedPolicyAction } from "./
 
 const services = new WeakMap<ServerConfig, ManagedDesktopPolicy>();
 /** Org-managed providers: Den-imported (lpr_), Gateway (ipr_) and hosted Uni-CLI Models. */
-const MANAGED_PROVIDER = /^(?:lpr_|ipr_)|^uni-cli$/i;
+const MANAGED_PROVIDER = /^(?:lpr_|ipr_)|^uniCli$/i;
 function sessionKey(session: CloudProviderDenSession) { return `${session.baseUrl}\n${session.orgId}`; }
 // The first cold read previously had 10s; keep two reads under the 15s plugin budget and one read under the 10s session-install budget.
 const DEN_READ_DEADLINE_MS = 6_000;
@@ -136,7 +136,7 @@ class ManagedDesktopPolicy {
         if (allowNotFound && response.status === 404) return null;
         if (!response.ok) {
           if (attempt < DEN_READ_MAX_ATTEMPTS && RETRYABLE_DEN_STATUSES.has(response.status)) {
-            console.warn("[uni-cli:managed-policy] retrying Den verification", {
+            console.warn("[uniCli:managed-policy] retrying Den verification", {
               reason: "http_transient", status: response.status, attempt: attempt + 1,
             });
             void response.body?.cancel().catch(() => undefined);
@@ -151,7 +151,7 @@ class ManagedDesktopPolicy {
         this.identityChanged(generation);
         const reason = transientTransportReason(error);
         if (attempt < DEN_READ_MAX_ATTEMPTS && reason && performance.now() < deadline) {
-          console.warn("[uni-cli:managed-policy] retrying Den verification", {
+          console.warn("[uniCli:managed-policy] retrying Den verification", {
             reason, status: null, attempt: attempt + 1,
           });
           continue;
@@ -178,7 +178,7 @@ class ManagedDesktopPolicy {
       if (error instanceof ApiError && error.code === "policy_identity_changed") throw error;
       if (!DESKTOP_POLICY_ENFORCEMENT_ENABLED) {
         // Never block on Den: keep the last policy verified for this sign-in, or none.
-        console.warn("[uni-cli:model-access] Den unreachable; using the last known model access");
+        console.warn("[uniCli:model-access] Den unreachable; using the last known model access");
         return this.lastKnown?.key === sessionKey(session) ? this.lastKnown.policy : null;
       }
       throw new ApiError(403, "policy_unavailable", "Your organization's policy could not be verified. Try again when connected.");
@@ -324,7 +324,7 @@ class ManagedDesktopPolicy {
           if (!Array.isArray(items)) throw new Error("Invalid catalog");
           return items.filter(isRecord).some((item) =>
             (gateway ? /^ipr_/.test(providerID) && item.source === "uni-cli_gateway" && item.status === "active" && item.id === providerID
-              : /^(?:lpr_|uni-cli$)/i.test(providerID) && (item.source === "uni-cli" ? "uni-cli" : item.id) === providerID)
+              : /^(?:lpr_|uniCli$)/i.test(providerID) && (item.source === "uni-cli" ? "uni-cli" : item.id) === providerID)
             && (item.organizationId === undefined || item.organizationId === session.orgId)
             && Array.isArray(item.models) && item.models.filter(isRecord).some((model) => model.id === modelID));
         }));

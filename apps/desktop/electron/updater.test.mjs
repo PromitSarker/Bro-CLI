@@ -109,7 +109,7 @@ async function registerFakeUpdaterIpc({ version, platform = "linux", manualNativ
     platform,
     arch,
     nativeStagingTimeoutMs,
-    shipItDefaultsDomain: "test.uni-cli.ShipIt",
+    shipItDefaultsDomain: "test.uniCli.ShipIt",
     writeDefaults: async (args) => { defaultsWrites.push(args); },
     ...(assertActivation ? { assertActivation } : {}),
   });
@@ -119,7 +119,7 @@ async function registerFakeUpdaterIpc({ version, platform = "linux", manualNativ
 describe("staleUpdaterStatePaths", () => {
   it("targets the ShipIt cache on macOS", { skip: process.platform !== "darwin" }, () => {
     assert.deepEqual(staleUpdaterStatePaths(fakeApp), [
-      "/Users/test/Library/Caches/com.differentai.uni-cli.ShipIt",
+      "/Users/test/Library/Caches/com.differentai.uniCli.ShipIt",
     ]);
   });
 
@@ -912,7 +912,7 @@ describe("macOS native staging", () => {
       assert.equal(nativeUpdater.listenerCount("error"), 1);
       if (process.platform === "darwin") {
         assert.equal(defaultsWrites.length, 2);
-        assert.ok(defaultsWrites.every((args) => args[1] === "test.uni-cli.ShipIt"));
+        assert.ok(defaultsWrites.every((args) => args[1] === "test.uniCli.ShipIt"));
       }
     } finally {
       await rm(tempDir, { recursive: true, force: true });

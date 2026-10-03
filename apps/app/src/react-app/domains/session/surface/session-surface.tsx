@@ -520,7 +520,7 @@ function createSubagentActivityEvalMessages(sessionId: string, childSessionId?: 
             prompt: "Reproduce the Azure failure in isolation.",
             subagent_type: "executor-deep",
           },
-          ...(childSessionId ? { callProviderMetadata: { uni-cli: { childSessionId } } } : {}),
+          ...(childSessionId ? { callProviderMetadata: { uniCli: { childSessionId } } } : {}),
         },
       ],
       metadata: { opencode: { created: now + 1 } },

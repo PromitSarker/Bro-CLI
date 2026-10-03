@@ -29,15 +29,15 @@ export async function readEvidenceSession(id: string, sourceSha: string, api = c
   if (!record(value) || value.vmId !== owner.id || value.sourceSha !== sourceSha || typeof value.token !== "string" || !/^[\w-]{43}$/.test(value.token)
     || typeof value.expiresAt !== "string" || !Number.isFinite(Date.parse(value.expiresAt)) || Date.parse(value.expiresAt) <= Date.now() || !record(value.origins)
     || typeof value.origins.desktop !== "string" || typeof value.origins.cdp !== "string"
-    || !/^https:\/\/evidence-[a-f0-9]{32}\.preview\.uni-cli\.software$/.test(value.origins.desktop)
-    || !/^https:\/\/cdp-[a-f0-9]{32}\.preview\.uni-cli\.software$/.test(value.origins.cdp)) throw new Error("Invalid evidence access configuration");
+    || !/^https:\/\/evidence-[a-f0-9]{32}\.preview\.uniCli\.software$/.test(value.origins.desktop)
+    || !/^https:\/\/cdp-[a-f0-9]{32}\.preview\.uniCli\.software$/.test(value.origins.cdp)) throw new Error("Invalid evidence access configuration");
   return { id, sourceSha, url: `${value.origins.desktop}/__uni-cli_launch?token=${value.token}`,
     cdpOrigin: value.origins.cdp, cookie: `__Host-uni-cli-preview=${value.token}`, expiresAt: value.expiresAt };
 }
 
 async function allocate(input: { snapshotId: string; slug: string; kind: string; sourceSha: string; runtimeFingerprint?: string; metadata?: Record<string, string> }, api: ReturnType<typeof client>, probe: typeof fetch = fetch) {
   const nonce = randomUUID().replaceAll("-", "");
-  const origins = { desktop: `https://evidence-${nonce}.preview.uni-cli.software`, cdp: `https://cdp-${nonce}.preview.uni-cli.software` };
+  const origins = { desktop: `https://evidence-${nonce}.preview.uniCli.software`, cdp: `https://cdp-${nonce}.preview.uniCli.software` };
   const created = await api.vms.create({
     snapshotId: input.snapshotId, slug: input.slug, ttlSeconds: 3600, idleTimeoutSeconds: 600,
     metadata: { kind: input.kind, sourceSha: input.sourceSha, ...input.metadata },

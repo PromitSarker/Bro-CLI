@@ -108,7 +108,7 @@ test("a brand-new person signs up through their agent, names a workspace inline,
     installPageUrl = typeof body.installPageUrl === "string" ? body.installPageUrl : "";
     const connectUrl = typeof body.connectUrl === "string" ? body.connectUrl : "";
     expect(new URL(installPageUrl).pathname).toBe("/install");
-    expect(connectUrl).toMatch(/^uni-cli:\/\/connect\?/);
+    expect(connectUrl).toMatch(/^uniCli:\/\/connect\?/);
     await person.navigate(installPageUrl);
     await person.see({ text: "Download Uni-CLI" }, { timeoutMs: 60_000 });
     await person.screenshot();

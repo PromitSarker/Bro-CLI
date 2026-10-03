@@ -3,7 +3,7 @@ import { spec } from "@uni-cli/testkit";
 import { reliableRecoveryWorld } from "../worlds/first-run.ts";
 
 const test = spec.world(reliableRecoveryWorld, { timeout: 300_000 });
-const verifiedArtifact = "https://releases.uni-cli.test/v1.8.2/Uni-CLI-darwin-arm64.dmg";
+const verifiedArtifact = "https://releases.uniCli.test/v1.8.2/Uni-CLI-darwin-arm64.dmg";
 
 test("a fatal desktop bootstrap failure offers one-click verified recovery without losing the profile", async ({ world, user, seed, probe }) => {
   await user.see({ text: /Uni-CLI (couldn't|could not) start/i });

@@ -23,7 +23,7 @@ const installScript = `#!/usr/bin/env sh
 # user-writable bin dir. No admin privileges, no npm, no npx. Requires Node.js 20+.
 #
 # This does NOT install the Uni-CLI desktop app. To install the app:
-#   macOS:   brew install --cask uni-cli
+#   macOS:   brew install --cask uniCli
 #   Any OS:  https://uni-clilabs.com/download
 #            (direct: https://uni-clilabs.com/download/<mac-arm64|mac-x64|win-x64|win-arm64|linux-x64|linux-arm64>)
 #   Or, after this script: uni-cli-bootstrap install app --manifest https://uni-clilabs.com/install-manifest.json

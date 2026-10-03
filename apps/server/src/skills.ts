@@ -82,7 +82,7 @@ async function parseSkillEntry(
   try {
     content = await readFile(skillPath, "utf8");
   } catch (error) {
-    console.warn("[uni-cli:skills] Skipping unreadable skill file", {
+    console.warn("[uniCli:skills] Skipping unreadable skill file", {
       path: skillPath,
       entryName,
       scope,
@@ -104,7 +104,7 @@ async function parseSkillEntry(
     } catch {
       return null;
     }
-    console.warn("[uni-cli:skills] Found invalid skill frontmatter", {
+    console.warn("[uniCli:skills] Found invalid skill frontmatter", {
       path: skillPath,
       entryName,
       scope,

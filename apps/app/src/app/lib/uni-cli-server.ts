@@ -753,7 +753,7 @@ export type uniCliCloudMcpFailure = {
 };
 
 export type uniCliCloudMcpCompatibility = {
-  uni-cli: {
+  uniCli: {
     serverVersion: string | null;
     app: Record<string, string | number | boolean | null> | null;
   };
@@ -966,7 +966,7 @@ export type uniCliWorkspaceExport = {
   workspaceId: string;
   exportedAt: number;
   opencode?: Record<string, unknown>;
-  uni-cli?: Record<string, unknown>;
+  uniCli?: Record<string, unknown>;
   skills?: Array<{ name: string; description?: string; trigger?: string; content: string }>;
   commands?: Array<{ name: string; description?: string; template?: string }>;
   files?: Array<{ path: string; content: string }>;
@@ -1939,7 +1939,7 @@ export function createuniCliServerClient(options: { baseUrl: string; token?: str
       });
     },
     getConfig: (workspaceId: string) =>
-      requestJson<{ opencode: Record<string, unknown>; uni-cli: Record<string, unknown>; updatedAt?: number | null }>(
+      requestJson<{ opencode: Record<string, unknown>; uniCli: Record<string, unknown>; updatedAt?: number | null }>(
         baseUrl,
         `/workspace/${workspaceId}/config`,
         { token, hostToken, timeoutMs: timeouts.config },
@@ -2000,7 +2000,7 @@ export function createuniCliServerClient(options: { baseUrl: string; token?: str
         `/workspace/${encodeURIComponent(workspaceId)}/runtime-config`,
         { token, hostToken, timeoutMs: timeouts.config },
       ),
-    patchConfig: (workspaceId: string, payload: { opencode?: Record<string, unknown>; uni-cli?: Record<string, unknown> }) =>
+    patchConfig: (workspaceId: string, payload: { opencode?: Record<string, unknown>; uniCli?: Record<string, unknown> }) =>
       requestJson<{ updatedAt?: number | null }>(baseUrl, `/workspace/${workspaceId}/config`, {
         token,
         hostToken,

@@ -1,5 +1,5 @@
 // Trusted Ed25519 public keys for verifying connect links
-// (uni-cli://connect?token=<JWT>), keyed by the token's `kid` header.
+// (uniCli://connect?token=<JWT>), keyed by the token's `kid` header.
 //
 // These are VERIFICATION keys only — safe to publish. The matching private
 // keys are held by the deployment operator that mints connect links (for

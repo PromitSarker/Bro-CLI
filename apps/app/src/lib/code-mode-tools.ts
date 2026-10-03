@@ -58,7 +58,7 @@ function structuredMessage(text: string, depth: number): string | null {
 
 /** Project recorded calls, never infer execution by parsing the generated code. */
 export function codeModeToolCalls(part: DynamicToolUIPart): DynamicToolUIPart[] | null {
-  const codeMode = part.callProviderMetadata?.uni-cli?.codeMode;
+  const codeMode = part.callProviderMetadata?.uniCli?.codeMode;
   if (!isRecord(codeMode) || !Array.isArray(codeMode.calls)) return null;
   const calls = codeMode.calls;
   // The engine reports one error for the whole script. Attribute it to the

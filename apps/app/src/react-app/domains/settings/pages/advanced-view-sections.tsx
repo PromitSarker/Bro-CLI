@@ -463,7 +463,7 @@ export function AdvancedCloudMcpDiagnosticsSection(props: AdvancedCloudMcpDiagno
               <DiagnosticRow label="Safe capabilities" value={`schema v${props.cloudMcpHealth.schemaVersion}; connect catalog ${props.cloudMcpHealth.connectCatalogEnabled ? "enabled" : "disabled"}`} />
               {compatibility ? (
                 <>
-                  <DiagnosticRow label="Uni-CLI versions" value={`server ${formatMaybe(compatibility.uni-cli.serverVersion)}; app ${formatMetadataRecord(compatibility.uni-cli.app)}`} />
+                  <DiagnosticRow label="Uni-CLI versions" value={`server ${formatMaybe(compatibility.uniCli.serverVersion)}; app ${formatMetadataRecord(compatibility.uniCli.app)}`} />
                   <DiagnosticRow label="OpenCode compatibility" value={`expected ${formatMaybe(compatibility.opencode.expectedVersion)}; actual ${formatMaybe(compatibility.opencode.actualVersion)}; probe ${compatibility.opencode.probe}`} />
                   <DiagnosticRow label="Feature probes" value={formatSupportedFeatures(compatibility.supportedFeatures)} />
                   <DiagnosticRow label="Experimental tool IDs" value={formatMcpToolExposure(compatibility.experimentalToolIds)} />

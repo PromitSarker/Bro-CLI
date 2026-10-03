@@ -39,7 +39,7 @@ export interface PermissionLayers {
   /** `permission` block of the user's global opencode.json, as written. */
   global: unknown;
   /** `permission` block Uni-CLI injects through OPENCODE_CONFIG. */
-  uni-cli: unknown;
+  uniCli: unknown;
   /** `permission` block of the workspace's opencode.json, as written. */
   workspace: unknown;
 }
@@ -127,7 +127,7 @@ function layerContains(layerRules: EffectiveEnginePermissionRule[], rule: Effect
 export function attributeRule(rule: EffectiveEnginePermissionRule, layers: PermissionLayers, home = homedir()): PermissionSource {
   const ordered: Array<[PermissionSource, unknown]> = [
     ["workspace", layers.workspace],
-    ["uni-cli", layers.uni-cli],
+    ["uni-cli", layers.uniCli],
     ["global", layers.global],
   ];
   for (const [source, block] of ordered) {

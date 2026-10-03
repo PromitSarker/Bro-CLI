@@ -146,7 +146,7 @@ test("DPA policy blocks warm managed keys without revoking customer-owned models
   expect(connect.text).not.toContain(world.fixtureKey(world.memberId));
   expect(record(record(connect.body).llmProvider).name).toBe("Customer-looking renamed provider");
   await blocked();
-  evidence.recordAssertionEvidence("Managed denial follows source, not display name", "Name-only public PATCH is rejected with 400. A datastore-arranged rename preserves source=uni-cli; lists still hide it, direct connect stays redacted, and the warm inference key returns 403 with no upstream call. This does not claim public rename support.", true);
+  evidence.recordAssertionEvidence("Managed denial follows source, not display name", "Name-only public PATCH is rejected with 400. A datastore-arranged rename preserves source=uniCli; lists still hide it, direct connect stays redacted, and the warm inference key returns 403 with no upstream call. This does not claim public rename support.", true);
   const resources = await api("/v1/resources");
   expect(resources.response.status).toBe(200);
   expect(record(record(record(resources.body).resources).llmProviders)[managedId]).toBeUndefined();

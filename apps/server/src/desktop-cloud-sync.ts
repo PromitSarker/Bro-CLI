@@ -237,8 +237,8 @@ function readImportedPlugins(value: unknown): Record<string, CloudImportedPlugin
   return plugins;
 }
 
-export function readWorkspaceCloudImports(uni-cli: Record<string, unknown>): WorkspaceCloudImports {
-  const cloudImports = isRecord(uni-cli.cloudImports) ? uni-cli.cloudImports : {};
+export function readWorkspaceCloudImports(uniCli: Record<string, unknown>): WorkspaceCloudImports {
+  const cloudImports = isRecord(uniCli.cloudImports) ? uniCli.cloudImports : {};
   return {
     providers: readImportedProviders(cloudImports.providers),
     marketplaces: readImportedMarketplaces(cloudImports.marketplaces),
@@ -296,8 +296,8 @@ function readDesktopCloudSyncEntry(contextKey: string, value: unknown): DesktopC
   };
 }
 
-export function readDesktopCloudSyncState(uni-cli: Record<string, unknown>): DesktopCloudSyncState {
-  const raw = isRecord(uni-cli.desktopCloudSync) ? uni-cli.desktopCloudSync : {};
+export function readDesktopCloudSyncState(uniCli: Record<string, unknown>): DesktopCloudSyncState {
+  const raw = isRecord(uniCli.desktopCloudSync) ? uniCli.desktopCloudSync : {};
   const rawEntries = isRecord(raw.entries) ? raw.entries : {};
   const entries: Record<string, DesktopCloudSyncEntry> = {};
   for (const [key, entry] of Object.entries(rawEntries)) {
@@ -458,14 +458,14 @@ function diffInstalledCloudResources(
 
 export function syncDesktopCloudResources(input: {
   now?: number;
-  uni-cli: Record<string, unknown>;
+  uniCli: Record<string, unknown>;
   snapshot: ResourceSnapshot;
 }) {
   const now = input.now ?? Date.now();
-  const state = readDesktopCloudSyncState(input.uni-cli);
+  const state = readDesktopCloudSyncState(input.uniCli);
   const key = contextKey(input.snapshot);
   const previousEntry = state.entries[key] ?? null;
-  const changes = diffInstalledCloudResources(readWorkspaceCloudImports(input.uni-cli), input.snapshot, now);
+  const changes = diffInstalledCloudResources(readWorkspaceCloudImports(input.uniCli), input.snapshot, now);
   const entry: DesktopCloudSyncEntry = {
     contextKey: key,
     fetchedAt: now,
@@ -486,8 +486,8 @@ export function syncDesktopCloudResources(input: {
 
   return {
     changes,
-    uni-cli: {
-      ...input.uni-cli,
+    uniCli: {
+      ...input.uniCli,
       desktopCloudSync: nextState,
     },
     state: nextState,

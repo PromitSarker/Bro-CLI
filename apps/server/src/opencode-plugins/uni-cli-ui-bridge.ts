@@ -18,7 +18,7 @@ function uiControlDiscoveryPaths(): string[] {
   if (explicit) return [explicit];
   return [
     join(userAppDataDir(), "com.differentai.uni-cli", "uni-cli-ui-control.json"),
-    join(userAppDataDir(), "com.differentai.uni-cli.dev", "uni-cli-ui-control.json"),
+    join(userAppDataDir(), "com.differentai.uniCli.dev", "uni-cli-ui-control.json"),
   ].filter((p): p is string => Boolean(p));
 }
 

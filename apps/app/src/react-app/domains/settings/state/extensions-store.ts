@@ -510,7 +510,7 @@ export function createExtensionsStore(options: {
 
     if (canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
       const config = await uniCliClient.getConfig(uniCliWorkspaceId);
-      return config.uni-cli ?? {};
+      return config.uniCli ?? {};
     }
 
     if (hasuniCliTarget) {
@@ -534,7 +534,7 @@ export function createExtensionsStore(options: {
       uniCliSnapshot.uniCliServerCapabilities?.config?.write !== false;
 
     if (canUseuniCliServer && uniCliClient && uniCliWorkspaceId) {
-      await uniCliClient.patchConfig(uniCliWorkspaceId, { uni-cli: config });
+      await uniCliClient.patchConfig(uniCliWorkspaceId, { uniCli: config });
       return true;
     }
 

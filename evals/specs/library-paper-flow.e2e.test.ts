@@ -76,11 +76,11 @@ test(title, async ({ evidence, world, user, probe, step }) => {
     const google = await chip("Google Workspace");
     const linear = await chip("Linear");
     const wikiReady = (await probe.dom('[data-library-row="Team wiki"] [data-library-ready]')).elements.length === 1;
-    const uni-cli = await sectionMeta("uni-cli");
+    const uniCli = await sectionMeta("uni-cli");
     await shot();
     evidence.recordAssertionEvidence(
       "One list: connectors from the organization carry their next step",
-      `filters=${filters.join(" / ")}; From Uni-CLI "${uni-cli}"; Google Workspace chip=${google}; Linear chip=${linear}; Team wiki ready=${wikiReady}`,
+      `filters=${filters.join(" / ")}; From Uni-CLI "${uniCli}"; Google Workspace chip=${google}; Linear chip=${linear}; Team wiki ready=${wikiReady}`,
       google === "Sign in" && linear === "Sign in" && wikiReady,
     );
     expect(google).toBe("Sign in");

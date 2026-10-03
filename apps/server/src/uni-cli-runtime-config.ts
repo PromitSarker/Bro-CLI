@@ -6,7 +6,7 @@ import { isManagedPolicyPlugin } from "./managed-policy-plugin.js";
  * Runtime OpenCode configuration injected via a server-managed config file
  * passed to the engine as OPENCODE_CONFIG.
  *
- * This is the single source of truth for the uni-cli agent definition,
+ * This is the single source of truth for the uniCli agent definition,
  * plugins, and any other config that should be injected at runtime rather
  * than written to the user's own config files. Both cli.ts and embedded.ts
  * use this.
@@ -74,13 +74,13 @@ export function builduniCliRuntimeConfigObjectFromSnapshot(
   return {
     ...engineConfig,
     ...(runtimeConfig.managedPolicy?.allowCustomProviders === false ? { enabled_providers: [
-      ...Object.keys(provider).filter((id) => /^(?:lpr_|ipr_|uni-cli$)/i.test(id)),
+      ...Object.keys(provider).filter((id) => /^(?:lpr_|ipr_|uniCli$)/i.test(id)),
       ...(runtimeConfig.managedPolicy.allowZenModel !== false ? ["opencode"] : []),
     ] } : {}),
     permission: { ...engineConfig.permission, ...permissions },
     default_agent: runtimeConfig.default_agent ?? "uni-cli",
     agent: {
-      uni-cli: {
+      uniCli: {
         description: "Uni-CLI default agent",
         mode: "primary",
         temperature: 0.2,

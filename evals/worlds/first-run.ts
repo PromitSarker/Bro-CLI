@@ -772,8 +772,8 @@ export async function compatibleReleaseWorld(_seed: Seed, { place }: { place: Pl
       UNICLI_EVAL_FATAL_DESKTOP_BOOTSTRAP_FAILURE: "EVAL_FATAL_DESKTOP_BOOTSTRAP_FAILURE",
       UNICLI_EVAL_RECOVERY_TARGET: "darwin-arm64-public",
       UNICLI_EVAL_RECOVERY_RELEASES: JSON.stringify([
-        { version: "2.4.0", channel: "stable", artifact: { platform: "darwin", arch: "arm64", distribution: "public", url: "https://releases.uni-cli.test/v2.4.0/Uni-CLI-darwin-arm64.dmg" } },
-        { version: "2.3.1", channel: "stable", artifact: { platform: "darwin", arch: "arm64", distribution: "public", url: "https://releases.uni-cli.test/v2.3.1/Uni-CLI-darwin-arm64.dmg" } },
+        { version: "2.4.0", channel: "stable", artifact: { platform: "darwin", arch: "arm64", distribution: "public", url: "https://releases.uniCli.test/v2.4.0/Uni-CLI-darwin-arm64.dmg" } },
+        { version: "2.3.1", channel: "stable", artifact: { platform: "darwin", arch: "arm64", distribution: "public", url: "https://releases.uniCli.test/v2.3.1/Uni-CLI-darwin-arm64.dmg" } },
         { version: "2.3.0", channel: "stable", artifact: { platform: "linux", arch: "x64", distribution: "public", url: "https://incompatible.invalid/Uni-CLI.AppImage" } },
         { version: "2.2.9", channel: "stable", artifact: { platform: "darwin", arch: "arm64", distribution: "enterprise", url: "https://wrong-flavor.invalid/Uni-CLI.dmg" } },
         { version: "2.2.8-beta.1", channel: "prerelease", artifact: { platform: "darwin", arch: "arm64", distribution: "public", url: "https://prerelease.invalid/Uni-CLI.dmg" } },
@@ -809,7 +809,7 @@ export async function reliableRecoveryWorld(_seed: Seed, { place }: { place: Pla
     env: {
       UNICLI_EVAL_FATAL_DESKTOP_BOOTSTRAP_FAILURE: "EVAL_FATAL_DESKTOP_BOOTSTRAP_FAILURE: dlopen(/private/tmp/runtime.node): invalid code signature",
       UNICLI_EVAL_RECOVERY_CANDIDATES: JSON.stringify([
-        { version: "1.8.2", verified: true, artifactUrl: "https://releases.uni-cli.test/v1.8.2/Uni-CLI-darwin-arm64.dmg" },
+        { version: "1.8.2", verified: true, artifactUrl: "https://releases.uniCli.test/v1.8.2/Uni-CLI-darwin-arm64.dmg" },
         { version: "1.8.1", verified: false, artifactUrl: "https://tampered.invalid/Uni-CLI.dmg" },
       ]),
     },

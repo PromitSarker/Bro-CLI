@@ -160,7 +160,7 @@ async function bootEngine(input: EngineInput): Promise<BootedEngine> {
       agent: agent.name,
       rows: summarizeEffectivePermissions(rules, {
         global: input.globalConfig?.permission,
-        uni-cli: injected.permission,
+        uniCli: injected.permission,
         workspace: input.projectConfig?.permission,
       }, home),
     };

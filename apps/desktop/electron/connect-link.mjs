@@ -144,9 +144,9 @@ function normalizeClaims(payload) {
 }
 
 /**
- * Extracts the signed token from a connect deep link. Accepts the uni-cli
- * and uni-cli-dev schemes and both authority forms (uni-cli://connect and
- * uni-cli:///connect).
+ * Extracts the signed token from a connect deep link. Accepts the uniCli
+ * and uni-cli-dev schemes and both authority forms (uniCli://connect and
+ * uniCli:///connect).
  *
  * @param {string} rawUrl
  * @returns {string | null}

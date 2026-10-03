@@ -86,7 +86,7 @@ assert.ok(docsInstaller.includes(serverUrl), "Docs installer is using a differen
 // One-click install links must add exactly the public endpoint, in each
 // client's documented format, in both the installer and the client guide.
 const installLinks = [
-  ["cursor.mdx", `cursor://anysphere.cursor-deeplink/mcp/install?name=uni-cli&config=${Buffer.from(JSON.stringify({ url: serverUrl })).toString("base64")}`],
+  ["cursor.mdx", `cursor://anysphere.cursor-deeplink/mcp/install?name=uniCli&config=${Buffer.from(JSON.stringify({ url: serverUrl })).toString("base64")}`],
   ["vs-code.mdx", `vscode:mcp/install?${encodeURIComponent(JSON.stringify({ name: "uni-cli", type: "http", url: serverUrl }))}`],
 ];
 for (const [guide, link] of installLinks) {
@@ -113,10 +113,10 @@ for (const name of sharedValueNames) {
 
 const exactCommands = [
   { docsInstallerNeedle: "opencode mcp auth uni-cli", cloudDocsNeedle: "opencode mcp auth uni-cli" },
-  { docsInstallerNeedle: "opencode mcp logout uni-cli\nopencode mcp auth uni-cli", cloudDocsNeedle: "opencode mcp logout uni-cli\nopencode mcp auth uni-cli" },
-  { docsInstallerNeedle: "codex mcp add uni-cli --url ${MCP_SERVER_URL}", cloudDocsNeedle: `codex mcp add uni-cli --url ${serverUrl}` },
+  { docsInstallerNeedle: "opencode mcp logout uniCli\nopencode mcp auth uni-cli", cloudDocsNeedle: "opencode mcp logout uniCli\nopencode mcp auth uni-cli" },
+  { docsInstallerNeedle: "codex mcp add uniCli --url ${MCP_SERVER_URL}", cloudDocsNeedle: `codex mcp add uniCli --url ${serverUrl}` },
   { docsInstallerNeedle: "codex mcp login uni-cli", cloudDocsNeedle: "codex mcp login uni-cli" },
-  { docsInstallerNeedle: "codex mcp logout uni-cli\ncodex mcp login uni-cli", cloudDocsNeedle: "codex mcp logout uni-cli\ncodex mcp login uni-cli" },
+  { docsInstallerNeedle: "codex mcp logout uniCli\ncodex mcp login uni-cli", cloudDocsNeedle: "codex mcp logout uniCli\ncodex mcp login uni-cli" },
 ];
 
 for (const command of exactCommands) {

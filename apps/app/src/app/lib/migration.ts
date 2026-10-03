@@ -11,12 +11,12 @@
 export const MIGRATION_SNAPSHOT_VERSION = 1;
 
 export const MIGRATION_KEY_PATTERNS: Array<RegExp> = [
-  /^uni-cli\.react\.activeWorkspace$/,
-  /^uni-cli\.react\.sessionByWorkspace$/,
-  /^uni-cli\.server\.list$/,
-  /^uni-cli\.server\.active$/,
-  /^uni-cli\.server\.urlOverride$/,
-  /^uni-cli\.server\.token$/,
+  /^uniCli\.react\.activeWorkspace$/,
+  /^uniCli\.react\.sessionByWorkspace$/,
+  /^uniCli\.server\.list$/,
+  /^uniCli\.server\.active$/,
+  /^uniCli\.server\.urlOverride$/,
+  /^uniCli\.server\.token$/,
 ];
 
 export type MigrationSnapshot = {

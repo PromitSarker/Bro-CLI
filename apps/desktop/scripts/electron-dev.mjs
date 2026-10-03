@@ -290,7 +290,7 @@ electronChild = run(pnpmCmd, ["exec", "electron", "./electron/main.mjs", ...blan
 });
 
 if (cdpPort) {
-  console.log(`[uni-cli] Electron CDP exposed at http://127.0.0.1:${cdpPort}`);
+  console.log(`[uniCli] Electron CDP exposed at http://127.0.0.1:${cdpPort}`);
 }
 
 electronChild.on("exit", (code) => {

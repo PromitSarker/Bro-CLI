@@ -855,7 +855,7 @@ function UiControlConnectionDetails(props: UiControlConnectionDetailsProps) {
                     Dev discovery file
                   </TableCell>
                   <TableCell className="py-2 whitespace-normal">
-                    <span className="font-mono text-xs break-all">~/Library/Application Support/com.differentai.uni-cli.dev/uni-cli-ui-control.json</span>
+                    <span className="font-mono text-xs break-all">~/Library/Application Support/com.differentai.uniCli.dev/uni-cli-ui-control.json</span>
                   </TableCell>
                 </TableRow>
                 <TableRow className="*:border-border hover:bg-transparent [&>:not(:last-child)]:border-r">

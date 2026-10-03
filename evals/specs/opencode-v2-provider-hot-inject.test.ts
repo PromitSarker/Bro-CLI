@@ -301,7 +301,7 @@ test("opencode v2 injects providers at runtime without an engine reload", { time
   const directory = join(rootDir, "workspace");
   await mkdir(directory);
   const baseConfig = join(rootDir, "opencode.json");
-  await writeFile(baseConfig, `${JSON.stringify({ agent: { uni-cli: { mode: "primary" } }, default_agent: "uni-cli" })}\n`);
+  await writeFile(baseConfig, `${JSON.stringify({ agent: { uniCli: { mode: "primary" } }, default_agent: "uni-cli" })}\n`);
   let server: ManagedOpencodeV2Server | undefined;
 
   try {

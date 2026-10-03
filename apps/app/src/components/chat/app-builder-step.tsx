@@ -48,13 +48,13 @@ export function AppBuilderStep({
   );
   const parts = [...(run.executions ?? []), ...(run.attempts ?? []), ...(run.discoveries ?? []), ...(run.preparation ? [run.preparation] : []), ...run.builds];
   const starts = parts.flatMap((part) =>
-    typeof part.callProviderMetadata?.uni-cli?.toolStartedAt === "number"
-      ? [part.callProviderMetadata.uni-cli.toolStartedAt]
+    typeof part.callProviderMetadata?.uniCli?.toolStartedAt === "number"
+      ? [part.callProviderMetadata.uniCli.toolStartedAt]
       : [],
   );
   const ends = parts.flatMap((part) =>
-    typeof part.callProviderMetadata?.uni-cli?.toolCompletedAt === "number"
-      ? [part.callProviderMetadata.uni-cli.toolCompletedAt]
+    typeof part.callProviderMetadata?.uniCli?.toolCompletedAt === "number"
+      ? [part.callProviderMetadata.uniCli.toolCompletedAt]
       : [],
   );
   const [now, setNow] = useState(Date.now);

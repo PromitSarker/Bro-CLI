@@ -48,7 +48,7 @@ function discoveryPaths() {
   return [
     process.env.UNICLI_UI_CONTROL_DISCOVERY?.trim(),
     join(userAppDataDir(), "com.differentai.uni-cli", DISCOVERY_FILE),
-    join(userAppDataDir(), "com.differentai.uni-cli.dev", DISCOVERY_FILE),
+    join(userAppDataDir(), "com.differentai.uniCli.dev", DISCOVERY_FILE),
   ].filter(Boolean);
 }
 
@@ -160,7 +160,7 @@ const server = new McpServer({
   version: "0.2.0",
 });
 
-// ── uni-cli://context/current ──
+// ── uniCli://context/current ──
 server.resource(
   "current_uni-cli_context",
   "uni-cli://context/current",

@@ -330,10 +330,10 @@ function readExportRecord(value: unknown): Record<string, unknown> | null {
 
 /**
  * Strips machine-local blueprint materialization state (session ids created on
- * one machine) from an uni-cli config so exports stay portable.
+ * one machine) from an uniCli config so exports stay portable.
  */
-export function sanitizeuniCliTemplateConfig(uni-cli: Record<string, unknown> | null | undefined): Record<string, unknown> {
-  const next = cloneJson(uni-cli ?? {});
+export function sanitizeuniCliTemplateConfig(uniCli: Record<string, unknown> | null | undefined): Record<string, unknown> {
+  const next = cloneJson(uniCli ?? {});
   const blueprint = readExportRecord(next.blueprint);
   if (!blueprint) return next;
 

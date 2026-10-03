@@ -32,7 +32,7 @@ const BUNDLED_ICONS_BY_APEX: Record<string, string> = {
 
 const BUNDLED_ICONS_BY_SLUG: Record<string, string> = {
   openai: "/integrations/openai.svg",
-  uni-cli: "/uni-cli-mark.svg",
+  uniCli: "/uni-cli-mark.svg",
   slack: "/integrations/slack.svg",
 };
 

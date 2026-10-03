@@ -21,7 +21,7 @@ import {
 
 function statusDescription(status: DesktopIntegrationStatus) {
   if (status.state === "integrated") {
-    return "Uni-CLI is in your application launcher and handles uni-cli:// browser callbacks.";
+    return "Uni-CLI is in your application launcher and handles uniCli:// browser callbacks.";
   }
   if (status.state === "managed_externally") {
     return "This AppImage is integrated by another app. Uni-CLI will leave its launcher untouched.";
@@ -86,7 +86,7 @@ export function DesktopIntegrationSection() {
       <LayoutSectionHeader>
         <LayoutSectionTitle>AppImage desktop integration</LayoutSectionTitle>
         <LayoutSectionDescription>
-          Control the launcher, icon, and uni-cli:// callback for this AppImage.
+          Control the launcher, icon, and uniCli:// callback for this AppImage.
         </LayoutSectionDescription>
       </LayoutSectionHeader>
 

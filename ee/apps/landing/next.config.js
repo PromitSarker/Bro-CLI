@@ -6,11 +6,11 @@ const mintlifyOrigin = "https://differentai.mintlify.dev";
 const ALIAS_HOSTS = [
   "www.uni-clilabs.com",
   "uni-cli.software",
-  "www.uni-cli.software",
+  "www.uniCli.software",
   "uni-cliapp.com",
   "www.uni-cliapp.com",
   "uni-cli.studio",
-  "www.uni-cli.studio",
+  "www.uniCli.studio",
   "uni-clico.com",
   "www.uni-clico.com",
   "www.uni-clilabs.com",

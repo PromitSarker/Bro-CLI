@@ -794,7 +794,7 @@ async function resolveVerificationCode(flags) {
 }
 
 function skillText(name, output) {
-  return `---\nname: ${name}\ndescription: Starter skill created by uni-cli bootstrap.\nuniCliBootstrapTrigger: bootstrap.verify\nuniCliBootstrapOutput: ${JSON.stringify(output)}\n---\n\n# ${name}\n\nWhen triggered with \`bootstrap.verify\`, output exactly:\n\n\`${output}\`\n\nUse this skill to confirm Uni-CLI cloud onboarding can create and trigger a deterministic skill.`
+  return `---\nname: ${name}\ndescription: Starter skill created by uniCli bootstrap.\nuniCliBootstrapTrigger: bootstrap.verify\nuniCliBootstrapOutput: ${JSON.stringify(output)}\n---\n\n# ${name}\n\nWhen triggered with \`bootstrap.verify\`, output exactly:\n\n\`${output}\`\n\nUse this skill to confirm Uni-CLI cloud onboarding can create and trigger a deterministic skill.`
 }
 
 async function createCloudSkillPlugin(baseUrl, auth, input) {

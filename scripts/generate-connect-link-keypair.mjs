@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Generates a dedicated Ed25519 keypair for signing connect links
-// (uni-cli://connect?token=<JWT>).
+// (uniCli://connect?token=<JWT>).
 //
 //   node scripts/generate-connect-link-keypair.mjs [kid]
 //

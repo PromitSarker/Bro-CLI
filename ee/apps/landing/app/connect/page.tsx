@@ -70,8 +70,8 @@ export default async function ConnectPage() {
           <section aria-label="What happens when you add the URL" className="mt-16 grid gap-6 md:mt-[72px] md:grid-cols-3">
             <HowStep number="01" title="Paste the URL">
               <CodeCard>
-                <span className="text-[var(--lp-ink)]">$ claude mcp add … uni-cli</span>
-                <span className="text-[var(--lp-muted)]">&gt; /mcp  uni-cli · needs sign-in</span>
+                <span className="text-[var(--lp-ink)]">$ claude mcp add … uniCli</span>
+                <span className="text-[var(--lp-muted)]">&gt; /mcp  uniCli · needs sign-in</span>
                 <span className="text-[#047857]">Opening your browser…</span>
               </CodeCard>
             </HowStep>
@@ -88,7 +88,7 @@ export default async function ConnectPage() {
             </HowStep>
             <HowStep number="03" title="Your tools are there">
               <CodeCard>
-                <span className="text-[#047857]">✓ uni-cli connected</span>
+                <span className="text-[#047857]">✓ uniCli connected</span>
                 <span className="text-[var(--lp-ink)]">tools: search_capabilities,</span>
                 <span className="text-[var(--lp-ink)]">execute_capability, list_skills, get_skill</span>
               </CodeCard>
@@ -265,7 +265,7 @@ function TeammateRow({ mark, who, app }: { mark: ReactNode; who: string; app: st
         <span className="text-[13px] font-medium text-[#111827]">{who}</span>
         <span className="text-xs text-[#6B7280]">in {app}</span>
       </span>
-      <span className="mono text-xs text-[#047857]">● uni-cli · Used Weekly update skill</span>
+      <span className="mono text-xs text-[#047857]">● uniCli · Used Weekly update skill</span>
     </li>
   );
 }

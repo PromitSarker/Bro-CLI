@@ -16,7 +16,7 @@ export type PreservedMcpResult =
   | { tool: string; input: unknown; status: "completed"; output: unknown }
   | { tool: string; input: unknown; status: "error"; error: string };
 
-const UNICLI_CLOUD_TOOL = /^(?:uni-cli|uni-cli-cloud)_/;
+const UNICLI_CLOUD_TOOL = /^(?:uniCli|uni-cli-cloud)_/;
 const MAX_ENTRY_BYTES = 64 * 1_024;
 const MAX_ENTRIES = 20;
 const MAX_OPEN_CALLS = 200;
@@ -61,7 +61,7 @@ function jsonCopy(value: unknown): unknown {
 
 /** Code Mode reports inner calls as `uni-cli-cloud.create_app`; older engines used `_`. */
 function normalizedTool(tool: string): string {
-  return tool.replace(/^(uni-cli(?:-cloud)?)\./, "$1_");
+  return tool.replace(/^(uniCli(?:-cloud)?)\./, "$1_");
 }
 
 export function preservedEntry(rawEvent: ExecuteAfter): PreservedMcpResult | null {

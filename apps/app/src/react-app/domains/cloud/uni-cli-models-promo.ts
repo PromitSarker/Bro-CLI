@@ -77,10 +77,10 @@ export function hasUniCliModelsAvailable(input: {
   providers: ReadonlyArray<{ id: string; models?: Record<string, unknown> | null }>;
 }) {
   if (!hasUniCliModelsProvider(input.providerConnectedIds)) return false;
-  const uni-cli = input.providers.find(
+  const uniCli = input.providers.find(
     (provider) => provider.id.trim().toLowerCase() === UNICLI_MODELS_PROVIDER_ID,
   );
-  return Object.keys(uni-cli?.models ?? {}).length > 0;
+  return Object.keys(uniCli?.models ?? {}).length > 0;
 }
 
 export function shouldShowUniCliModelsSyncing(input: {

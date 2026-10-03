@@ -124,7 +124,7 @@ test("the revealed technical details show the redacted message, never the query 
   const root = createRoot(container);
   const logError = spyOn(console, "error").mockImplementation(() => {});
   function Throws(): ReactNode {
-    throw new Error("Deep link rejected: uni-cli://open?token=eval-secret-token");
+    throw new Error("Deep link rejected: uniCli://open?token=eval-secret-token");
   }
   try {
     await act(async () => {
@@ -132,7 +132,7 @@ test("the revealed technical details show the redacted message, never the query 
     });
     const toggle = Array.from(container.querySelectorAll("button")).find((button) => /technical details/i.test(button.textContent ?? ""));
     await act(async () => { toggle?.click(); });
-    expect(container.textContent).toContain("Deep link rejected: uni-cli://open");
+    expect(container.textContent).toContain("Deep link rejected: uniCli://open");
     expect(container.textContent).not.toContain("eval-secret-token");
   } finally {
     await act(async () => { root.unmount(); });

@@ -41,7 +41,7 @@ const ACTION_LABEL_KEYS = {
 const SOURCE_LABEL_KEYS = {
   engine: "context_panel.permission_source_engine",
   global: "context_panel.permission_source_global",
-  uni-cli: "context_panel.permission_source_uni-cli",
+  uniCli: "context_panel.permission_source_uni-cli",
   workspace: "context_panel.permission_source_workspace",
 } as const satisfies Record<uniCliPermissionSource, string>;
 

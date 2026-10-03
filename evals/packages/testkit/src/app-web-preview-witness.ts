@@ -10,7 +10,7 @@ export async function appWebPreviewWitness(options: { sandboxId: string; browser
     await verifyPrivateWebPreview(preview);
     surface = await chrome({ name: "private-app-web-browser", host: daytonaSandbox(options.sandboxId), startUrl: "about:blank", headless: true });
     await surface.client.send("Network.enable");
-    await surface.client.send("Network.setBlockedURLs", { urls: ["*uni-clilabs.com*", "*uni-cli.so*", "*posthog*", "*sentry*", "*api.openai.com*", "*api.anthropic.com*"] });
+    await surface.client.send("Network.setBlockedURLs", { urls: ["*uni-clilabs.com*", "*uniCli.so*", "*posthog*", "*sentry*", "*api.openai.com*", "*api.anthropic.com*"] });
     await surface.client.send("Network.setExtraHTTPHeaders", { headers: { "X-Daytona-Skip-Preview-Warning": "true" } });
     await surface.client.send("Page.navigate", { url: preview.browserOrigin });
     const browser = surface;

@@ -13,7 +13,7 @@ import { checkpointCapability, type CheckpointCapability } from "./checkpoint-ca
 /** Host-only relay: keeps the provider cookie out of CDP URLs and evidence logs. */
 export async function evidenceCdpRelay(session: Pick<EvidenceSession, "cdpOrigin" | "cookie">) {
   const remote = new URL(session.cdpOrigin);
-  if (remote.protocol !== "https:" || !/^cdp-[a-f0-9]{32}\.preview\.uni-cli\.software$/.test(remote.hostname)) throw new Error("Invalid evidence CDP origin");
+  if (remote.protocol !== "https:" || !/^cdp-[a-f0-9]{32}\.preview\.uniCli\.software$/.test(remote.hostname)) throw new Error("Invalid evidence CDP origin");
   const peers = new Set<Duplex>();
   const server = createServer((req, res) => {
     // This loopback endpoint is for the Node controller, not arbitrary websites.

@@ -17,10 +17,10 @@ export type UniCliConnectClientSupport = {
 
 export const CURSOR_SNIPPET = `${MCP_SERVER_URL}`;
 
-export const CLAUDE_CODE_COMMAND = `claude mcp add --transport http uni-cli ${MCP_SERVER_URL}`;
-export const CODEX_COMMAND = `codex mcp add uni-cli --url ${MCP_SERVER_URL}`;
+export const CLAUDE_CODE_COMMAND = `claude mcp add --transport http uniCli ${MCP_SERVER_URL}`;
+export const CODEX_COMMAND = `codex mcp add uniCli --url ${MCP_SERVER_URL}`;
 export const CODEX_LOGIN_COMMAND = `codex mcp login uni-cli`;
-export const CODEX_RECONNECT_COMMAND = `codex mcp logout uni-cli
+export const CODEX_RECONNECT_COMMAND = `codex mcp logout uniCli
 codex mcp login uni-cli`;
 
 export const OPENCODE_SNIPPET = `{
@@ -37,7 +37,7 @@ export const OPENCODE_SNIPPET = `{
 export const VS_CODE_COMMAND = `code --add-mcp '{"name":"uni-cli","type":"http","url":"${MCP_SERVER_URL}"}'`;
 export const ANY_CLIENT_COMMAND = `${MCP_SERVER_URL}`;
 export const OPENCODE_AUTH_COMMAND = `opencode mcp auth uni-cli`;
-export const OPENCODE_RECONNECT_COMMAND = `opencode mcp logout uni-cli
+export const OPENCODE_RECONNECT_COMMAND = `opencode mcp logout uniCli
 opencode mcp auth uni-cli`;
 
 export const CONNECT_CLIENT_SUPPORT: Record<UniCliConnectClientId, UniCliConnectClientSupport> = {
@@ -47,7 +47,7 @@ export const CONNECT_CLIENT_SUPPORT: Record<UniCliConnectClientId, UniCliConnect
   },
   "codex": {
     status: "Setup only",
-    explanation: "Setup guide only: add Uni-CLI, run codex mcp login uni-cli, and reconnect with logout then login. Native proof must be rerun on this exact branch."
+    explanation: "Setup guide only: add Uni-CLI, run codex mcp login uniCli, and reconnect with logout then login. Native proof must be rerun on this exact branch."
   },
   "chatgpt-desktop": {
     status: "Setup only",

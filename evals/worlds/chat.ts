@@ -711,7 +711,7 @@ async function seedModelPicker(seed: Seed, options: { disabledAutoDesktop?: bool
       // Native Auto belongs to the local relay; do not replace it with a mock BYOK provider.
       ...(options.disabledAutoDesktop ? {} : { [auto.providerID]: { npm: "@ai-sdk/openai-compatible", name: "Uni-CLI Free", options: providerOptions,
         models: { [auto.modelID]: { name: "GPT-6 Luna" } } } }),
-      uni-cli: { npm: "@ai-sdk/openai-compatible", name: "Uni-CLI Models", options: providerOptions,
+      uniCli: { npm: "@ai-sdk/openai-compatible", name: "Uni-CLI Models", options: providerOptions,
         models: { "hosted-model": { name: "Hosted witness" } } },
       [byok.providerID]: { npm: "@ai-sdk/openai-compatible", name: "BYOK provider", options: providerOptions,
         models: { [byok.modelID]: { name: "BYOK witness" }, [favorite.modelID]: { name: "Pinned witness" }, [recent.modelID]: { name: "Recent witness" } } },

@@ -888,7 +888,7 @@ async function ensureDisplay(repoRoot: string, env: NodeJS.ProcessEnv, log: (mes
       const [port, cdpPort] = await allocateFreePorts(2);
       if (port === undefined || cdpPort === undefined) throw new Error("Could not allocate Electron Vite/CDP ports.");
       const appName = `Uni-CLI Eval ${name}`;
-      const appIdentifier = `com.differentai.uni-cli.eval.${sanitizeSlug(name)}`;
+      const appIdentifier = `com.differentai.uniCli.eval.${sanitizeSlug(name)}`;
       const isolationEnv = electronSurfaceEnv(paths, { appName, appIdentifier, port, cdpPort }, opts.env);
       const env = electronLaunchEnv(process.env, isolationEnv);
       const launchArgs = containerLaunchArgs(env.ELECTRON_EXTRA_LAUNCH_ARGS);

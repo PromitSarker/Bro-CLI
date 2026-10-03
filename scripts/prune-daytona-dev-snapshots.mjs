@@ -355,7 +355,7 @@ Options:
   --channel <channel>   Snapshot family to prune: dev scopes to per-push
                         <base>-dev-* snapshots, release scopes to tagged
                         <base>-<version> snapshots (default: dev).
-  --name-base <base>    Snapshot name base (default: uni-cli).
+  --name-base <base>    Snapshot name base (default: uniCli).
   --keep <name>         Snapshot name to protect; may be repeated.
   --keep-count <n>      Protect the newest n in-scope snapshots
                         (default: 5 for dev, 20 for release).

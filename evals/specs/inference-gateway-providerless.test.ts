@@ -371,8 +371,8 @@ test("provider-less Gateway routes list and invoke every granted model across pr
   expect(models.map((model) => stringAt(model, "id")).sort()).toEqual([anthropicAlias, openaiAlias].sort());
   const anthropicEntry = models.find((model) => model.id === anthropicAlias);
   const openaiEntry = models.find((model) => model.id === openaiAlias);
-  expect(anthropicEntry).toMatchObject({ object: "model", owned_by: "anthropic", uni-cli: { provider_id: anthropicId, provider_name: "Dummy Anthropic", upstream_model_id: ANTHROPIC_MODEL } });
-  expect(openaiEntry).toMatchObject({ object: "model", owned_by: "openai", uni-cli: { provider_id: openaiId, provider_name: "Dummy OpenAI", upstream_model_id: OPENAI_MODEL } });
+  expect(anthropicEntry).toMatchObject({ object: "model", owned_by: "anthropic", uniCli: { provider_id: anthropicId, provider_name: "Dummy Anthropic", upstream_model_id: ANTHROPIC_MODEL } });
+  expect(openaiEntry).toMatchObject({ object: "model", owned_by: "openai", uniCli: { provider_id: openaiId, provider_name: "Dummy OpenAI", upstream_model_id: OPENAI_MODEL } });
   expect(typeof anthropicEntry?.created === "number" && anthropicEntry.created > 1_700_000_000).toBe(true);
   const outsiderListed = await listModels(gateway, outsiderKey);
   expect(outsiderListed.status).toBe(200);
@@ -380,7 +380,7 @@ test("provider-less Gateway routes list and invoke every granted model across pr
   expect(upstream.requests).toHaveLength(0);
   evidence.recordAssertionEvidence(
     "GET /api/v1/models lists each member's granted models across providers",
-    `The granted member's key listed ${models.length} models (anthropic ${anthropicId} and openai ${openaiId}) with owned_by and uni-cli.provider_id set; the outsider's key listed only the OpenAI model; no upstream was contacted.`,
+    `The granted member's key listed ${models.length} models (anthropic ${anthropicId} and openai ${openaiId}) with owned_by and uniCli.provider_id set; the outsider's key listed only the OpenAI model; no upstream was contacted.`,
     models.length === 2 && listedModels(outsiderListed).length === 1,
   );
 

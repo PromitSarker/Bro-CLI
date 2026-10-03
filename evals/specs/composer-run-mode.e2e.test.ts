@@ -24,8 +24,8 @@ test("workspace run mode is opt-in, confirms Keep going, and preserves policy wh
   // updatedAt includes runtime reattachment on reload, not just permission
   // edits. Compare configuration values rather than that unrelated clock.
   const readConfig = async () => {
-    const { opencode, uni-cli } = await read("config");
-    return { opencode, uni-cli };
+    const { opencode, uniCli } = await read("config");
+    return { opencode, uniCli };
   };
   const flagEnabled = () => probe.storage("uni-cli.preferences", (value) => (
     isRecord(value) && isRecord(value.featureFlags) && value.featureFlags.workspaceRunMode === true

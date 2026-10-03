@@ -80,7 +80,7 @@ try {
   }, health.status === 200 && health.body?.ok === true)
 
   const install = run(process.execPath, [cli, "install", "--install-dir", installDir, "--bin-dir", binDir, "--json"])
-  prove("A bootstrap script can install the uni-cli CLI", {
+  prove("A bootstrap script can install the uniCli CLI", {
     action: "node bin/uni-cli.mjs install --install-dir <tmp> --bin-dir <tmp>/bin --json",
     assert: "exit 0 and installed executable path returned",
     evidence: { status: install.status, body: install.json },

@@ -1851,7 +1851,7 @@ export function McpView(props: McpViewProps) {
     mine: firstSharedOwned
       ? t("extensions.section_mine_shared", { count: String(sharedOwned.length), audience: libraryAudienceName(libraryCloud.audienceFor(firstSharedOwned.id)) })
       : t("extensions.section_mine_just_me", { count: String(ownedPlugins.length) }),
-    uni-cli: uniCliRowCount > 0 ? t("extensions.section_uni-cli_meta", { count: String(uniCliRowCount) }) : null,
+    uniCli: uniCliRowCount > 0 ? t("extensions.section_uni-cli_meta", { count: String(uniCliRowCount) }) : null,
   };
 
   const inventory = (

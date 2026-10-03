@@ -284,7 +284,7 @@ export default {
   "den.sign_out": "Cerrar sesión",
   "den.signed_out": "Sesión cerrada",
   "den.signin_button": "Iniciar sesión",
-  "den.signin_code_note": "Acepta un enlace uni-cli://den-auth o la concesión única sin procesar.",
+  "den.signin_code_note": "Acepta un enlace uniCli://den-auth o la concesión única sin procesar.",
   "den.signin_link_hint": "Si tu navegador no vuelve automáticamente a Uni-CLI, pega aquí el enlace o el código de inicio de sesión de Uni-CLI Cloud.",
   "den.signin_link_label": "Enlace de inicio de sesión o código de un solo uso",
   "den.signin_link_placeholder": "uni-cli://den-auth?... o código pegado",

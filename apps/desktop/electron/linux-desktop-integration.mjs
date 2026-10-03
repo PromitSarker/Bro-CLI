@@ -17,7 +17,7 @@ import path from "node:path";
 /** @typedef {import("@uni-cli/types/desktop-ipc").DesktopIntegrationResult} DesktopIntegrationResult */
 /** @typedef {import("@uni-cli/types/desktop-ipc").DesktopIntegrationStatus} DesktopIntegrationStatus */
 
-export const UNICLI_DESKTOP_ID = "com.differentai.uni-cli.desktop";
+export const UNICLI_DESKTOP_ID = "com.differentai.uniCli.desktop";
 export const UNICLI_DESKTOP_NAME = "com.differentai.uni-cli";
 export const UNICLI_PROTOCOL_MIME = "x-scheme-handler/uni-cli";
 
@@ -408,7 +408,7 @@ export function createLinuxDesktopIntegration({
       return {
         ok: false,
         status,
-        error: "The external launcher was not selected for uni-cli:// callbacks.",
+        error: "The external launcher was not selected for uniCli:// callbacks.",
       };
     }
     if (
@@ -444,11 +444,11 @@ export function createLinuxDesktopIntegration({
       await refreshDesktopCaches();
       const registration = await runCommand("xdg-mime", ["default", UNICLI_DESKTOP_ID, UNICLI_PROTOCOL_MIME]);
       if (!registration.ok) {
-        throw new Error(registration.stderr || "xdg-mime could not register uni-cli://.");
+        throw new Error(registration.stderr || "xdg-mime could not register uniCli://.");
       }
       const status = await getStatus();
       if (status.state !== "integrated") {
-        throw new Error("The desktop entry was installed, but the desktop did not select it as the uni-cli:// handler.");
+        throw new Error("The desktop entry was installed, but the desktop did not select it as the uniCli:// handler.");
       }
       return { ok: true, status };
     } catch (error) {

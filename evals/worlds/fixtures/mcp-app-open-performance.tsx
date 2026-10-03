@@ -46,7 +46,7 @@ function ready() {
 function Chat({ index }: { index: number }) {
   const definition = config.apps[index];
   return <McpAppFrame part={{ type: "dynamic-tool", toolName: "uni-cli-cloud_execute_capability", toolCallId: definition.appId,
-    state: "output-available", input: {}, output: {}, callProviderMetadata: { uni-cli: { mcpResult: {
+    state: "output-available", input: {}, output: {}, callProviderMetadata: { uniCli: { mcpResult: {
       content: [], structuredContent: { input: {} }, _meta: { "uni-cli/mcpApp": {
         connectionId: definition.appId, toolName: definition.toolName, resourceUri: definition.resourceUri, arguments: {},
       } },

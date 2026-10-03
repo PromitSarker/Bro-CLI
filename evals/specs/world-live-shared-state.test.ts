@@ -77,7 +77,7 @@ test("live shared production desktop state requires consent and selects state wi
       profilePaths,
       {
         appName: "Uni-CLI Eval production-live",
-        appIdentifier: "com.differentai.uni-cli.eval.production-live",
+        appIdentifier: "com.differentai.uniCli.eval.production-live",
         port: 31_001,
         cdpPort: 31_002,
       },
@@ -93,7 +93,7 @@ test("live shared production desktop state requires consent and selects state wi
     assert.equal(launchEnv.UNICLI_DEV_SHARED_STATE, "1");
     assert.equal(launchEnv.UNICLI_ELECTRON_USERDATA, profilePaths.userDataDir);
     assert.notEqual(launchEnv.UNICLI_ELECTRON_USERDATA, dataDir);
-    assert.equal(launchEnv.UNICLI_ELECTRON_APP_IDENTIFIER, "com.differentai.uni-cli.eval.production-live");
+    assert.equal(launchEnv.UNICLI_ELECTRON_APP_IDENTIFIER, "com.differentai.uniCli.eval.production-live");
     assert.equal(launchEnv.UNICLI_ELECTRON_REMOTE_DEBUG_PORT, "31002");
     // Signed in to the real account, so it must never claim that person's Automation or remote-session work.
     assert.equal(launchEnv.UNICLI_AUTOMATION_RUNNER, "off");

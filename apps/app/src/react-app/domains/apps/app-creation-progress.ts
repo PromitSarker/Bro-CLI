@@ -34,7 +34,7 @@ export function appPreparation(part: DynamicToolUIPart | undefined) {
     appBuilderResultFailed(part)
   )
     return null;
-  const result = field(part.callProviderMetadata?.uni-cli, "mcpResult");
+  const result = field(part.callProviderMetadata?.uniCli, "mcpResult");
   const structured = prepareMcpAppOutputSchema.safeParse(
     field(result, "structuredContent"),
   );
@@ -55,7 +55,7 @@ export function appPreparation(part: DynamicToolUIPart | undefined) {
 /** A step that succeeded but whose result an older engine did not record. */
 export function appStepUnrecorded(part: DynamicToolUIPart | undefined): boolean {
   if (!part || part.state !== "output-available") return false;
-  const result = field(part.callProviderMetadata?.uni-cli, "mcpResult");
+  const result = field(part.callProviderMetadata?.uniCli, "mcpResult");
   return field(field(result, "structuredContent"), "unrecorded") === true;
 }
 
@@ -127,7 +127,7 @@ export function appCreationRuns(messages: UIMessage[], creationRequested = false
   }
   for (const run of runs) {
     const calls = [...(run.discoveries ?? []), ...(run.preparation ? [run.preparation] : []), ...(run.attempts ?? []), ...run.builds];
-    run.executions = [...parts.values()].filter(part => part.callProviderMetadata?.uni-cli?.codeMode && calls.some(call => call.toolCallId.startsWith(`${part.toolCallId}:app:`)));
+    run.executions = [...parts.values()].filter(part => part.callProviderMetadata?.uniCli?.codeMode && calls.some(call => call.toolCallId.startsWith(`${part.toolCallId}:app:`)));
   }
   return runs;
 }

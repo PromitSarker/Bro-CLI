@@ -157,7 +157,7 @@ describe("reportCaughtWebError", () => {
     };
     const boundary = new AppErrorBoundary({ children: null });
     const info = { componentStack: "\n    at AppRoot" };
-    const thrown = new Error("Deep link rejected: uni-cli://open?token=eval-secret-token");
+    const thrown = new Error("Deep link rejected: uniCli://open?token=eval-secret-token");
     try {
       process.env.VITE_UNICLI_DEPLOYMENT = "desktop";
       process.env.VITE_UNICLI_SENTRY_DSN = DSN;
@@ -172,10 +172,10 @@ describe("reportCaughtWebError", () => {
       boundary.componentDidCatch(thrown, info);
       expect(bodies).toHaveLength(1);
       const event = JSON.parse(bodies[0].split("\n")[2]);
-      expect(event.exception.values).toEqual([{ type: "Error", value: "Deep link rejected: uni-cli://open" }]);
+      expect(event.exception.values).toEqual([{ type: "Error", value: "Deep link rejected: uniCli://open" }]);
       expect(event.tags).toEqual({ boot_phase: "runtime" });
       expect(event.request).toEqual({ url: "https://app.uni-clilabs.com/signin" });
-      expect(event.extra.stack).toContain("Deep link rejected: uni-cli://open");
+      expect(event.extra.stack).toContain("Deep link rejected: uniCli://open");
       // Neither the page URL's grant nor the thrown URL's token leaves the page.
       expect(bodies[0]).not.toContain("secret-grant");
       expect(bodies[0]).not.toContain("eval-secret-token");

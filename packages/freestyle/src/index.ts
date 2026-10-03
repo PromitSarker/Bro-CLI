@@ -140,11 +140,11 @@ export async function launchPreview(
   const minutes = input.lifetimeMinutes ?? 120;
   if (!Number.isInteger(minutes) || minutes < 10 || minutes > 1430) throw new Error("Preview lifetime must be 10–1430 minutes.");
   const launchId = randomUUID().replaceAll("-", "");
-  const domain = `${world === "desktop" ? "desktop" : "ow"}-${launchId}.preview.uni-cli.software`;
+  const domain = `${world === "desktop" ? "desktop" : "ow"}-${launchId}.preview.uniCli.software`;
   const origins = world === "acme-web" ? {
-    app: `https://${domain}`, den: `https://den-${launchId}.preview.uni-cli.software`, api: `https://api-${launchId}.preview.uni-cli.software`,
-    engine: `https://engine-${launchId}.preview.uni-cli.software`, gateway: `https://gateway-${launchId}.preview.uni-cli.software`,
-    desktop: `https://desktop-${launchId}.preview.uni-cli.software`,
+    app: `https://${domain}`, den: `https://den-${launchId}.preview.uniCli.software`, api: `https://api-${launchId}.preview.uniCli.software`,
+    engine: `https://engine-${launchId}.preview.uniCli.software`, gateway: `https://gateway-${launchId}.preview.uniCli.software`,
+    desktop: `https://desktop-${launchId}.preview.uniCli.software`,
   } : world === "desktop" ? { desktop: `https://${domain}` } : undefined;
   const domains = origins ? Object.values(origins).map((value) => new URL(value).hostname) : [domain];
   const token = randomBytes(32).toString("base64url");

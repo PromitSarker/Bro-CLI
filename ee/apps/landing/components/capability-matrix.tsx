@@ -77,17 +77,17 @@ export function CapabilityMatrix({ caption, emphasis }: Props) {
                 Capability
               </th>
               {capabilityColumns.map((column) => {
-                const uni-cli = column.key === "uni-cli";
-                const strong = uni-cli || column.key === emphasis;
+                const uniCli = column.key === "uni-cli";
+                const strong = uniCli || column.key === emphasis;
                 return (
                   <th
                     key={column.key}
                     scope="col"
                     className={`rounded-t-[12px] px-1.5 pb-3 pt-3 text-center align-bottom text-[12.5px] md:px-4 md:text-[13.5px] ${tonal(column.key)} ${
-                      uni-cli ? "font-semibold text-[var(--lp-blue)]" : strong ? "font-semibold text-[var(--lp-ink)]" : "font-medium text-[var(--lp-muted)]"
+                      uniCli ? "font-semibold text-[var(--lp-blue)]" : strong ? "font-semibold text-[var(--lp-ink)]" : "font-medium text-[var(--lp-muted)]"
                     }`}
                   >
-                    {uni-cli ? (
+                    {uniCli ? (
                       <span className="inline-flex flex-col items-center gap-1 md:flex-row md:gap-2">
                         <UniCliMark className="h-4 w-4 object-contain" />
                         {column.label}

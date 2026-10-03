@@ -27,7 +27,7 @@ export async function bootManagedInference(place: Place) {
         $schema: "https://opencode.ai/config.json",
         enabled_providers: ["uni-cli"],
         model: "uni-cli/z-ai/glm-5.2", small_model: "uni-cli/z-ai/glm-5.2",
-        provider: { uni-cli: {
+        provider: { uniCli: {
           npm: "@openrouter/ai-sdk-provider", name: "Uni-CLI Models",
           options: { baseURL: `${service.url}/api/v1`, apiKey: service.identity.key },
           models: { [model.id]: { name: model.name, limit: model.limit, modalities: model.modalities, tool_call: model.tool_call } },

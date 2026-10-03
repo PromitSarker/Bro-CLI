@@ -52,7 +52,7 @@ type ProviderOAuthSession = ProviderOAuthStartResult & {
 };
 
 export const PROVIDER_LABELS: Record<string, string> = {
-  uni-cli: "Uni-CLI",
+  uniCli: "Uni-CLI",
   opencode: "OpenCode Zen",
   openai: "OpenAI",
   anthropic: "Anthropic",

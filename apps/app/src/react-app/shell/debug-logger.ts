@@ -183,7 +183,7 @@ export function recordDebugLog(entry: DevLogEntry) {
 
 function isEnabled(): boolean {
   if (typeof window === "undefined") return false;
-  // Always on in dev; explicit opt-out via `localStorage.uni-cli.debug.disableLogger = "1"`.
+  // Always on in dev; explicit opt-out via `localStorage.uniCli.debug.disableLogger = "1"`.
   try {
     if (window.localStorage.getItem("uni-cli.debug.disableLogger") === "1") return false;
   } catch {

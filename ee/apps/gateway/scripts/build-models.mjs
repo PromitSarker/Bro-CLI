@@ -15,7 +15,7 @@ async function readJson(filePath) {
 
 function uniCliProvider(models, api) {
   return {
-    uni-cli: {
+    uniCli: {
       id: "uni-cli",
       env: ["UNICLI_API_KEY"],
       npm: "@openrouter/ai-sdk-provider",
@@ -29,8 +29,8 @@ function uniCliProvider(models, api) {
 const isDevMode = process.env.UNICLI_DEV_MODE === "1"
 const base = await readJson(path.join(sourceDir, "base.json"))
 const uniCliModels = await readJson(path.join(sourceDir, "uni-cli-models.json"))
-const uni-cli = uniCliProvider(uniCliModels, isDevMode ? devuniCliApi : produniCliApi)
-const models = { ...base, ...uni-cli }
+const uniCli = uniCliProvider(uniCliModels, isDevMode ? devuniCliApi : produniCliApi)
+const models = { ...base, ...uniCli }
 
 await mkdir(path.dirname(outputPath), { recursive: true })
 await writeFile(outputPath, `${JSON.stringify(models)}\n`)

@@ -117,7 +117,7 @@ type InjectedMarketplaceSkill = {
 
 function logInjectedMarketplaceSkills(skills: InjectedMarketplaceSkill[]): void {
   if (process.env.UNICLI_DEV_MODE !== "1") return;
-  console.log("[uni-cli:skills] marketplace skills injected into prompt", {
+  console.log("[uniCli:skills] marketplace skills injected into prompt", {
     count: skills.length,
     skills,
   });

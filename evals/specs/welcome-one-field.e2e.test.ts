@@ -44,11 +44,11 @@ test("desktop opens directly while the non-desktop welcome join field accepts a 
   await step("A server URL becomes the control plane", async () => {
     await user.type(joinInput, "https://uni-cli.acme.test");
     await user.click("Connect");
-    await user.see({ text: /Connected to uni-cli\.acme\.test\. Sign in to continue\./ }, { timeoutMs: 20_000 });
+    await user.see({ text: /Connected to uniCli\.acme\.test\. Sign in to continue\./ }, { timeoutMs: 20_000 });
     expect(await readBootstrapBaseUrl()).toBe("https://uni-cli.acme.test");
     await user.looks([
       "The join dialog field label mentions invite link, install link, or server URL",
-      "The dialog confirms it connected to uni-cli.acme.test",
+      "The dialog confirms it connected to uniCli.acme.test",
     ]);
   });
 

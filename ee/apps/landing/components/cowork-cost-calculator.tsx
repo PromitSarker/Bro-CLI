@@ -568,7 +568,7 @@ export function CoworkCostCalculator({
 
   const lines: ChartLine[] = [
     { key: "claude", label: claudeLabel, series: claudeLine, stroke: claudeGray, width: 2.25, pattern: "solid", opacity: 1 },
-    { key: "uni-cli", label: uniCliLabel, series: result.uni-cli, stroke: accent, width: 2.75, pattern: "solid", opacity: 1 },
+    { key: "uni-cli", label: uniCliLabel, series: result.uniCli, stroke: accent, width: 2.75, pattern: "solid", opacity: 1 },
     ...(result.mix
       ? [
           {
@@ -593,7 +593,7 @@ export function CoworkCostCalculator({
       : [])
   ];
 
-  const delta = claudeLine.total - result.uni-cli.total;
+  const delta = claudeLine.total - result.uniCli.total;
   const claudePerPerson = dollars.format(perPersonMonthly(claudeLine, users));
   const perPersonText = (series: CostSeries) =>
     `${claudePerPerson} vs ${dollars.format(perPersonMonthly(series, users))} per person / month`;
@@ -602,8 +602,8 @@ export function CoworkCostCalculator({
       key: "same",
       title: `Same model on both (${model.label})`,
       headline: verdict(delta),
-      perPerson: perPersonText(result.uni-cli),
-      detail: `${claudeVendor} ${dollars.format(claudeLine.total)} vs Uni-CLI ${dollars.format(result.uni-cli.total)}`,
+      perPerson: perPersonText(result.uniCli),
+      detail: `${claudeVendor} ${dollars.format(claudeLine.total)} vs Uni-CLI ${dollars.format(result.uniCli.total)}`,
       line: lines.find((line) => line.key === "uni-cli")
     },
     ...(result.mix
@@ -639,7 +639,7 @@ export function CoworkCostCalculator({
         : model.label,
       strong: true
     },
-    { key: "uni-cli", series: result.uni-cli, detail: model.label, strong: true },
+    { key: "uni-cli", series: result.uniCli, detail: model.label, strong: true },
     ...(result.mix ? [{ key: "mix", series: result.mix, detail: result.mix.modelLabel, strong: true }] : [])
   ];
 
@@ -815,7 +815,7 @@ export function CoworkCostCalculator({
             <CostChart
               lines={lines}
               months={years * 12}
-              shade={{ from: claudeLine, to: result.uni-cli }}
+              shade={{ from: claudeLine, to: result.uniCli }}
               label={`Cumulative cost over ${period}. Use arrow keys to move by month.`}
             />
           </div>
