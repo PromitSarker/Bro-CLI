@@ -1,0 +1,21 @@
+{
+  "name": "uni-cli-bootstrap",
+  "version": "0.1.0",
+  "description": "Script-installable Uni-CLI bootstrap CLI for agents",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "uni-cli-bootstrap": "bin/uni-cli.mjs"
+  },
+  "files": [
+    "bin",
+    "README.md",
+    "start.md"
+  ],
+  "scripts": {
+    "check": "node --check bin/uni-cli.mjs && node --check evals/agent-test-evidence-uni-cli-bootstrap.mjs && node --check evals/agent-test-evidence-uni-cli-app-install.mjs && node --check evals/agent-test-evidence-linux-container.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,19 @@
+# Copy to terraform.tfvars and fill in. Do not commit the filled-in file.
+uni-cli_version = "0.18.54"
+web_host         = "uni-cli.example.com"
+
+database_url = "mysql://uni-cli:REPLACE_ME@mysql.example.internal:3306/uni-cli_den?sslmode=verify-full"
+
+org_name                     = "Example Co"
+owner_emails                 = ["admin@example.com"]
+initial_admin_bootstrap_code = "REPLACE_WITH_openssl_rand_hex_16"
+
+email_from = "Uni-CLI <no-reply@example.com>"
+smtp = {
+  host     = "smtp.example.com"
+  username = "uni-cli@example.com"
+  password = "REPLACE_ME"
+}
+
+ingress_class_name = "nginx"
+tls_secret_name    = "uni-cli-ee-tls"

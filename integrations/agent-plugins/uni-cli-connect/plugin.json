@@ -1,0 +1,19 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "uni-cli-connect",
+  "version": "1.0.0",
+  "description": "Use the skills, MCP connections, and connected services assigned to you through Uni-CLI.",
+  "author": {
+    "name": "Uni-CLI",
+    "url": "https://uni-clilabs.com"
+  },
+  "homepage": "https://uni-clilabs.com/docs/cloud/run-in-the-cloud/cloud-mcp",
+  "repository": "https://github.com/different-ai/uni-cli",
+  "license": "MIT",
+  "keywords": [
+    "uni-cli",
+    "mcp",
+    "agent-skills",
+    "organization"
+  ]
+}

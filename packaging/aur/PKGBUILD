@@ -1,0 +1,64 @@
+# TEMPLATE — the committed copy is never release-specific. The release
+# workflow renders pkgver + sha256sums via scripts/aur/update-aur.sh in the
+# CI workspace and pushes the result to aur.archlinux.org only. Edit this
+# file for packaging logic changes; never commit a real version here.
+pkgname=uni-cli
+pkgver=0.0.0
+pkgrel=1 # pkgrel should change when PKGBUILD does. Standard is to change back to 1 next time. Any interger is valid.
+pkgdesc="An Open source alternative to Claude Cowork"
+arch=('x86_64' 'aarch64')
+url="https://github.com/different-ai/uni-cli"
+license=('MIT')
+depends=('gtk3' 'nss' 'alsa-lib' 'libxss' 'libxtst' 'xdg-utils' 'at-spi2-core' 'libdrm' 'libxkbcommon' 'mesa' 'dbus' 'hicolor-icon-theme')
+options=(!strip)
+
+# Architecture-specific sources and checksums
+source_x86_64=("${pkgname}-${pkgver}-x64.tar.gz::${url}/releases/download/v${pkgver}/uni-cli-linux-x64-${pkgver}.tar.gz")
+sha256sums_x86_64=('0000000000000000000000000000000000000000000000000000000000000000')
+
+source_aarch64=("${pkgname}-${pkgver}-arm64.tar.gz::${url}/releases/download/v${pkgver}/uni-cli-linux-arm64-${pkgver}.tar.gz")
+sha256sums_aarch64=('0000000000000000000000000000000000000000000000000000000000000000')
+
+package() {
+  cd "${srcdir}"
+
+  local bundle_dir
+  case "${CARCH}" in
+    x86_64)
+      bundle_dir="uni-cli-linux-x64-${pkgver}"
+      ;;
+    aarch64)
+      bundle_dir="uni-cli-linux-arm64-${pkgver}"
+      ;;
+    *)
+      echo "Unsupported architecture: ${CARCH}" >&2
+      return 1
+      ;;
+  esac
+
+  install -d "${pkgdir}/opt/uni-cli"
+  cp -a "${bundle_dir}/." "${pkgdir}/opt/uni-cli/"
+
+  install -d "${pkgdir}/usr/bin"
+  test -x "${pkgdir}/opt/uni-cli/uni-cli"
+  ln -s /opt/uni-cli/uni-cli "${pkgdir}/usr/bin/uni-cli"
+
+  install -Dm644 "${pkgdir}/opt/uni-cli/resources/app-dist/uni-cli-logo-square.svg" \
+    "${pkgdir}/usr/share/icons/hicolor/scalable/apps/uni-cli.svg"
+
+  install -d "${pkgdir}/usr/share/applications"
+  cat > "${pkgdir}/usr/share/applications/uni-cli.desktop" <<'EOF'
+[Desktop Entry]
+Name=Uni-CLI
+Comment=Run agents, skills, and MCP workflows
+Exec=uni-cli %U
+Terminal=false
+Type=Application
+Icon=uni-cli
+StartupWMClass=Uni-CLI
+Categories=Development;Utility;
+MimeType=x-scheme-handler/uni-cli;
+EOF
+
+  chmod 4755 "${pkgdir}/opt/uni-cli/chrome-sandbox"
+}

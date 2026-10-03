@@ -1,0 +1,32 @@
+export { browserScript } from "@uni-cli/cdp";
+export { attachSurface, evaluateOnSurface } from "@uni-cli/cdp";
+export { denFetch, signIn as signInDen } from "@uni-cli/behaviors";
+// checkpointCapability and its types come from @uni-cli/env (re-exported below).
+export { screenshot } from "@uni-cli/test-evidence";
+export type { BrowserEvaluation, BrowserScript } from "@uni-cli/cdp";
+export { control, createDesktopHandoffGrant, evalIn, quitDesktop, signInDesktopAs } from "@uni-cli/behaviors";
+export { requestDenLoopback } from "@uni-cli/labs";
+export { desktop as relaunchDesktop, electronProfilePaths } from "@uni-cli/hosts";
+export type { DesktopHandle } from "@uni-cli/hosts";
+export type { Surface } from "@uni-cli/cdp";
+export type { Target } from "@uni-cli/cdp";
+export { browserConversation } from "@uni-cli/behaviors";
+export type { BrowserTaskInput, BrowserTaskReply } from "@uni-cli/behaviors";
+export { renderPrMarkdown } from "@uni-cli/test-artifacts";
+export type { TestRunRecord } from "@uni-cli/test-artifacts";
+export type { StepRecord, TestOutcome, TraceEntry } from "@uni-cli/test-evidence";
+export { test, CHECKPOINTS_TAG } from "./fixture.ts";
+export * from "@uni-cli/env";
+export * from "./brief.ts";
+export * from "./daytona-witness.ts";
+export * from "./app-web-preview-witness.ts";
+export * from "./eventually.ts";
+export * from "./link.ts";
+export * from "./self-host.ts";
+export * from "./spec/index.ts";
+export * from "./state.ts";
+
+export { observeTranscript, readTranscriptMessages } from "./transcript-observer.ts";
+export { readSidebarOverflow } from "@uni-cli/behaviors";
+export * from "./verification.ts";
+export * from "./verification-jev.ts";

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.uni-clilabs/uni-cli",
+  "title": "Uni-CLI MCP Gateway",
+  "description": "Your Uni-CLI org's skills, plugins, workflows, and connections through one OAuth MCP URL.",
+  "websiteUrl": "https://uni-clilabs.com/docs/start-here/connect-uni-cli-mcp",
+  "repository": {
+    "url": "https://github.com/different-ai/uni-cli",
+    "source": "github",
+    "subfolder": "ee/apps/den-api"
+  },
+  "version": "1.0.0",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://api.uni-clilabs.com/mcp/agent"
+    }
+  ]
+}

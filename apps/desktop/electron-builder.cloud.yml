@@ -1,0 +1,18 @@
+extends: ./electron-builder.base.yml
+appId: com.differentai.uni-cli
+productName: Uni-CLI Cloud
+extraMetadata:
+  uni-cliDistribution: cloud
+protocols:
+  - name: Uni-CLI Cloud
+    schemes:
+      - uni-cli
+publish:
+  - provider: github
+    owner: different-ai
+    repo: uni-cli
+    releaseType: release
+    channel: cloud
+linux:
+  executableName: uni-cli-cloud
+artifactName: uni-cli-cloud-${os}-${arch}-${version}.${ext}

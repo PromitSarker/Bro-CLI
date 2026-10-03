@@ -1,0 +1,6 @@
+apiVersion: v2
+name: uni-cli-ee
+description: Uni-CLI EE Den control plane, web app, and optional Uni-CLI Gateway
+type: application
+version: 0.2.0
+appVersion: "0.1.0"

@@ -1,0 +1,10 @@
+extends: electron-builder.yml
+appId: com.differentai.uni-cli.demo.admin
+productName: Uni-CLI Demo A
+protocols: []
+directories:
+  output: dist-electron-demo-a
+mac:
+  identity: null
+  target:
+    - dir

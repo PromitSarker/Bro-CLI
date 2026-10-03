@@ -1,0 +1,29 @@
+---
+title: "Connect your Slack account to @uni-cli"
+sidebarTitle: "Connect your account"
+description: "Link your own Slack account to Uni-CLI once, then DM or mention @uni-cli and confirm it answers."
+keywords: ["slack", "@uni-cli", "connect slack", "reconnect slack", "link slack account", "/uni-cli", "slack dm", "test slack bot"]
+---
+
+<Note>
+**Private alpha.** Your administrator must [set up the Slack app](/slack/set-up-the-slack-app) before this works.
+</Note>
+
+## Connect once
+
+1. Open **Your Connections** in Uni-CLI and connect your own Slack account.
+2. If you connected before the assistant was installed, disconnect **your personal Slack connection**, then connect it again once. This temporarily interrupts that connection; it does not require signing everyone out or reinstalling the bot.
+3. Authorize using the Slack workspace and account you will use to message `@uni-cli`.
+
+This links your Slack identity to your Uni-CLI membership. Before linking, the assistant asks you to connect. `/uni-cli` returns a connection link; following the link alone does not complete authorization.
+
+## Verify it works
+
+1. Open `uni-cli` under Slack's agents/apps and send a DM: “Reply with a short hello to confirm my connection works.”
+2. Wait for the finished answer in the thread. “On it” only confirms that a request started.
+3. In an allowed test channel, run `/invite @uni-cli`, then mention it with the same test request. Confirm it appears in mention autocomplete and replies in the selected reply mode.
+4. Administrators: check the connector's **Last 24 hours** counts for completed, active, need-connection, and failed requests.
+
+Once those checks pass, try a task such as “Summarize this thread” or “Draft a reply.” Connected-service access depends on your own permissions. If the assistant needs a permission decision, continue in Uni-CLI Web; Slack does not approve it for you.
+
+Something off? See [Troubleshooting](/slack/troubleshooting).

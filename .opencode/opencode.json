@@ -1,0 +1,13 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": "allow",
+  "plugin": ["opencode-chrome-devtools@1.0.4"],
+  "mcp": {
+    "uni-cli": {
+      "type": "remote",
+      "enabled": true,
+      "url": "https://api.uni-clilabs.com/mcp/agent",
+      "oauth": {}
+    }
+  }
+}

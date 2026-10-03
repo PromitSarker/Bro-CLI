@@ -1,0 +1,10 @@
+extends: ./electron-builder.base.yml
+appId: com.differentai.uni-cli
+productName: Uni-CLI
+protocols:
+  - name: Uni-CLI
+    schemes:
+      - uni-cli
+linux:
+  executableName: uni-cli
+artifactName: uni-cli-${os}-${arch}-${version}.${ext}

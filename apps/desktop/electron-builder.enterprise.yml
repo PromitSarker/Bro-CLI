@@ -1,0 +1,18 @@
+extends: ./electron-builder.base.yml
+appId: com.differentai.uni-cli
+productName: Uni-CLI Enterprise
+extraMetadata:
+  uni-cliDistribution: enterprise
+protocols:
+  - name: Uni-CLI Enterprise
+    schemes:
+      - uni-cli
+publish:
+  - provider: github
+    owner: different-ai
+    repo: uni-cli
+    releaseType: release
+    channel: enterprise
+linux:
+  executableName: uni-cli-enterprise
+artifactName: uni-cli-enterprise-${os}-${arch}-${version}.${ext}

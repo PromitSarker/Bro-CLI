@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0",
+  "transport": "streamable-http",
+  "url": "https://api.uni-clilabs.com/mcp/agent",
+  "serverCard": "https://uni-clilabs.com/.well-known/mcp/server-card.json",
+  "servers": [
+    {
+      "name": "uni-cli",
+      "title": "Uni-CLI MCP Gateway",
+      "url": "https://api.uni-clilabs.com/mcp/agent",
+      "transport": "streamable-http",
+      "authentication": "oauth2",
+      "protectedResourceMetadata": "https://api.uni-clilabs.com/.well-known/oauth-protected-resource/mcp/agent",
+      "serverCard": "https://uni-clilabs.com/.well-known/mcp/server-card.json"
+    }
+  ]
+}

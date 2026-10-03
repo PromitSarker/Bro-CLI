@@ -1,0 +1,35 @@
+{
+  "name": "com.uni-clilabs/uni-cli",
+  "title": "Uni-CLI MCP Gateway",
+  "version": "1.0.0",
+  "description": "One MCP URL for your Uni-CLI organization: org-assigned skills, plugins, workflows, and connections (Google Workspace, Microsoft 365, and MCP servers), exposed through search_capabilities and execute_capability.",
+  "url": "https://api.uni-clilabs.com/mcp/agent",
+  "transport": "streamable-http",
+  "authentication": "oauth2",
+  "auth": {
+    "type": "oauth2",
+    "protectedResourceMetadata": "https://api.uni-clilabs.com/.well-known/oauth-protected-resource/mcp/agent",
+    "authorizationServer": "https://app.uni-clilabs.com/api/auth",
+    "scopes": ["mcp:read", "mcp:write", "offline_access"],
+    "dynamicClientRegistration": true
+  },
+  "capabilities": {
+    "tools": true,
+    "resources": true
+  },
+  "coreTools": ["search_capabilities", "execute_capability"],
+  "websiteUrl": "https://uni-clilabs.com/connect",
+  "documentationUrl": "https://uni-clilabs.com/docs/start-here/connect-uni-cli-mcp",
+  "signUpUrl": "https://app.uni-clilabs.com?mode=sign-up",
+  "repository": {
+    "url": "https://github.com/different-ai/uni-cli",
+    "source": "github",
+    "subfolder": "ee/apps/den-api"
+  },
+  "install": {
+    "claude-code": "claude mcp add --transport http uni-cli https://api.uni-clilabs.com/mcp/agent",
+    "codex": "codex mcp add uni-cli --url https://api.uni-clilabs.com/mcp/agent && codex mcp login uni-cli",
+    "gemini-cli": "gemini mcp add --transport http uni-cli https://api.uni-clilabs.com/mcp/agent",
+    "opencode": "opencode mcp add uni-cli --url https://api.uni-clilabs.com/mcp/agent && opencode mcp auth uni-cli"
+  }
+}

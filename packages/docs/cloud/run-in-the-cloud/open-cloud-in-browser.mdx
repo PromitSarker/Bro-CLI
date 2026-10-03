@@ -1,0 +1,43 @@
+---
+title: "Open Uni-CLI Web in your browser"
+description: "Open a full Uni-CLI instance in your browser with nothing to install"
+---
+
+<Warning>
+**Hosted access.** Uni-CLI Web is available to every organization when an Uni-CLI-hosted deployment explicitly enables it. A platform admin in Den `/admin` can also grant complimentary access to one specific organization while deployment-wide availability is off. Web billing must be configured before an owner or admin can purchase it. It costs **$50 per joined organization member per month**; pending invitations are not billed until they are accepted.
+</Warning>
+
+Open `/dashboard/web` to see the price, billable member quantity, expected monthly total, and purchase action. Access opens only after the organization's subscription is confirmed.
+
+## Who can use it
+
+Every joined member can see Uni-CLI Web when the hosted deployment offers it. An organization owner or admin purchases the subscription; all joined members receive access after it becomes active.
+
+Self-hosted deployments do not show Uni-CLI Web by default: a missing or false `DEN_UNICLI_WEB_ENABLED` value fails closed unless a platform admin in Den `/admin` has explicitly granted complimentary access to that organization. If you use an Uni-CLI-hosted organization and do not see it in the sidebar, email [team@uni-clilabs.com](mailto:team@uni-clilabs.com) so the deployment configuration or organization grant can be checked.
+
+## Open Uni-CLI Web
+
+1. Sign in to your organization dashboard.
+2. Click `Uni-CLI Web` in the sidebar.
+3. If prompted, purchase Uni-CLI Web and wait for the subscription to be confirmed.
+4. Click `Open Uni-CLI Web`.
+
+<Frame>
+  ![The Uni-CLI Web page in the organization dashboard with the Open Uni-CLI Web button](/images/cloud-uni-cli-web.png)
+</Frame>
+
+You are now looking at the full Uni-CLI interface in your browser.
+
+<Frame>
+  ![Uni-CLI Web open in a browser tab showing the full Uni-CLI interface](/images/uni-cli-web-browser-tab.png)
+</Frame>
+
+## Sleep and persistence
+
+The hosted instance sleeps when it is idle and wakes when you open it again. Files in the workspace persist across sleep, so you can close the tab and come back later without losing your work.
+
+## Early-access limitation
+
+During early access, the instance URL is itself the credential. Do not share it, paste it into public chats, or publish it anywhere public.
+
+If you accidentally share the URL, ask an Uni-CLI admin for help.

@@ -1,0 +1,173 @@
+/**
+ * Single source of truth for "where does a workspace's server live?".
+ *
+ * Every workspace-scoped API call in the app must route to the Uni-CLI server
+ * that actually owns that workspace. For local workspaces that's the user's
+ * local Uni-CLI server. For workspaces hosted on a remote Uni-CLI worker
+ * (`id` starts with `rem_` and `workspaceType === "remote"`), it's the
+ * `baseUrl`/`uni-cliHostUrl` and `uni-cliToken` saved on the workspace
+ * record, with the workspace addressed by its server-side id (the `rem_`
+ * prefix is stripped, or `uni-cliWorkspaceId` is used when present).
+ *
+ * Always go through {@link resolveWorkspaceEndpoint} when you need:
+ *   - an `uni-cliServerClient` for a workspace
+ *   - a mounted `/workspace/<id>` URL prefix
+ *   - the `/opencode` URL for the OpenCode SDK
+ *
+ * Don't compose `<baseUrl>/workspace/<id>` by hand — that pattern is what
+ * caused this whole class of "remote workspace API calls hit the local
+ * server" bugs.
+ */
+
+import type { WorkspaceInfo } from "./desktop";
+import {
+  builduni-cliWorkspaceBaseUrl,
+  createuni-cliServerClient,
+  type uni-cliServerClient,
+} from "./uni-cli-server";
+
+export type ResolvedWorkspaceEndpoint = {
+  /** Host URL of the Uni-CLI server that owns this workspace (no `/workspace` mount). */
+  baseUrl: string;
+  /** Auth token for that server. May be empty for unauthenticated local servers. */
+  token: string;
+  /** Workspace id as the owning server expects it in URL paths. No `rem_` prefix. */
+  workspaceId: string;
+  /** True when the workspace lives on a remote Uni-CLI worker, not the user's local server. */
+  isRemote: boolean;
+  /** uni-cliServerClient bound to {@link baseUrl}/{@link token}. */
+  client: uni-cliServerClient;
+  /** Mounted base url: `<baseUrl>/workspace/<workspaceId>`. No trailing slash. */
+  mountedBaseUrl: string;
+  /** OpenCode SDK base url: `<mountedBaseUrl>/opencode`. */
+  opencodeBaseUrl: string;
+};
+
+export type LocalServerHandle = {
+  baseUrl: string | null | undefined;
+  token: string | null | undefined;
+};
+
+type WorkspaceEndpointInput = Pick<
+  WorkspaceInfo,
+  | "id"
+  | "workspaceType"
+  | "baseUrl"
+  | "uni-cliHostUrl"
+  | "uni-cliToken"
+  | "uni-cliClientToken"
+  | "uni-cliHostToken"
+  | "uni-cliWorkspaceId"
+> | null | undefined;
+
+/**
+ * Cheap predicate. Use this instead of duplicating the `id.startsWith("rem_")`
+ * check inline.
+ */
+export function isRemoteWorkspace(workspace: WorkspaceEndpointInput): boolean {
+  if (!workspace) return false;
+  return (
+    workspace.id.trim().startsWith("rem_") &&
+    workspace.workspaceType === "remote"
+  );
+}
+
+/**
+ * Returns the server-side workspace id (no `rem_` prefix) for any workspace.
+ * For local workspaces, returns the id as-is.
+ */
+export function workspaceServerId(workspace: WorkspaceEndpointInput): string {
+  if (!workspace) return "";
+  const id = workspace.id.trim();
+  if (!isRemoteWorkspace(workspace)) return id;
+  const explicit = workspace.uni-cliWorkspaceId?.trim();
+  if (explicit) return explicit;
+  return id.startsWith("rem_") ? id.slice("rem_".length) : id;
+}
+
+function pickRemoteBaseUrl(workspace: WorkspaceEndpointInput): string {
+  if (!workspace) return "";
+  return (workspace.baseUrl ?? workspace.uni-cliHostUrl ?? "").trim();
+}
+
+function pickRemoteToken(workspace: WorkspaceEndpointInput): string {
+  if (!workspace) return "";
+  return (
+    workspace.uni-cliToken ??
+    workspace.uni-cliClientToken ??
+    workspace.uni-cliHostToken ??
+    ""
+  ).trim();
+}
+
+/**
+ * Resolve the right server endpoint for a workspace. Returns null when the
+ * workspace can't be reached (remote with no baseUrl, or local with no local
+ * server connected yet). The returned object's `client`, `mountedBaseUrl`, and
+ * `opencodeBaseUrl` are ready to use for any workspace-scoped API call.
+ */
+export function resolveWorkspaceEndpoint(
+  workspace: WorkspaceEndpointInput,
+  localServer: LocalServerHandle,
+): ResolvedWorkspaceEndpoint | null {
+  if (!workspace) return null;
+
+  if (isRemoteWorkspace(workspace)) {
+    const baseUrl = pickRemoteBaseUrl(workspace);
+    if (!baseUrl) return null;
+    const token = pickRemoteToken(workspace);
+    const workspaceId = workspaceServerId(workspace);
+    const client = createuni-cliServerClient({
+      baseUrl,
+      token: token || undefined,
+    });
+    const mountedBaseUrl = (
+      builduni-cliWorkspaceBaseUrl(baseUrl, workspaceId) ?? baseUrl
+    ).replace(/\/+$/, "");
+    return {
+      baseUrl,
+      token,
+      workspaceId,
+      isRemote: true,
+      client,
+      mountedBaseUrl,
+      opencodeBaseUrl: `${mountedBaseUrl}/opencode`,
+    };
+  }
+
+  const localBaseUrl = (localServer.baseUrl ?? "").trim();
+  if (!localBaseUrl) return null;
+  const localToken = (localServer.token ?? "").trim();
+  const workspaceId = workspace.id.trim();
+  const client = createuni-cliServerClient({
+    baseUrl: localBaseUrl,
+    token: localToken || undefined,
+  });
+  const mountedBaseUrl = (
+    builduni-cliWorkspaceBaseUrl(localBaseUrl, workspaceId) ?? localBaseUrl
+  ).replace(/\/+$/, "");
+  return {
+    baseUrl: localBaseUrl,
+    token: localToken,
+    workspaceId,
+    isRemote: false,
+    client,
+    mountedBaseUrl,
+    opencodeBaseUrl: `${mountedBaseUrl}/opencode`,
+  };
+}
+
+/**
+ * The local server's managed engine, addressed without a workspace. The
+ * server runs its engine before the first workspace exists and proxies
+ * `<server>/opencode/*` to it, so providers can be listed and connected
+ * right after sign-in. Returns null without a connected local server.
+ */
+export function resolveEngineRootEndpoint(
+  localServer: LocalServerHandle,
+): { opencodeBaseUrl: string; token: string } | null {
+  const baseUrl = (localServer.baseUrl ?? "").trim().replace(/\/+$/, "");
+  const token = (localServer.token ?? "").trim();
+  if (!baseUrl || !token) return null;
+  return { opencodeBaseUrl: `${baseUrl}/opencode`, token };
+}

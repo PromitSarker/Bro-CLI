@@ -1,0 +1,52 @@
+---
+title: "Connect OpenCode"
+sidebarTitle: "OpenCode"
+description: "Add Uni-CLI MCP to OpenCode: add a remote MCP entry for https://api.uni-clilabs.com/mcp/agent to your OpenCode config, then run opencode mcp auth uni-cli."
+---
+
+Give OpenCode your organization's Uni-CLI skills, plugins, and connections. OpenCode is the verified client.
+
+<Steps>
+<Step title="Add the server to opencode.json">
+
+```json
+{
+  "mcp": {
+    "uni-cli": {
+      "type": "remote",
+      "enabled": true,
+      "url": "https://api.uni-clilabs.com/mcp/agent",
+      "oauth": {}
+    }
+  }
+}
+```
+
+</Step>
+<Step title="Sign in">
+
+```sh
+opencode mcp auth uni-cli
+```
+
+Sign in to Uni-CLI in the browser and pick your organization.
+
+</Step>
+<Step title="Try it">
+Ask: "Which Uni-CLI organization am I connected to?"
+</Step>
+</Steps>
+
+<AccordionGroup>
+  <Accordion title="Switch organizations">
+
+```sh
+opencode mcp logout uni-cli
+opencode mcp auth uni-cli
+```
+
+  </Accordion>
+  <Accordion title="OpenCode on a remote machine or SSH host">
+    Follow [Connect Uni-CLI MCP from a remote machine](/cloud/run-in-the-cloud/connect-uni-cli-mcp-remote-machine).
+  </Accordion>
+</AccordionGroup>

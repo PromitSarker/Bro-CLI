@@ -1,0 +1,70 @@
+---
+title: "Use Uni-CLI from an AI agent"
+sidebarTitle: "For AI agents"
+description: "Exact commands for Claude Code, Codex, Cursor, ChatGPT, and other agents to install Uni-CLI, set it up for a team, or connect the Uni-CLI MCP Gateway."
+---
+
+Point your agent at [uni-clilabs.com/llms.txt](https://uni-clilabs.com/llms.txt) and it can install Uni-CLI, set it up for a team, or connect Uni-CLI to itself. This page has the same steps.
+
+<Warning>
+Don't use `npx uni-cli` or `npm install uni-cli`. The npm package named `uni-cli` is a different project.
+</Warning>
+
+## Just me: install the desktop app
+
+Free, no account needed.
+
+| OS | Install |
+|---|---|
+| macOS (Homebrew) | `brew install --cask uni-cli` |
+| macOS | [Apple Silicon](https://uni-clilabs.com/download/mac-arm64) or [Intel](https://uni-clilabs.com/download/mac-x64) `.dmg` |
+| Windows | [x64](https://uni-clilabs.com/download/win-x64) or [ARM64](https://uni-clilabs.com/download/win-arm64) `.exe` |
+| Linux | [x64](https://uni-clilabs.com/download/linux-x64) or [ARM64](https://uni-clilabs.com/download/linux-arm64) `.AppImage` |
+
+These links always point to the latest stable release. Then [run your first task](/desktop-app/first-task).
+
+## My team: set up Uni-CLI Cloud
+
+1. [Sign up](https://app.uni-clilabs.com?mode=sign-up) and name your team. That creates your organization. The first 5 seats are free.
+2. Invite teammates in `Members` > `Add member`.
+3. Share models in `AI Gateway` > `AI Providers` > `Add provider`.
+4. Share a skill: **Manage › Plugins › Create a plugin**, add the skill, then add the team under **Who can use it**.
+5. Everyone installs the desktop app and clicks `Joining a team? Sign in`.
+
+Full walkthrough: [Team quickstart](/cloud/team-quickstart). For a headless, agent-run setup, follow [start.md](https://uni-clilabs.com/start.md). It uses the `uni-cli-bootstrap` CLI from `https://uni-clilabs.com/install.sh`, which needs Node.js 20+ and doesn't install the desktop app.
+
+## Inside my agent: connect the MCP Gateway
+
+Server URL: `https://api.uni-clilabs.com/mcp/agent`. Sign-in uses OAuth in the browser. You need an Uni-CLI Cloud account.
+
+```sh
+# Claude Code
+claude mcp add --transport http uni-cli https://api.uni-clilabs.com/mcp/agent
+
+# Codex
+codex mcp add uni-cli --url https://api.uni-clilabs.com/mcp/agent
+codex mcp login uni-cli
+
+# Gemini CLI
+gemini mcp add --transport http uni-cli https://api.uni-clilabs.com/mcp/agent
+
+# OpenCode
+opencode mcp add uni-cli --url https://api.uni-clilabs.com/mcp/agent
+opencode mcp auth uni-cli
+```
+
+Other clients: [Connect Uni-CLI MCP](/start-here/connect-uni-cli-mcp). It's working when your agent lists the `search_capabilities` and `execute_capability` tools.
+
+## Agent skills and machine-readable files
+
+For approved private-alpha organizations, your agent can also configure the Slack assistant. Use the [Uni-CLI in Slack guide](/slack/overview) and its copyable setup prompt. An administrator installs the bot; every member authorizes their own Slack connection.
+
+| Resource | URL |
+|---|---|
+| Install skill | [install-uni-cli](https://uni-clilabs.com/.well-known/agent-skills/install-uni-cli/SKILL.md) |
+| MCP skill | [connect-uni-cli-mcp](https://uni-clilabs.com/.well-known/agent-skills/connect-uni-cli-mcp/SKILL.md) |
+| Team skill | [set-up-uni-cli-team](https://uni-clilabs.com/.well-known/agent-skills/set-up-uni-cli-team/SKILL.md) |
+| Slack assistant setup (private alpha) | [set-up-uni-cli-slack](https://uni-clilabs.com/.well-known/agent-skills/set-up-uni-cli-slack/SKILL.md) |
+| Skills index | [agent-skills/index.json](https://uni-clilabs.com/.well-known/agent-skills/index.json) |
+| MCP server card | [mcp/server-card.json](https://uni-clilabs.com/.well-known/mcp/server-card.json) |
+| OpenAPI | [openapi.json](https://api.uni-clilabs.com/openapi.json) |

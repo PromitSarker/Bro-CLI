@@ -1,0 +1,26 @@
+{
+  "name": "@uni-cli/scenarios",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc -p .",
+    "onboarding:render": "node onboarding/render.mjs"
+  },
+  "dependencies": {
+    "@uni-cli/behaviors": "workspace:*",
+    "@uni-cli/cdp": "workspace:*",
+    "@uni-cli/env": "workspace:*",
+    "@uni-cli/testkit": "workspace:*",
+    "@uni-cli/presentation": "link:../packages/presentation",
+    "@remotion/bundler": "4.0.520",
+    "@remotion/renderer": "4.0.520",
+    "remotion": "4.0.520",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "vitest": "^4.1.11"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.13",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,565 @@
+# Deploy Uni-CLI EE on Google Cloud with GKE and Helm
+
+Status: self-host operator guide
+Related: `packaging/helm/uni-cli-ee`, `packaging/helm/uni-cli-ee/examples/values.gcp-ingress.yaml`
+
+This is the recommended Google Cloud path for a first production-like Uni-CLI
+EE self-host install. Use Helm on GKE Autopilot with Cloud SQL for MySQL. For
+web/API exposure, use GKE Ingress with Google-managed certificates, a reserved
+global IP address, and explicit backend health checks.
+
+Google recommends Gateway API for new L7 traffic management, and GKE Ingress is
+in maintenance mode. The current Uni-CLI chart emits Ingress resources, so GKE
+Ingress is the simplest supported GCP path today. Treat Gateway API support as a
+future chart/platform hardening item.
+
+Do not use raw Kubernetes `LoadBalancer` Services as the normal GCP path for
+Uni-CLI. GKE `LoadBalancer` Services are useful for TCP services and quick
+smoke tests, but the customer-facing web app and SSO flow need HTTP(S) load
+balancing, host routing, managed certificates, and backend health checks.
+
+## What this deploys
+
+- Den API on port `8788`
+- Den Web on port `3005`
+- optional Uni-CLI Gateway service, disabled by default (`inference.enabled`)
+- one Cloud SQL for MySQL database
+- one single-org Uni-CLI deployment
+- one external GKE Ingress backed by a Google Cloud Application Load Balancer
+- one Google-managed certificate covering web and API hosts
+
+Google Cloud owns the GKE cluster, Autopilot compute lifecycle, VPC networking,
+Cloud Load Balancing, managed certificates, Cloud SQL, IAM, and firewall rules.
+The Uni-CLI Helm chart owns Uni-CLI Deployments, Services, ConfigMaps,
+Secrets, health probes, the optional Ingress, and the database migration Job.
+The `BackendConfig` and `ManagedCertificate` resources in this guide are
+GKE-specific platform resources applied alongside the chart.
+
+## Use Helm or something else?
+
+Use Helm on GKE for Google Cloud unless the customer explicitly cannot run
+Kubernetes. The Uni-CLI EE release artifact is already a Helm chart, and GKE
+Autopilot keeps the first customer path small while still supporting migration
+Jobs, separate web/API services, SSO-ready HTTPS, and later enterprise network
+controls. The practical gap to fill is GCP-specific ingress and database
+guidance, not a different Uni-CLI packaging format.
+
+## Prerequisites
+
+- Google Cloud CLI authenticated to the target project.
+- `kubectl`, `helm`, and `gke-gcloud-auth-plugin`.
+- Permission to create GKE, Compute Engine networking and global addresses,
+  Cloud SQL, Service Networking, DNS, IAM, and Kubernetes resources.
+- Enabled APIs: Kubernetes Engine API, Compute Engine API, Cloud SQL Admin API,
+  and Service Networking API.
+- A real admin email address for the first owner account.
+- A domain you control, such as `uni-cli.example.com` and
+  `api.uni-cli.example.com`.
+
+Google Cloud docs used for this guide:
+
+- GKE Autopilot clusters: https://cloud.google.com/kubernetes-engine/docs/how-to/creating-an-autopilot-cluster
+- GKE Ingress for Application Load Balancers: https://cloud.google.com/kubernetes-engine/docs/concepts/ingress
+- GKE external Ingress and NEGs: https://cloud.google.com/kubernetes-engine/docs/how-to/container-native-load-balancing
+- GKE managed certificates: https://cloud.google.com/kubernetes-engine/docs/how-to/managed-certs
+- GKE Ingress configuration and BackendConfig: https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-configuration
+- GKE Ingress health checks: https://cloud.google.com/kubernetes-engine/docs/troubleshooting/ingress-health-checks
+- Cloud SQL private IP: https://cloud.google.com/sql/docs/mysql/private-ip
+- Cloud SQL from GKE: https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine
+
+## 1. Create the GKE cluster
+
+For a first deployment, create a regional Autopilot cluster:
+
+```bash
+export GCP_PROJECT=REPLACE_PROJECT_ID
+export GCP_REGION=us-central1
+export GKE_CLUSTER=uni-cli-ee
+
+gcloud config set project "$GCP_PROJECT"
+
+gcloud services enable \
+  container.googleapis.com \
+  compute.googleapis.com \
+  sqladmin.googleapis.com \
+  servicenetworking.googleapis.com
+
+gcloud container clusters create-auto "$GKE_CLUSTER" \
+  --location "$GCP_REGION" \
+  --project "$GCP_PROJECT"
+
+# If the cluster command reports that the auth plugin is missing:
+gcloud components install gke-gcloud-auth-plugin --quiet
+
+gcloud container clusters get-credentials "$GKE_CLUSTER" \
+  --location "$GCP_REGION" \
+  --project "$GCP_PROJECT"
+
+kubectl get nodes
+```
+
+GKE enables HTTP load balancing by default. Do not disable it; GKE Ingress needs
+that add-on.
+
+Some standalone Google Cloud SDK installations do not include
+`gke-gcloud-auth-plugin`. If `kubectl` cannot authenticate after cluster
+creation, install the component as shown above, rerun `get-credentials`, and
+verify with `kubectl get nodes` before debugging Kubernetes resources.
+
+## 2. Create Cloud SQL for MySQL
+
+Create Cloud SQL for MySQL with private IP in the same VPC as the GKE cluster.
+The most important requirements are:
+
+- MySQL 8-compatible Cloud SQL instance.
+- Database name: `uni-cli_den`.
+- Private services access configured for the VPC.
+- Private IP enabled on the Cloud SQL instance.
+- GKE is VPC-native and can reach the private IP.
+- Backups enabled.
+- Public IP disabled for production unless there is a documented exception.
+
+Private IP requires a one-time private services access connection for the VPC:
+
+```bash
+export VPC_NETWORK=default
+export SQL_RANGE=uni-cli-sql-range
+
+gcloud compute addresses create "$SQL_RANGE" \
+  --global \
+  --purpose=VPC_PEERING \
+  --prefix-length=16 \
+  --network="$VPC_NETWORK"
+
+gcloud services vpc-peerings connect \
+  --service=servicenetworking.googleapis.com \
+  --ranges="$SQL_RANGE" \
+  --network="$VPC_NETWORK"
+```
+
+Create the instance and database:
+
+```bash
+export SQL_INSTANCE=uni-cli-ee-mysql
+
+gcloud sql instances create "$SQL_INSTANCE" \
+  --database-version=MYSQL_8_0 \
+  --region="$GCP_REGION" \
+  --network="projects/$GCP_PROJECT/global/networks/$VPC_NETWORK" \
+  --no-assign-ip
+
+gcloud sql databases create uni-cli_den \
+  --instance="$SQL_INSTANCE"
+
+gcloud sql users create uni-cli \
+  --instance="$SQL_INSTANCE" \
+  --password=REPLACE_DB_PASSWORD
+```
+
+Get the private IP:
+
+```bash
+gcloud sql instances describe "$SQL_INSTANCE" \
+  --format='value(ipAddresses[0].ipAddress)'
+```
+
+Example database URL:
+
+```text
+mysql://uni-cli:<password>@<cloud-sql-private-ip>:3306/uni-cli_den
+```
+
+This guide uses direct private IP because the current Uni-CLI chart does not
+inject Cloud SQL Auth Proxy sidecars. Cloud SQL Auth Proxy is a stronger future
+hardening path when the chart supports sidecars or an operator-managed proxy
+pattern.
+
+If the Cloud SQL instance enforces encrypted client connections, use
+`?sslaccept=accept` for the simple private-MySQL smoke path. This keeps TLS on
+without requiring a cloud CA bundle to be mounted into the Uni-CLI image. Use
+strict certificate verification later, after you provide the required CA bundle,
+with a hardened value such as `sslmode=verify-ca` or `sslmode=verify-full`.
+Verify the same URL works for both the migration Job and runtime pods before
+testing the browser flow.
+
+Before installing Uni-CLI, verify network access from the cluster:
+
+```bash
+kubectl run mysql-client \
+  --rm \
+  -it \
+  --restart=Never \
+  --image=mysql:8 \
+  -- mysql \
+    --host="REPLACE_CLOUD_SQL_PRIVATE_IP" \
+    --user=uni-cli \
+    --password \
+    --execute "select 1"
+```
+
+## 3. Reserve a global IP and create GKE resources
+
+Reserve a global IP address for the HTTPS load balancer:
+
+```bash
+gcloud compute addresses create uni-cli-ee-ip \
+  --global
+
+gcloud compute addresses describe uni-cli-ee-ip \
+  --global \
+  --format='value(address)'
+```
+
+Create the namespace:
+
+```bash
+kubectl create namespace uni-cli-ee
+```
+
+Create a Google-managed certificate resource:
+
+```bash
+kubectl apply -n uni-cli-ee -f - <<'YAML'
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: uni-cli-ee-cert
+spec:
+  domains:
+    - REPLACE_WEB_HOST
+    - REPLACE_API_HOST
+YAML
+```
+
+Create explicit backend health checks for the two Uni-CLI services:
+
+```bash
+kubectl apply -n uni-cli-ee -f - <<'YAML'
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: uni-cli-ee-den-api-backend
+spec:
+  healthCheck:
+    type: HTTP
+    requestPath: /ready
+    port: 8788
+    checkIntervalSec: 15
+    timeoutSec: 5
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: uni-cli-ee-den-web-backend
+spec:
+  healthCheck:
+    type: HTTP
+    requestPath: /api/ready
+    port: 3005
+    checkIntervalSec: 15
+    timeoutSec: 5
+YAML
+```
+
+The Helm values annotate the Uni-CLI Services so GKE associates these
+`BackendConfig` objects with the Google Cloud backend services.
+
+## 4. Prepare Helm values
+
+Copy the starter file:
+
+```bash
+cp packaging/helm/uni-cli-ee/examples/values.gcp-ingress.yaml values.gcp.yaml
+```
+
+Replace every `REPLACE_*` placeholder.
+
+Generate secrets:
+
+```bash
+openssl rand -base64 48
+openssl rand -base64 48
+```
+
+Use the first value for `secret.values.betterAuthSecret` and the second for
+`secret.values.denDbEncryptionKey`. Do not reuse either value across
+environments.
+
+To send transactional email, configure SMTP in the same values file:
+
+```yaml
+secret:
+  values:
+    emailFrom: "Uni-CLI <no-reply@example.com>"
+    smtpHost: "smtp.example.com"
+    smtpPort: "587"
+    smtpUser: "uni-cli@example.com"
+    smtpPass: "REPLACE_SMTP_PASSWORD"
+    smtpSecure: "false"
+```
+
+These values become `EMAIL_FROM`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`,
+`SMTP_PASS`, and `SMTP_SECURE` in Den API. If you use `secret.create=false`,
+add those keys to the existing Kubernetes Secret referenced by
+`secret.existingSecret`. SMTP delivery requires both `EMAIL_FROM` and
+`SMTP_HOST`; leave `smtpHost` blank only when SMTP-backed transactional email
+should be disabled.
+
+Use a values file, not a long list of `--set` flags. Several Uni-CLI values are
+comma-separated strings, such as `config.public.corsOrigins`, and plain `--set`
+parsing commonly breaks them.
+
+Make sure your file uses the current chart keys. Public URL values belong under
+`config.public.*`; database and app secrets belong under `secret.values.*`.
+Values such as `config.urls`, `config.databaseUrl`, or `secrets.*` are ignored
+by the chart.
+
+Before installing, render the chart and verify the migration Job will use your
+Cloud SQL URL:
+
+```bash
+helm template uni-cli-ee oci://ghcr.io/different-ai/charts/uni-cli-ee \
+  --version REPLACE_UNICLI_VERSION \
+  --namespace uni-cli-ee \
+  -f values.gcp.yaml > /tmp/uni-cli-rendered.yaml
+
+grep -E 'DATABASE_URL|DEN_BASE_URL|DEN_WEB_PUBLIC_ORIGIN|EMAIL_FROM|SMTP_HOST|SMTP_PORT|SMTP_SECURE' /tmp/uni-cli-rendered.yaml
+```
+
+Redact secrets before sharing rendered manifests or terminal output.
+
+## 5. Install Uni-CLI
+
+Published chart releases live in GHCR:
+
+```bash
+helm upgrade --install uni-cli-ee oci://ghcr.io/different-ai/charts/uni-cli-ee \
+  --version REPLACE_UNICLI_VERSION \
+  --namespace uni-cli-ee \
+  --create-namespace \
+  -f values.gcp.yaml
+```
+
+For a checkout-local test:
+
+```bash
+helm upgrade --install uni-cli-ee ./packaging/helm/uni-cli-ee \
+  --namespace uni-cli-ee \
+  --create-namespace \
+  -f values.gcp.yaml
+```
+
+If GHCR image pulls fail with `ImagePullBackOff`, authenticate to GHCR and add
+an `imagePullSecrets` entry. Public releases should not require this, but
+private packages or private forks do:
+
+```bash
+kubectl create secret docker-registry ghcr-pull-secret \
+  --namespace uni-cli-ee \
+  --docker-server=ghcr.io \
+  --docker-username="$GITHUB_USER" \
+  --docker-password="$GITHUB_TOKEN"
+```
+
+```yaml
+imagePullSecrets:
+  - name: ghcr-pull-secret
+```
+
+## 6. Migration troubleshooting
+
+The migration Job runs before the Deployments are useful. If it fails, fix that
+before debugging web/API readiness.
+
+Avoid `kubectl describe job uni-cli-ee-migrate` in shared reports because the
+hook Job currently includes `DATABASE_URL` and `DEN_DB_ENCRYPTION_KEY` in the
+rendered environment. Use logs and redacted rendered manifests instead.
+
+For a retained-log debug attempt, temporarily disable hook behavior:
+
+```yaml
+migrations:
+  enabled: true
+  hook: false
+  backoffLimit: 0
+```
+
+Then run Helm and inspect the normal Job logs:
+
+```bash
+helm upgrade --install uni-cli-ee oci://ghcr.io/different-ai/charts/uni-cli-ee \
+  --version REPLACE_UNICLI_VERSION \
+  --namespace uni-cli-ee \
+  --create-namespace \
+  -f values.gcp.yaml \
+  --wait=false
+
+kubectl get jobs,pods -n uni-cli-ee
+kubectl logs -n uni-cli-ee -l job-name=uni-cli-ee-migrate --all-containers=true
+```
+
+Return to the default hook mode after debugging:
+
+```yaml
+migrations:
+  enabled: true
+  hook: true
+  backoffLimit: 2
+```
+
+## 7. Point DNS at the global load balancer IP
+
+Get the reserved IP address:
+
+```bash
+gcloud compute addresses describe uni-cli-ee-ip \
+  --global \
+  --format='value(address)'
+```
+
+Create DNS records:
+
+- `uni-cli.example.com` -> the reserved global IP address.
+- `api.uni-cli.example.com` -> the reserved global IP address.
+
+GKE can take several minutes to provision the load balancer. Google-managed
+certificates can take up to an hour to become active after DNS points at the
+load balancer.
+
+Check status:
+
+```bash
+kubectl get ingress -n uni-cli-ee
+kubectl describe managedcertificate uni-cli-ee-cert -n uni-cli-ee
+kubectl describe ingress uni-cli-ee -n uni-cli-ee
+```
+
+If you are still using temporary hosts before DNS/TLS is ready, temporarily
+update the corresponding `config.public.*` origins in `values.gcp.yaml`, then
+run `helm upgrade` again. Do not leave production deployments on raw IPs or
+placeholder hostnames.
+
+The current chart rolls the Den API, Den Web, and Gateway pods automatically
+when ConfigMap or Secret content changes. On older chart versions, manually
+restart the deployments after changing public origin values:
+
+```bash
+kubectl rollout restart deployment/uni-cli-ee-den-api deployment/uni-cli-ee-den-web -n uni-cli-ee
+kubectl rollout status deployment/uni-cli-ee-den-api -n uni-cli-ee --timeout=180s
+kubectl rollout status deployment/uni-cli-ee-den-web -n uni-cli-ee --timeout=180s
+```
+
+## 8. Verify readiness
+
+Check Kubernetes state:
+
+```bash
+helm status uni-cli-ee -n uni-cli-ee
+kubectl get pods -n uni-cli-ee
+kubectl get jobs -n uni-cli-ee
+kubectl get ingress -n uni-cli-ee
+kubectl describe backendconfig uni-cli-ee-den-api-backend -n uni-cli-ee
+kubectl describe backendconfig uni-cli-ee-den-web-backend -n uni-cli-ee
+kubectl logs -n uni-cli-ee deploy/uni-cli-ee-den-api
+kubectl logs -n uni-cli-ee deploy/uni-cli-ee-den-web
+```
+
+Check readiness from your machine:
+
+```bash
+curl -fsS https://api.uni-cli.example.com/ready
+curl -fsS https://uni-cli.example.com/api/ready
+```
+
+## 9. Bootstrap the first owner
+
+The chart defaults to `single_org`. Set these before first sign-in:
+
+```yaml
+config:
+  tenancy:
+    mode: "single_org"
+    singleOrgName: "Acme"
+    singleOrgSlug: "acme"
+    ownerEmails: "admin@acme.com"
+    requireEmailVerification: "false"
+  public:
+    bootstrapAdminEmails: "admin@acme.com"
+secret:
+  values:
+    initialAdminBootstrapCode: "REPLACE_BOOTSTRAP_CODE"
+```
+
+For releases that include initial-administrator bootstrap, inject the
+release-documented one-time setup secret through the Kubernetes Secret referenced
+by `secret.existingSecret`. Do not store the code in the values file or a
+ConfigMap. Then open `https://uni-cli.example.com/setup`, enter the configured
+owner email and one-time operator code, and create the first account. Uni-CLI
+creates the singleton organization, grants owner and configured platform-admin
+access, and signs the administrator in. Public signup remains disabled. After
+the first user exists, the setup code cannot bootstrap another account.
+
+`ownerEmails` and `bootstrapAdminEmails` authorize roles; neither setting creates
+an account or password. There is no default administrator password. Chart
+versions without `/setup` do not support private initial-administrator bootstrap
+and must be upgraded before following this step.
+
+## 10. Configure SSO with a test IdP
+
+Self-hosted installs keep plan gating off unless the operator explicitly sets
+`DEN_PLAN_GATING_ENABLED=true`, so SSO management should be available in the EE
+self-host default.
+
+Use OIDC first for a smoke test because most IdPs provide discovery metadata.
+Auth0, Okta trial, and Google Cloud Identity test tenants all work as realistic
+demo IdPs.
+
+Configure the IdP application with this callback URL:
+
+```text
+https://uni-cli.example.com/api/auth/sso/callback/uni-cli-sso-<org-id>
+```
+
+In Uni-CLI, sign in as the owner, open the organization SSO settings, and enter
+the IdP issuer/client details. After saving, the organization sign-in path is:
+
+```text
+https://uni-cli.example.com/sso/<singleOrgSlug>
+```
+
+For SAML, Uni-CLI shows the generated ACS URL and metadata URL after the SAML
+connection is registered. Use those values in the IdP rather than guessing.
+Uni-CLI rejects unsigned or weak SAML responses, so configure the IdP to sign
+assertions.
+
+After SSO is configured, root sign-in shows the SSO-only experience for the
+single organization. Password sign-in for that organization is rejected.
+
+## 11. Troubleshooting
+
+| Symptom | Likely cause | Fix |
+|---|---|---|
+| Ingress does not reconcile | HTTP load balancing add-on is disabled or Ingress annotation is wrong | Keep HTTP load balancing enabled and use `kubernetes.io/ingress.class: gce` |
+| Backends are unhealthy | GKE load balancer health checks do not match Uni-CLI readiness endpoints | Apply the `BackendConfig` resources and keep the service annotations from the starter values |
+| Ingress events report `TimeoutSec should be less than checkIntervalSec` | The backend health-check timeout is greater than or equal to its effective interval | Set `checkIntervalSec: 15` and `timeoutSec: 5` on both `BackendConfig` resources |
+| Managed certificate is not `Active` | DNS does not point at the load balancer or provisioning is still running | Point both hosts at the reserved global IP and wait; check `kubectl describe managedcertificate` |
+| Migration Job fails to connect to MySQL | Private services access, VPC, credentials, IP, or TLS mode are wrong | Test from `mysql-client`, confirm the private IP, and confirm GKE and Cloud SQL share VPC reachability |
+| Migration Job logs show `self-signed certificate in certificate chain` | Strict certificate verification is being used without the cloud MySQL CA bundle | Use `?sslaccept=accept` for the smoke path or mount/configure the CA bundle before strict verification |
+| `ImagePullBackOff` from GHCR | Private image or missing pull token | Add `imagePullSecrets` |
+| Browser auth loops or CORS errors | Public origins do not match DNS/TLS | Set `webOrigin`, `apiOrigin`, `corsOrigins`, `betterAuthTrustedOrigins`, and `authCallbackUrl` to the final HTTPS domains |
+| SSO callback rejected | IdP callback URL does not match Uni-CLI | Use the callback/ACS URL shown by Uni-CLI for that org/provider |
+| SSO settings show Enterprise gating | `DEN_PLAN_GATING_ENABLED=true` or org is not entitled | Leave plan gating off for self-host smoke tests, or grant enterprise entitlement |
+
+## 12. Cleanup
+
+For a disposable test:
+
+```bash
+helm uninstall uni-cli-ee -n uni-cli-ee
+gcloud compute addresses delete uni-cli-ee-ip --global
+gcloud container clusters delete "$GKE_CLUSTER" --location "$GCP_REGION"
+gcloud sql instances delete "$SQL_INSTANCE"
+```
+
+Delete DNS records, retained backups, private service access ranges, and any IAM
+resources if they were only for the test.
