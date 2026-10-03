@@ -69,6 +69,12 @@ def read_file(filepath: str) -> str:
 
 def write_file(filepath: str, content: str) -> str:
     """Write content to a local file. Overwrites if exists."""
+    from bro_cli.ui.terminal import console, Confirm
+    
+    console.print(f"\n[warning]Agent wants to write {len(content)} bytes to:[/warning] [bold]{filepath}[/bold]")
+    if not Confirm.ask("[prompt]Allow file write?[/prompt]", default=False):
+        return "User refused to write the file."
+        
     try:
         path = Path(filepath)
         path.parent.mkdir(parents=True, exist_ok=True)
