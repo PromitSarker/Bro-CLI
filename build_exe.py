@@ -2,7 +2,7 @@ import PyInstaller.__main__
 import sys
 
 PyInstaller.__main__.run([
-    'bro_cli/app.py',
+    'run_app.py',
     '--name=Bro-CLI',
     '--noconsole',  # Hide the terminal window
     '--onedir',     # Create a directory rather than a single file (starts faster and easier to debug)

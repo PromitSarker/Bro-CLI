@@ -3,11 +3,15 @@ name: Build Windows Installer
 on:
   push:
     branches: [ "main" ]
+    tags:
+      - 'v*'
   workflow_dispatch: # Allows manual triggering from the GitHub Actions tab
 
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      contents: write # Required to create a GitHub Release
 
     steps:
     - uses: actions/checkout@v4
@@ -36,3 +40,10 @@ jobs:
       with:
         name: Bro-CLI-Setup
         path: Output/Bro-CLI-Setup.exe
+
+    - name: Create GitHub Release (Direct .exe Download)
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v2
+      with:
+        files: Output/Bro-CLI-Setup.exe
+        generate_release_notes: true
