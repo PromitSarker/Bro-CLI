@@ -31,13 +31,13 @@ if (services.den) {
     const { signInDesktopAs } = await import("/workspace/evals/packages/behaviors/src/index.ts");
     const surface = await attachSurface({ name: "preview-refresh", kind: "electron", hostKind: "local", cdpUrl: "http://127.0.0.1:9825" }, { timeoutMs: 30_000 });
     const nonce = randomUUID();
-    const init = await addInitScript(surface.client, browserScript((value) => { globalThis.__uni-cliPreviewReload = value; }, [nonce]));
+    const init = await addInitScript(surface.client, browserScript((value) => { globalThis.__uniCliPreviewReload = value; }, [nonce]));
     try {
       await surface.client.send("Page.reload", { ignoreCache: true });
       let loaded = false;
       const deadline = Date.now() + 60_000;
       while (Date.now() < deadline) {
-        loaded = await evaluate(surface.client, browserScript((value) => globalThis.__uni-cliPreviewReload === value && Boolean(window.__uni-cliControl?.listActions?.().length), [nonce])).catch(() => false);
+        loaded = await evaluate(surface.client, browserScript((value) => globalThis.__uniCliPreviewReload === value && Boolean(window.__uniCliControl?.listActions?.().length), [nonce])).catch(() => false);
         if (loaded) break;
         await delay(250);
       }

@@ -14,7 +14,7 @@
  * In prod builds the wrapper is a pass-through (no Profiler overhead) and
  * the overlay renders null.
  *
- * Findings also land on window.__uni-cli.slice("profiler") so external
+ * Findings also land on window.__uniCli.slice("profiler") so external
  * tools can read them.
  */
 
@@ -121,7 +121,7 @@ function readSnapshot() {
 }
 
 // Register a top-level inspector slice so the snapshot is accessible via
-// window.__uni-cli.slice("profiler") — even for operators who aren't
+// window.__uniCli.slice("profiler") — even for operators who aren't
 // looking at the overlay.
 if (typeof window !== "undefined") {
   publishInspectorSlice("profiler", readSnapshot);

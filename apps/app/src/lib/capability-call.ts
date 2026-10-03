@@ -184,7 +184,7 @@ function skillReference(part: DynamicToolUIPart): string | null {
 }
 
 export function getConnectionStatusProbeId(part: DynamicToolUIPart): string | null {
-  if (part.toolName !== "uni-cli_execute_capability" && part.toolName !== "uni-cli-cloud_execute_capability") return null
+  if (part.toolName !== "uniCli_execute_capability" && part.toolName !== "uni-cli-cloud_execute_capability") return null
   const input = parseRecord(part.input)
   return typeof input?.name === "string" ? /^mcp:([^:\s]+):\*$/.exec(input.name)?.[1] ?? null : null
 }

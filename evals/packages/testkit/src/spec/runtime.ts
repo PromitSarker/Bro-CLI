@@ -238,7 +238,7 @@ async function waitForControlAction(surface: Surface, action: string, timeoutMs 
   await waitForControlRail(surface, action, Math.max(1, deadline - Date.now()));
   while (Date.now() < deadline) {
     try {
-      const actions = await evalIn(surface, () => (window.__uni-cliControl?.listActions?.() ?? null), {
+      const actions = await evalIn(surface, () => (window.__uniCliControl?.listActions?.() ?? null), {
         timeoutMs: Math.min(2_000, Math.max(1, deadline - Date.now())),
       });
       if (Array.isArray(actions) && actions.some((entry) => isRecord(entry) && entry.id === action && entry.disabled !== true)) return;
@@ -625,7 +625,7 @@ export class SeedChannel implements Seed {
     return this.#runtime.call("seed", "workspace", `workspace(${path})`, app, async () => {
       const result = await import("@uni-cli/behaviors").then(({ createAndSelectWorkspace }) => createAndSelectWorkspace(app, { path, ...options }));
       await eventually(() => callFunctionOnSurface(app, (workspaceId) => {
-        const workspace = window.__uni-cli?.slice?.("route")?.workspaces?.find(item => item.id === workspaceId);
+        const workspace = window.__uniCli?.slice?.("route")?.workspaces?.find(item => item.id === workspaceId);
         return workspace ? { exists: true, loading: workspace.loading } : { exists: false };
       }, [result.workspaceId]), {
         within: 60000, intervalMs: 250, label: `workspace ${result.workspaceId} initial session load`,
@@ -1000,7 +1000,7 @@ export class AgentChannel implements Agent {
     const surface = requireSurface(this.#surface);
     return this.#runtime.call("agent", "actions", "listActions", surface, async () => {
       await waitForControlRail(surface, "listActions");
-      return evaluateOnSurface(surface, () => (window.__uni-cliControl.listActions()));
+      return evaluateOnSurface(surface, () => (window.__uniCliControl.listActions()));
     });
   }
 }

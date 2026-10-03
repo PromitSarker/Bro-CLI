@@ -141,7 +141,7 @@ Rollout order (each step independently safe):
 
 - **den-web dashboard** (`dashboard/sso/`, `dashboard/(admin)/desktop-policies/`,
   org settings requireSso/version toggles): screens stay visible but show an
-  "Enterprise" badge and a "Talk to us" CTA (→ `uni-clilabs.com/enterprise#book`)
+  "Enterprise" badge and a "Talk to us" CTA (→ `uniClilabs.com/enterprise#book`)
   instead of the create/edit actions, driven by an `entitlements` object added
   to the existing org payload in `org-dashboard-provider.tsx`. Handle the 402
   defensively as well.

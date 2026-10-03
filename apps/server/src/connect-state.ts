@@ -114,7 +114,7 @@ export function googleWorkspaceCloudRequired(cloudHealth: CloudMcpHealth | null)
   const failure = cloudHealth?.firstFailure;
   return {
     ok: false,
-    error: "use_uni-cli_cloud",
+    error: "use_uniCli_cloud",
     message: "Local Google Workspace actions are retired. Use Google Workspace through Uni-CLI Cloud Connect only. Discover the capability with search_capabilities, then call execute_capability with the exact returned name. If Cloud reports a connection or authorization requirement, relay its exact next action; local credentials cannot be used.",
     nextAction: cloudHealth?.usable
       ? { tool: "search_capabilities", arguments: { query: "Google Workspace" } }

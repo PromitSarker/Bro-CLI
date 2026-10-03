@@ -55,8 +55,8 @@ export async function bootAppWebWorld(
   const lifetimeMinutes = options.lifetimeMinutes ?? 120;
   if (!Number.isInteger(lifetimeMinutes) || lifetimeMinutes < 10 || lifetimeMinutes > 1430) throw new Error("app-web lifetime must be 10-1430 minutes.");
   if (options.place === "daytona" && selectedEnv.UNICLI_DEV_DEN_PROXY_TARGET !== undefined
-    && selectedEnv.UNICLI_DEV_DEN_PROXY_TARGET !== "https://app.uni-clilabs.com") {
-    throw new Error("Remote app-web supports only https://app.uni-clilabs.com as its Den proxy target.");
+    && selectedEnv.UNICLI_DEV_DEN_PROXY_TARGET !== "https://app.uniClilabs.com") {
+    throw new Error("Remote app-web supports only https://app.uniClilabs.com as its Den proxy target.");
   }
   const runtimeName = `${receiptName("preview-app-web", resolveStage(env))}-${randomUUID().slice(0, 8)}`;
   if (options.place === "freestyle") {

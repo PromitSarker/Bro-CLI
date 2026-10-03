@@ -1,7 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto"
 import type { diagnosticsConfig } from "./config"
 
-export const DASHBOARD_SESSION_COOKIE = "uni-cli_diagnostics_admin"
+export const DASHBOARD_SESSION_COOKIE = "uniCli_diagnostics_admin"
 export const DASHBOARD_SESSION_LIFETIME_SECONDS = 60 * 60
 
 type DashboardAuthConfig = Pick<ReturnType<typeof diagnosticsConfig>, "adminPassword" | "adminUsername" | "signingSecret">

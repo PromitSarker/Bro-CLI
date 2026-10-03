@@ -61,7 +61,7 @@ const DEFAULT_REQUEST_BODY_MAX_BYTES = 32 * 1024 * 1024;
  *
  * We reflect those origins, and make that safe by stripping the cookie header
  * from the forwarded request: an instance-origin call is authenticated by its
- * bearer token alone and can never ride the viewer's app.uni-clilabs.com
+ * bearer token alone and can never ride the viewer's app.uniClilabs.com
  * session. A hostile page on some other origin therefore gains nothing from the
  * reflection - it has no bearer token and its cookies are discarded.
  *

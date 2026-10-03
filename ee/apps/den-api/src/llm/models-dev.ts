@@ -1,6 +1,6 @@
 import { withBedrockMantleProvider } from "@uni-cli-ee/utils/bedrock-mantle-catalog"
 
-const MODELS_DEV_API_URL = "https://models.uni-clilabs.com/api.json"
+const MODELS_DEV_API_URL = "https://models.uniClilabs.com/api.json"
 const MODELS_DEV_CACHE_TTL_MS = 1000 * 60 * 10
 
 type JsonRecord = Record<string, unknown>

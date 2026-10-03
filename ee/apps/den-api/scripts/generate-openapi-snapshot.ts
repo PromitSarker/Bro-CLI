@@ -26,7 +26,7 @@ function seedSnapshotEnv(snapshotVersion: string) {
   // OpenAPI document.
   setEnvDefault("UNICLI_DEV_MODE", "1")
   setEnvDefault("DB_MODE", "mysql")
-  setEnvDefault("DATABASE_URL", "mysql://root:password@127.0.0.1:3306/uni-cli_den")
+  setEnvDefault("DATABASE_URL", "mysql://root:password@127.0.0.1:3306/uniCli_den")
   setEnvDefault("DEN_DB_ENCRYPTION_KEY", "local-dev-db-encryption-key-please-change-1234567890")
   setEnvDefault("BETTER_AUTH_SECRET", "local-dev-secret-not-for-production-use!!")
   setEnvDefault("BETTER_AUTH_URL", "http://localhost:8790")
@@ -35,7 +35,7 @@ function seedSnapshotEnv(snapshotVersion: string) {
   // (not a git SHA) so CI can diff the regenerated document against the
   // committed one. Den API images are tagged with the app release version, so
   // the pinned latest app version is the same value production reports.
-  setEnvDefault("DEN_API_PUBLIC_URL", "https://api.uni-clilabs.com")
+  setEnvDefault("DEN_API_PUBLIC_URL", "https://api.uniClilabs.com")
   setEnvDefault("DEN_API_VERSION", snapshotVersion)
   setEnvDefault("DEN_AUTOMATIONS_ENABLED", "true")
   setEnvDefault("DEN_AUTOMATIONS_RUNTIME_ENABLED", "true")

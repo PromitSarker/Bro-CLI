@@ -18,7 +18,7 @@ const pricingSchema = {
       name: "Free",
       price: "0",
       priceCurrency: "USD",
-      url: "https://app.uni-clilabs.com?mode=sign-up",
+      url: "https://app.uniClilabs.com?mode=sign-up",
       availability: "https://schema.org/InStock",
       description:
         "First 5 seats free on Uni-CLI Cloud. Open source desktop app with bring-your-own-keys; self-host the full platform free for organizations up to 5 users."
@@ -28,7 +28,7 @@ const pricingSchema = {
       name: "Team",
       price: "10",
       priceCurrency: "USD",
-      url: "https://app.uni-clilabs.com/dashboard/billing",
+      url: "https://app.uniClilabs.com/dashboard/billing",
       availability: "https://schema.org/InStock",
       priceSpecification: {
         "@type": "UnitPriceSpecification",
@@ -51,7 +51,7 @@ export const metadata = withSocialMetadata({
   },
   openGraph: {
     ...baseOpenGraph,
-    url: "https://uni-clilabs.com/pricing"
+    url: "https://uniClilabs.com/pricing"
   }
 });
 

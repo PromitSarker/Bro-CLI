@@ -112,7 +112,7 @@ export async function waitForServiceRoutes(
     let status = 0;
     for (let attempt = 0; Date.now() < deadline; attempt++) {
       try {
-        const response = await probe(`${origin}/__uni-cli_launch?token=${token}`, { redirect: "manual", signal: AbortSignal.timeout(3_000) });
+        const response = await probe(`${origin}/__uniCli_launch?token=${token}`, { redirect: "manual", signal: AbortSignal.timeout(3_000) });
         status = response.status;
         const cookie = response.headers.get("set-cookie")?.split(";", 1)[0];
         await response.body?.cancel();
@@ -183,11 +183,11 @@ export async function launchPreview(
       for (const [name, key] of Object.entries(serviceKeys)) {
         const origin = Object.entries(origins ?? {}).find(([service]) => service === name)?.[1];
         if (!origin) throw new Error("Missing private service origin");
-        outputs[key] = { value: `${origin}/__uni-cli_launch?token=${token}`, secret: true, group: "Services", note: "Ready · open this link to authorize this service" };
+        outputs[key] = { value: `${origin}/__uniCli_launch?token=${token}`, secret: true, group: "Services", note: "Ready · open this link to authorize this service" };
       }
       outputs.previewCookie = { value: `__Host-uni-cli-preview=${token}`, secret: true, group: "Developer access", note: "Cookie header for requests to this VM's private service URLs" };
     }
-    const url = `https://${domain}/__uni-cli_launch?token=${token}`;
+    const url = `https://${domain}/__uniCli_launch?token=${token}`;
     if (world === "desktop") {
       stage = "desktop-ready";
       if ((await vm.fs.readTextFile("/opt/uni-cli-preview/source-sha")).trim() !== input.gitSha

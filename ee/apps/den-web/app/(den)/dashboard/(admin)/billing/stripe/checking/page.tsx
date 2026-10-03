@@ -101,7 +101,7 @@ export default function StripeCheckingPage() {
             <p className="text-[17px] font-medium text-gray-950">We couldn&apos;t confirm the subscription yet</p>
             <p className="max-w-[480px] text-[14px] leading-6 text-gray-600">
               If your payment went through, refresh the billing page or contact{" "}
-              <a className="font-medium text-blue-600 hover:underline" href="mailto:team@uni-clilabs.com">team@uni-clilabs.com</a>.
+              <a className="font-medium text-blue-600 hover:underline" href="mailto:team@uniClilabs.com">team@uniClilabs.com</a>.
             </p>
             <DenButton onClick={() => router.replace(destinationRoute)}>
               {returnTarget === "web" ? "Return to Uni-CLI Web" : "Return to Billing"}

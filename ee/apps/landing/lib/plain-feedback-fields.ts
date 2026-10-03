@@ -20,10 +20,10 @@ type FeedbackMetadata = FeedbackContext & {
 };
 
 const fieldDefinitions = [
-  { key: "uni-cli_os_name", label: "Uni-CLI OS" },
-  { key: "uni-cli_app_version", label: "Uni-CLI app version" },
-  { key: "uni-cli_deployment", label: "Uni-CLI deployment" },
-  { key: "uni-cli_metadata", label: "Uni-CLI metadata" },
+  { key: "uniCli_os_name", label: "Uni-CLI OS" },
+  { key: "uniCli_app_version", label: "Uni-CLI app version" },
+  { key: "uniCli_deployment", label: "Uni-CLI deployment" },
+  { key: "uniCli_metadata", label: "Uni-CLI metadata" },
 ];
 
 // Shared by the form and the one-time setup script so schema keys/types stay in sync.

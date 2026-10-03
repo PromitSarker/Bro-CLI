@@ -9,7 +9,7 @@ const test = spec.world(reviewSandboxWorld, {
 const picker = { role: "combobox", label: "Preview world" } satisfies Target;
 
 test("sandbox controls preserve a launched environment and recover from failures and expiry", async ({ world, user, probe, step, evidence }) => {
-  const url = `https://ow-${"a".repeat(32)}.preview.uniCli.software/__uni-cli_launch?token=synthetic`;
+  const url = `https://ow-${"a".repeat(32)}.preview.uniCli.software/__uniCli_launch?token=synthetic`;
   function ready(expiresAt: string) {
     return { url, world: "app-web", expiresAt, outputs: {
       webUrl: { value: url, group: "Services", secret: true },

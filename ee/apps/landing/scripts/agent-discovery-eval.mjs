@@ -33,18 +33,18 @@ const opencodeModel = option("--opencode-model", "openai/gpt-5.5");
 const agents = option("--agents", "codex,gemini,opencode").split(",").map((agent) => agent.trim()).filter(Boolean);
 mkdirSync(outDir, { recursive: true });
 
-const MCP_URL = "https://api.uni-clilabs.com/mcp/agent";
+const MCP_URL = "https://api.uniClilabs.com/mcp/agent";
 const CLAUDE_ADD = new RegExp(`claude mcp add --transport http uniCli ${MCP_URL.replaceAll(".", "\\.")}`);
 
 // llms.txt links use production URLs; point the agent at the local build.
-const preamble = `You are helping a user. Only use ${baseUrl}/llms.txt and pages it links to (fetch each one with \`curl -sL <url>\`). This is a pre-release build: any https://uni-clilabs.com/... URL except /docs is served at ${baseUrl}/... - fetch it from there. Do not install anything and do not create accounts. Answer with exact commands and URLs.`;
+const preamble = `You are helping a user. Only use ${baseUrl}/llms.txt and pages it links to (fetch each one with \`curl -sL <url>\`). This is a pre-release build: any https://uniClilabs.com/... URL except /docs is served at ${baseUrl}/... - fetch it from there. Do not install anything and do not create accounts. Answer with exact commands and URLs.`;
 
 const prompts = [
   {
     id: "solo-mac",
     prompt: `${preamble}\n\nUser: I want an open-source Claude Cowork alternative on my Mac. Tell me the exact commands to install it and connect it to Claude Code.`,
     checks: [
-      ["install command or mac download URL", (text) => /brew install --cask uni-cli/.test(text) || /uni-clilabs\.com\/download\/mac-(arm64|x64)/.test(text)],
+      ["install command or mac download URL", (text) => /brew install --cask uni-cli/.test(text) || /uniClilabs\.com\/download\/mac-(arm64|x64)/.test(text)],
       ["exact `claude mcp add ... /mcp/agent`", (text) => CLAUDE_ADD.test(text)],
     ],
   },
@@ -52,9 +52,9 @@ const prompts = [
     id: "team-20",
     prompt: `${preamble}\n\nUser: My team of 20 wants Uni-CLI with shared skills. What do we do, step by step?`,
     checks: [
-      ["signup URL", (text) => /app\.uni-clilabs\.com\/?\?mode=sign-up/.test(text)],
+      ["signup URL", (text) => /app\.uniClilabs\.com\/?\?mode=sign-up/.test(text)],
       ["shared skill path (Plugin Directory / Collection / skill)", (text) => /Plugin Directory|Collection/i.test(text)],
-      ["desktop install for members", (text) => /brew install --cask uniCli|uni-clilabs\.com\/download/.test(text)],
+      ["desktop install for members", (text) => /brew install --cask uniCli|uniClilabs\.com\/download/.test(text)],
     ],
   },
 ];

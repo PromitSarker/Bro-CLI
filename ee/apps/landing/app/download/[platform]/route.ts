@@ -12,7 +12,7 @@ export function generateStaticParams() {
 export async function GET(_request: Request, context: { params: Promise<{ platform: string }> }) {
   const { platform } = await context.params;
   if (!isDownloadPlatform(platform)) {
-    const valid = Object.keys(downloadPlatforms).map((slug) => `  https://uni-clilabs.com/download/${slug}`).join("\n");
+    const valid = Object.keys(downloadPlatforms).map((slug) => `  https://uniClilabs.com/download/${slug}`).join("\n");
     return new Response(`Unknown platform "${platform}". Use one of:\n${valid}\n`, {
       status: 404,
       headers: { "content-type": "text/plain; charset=utf-8" },

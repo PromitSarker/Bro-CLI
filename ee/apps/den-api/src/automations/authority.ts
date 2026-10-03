@@ -37,7 +37,7 @@ export type AutomationModelSelection = {
 }
 
 export type ResolvedAutomationModel = AutomationModelSelection & {
-  accessKind: "free" | "uni-cli_managed" | "authorized_custom" | "cloud_default"
+  accessKind: "free" | "uniCli_managed" | "authorized_custom" | "cloud_default"
   providerRecordId: string | null
   providerName: string
   modelName: string
@@ -219,7 +219,7 @@ export async function resolveAutomationModelAccessWithStore(
     return {
       ok: true,
       value: {
-        accessKind: "uni-cli_managed",
+        accessKind: "uniCli_managed",
         providerRecordId: provider.id,
         providerId: input.providerId,
         modelId: input.modelId,

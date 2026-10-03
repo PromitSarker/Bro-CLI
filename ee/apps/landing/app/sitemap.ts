@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const BASE_URL = "https://uni-clilabs.com";
+const BASE_URL = "https://uniClilabs.com";
 
 const paths: { path: string; priority: number }[] = [
   { path: "/", priority: 1 },

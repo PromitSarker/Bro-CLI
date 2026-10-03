@@ -38,7 +38,7 @@ export function isExistingWebAccessResponse(response: Response, payload: unknown
       payload
       && typeof payload === "object"
       && "error" in payload
-      && (payload.error === "stripe_subscription_exists" || payload.error === "uni-cli_web_complimentary_access_exists"),
+      && (payload.error === "stripe_subscription_exists" || payload.error === "uniCli_web_complimentary_access_exists"),
     );
 }
 

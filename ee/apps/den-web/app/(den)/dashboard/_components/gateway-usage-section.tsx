@@ -146,7 +146,7 @@ export function GatewayUsageSection({ orgId }: { orgId: string }) {
         </div>
         {usage && !noTeams && !isCost ? <GatewayUsageCoverageNotice usage={usage} /> : null}
         {isCost ? <div role="note" className="mt-5 text-xs leading-5 text-gray-500">
-          <p>Costs are approximate based on publicly listed model prices when each request was recorded. <a href="https://uni-clilabs.com/docs/ai-gateway/token-costs" target="_blank" rel="noreferrer" className="underline underline-offset-2 hover:text-gray-900">Click here to see how costs are calculated</a></p>
+          <p>Costs are approximate based on publicly listed model prices when each request was recorded. <a href="https://uniClilabs.com/docs/ai-gateway/token-costs" target="_blank" rel="noreferrer" className="underline underline-offset-2 hover:text-gray-900">Click here to see how costs are calculated</a></p>
         </div> : null}
       </DenCard>
     </section>

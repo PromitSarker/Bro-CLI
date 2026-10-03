@@ -42,7 +42,7 @@ export async function engineGatewayParity(seed: Seed, context: { place: Place },
     VITE_DEN_BASE_URL: den.ref.webUrl, VITE_DEN_API_BASE_URL: "/api/den",
   } }));
   const databaseUrl = den.database?.url;
-  if (!databaseUrl || !new URL(databaseUrl).pathname.startsWith("/uni-cli_eval_")) throw new Error("Expected disposable Den database");
+  if (!databaseUrl || !new URL(databaseUrl).pathname.startsWith("/uniCli_eval_")) throw new Error("Expected disposable Den database");
   const child = spawn(process.execPath, ["--conditions=development", "--import", "tsx", "src/server.ts"], {
     cwd: fileURLToPath(new URL("../../ee/apps/gateway", import.meta.url)), stdio: ["ignore", "pipe", "pipe"],
     env: {

@@ -46,7 +46,7 @@ type ElectronUpdaterBridge = NonNullable<Window["__UNICLI_ELECTRON__"]>["updater
 
 declare global {
   interface Window {
-    __uni-cliUpdaterEvalBridge?: ElectronUpdaterBridge;
+    __uniCliUpdaterEvalBridge?: ElectronUpdaterBridge;
   }
 }
 
@@ -116,8 +116,8 @@ function electronUpdaterEnvReducer(
 
 function electronUpdaterBridge(): ElectronUpdaterBridge | null {
   if (typeof window === "undefined") return null;
-  if (import.meta.env.DEV && window.__uni-cliUpdaterEvalBridge) {
-    return window.__uni-cliUpdaterEvalBridge;
+  if (import.meta.env.DEV && window.__uniCliUpdaterEvalBridge) {
+    return window.__uniCliUpdaterEvalBridge;
   }
   return window.__UNICLI_ELECTRON__?.updater ?? null;
 }

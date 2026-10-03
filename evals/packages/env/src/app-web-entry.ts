@@ -21,7 +21,7 @@ export function reloadOnceIfEntryFails(input: {
     while (!stopped.signal.aborted && !reloaded) {
       await new Promise(resolve => setTimeout(resolve, input.pollMs ?? 500));
       if (stopped.signal.aborted) return;
-      const failed = await evaluate(input.client(), () => (window.__uni-cliEvalBootErrors ?? [])
+      const failed = await evaluate(input.client(), () => (window.__uniCliEvalBootErrors ?? [])
         .some(error => error.endsWith("(/src/index.react.tsx)")), { timeoutMs: 5_000 }).catch(() => false);
       if (failed !== true) continue;
       reloaded = true;

@@ -202,9 +202,9 @@ export type ExternalConnectionStatus = {
   message: string
   actor: ExternalMcpDiagnostic["actionOwner"]
   action: {
-    type: "connect" | "reconnect" | "update_credentials" | "inspect_connection" | "fix_provider" | "fix_network" | "contact_uni-cli"
+    type: "connect" | "reconnect" | "update_credentials" | "inspect_connection" | "fix_provider" | "fix_network" | "contact_uniCli"
     label: string
-    surface: "uni-cli_your_connections" | "uni-cli_organization_connections" | "provider_admin_console" | "network_infrastructure" | "uni-cli_support"
+    surface: "uniCli_your_connections" | "uniCli_organization_connections" | "provider_admin_console" | "network_infrastructure" | "uniCli_support"
     retry: "search_capabilities"
     url?: string
   }
@@ -348,8 +348,8 @@ function diagnosticConnectionAction(input: {
   let type: ExternalConnectionStatus["action"]["type"]
   let surface: ExternalConnectionStatus["action"]["surface"]
   if (actor === "uni-cli") {
-    type = "contact_uni-cli"
-    surface = "uni-cli_support"
+    type = "contact_uniCli"
+    surface = "uniCli_support"
   } else if (actor === "network_admin") {
     type = "fix_network"
     surface = "network_infrastructure"
@@ -358,12 +358,12 @@ function diagnosticConnectionAction(input: {
     surface = "provider_admin_console"
   } else if (actor === "member") {
     type = input.state === "needs_connection" ? "connect" : "reconnect"
-    surface = "uni-cli_your_connections"
+    surface = "uniCli_your_connections"
   } else {
     type = input.state === "reauth_required"
       ? input.connection.authType === "apikey" ? "update_credentials" : "reconnect"
       : "inspect_connection"
-    surface = "uni-cli_organization_connections"
+    surface = "uniCli_organization_connections"
   }
   return {
     actor,
@@ -380,8 +380,8 @@ function actionNavigationUrl(input: {
   connectionId: string
   surface: ExternalConnectionStatus["action"]["surface"]
 }) {
-  if (input.surface === "uni-cli_your_connections") return uniCliYourConnectionsUrl(input.connectionId)
-  if (input.surface === "uni-cli_organization_connections") return uniCliOrganizationConnectionsUrl()
+  if (input.surface === "uniCli_your_connections") return uniCliYourConnectionsUrl(input.connectionId)
+  if (input.surface === "uniCli_organization_connections") return uniCliOrganizationConnectionsUrl()
   return undefined
 }
 
@@ -441,7 +441,7 @@ function providerAuthorizationConnectionStatus(input: {
     action: {
       type: "connect",
       label: "Connect your provider account",
-      surface: "uni-cli_your_connections",
+      surface: "uniCli_your_connections",
       retry: "search_capabilities",
       ...(input.diagnostic.connectUrl ? { url: input.diagnostic.connectUrl } : {}),
     },
@@ -493,7 +493,7 @@ export function buildExternalConnectionStatus(input: {
             label: providerAdminAction
               ? `Fix ${connectionName} in the provider admin console`
               : `Inspect the ${connectionName} connection`,
-            surface: providerAdminAction ? "provider_admin_console" : "uni-cli_organization_connections",
+            surface: providerAdminAction ? "provider_admin_console" : "uniCli_organization_connections",
             retry: "search_capabilities",
           },
         }),
@@ -503,8 +503,8 @@ export function buildExternalConnectionStatus(input: {
   const actor = input.actionOwner
     ?? (input.connection.credentialMode === "per_member" ? "member" : "organization_admin")
   const surface = actor === "member"
-    ? "uni-cli_your_connections"
-    : "uni-cli_organization_connections"
+    ? "uniCli_your_connections"
+    : "uniCli_organization_connections"
   const actionType = input.state === "needs_connection"
     ? "connect"
     : input.connection.authType === "oauth"

@@ -134,7 +134,7 @@ export default defineConfig(({ command, isPreview }) => {
       {
         name: "uni-cli-dev-server-id",
         configureServer(server) {
-          server.middlewares.use("/__uni-cli_dev_server_id", (_req, res) => {
+          server.middlewares.use("/__uniCli_dev_server_id", (_req, res) => {
             res.setHeader("Content-Type", "application/json");
             res.end(JSON.stringify({ appRoot }));
           });

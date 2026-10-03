@@ -199,7 +199,7 @@ export function CloudWorkspaceStatusProvider(props: { children: ReactNode }) {
         console.error("[cloud-workspace] sandbox startup failed", cloudWorkspaceFailureLogFields(next.failure));
       }
     } catch (error) {
-      if (error instanceof DenApiError && error.code === "uni-cli_web_access_required") {
+      if (error instanceof DenApiError && error.code === "uniCli_web_access_required") {
         setAccessRequired(true);
         setRequestFailed(false);
         return;

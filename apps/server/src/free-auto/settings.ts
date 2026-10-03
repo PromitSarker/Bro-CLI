@@ -22,7 +22,7 @@ export const HEADER_TIMEOUT_MS = 30_000;
 export const REQUEST_BODY_TIMEOUT_MS = 15_000;
 
 export function resolveAnonymousInferenceOrigin(environment: NodeJS.ProcessEnv = process.env): string {
-  const url = new URL(environment.UNICLI_FREE_INFERENCE_ORIGIN?.trim() || "https://inference.uni-clilabs.com");
+  const url = new URL(environment.UNICLI_FREE_INFERENCE_ORIGIN?.trim() || "https://inference.uniClilabs.com");
   const local = (environment.UNICLI_DEV_MODE === "1" || environment.NODE_ENV === "test")
     && ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname);
   if (url.username || url.password || url.search || url.hash || url.pathname !== "/"

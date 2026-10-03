@@ -119,7 +119,7 @@ const setupErrorSchema = z.object({
     "setup_required",
     "browser_session_required",
     "slack_assistant_not_enabled",
-    "uni-cli_web_access_required",
+    "uniCli_web_access_required",
   ]),
   message: z.string().optional(),
 })
@@ -227,7 +227,7 @@ export function registerSlackAssistantRoutes<T extends { Variables: OrgRouteVari
         slackRuntimeForOrganization(org.organization.metadata) !== "headless" &&
         !(await getUniCliWebRuntimeAccess(org.organization.id)).hasAccess
       )
-        return c.json({ error: "uni-cli_web_access_required" }, 403)
+        return c.json({ error: "uniCli_web_access_required" }, 403)
       const previous = await getInstallation(connectionId)
       const signingSecret = body.signingSecret ?? previous?.signingSecret
       if (!signingSecret) return c.json({ error: "signing_secret_required" }, 400)

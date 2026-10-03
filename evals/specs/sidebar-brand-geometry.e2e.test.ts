@@ -103,8 +103,8 @@ test("sidebar brand painted bounds align with the action rail without changing c
   await evalIn(app, browserScript(logo => {
     document.documentElement.style.fontSize = "16px";
     const config = { brandAppName: "Studio", brandLogoUrl: logo };
-    window.__uni-cliApplyDesktopConfig(config);
-    window.__uni-cliSetDesktopConfigRefreshResult(config);
+    window.__uniCliApplyDesktopConfig(config);
+    window.__uniCliSetDesktopConfigRefreshResult(config);
   }, [logo]));
   await waitFor(app, () => Boolean(document.querySelector('[data-testid="brand-logo"] img')), { timeoutMs: 10_000 });
   for (const dark of [false, true]) {

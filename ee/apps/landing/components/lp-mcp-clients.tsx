@@ -17,7 +17,7 @@ export { MCP_SERVER_URL };
 export const CURSOR_INSTALL_LINK =
   "cursor://anysphere.cursor-deeplink/mcp/install?name=uniCli&config=eyJ1cmwiOiJodHRwczovL2FwaS5vcGVud29ya2xhYnMuY29tL21jcC9hZ2VudCJ9";
 export const VS_CODE_INSTALL_LINK =
-  "vscode:mcp/install?%7B%22name%22%3A%22uni-cli%22%2C%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fapi.uni-clilabs.com%2Fmcp%2Fagent%22%7D";
+  "vscode:mcp/install?%7B%22name%22%3A%22uniCli%22%2C%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fapi.uniClilabs.com%2Fmcp%2Fagent%22%7D";
 
 export const OPENCODE_ADD_COMMAND = `opencode mcp add uniCli --url ${MCP_SERVER_URL}`;
 export const GEMINI_ADD_COMMAND = `gemini mcp add --transport http uniCli ${MCP_SERVER_URL}`;

@@ -69,7 +69,7 @@ test("managed responses preserve completion, partial work, and cancellation", { 
   expect(providerInput).toEqual({ model, stream: true, ...controls, stream_options: { ...controls.stream_options, include_usage: true } });
   expect(controls.stream_options.include_usage).toBe(false);
   expect(user).toBe(memberId);
-  expect(trace).toMatchObject({ uni-cli_request_id: session_id, org_membership_id: memberId });
+  expect(trace).toMatchObject({ uniCli_request_id: session_id, org_membership_id: memberId });
   claim("Request settings survive the server-owned usage-reporting requirement", "The exact forwarded payload retains model, reasoning, routing preferences, transforms, output limits, tool-error history and the extra stream option. Only include_usage is forced true, even when the client explicitly sends false; identity and trace remain server-owned.");
 
   world.witness.mode("length-tools");

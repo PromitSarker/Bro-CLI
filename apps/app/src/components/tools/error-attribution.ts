@@ -25,15 +25,15 @@ const UNICLI_CLOUD_CAPABILITY_TOOLS = new Set([
   "uni-cli-cloud_list_skills",
   "uni-cli-cloud_get_skill",
   "uni-cli-cloud_connection_action",
-  "uni-cli_search_capabilities",
-  "uni-cli_execute_capability",
-  "uni-cli_list_skills",
-  "uni-cli_get_skill",
-  "uni-cli_connection_action",
+  "uniCli_search_capabilities",
+  "uniCli_execute_capability",
+  "uniCli_list_skills",
+  "uniCli_get_skill",
+  "uniCli_connection_action",
 ])
 
 export function isConnectionDiscoveryTool(toolName: string): boolean {
-  return toolName === "uni-cli_search_capabilities" || toolName === "uni-cli-cloud_search_capabilities"
+  return toolName === "uniCli_search_capabilities" || toolName === "uni-cli-cloud_search_capabilities"
 }
 
 const MAX_PARSED_RESULT_LENGTH = 64 * 1_024
@@ -94,7 +94,7 @@ const CONNECTION_ACTION_LABELS = {
   inspect_connection: "Inspect the connection",
   fix_provider: "Fix provider access",
   fix_network: "Fix network access",
-  contact_uni-cli: "Contact Uni-CLI support",
+  contact_uniCli: "Contact Uni-CLI support",
 }
 
 function isConnectionTool(toolName: string): boolean {
@@ -180,7 +180,7 @@ export function reconnectActionFromChatToolResult(
   const target = chatConnectionTarget(toolName, result, input, options)
   if (!target?.memberOAuth) return null
   const { connection } = target
-  if (connection.actor !== "member" || connection.action?.surface !== "uni-cli_your_connections"
+  if (connection.actor !== "member" || connection.action?.surface !== "uniCli_your_connections"
     || !((connection.state === "needs_connection" && connection.action.type === "connect")
       || (connection.state === "reauth_required" && connection.action.type === "reconnect"))) return null
   return {

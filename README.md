@@ -2,7 +2,7 @@
 
 Uni-CLI is the free, open-source alternative to Claude Cowork and Codex: a desktop app for macOS, Windows, and Linux where AI agents do real work on your own files. It is built on [OpenCode](https://opencode.ai), works with any model — 50+ providers, your own API keys, or local models via Ollama — and lets teams share skills and MCP servers.
 
-[**Download Uni-CLI**](https://uni-clilabs.com/download) · [GitHub releases](https://github.com/different-ai/uni-cli/releases) · [Docs](https://uni-clilabs.com/docs)
+[**Download Uni-CLI**](https://uniClilabs.com/download) · [GitHub releases](https://github.com/different-ai/uni-cli/releases) · [Docs](https://uniClilabs.com/docs)
 
 Read this in: [简体中文](./translated_readmes/README_ZH.md) · [繁體中文](./translated_readmes/README_ZH_hk.md) · [日本語](./translated_readmes/README_JA.md)
 
@@ -15,19 +15,19 @@ The desktop app is there when you want a dedicated workspace, but it is not requ
 ## Why Uni-CLI instead of Claude Cowork
 
 - **Free and open source.** The desktop app is MIT-licensed; no Uni-CLI account is required to use it locally.
-- **Any model.** Bring your own API key, sign in with ChatGPT, or run local models through Ollama or any OpenAI-compatible server. See [Add a custom LLM](https://uni-clilabs.com/docs/start-here/connect-your-stack/add-a-custom-llm).
+- **Any model.** Bring your own API key, sign in with ChatGPT, or run local models through Ollama or any OpenAI-compatible server. See [Add a custom LLM](https://uniClilabs.com/docs/start-here/connect-your-stack/add-a-custom-llm).
 - **Runs on macOS, Windows, and Linux** as a desktop app — not a CLI.
 - **Your files stay local.** Cloud is optional.
-- **Share skills and MCP servers with your team.** See [Share skills with your team](https://uni-clilabs.com/docs/start-here/do-work-with-it/share-your-setup) and [Shared MCP connections](https://uni-clilabs.com/docs/cloud/share-with-your-team/shared-mcp-connections).
-- **Self-host** the team control plane on your own infrastructure. See [Self-host](https://uni-clilabs.com/docs/start-here/self-host).
-- **Bring your Cowork setup.** Skills, Claude-compatible plugins, and MCP servers carry over. See [Migrate from Claude Cowork](https://uni-clilabs.com/docs/start-here/migrate-from-claude-cowork).
+- **Share skills and MCP servers with your team.** See [Share skills with your team](https://uniClilabs.com/docs/start-here/do-work-with-it/share-your-setup) and [Shared MCP connections](https://uniClilabs.com/docs/cloud/share-with-your-team/shared-mcp-connections).
+- **Self-host** the team control plane on your own infrastructure. See [Self-host](https://uniClilabs.com/docs/start-here/self-host).
+- **Bring your Cowork setup.** Skills, Claude-compatible plugins, and MCP servers carry over. See [Migrate from Claude Cowork](https://uniClilabs.com/docs/start-here/migrate-from-claude-cowork).
 
 ## Install with your AI agent
 
 Already use an AI agent? Copy this prompt and paste it into Claude Code, Cursor, Codex, ChatGPT, or any agent that can run commands on your computer.
 
 ```text
-Install Uni-CLI on my computer, set up my first workspace, and open it ready to use. Follow the steps in https://uni-clilabs.com/start.md?v=hero
+Install Uni-CLI on my computer, set up my first workspace, and open it ready to use. Follow the steps in https://uniClilabs.com/start.md?v=hero
 ```
 
 1. Installs Uni-CLI
@@ -43,13 +43,13 @@ It exposes four tools: `search_capabilities` finds what you can use, `execute_ca
 ### Codex
 
 ```bash
-codex mcp add uni-cli --url https://api.uni-clilabs.com/mcp/agent
+codex mcp add uni-cli --url https://api.uniClilabs.com/mcp/agent
 ```
 
 ### Claude Code
 
 ```bash
-claude mcp add --transport http uni-cli https://api.uni-clilabs.com/mcp/agent
+claude mcp add --transport http uni-cli https://api.uniClilabs.com/mcp/agent
 ```
 
 ### OpenCode
@@ -62,7 +62,7 @@ Add this to `opencode.json`:
     "uni-cli": {
       "type": "remote",
       "enabled": true,
-      "url": "https://api.uni-clilabs.com/mcp/agent",
+      "url": "https://api.uniClilabs.com/mcp/agent",
       "oauth": {}
     }
   }
@@ -74,7 +74,7 @@ Add this to `opencode.json`:
 Use this remote MCP server URL:
 
 ```text
-https://api.uni-clilabs.com/mcp/agent
+https://api.uniClilabs.com/mcp/agent
 ```
 
 ## Uni-CLI Den
@@ -94,13 +94,13 @@ Uni-CLI Den is the control plane for managing Uni-CLI across a team or organizat
 This repository uses a directory-split license, similar to GitLab:
 
 - **Everything outside `ee/` is MIT** — the desktop app and core platform are open source, free for any use.
-- **Everything under `ee/` (Uni-CLI Den — the org control plane) is under the [Uni-CLI EE License](ee/LICENSE)**, a source-available license. The code is public so you can audit exactly what you deploy. Production use requires an [Uni-CLI subscription](https://uni-clilabs.com/pricing), except that it is **free for organizations with up to 5 users**, **free to evaluate for 30 days at any size**, and always free for development and testing. Each `ee/` release additionally converts to MIT two years after publication.
+- **Everything under `ee/` (Uni-CLI Den — the org control plane) is under the [Uni-CLI EE License](ee/LICENSE)**, a source-available license. The code is public so you can audit exactly what you deploy. Production use requires an [Uni-CLI subscription](https://uniClilabs.com/pricing), except that it is **free for organizations with up to 5 users**, **free to evaluate for 30 days at any size**, and always free for development and testing. Each `ee/` release additionally converts to MIT two years after publication.
 
-Versions released before this license was adopted remain under their original license (FSL-1.1-MIT). See [pricing](https://uni-clilabs.com/pricing) and the [subscription terms](https://uni-clilabs.com/terms/subscription).
+Versions released before this license was adopted remain under their original license (FSL-1.1-MIT). See [pricing](https://uniClilabs.com/pricing) and the [subscription terms](https://uniClilabs.com/terms/subscription).
 
 ## Documentation
 
-[Read the Uni-CLI docs.](https://uni-clilabs.com/docs)
+[Read the Uni-CLI docs.](https://uniClilabs.com/docs)
 
 ## Getting started (contributors)
 

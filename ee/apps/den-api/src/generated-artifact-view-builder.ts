@@ -92,7 +92,7 @@ const HOST_GLOBAL_NAMES = [
 
 const HOST_GLOBAL_DEFINES = Object.fromEntries(HOST_GLOBAL_NAMES.map((name, index) => [
   name,
-  `__uni-cli_forbidden_host_global_${index}__`,
+  `__uniCli_forbidden_host_global_${index}__`,
 ]))
 
 // React reaches MCP App source as one binding, so a bare useState would build
@@ -106,7 +106,7 @@ const REACT_API_NAMES = [
 
 const REACT_API_DEFINES = Object.fromEntries(REACT_API_NAMES.map((name, index) => [
   name,
-  `__uni-cli_bare_react_api_${index}__`,
+  `__uniCli_bare_react_api_${index}__`,
 ]))
 
 // The bundler rejects real imports anyway; these patterns only explain the
@@ -116,7 +116,7 @@ const ARTIFACT_MODULE_PATTERN = /\b(?:import|require)\s*(?:\(|["'{])/u
 // matching only real module syntax so text such as "important," "imported from",
 // "to import." or data.import still builds.
 const AUTHORED_MODULE_PATTERN = /\bimport\s*(?:\(|["'{*]|\.\s*meta\b)|\bimport\s+(?:type\s+)?(?:[\w$]+\s*,\s*[{*]|[\w$]+\s+from\s*["']|\{[^}]*\}\s*from\s*["']|\*\s*as\s+[\w$]+\s+from\s*["'])|\brequire\s*\(|\bexport\s*(?:type\s+)?(?:\*|\{[^}]*\})\s*(?:as\s+[\w$]+\s*)?from\s*["']/u
-const SAFE_REACT_FACTORY = "__uni-cliSafeReact"
+const SAFE_REACT_FACTORY = "__uniCliSafeReact"
 
 async function sourcePolicyDiagnostic(reactSource: string, cssSource: string, runtime: "artifact" | "mcp-app"): Promise<GeneratedArtifactViewBuildDiagnostic | null> {
   const sourceBytes = Buffer.byteLength(reactSource)
@@ -136,7 +136,7 @@ async function sourcePolicyDiagnostic(reactSource: string, cssSource: string, ru
       : { pattern: ARTIFACT_MODULE_PATTERN, label: "module imports" },
     ...(mcpApp ? [
       { pattern: /@jsx(?:Runtime|ImportSource|Frag)?\b/u, label: "JSX compiler directives" },
-      { pattern: /\b__uni-cliSafeReact\b/u, label: "reserved compiler bindings" },
+      { pattern: /\b__uniCliSafeReact\b/u, label: "reserved compiler bindings" },
     ] : []),
     ...(mcpApp ? [] : [{ pattern: /\b(?:fetch|XMLHttpRequest|WebSocket|EventSource|Worker)\b/u, label: "network APIs" }]),
     { pattern: /\b(?:eval|Function|setTimeout|setInterval)\s*\(/u, label: "dynamic code or timers" },
@@ -180,12 +180,12 @@ async function sourcePolicyDiagnostic(reactSource: string, cssSource: string, ru
   }
   const hostGlobal = HOST_GLOBAL_NAMES.find((_, index) =>
     (mcpApp || index < ARTIFACT_HOST_GLOBAL_COUNT)
-    && scopeAnalyzedSource.includes(`__uni-cli_forbidden_host_global_${index}__`))
+    && scopeAnalyzedSource.includes(`__uniCli_forbidden_host_global_${index}__`))
   if (hostGlobal) {
     return diagnostic(`Generated ${subject} cannot use the browser host global "${hostGlobal}". Use component props and React rendering only.`)
   }
   const bareReactApi = mcpApp
-    ? REACT_API_NAMES.find((_, index) => scopeAnalyzedSource.includes(`__uni-cli_bare_react_api_${index}__`))
+    ? REACT_API_NAMES.find((_, index) => scopeAnalyzedSource.includes(`__uniCli_bare_react_api_${index}__`))
     : undefined
   if (bareReactApi) {
     return diagnostic(`Generated ${subject} cannot use ${bareReactApi} on its own. React is injected: use React.${bareReactApi}.`)
@@ -274,7 +274,7 @@ const GENERATED_ARTIFACT_RUNTIME_REPORTER = `
       },
     }, "*");
   };
-  window.__uni-cliReportArtifactRuntimeError = report;
+  window.__uniCliReportArtifactRuntimeError = report;
   window.addEventListener("error", (event) => report("document-error", event.error || event.message));
   window.addEventListener("unhandledrejection", (event) => report("unhandled-rejection", event.reason));
 })();
@@ -288,7 +288,7 @@ async function buildClientBundle(reactSource: string, runtime: "artifact" | "mcp
     const ArtifactView = React.lazy(() => import("artifact:view"));
     const mount = document.getElementById("uni-cli-artifact-view-root");
     const reportRuntimeError = (stage, error) => {
-      const report = window.__uni-cliReportArtifactRuntimeError;
+      const report = window.__uniCliReportArtifactRuntimeError;
       if (typeof report === "function") report(stage, error);
     };
     const renderFailure = () => React.createElement("p", { role: "alert", style: { margin: "16px", fontFamily: "system-ui, sans-serif" } }, "This Artifact view could not render. The normal tool result is still available.");

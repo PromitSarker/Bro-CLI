@@ -25,7 +25,7 @@ export type OpencodeSessionErrorPresentation = {
 };
 
 /** Error code the Uni-CLI inference gateway returns when the member's own sign-in is missing or revoked. */
-export const GATEWAY_AUTH_REQUIRED_ERROR_CODE = "uni-cli_auth_required";
+export const GATEWAY_AUTH_REQUIRED_ERROR_CODE = "uniCli_auth_required";
 export const GATEWAY_AUTH_REQUIRED_TITLE = "Sign in to keep using this model";
 
 export const interruptedTaskRecoveryPrompt = [
@@ -207,7 +207,7 @@ function errorDescription(kind: OpencodeSessionErrorKind, gatewayAuth: GatewayAu
 type GatewayAuthRequired = { connectUrl: string | null; message: string | null };
 
 /**
- * Detects the gateway's in-band `401 { error: { code: "uni-cli_auth_required",
+ * Detects the gateway's in-band `401 { error: { code: "uniCli_auth_required",
  * message, auth_url?, provider_id } }`. The body reaches us as a string on
  * whichever field the SDK error exposes (message / responseBody / cause), so
  * match the code and message tolerantly. URLs from upstream errors are never
@@ -362,7 +362,7 @@ export function presentOpencodeSessionError(error: unknown, fallback = "Session 
     kind,
     title: credentialCopy?.title ?? errorTitle(kind, fallbackTitle),
     description: credentialCopy?.description ?? errorDescription(kind, gatewayAuth),
-    technicalDetails: kind === "gateway-selection-required" ? "Error code: gateway_selection_required\nStatus: 409" : gatewayAuth ? "Error code: uni-cli_auth_required\nStatus: 401" : technicalErrorDetails(error, fallback, fields),
+    technicalDetails: kind === "gateway-selection-required" ? "Error code: gateway_selection_required\nStatus: 409" : gatewayAuth ? "Error code: uniCli_auth_required\nStatus: 401" : technicalErrorDetails(error, fallback, fields),
     recoveryPrompt: errorRecoveryPrompt(kind),
     ...(gatewayAuth ? { connectUrl: gatewayAuth.connectUrl } : {}),
     ...(gatewayUsage ? { gatewayUsage, providerId: fields.provider } : {}),

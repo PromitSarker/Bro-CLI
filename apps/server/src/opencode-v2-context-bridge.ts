@@ -6,7 +6,7 @@ import { uniCliReadTransport, type uniCliReadTransport } from "./opencode-plugin
 import { createV2ReadAdapter, readV2SessionActivity } from "./opencode-v2-read-adapter.js";
 import { isRecord } from "./workspace-kv-store.js";
 
-const requestSchema = z.object({ name: z.enum(["uni-cli_context", "uni-cli_query"]), input: z.unknown() });
+const requestSchema = z.object({ name: z.enum(["uniCli_context", "uniCli_query"]), input: z.unknown() });
 // Advertise only reads this bridge executes. Native MCP discovery owns remote
 // tool names; v1 executor spellings and unregistered commands do not belong here.
 function readAffordances(value: unknown): unknown {
@@ -55,11 +55,11 @@ export async function createV2ContextBridge(hostRequest: (path: string, init?: R
         },
       };
       const result = await uniCliReadTransport.run(transport, async () => {
-        if (call.name === "uni-cli_query") return plugin.tool.uni-cli_query.execute(call.input);
-        const context: unknown = JSON.parse(await plugin.tool.uni-cli_context.execute());
+        if (call.name === "uniCli_query") return plugin.tool.uniCli_query.execute(call.input);
+        const context: unknown = JSON.parse(await plugin.tool.uniCli_context.execute());
         const filtered = readAffordances(context);
         return JSON.stringify(isRecord(filtered) ? { ...filtered, instructions: {
-          context: "Use uni-cli_query for the discovered read-only affordances. For other conversations, use session.search then session.read. Session reads include current activity and background-agent counts."
+          context: "Use uniCli_query for the discovered read-only affordances. For other conversations, use session.search then session.read. Session reads include current activity and background-agent counts."
         } } : filtered);
       });
       return new Response(result, { headers: { "Content-Type": "application/json" } });

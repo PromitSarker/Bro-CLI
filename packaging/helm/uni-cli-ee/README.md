@@ -229,7 +229,7 @@ secret:
   values:
     # Transitional/smoke TLS only: sslaccept=accept encrypts without certificate verification.
     # For production verification, use customCa plus sslmode=verify-full or verify-ca.
-    databaseUrl: "mysql://uni-cli:REPLACE_ME@mysql.example.internal:3306/uni-cli_den?sslaccept=accept"
+    databaseUrl: "mysql://uni-cli:REPLACE_ME@mysql.example.internal:3306/uniCli_den?sslaccept=accept"
     betterAuthSecret: "REPLACE_WITH_AT_LEAST_32_CHARACTERS"
     denDbEncryptionKey: "REPLACE_WITH_AT_LEAST_32_CHARACTERS"
     emailFrom: "Uni-CLI <no-reply@example.com>"
@@ -377,7 +377,7 @@ deployments. Uni-CLI Cloud enables it in its deployment values with:
 ```yaml
 config:
   public:
-    uni-cliWebEnabled: "true"
+    uniCliWebEnabled: "true"
 ```
 
 The chart renders this value as `DEN_UNICLI_WEB_ENABLED`. A raw environment
@@ -525,7 +525,7 @@ For strict MySQL TLS verification, pair the mounted CA with a verifying
 ```yaml
 secret:
   values:
-    databaseUrl: "mysql://uni-cli:REPLACE_DB_PASSWORD@mysql.example.internal:3306/uni-cli_den?sslmode=verify-full"
+    databaseUrl: "mysql://uni-cli:REPLACE_DB_PASSWORD@mysql.example.internal:3306/uniCli_den?sslmode=verify-full"
 ```
 
 `sslmode=require`, `sslmode=verify-ca`, `sslmode=verify-full`, and

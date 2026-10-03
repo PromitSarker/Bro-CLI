@@ -19,9 +19,9 @@ type AppSurface = "electron" | "web";
 declare global {
   interface Window {
     __modelEffortRequests?: unknown[];
-    __uni-cliSubmissionFault?: { attempts: number; release: () => void };
-    __uni-cliLongHistoryFault?: { dispose: () => void };
-    __uni-cliWarmHistoryFault?: {
+    __uniCliSubmissionFault?: { attempts: number; release: () => void };
+    __uniCliLongHistoryFault?: { dispose: () => void };
+    __uniCliWarmHistoryFault?: {
       state: {
         armed: boolean;
         released: boolean;
@@ -41,7 +41,7 @@ declare global {
       release: () => void;
       dispose: () => void;
     };
-    __uni-cliStoppingFault?: {
+    __uniCliStoppingFault?: {
       state: {
         attempts: number;
         held: number;
@@ -216,7 +216,7 @@ export async function configureProvider(
         }
         const mounted = base + "/workspace/" + encodeURIComponent(workspaceId);
         const response = await fetch(mounted + (engine === "v2" ? "/opencode2/api/model" : "/opencode/session"), { headers });
-        if (response.ok && window.__uni-cliControl) {
+        if (response.ok && window.__uniCliControl) {
           let catalogName: string | null = null;
           if (engine === "v2") {
             const record = (value: unknown): value is Record<string, unknown> =>
@@ -268,11 +268,11 @@ export async function arrangeControl(
   return seed.evalIn(app, browserScript(async (action, argsJson) => {
     const deadline = Date.now() + 30000;
     while (Date.now() < deadline) {
-      const available = window.__uni-cliControl?.listActions().find((candidate) => candidate.id === action && !candidate.disabled);
+      const available = window.__uniCliControl?.listActions().find((candidate) => candidate.id === action && !candidate.disabled);
       if (available) break;
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
-    const result = await window.__uni-cliControl.execute(action, JSON.parse(argsJson));
+    const result = await window.__uniCliControl.execute(action, JSON.parse(argsJson));
     if (!result?.ok) throw new Error(String(result?.error ?? "control action failed"));
     return result.value;
   }, [action, JSON.stringify(args ?? null)]), { awaitPromise: true, timeoutMs: 120_000 });
@@ -509,10 +509,10 @@ export async function restartUpdateTaskWorld(seed: Seed) {
   const originalTimeOrigin = await evalIn(base.app, () => performance.timeOrigin);
   await seed.evalIn(base.app, () => {
     const currentVersion = "0.18.0";
-    window.__uni-cliReadDesktopVersionMetadataEval = () => ({
+    window.__uniCliReadDesktopVersionMetadataEval = () => ({
       minAppVersion: "0.1.0", latestAppVersion: "9.9.9", publishedDesktopVersions: ["9.9.9"],
     });
-    window.__uni-cliUpdaterEvalBridge = {
+    window.__uniCliUpdaterEvalBridge = {
       getChannel: async () => ({ channel: "stable", currentVersion }),
       setChannel: async (channel) => ({ channel, currentVersion }),
       // Like the main process, report the staged build to checks that must preserve it.
@@ -585,7 +585,7 @@ export async function newSplitPrimary(seed: Seed) {
   const switchSession = await seedSessionRetry(seed, app, { title: "Split switch target" });
   const session = await seedSessionRetry(seed, app, { title: "New split primary" });
   const splitFacts = () => evalIn(app, () => {
-    const context = window.__uni-cliControl?.context?.();
+    const context = window.__uniCliControl?.context?.();
     const layout = context?.conversations?.layout;
     const primaryPane = document.querySelector<HTMLElement>('[data-workbench-pane="primary"]');
     const secondaryPanes = [...document.querySelectorAll<HTMLElement>('[data-workbench-pane="secondary"]')];
@@ -1063,7 +1063,7 @@ export async function attachmentUpload(seed: Seed) {
             attempts: 0,
             release: () => { release(); window.fetch = originalFetch; },
           };
-          window.__uni-cliSubmissionFault = fault;
+          window.__uniCliSubmissionFault = fault;
           window.fetch = async (input, init) => {
             const url = input instanceof Request ? input.url : String(input);
             const method = init?.method ?? (input instanceof Request ? input.method : "GET");
@@ -1079,7 +1079,7 @@ export async function attachmentUpload(seed: Seed) {
         });
       },
       async releaseUploads() {
-        await seed.evalIn(app, () => window.__uni-cliSubmissionFault?.release());
+        await seed.evalIn(app, () => window.__uniCliSubmissionFault?.release());
       },
       approvalTimeoutMs,
       uploadStatus: uploadResponse.status,
@@ -1153,7 +1153,7 @@ export async function renderCycle(seed: Seed) {
     const controlsReady = await seed.evalIn(app, async () => {
       const deadline = Date.now() + 30000;
       while (Date.now() < deadline) {
-        if (window.__uni-cliControl?.listActions().some((action) => action.id === "session.create_task" && !action.disabled)) return true;
+        if (window.__uniCliControl?.listActions().some((action) => action.id === "session.create_task" && !action.disabled)) return true;
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
       return false;
@@ -1163,7 +1163,7 @@ export async function renderCycle(seed: Seed) {
     await seed.composerText(app, `Reply with exactly: ${renderCycleFirstReply}`);
     // TODO(primitive): send an arranged historical turn and await its completion.
     const historical = await seed.evalIn(app, browserScript(async (expectedReply) => {
-      const sent = await window.__uni-cliControl.execute("composer.send", null);
+      const sent = await window.__uniCliControl.execute("composer.send", null);
       if (!sent?.ok) throw new Error(String(sent?.error ?? "composer.send failed"));
       const deadline = Date.now() + 30000;
       while (Date.now() < deadline) {
@@ -1351,7 +1351,7 @@ export async function streamedMarkdown(seed: Seed) {
       await seed.evalIn(app, () => {
         const originalFetch = window.fetch;
         const fault = { attempts: 0, release: () => {} };
-        window.__uni-cliSubmissionFault = fault;
+        window.__uniCliSubmissionFault = fault;
         window.fetch = async (input, init) => {
           const url = input instanceof Request ? input.url : String(input);
           const method = init?.method ?? (input instanceof Request ? input.method : "GET");
@@ -1371,10 +1371,10 @@ export async function streamedMarkdown(seed: Seed) {
       });
     },
     async submissionAttempts() {
-      return seed.evalIn(app, () => window.__uni-cliSubmissionFault?.attempts ?? 0);
+      return seed.evalIn(app, () => window.__uniCliSubmissionFault?.attempts ?? 0);
     },
     async rejectSubmission() {
-      await seed.evalIn(app, () => window.__uni-cliSubmissionFault?.release());
+      await seed.evalIn(app, () => window.__uniCliSubmissionFault?.release());
     },
     async videoState(play = false) {
       return seed.evalIn(app, browserScript(async (play) => {
@@ -1549,7 +1549,7 @@ async function selectModelInWorld(seed: Seed, app: Awaited<ReturnType<Seed["desk
   const selected = await seed.evalIn(app, browserScript(async (modelName) => {
     const deadline = Date.now() + 60000;
     if (!document.querySelector<HTMLInputElement>('input[placeholder="Search providers and models..."]')) {
-      const result = await window.__uni-cliControl.execute("session.model_picker.open", null);
+      const result = await window.__uniCliControl.execute("session.model_picker.open", null);
       if (!result?.ok) return false;
     }
     while (Date.now() < deadline) {
@@ -2086,12 +2086,12 @@ export async function snapshotFailure(seed: Seed) {
   const failureJson = await seed.evalIn(app, browserScript(async () => {
     const deadline = Date.now() + 30000;
     while (Date.now() < deadline) {
-      const available = window.__uni-cliControl?.listActions()
+      const available = window.__uniCliControl?.listActions()
         .find((candidate) => candidate.id === "eval.session_snapshot.fail" && !candidate.disabled);
       if (available) break;
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
-    const result = await window.__uni-cliControl.execute("eval.session_snapshot.fail", null);
+    const result = await window.__uniCliControl.execute("eval.session_snapshot.fail", null);
     if (!result?.ok) throw new Error(String(result?.error ?? "control action failed"));
     return JSON.stringify(result.result);
   }, []), { awaitPromise: true, timeoutMs: 120_000 });
@@ -2341,7 +2341,7 @@ export async function longHistory(seed: Seed, options: { holdAncillaryReads?: bo
         window.removeEventListener("pagehide", dispose);
         window.removeEventListener("click", captureOpen, true);
       };
-      window.__uni-cliLongHistoryFault = { dispose };
+      window.__uniCliLongHistoryFault = { dispose };
       window.addEventListener("pagehide", dispose, { once: true });
       window.fetch = wrappedFetch;
       publish();
@@ -2351,7 +2351,7 @@ export async function longHistory(seed: Seed, options: { holdAncillaryReads?: bo
     app, workspace, session, other, ancillaryFaultKey,
     async [Symbol.asyncDispose]() {
       if (!ancillaryFault) return;
-      try { await evalIn(app, () => window.__uni-cliLongHistoryFault?.dispose(), { timeoutMs: 5_000, reattachAttempts: 0 }); }
+      try { await evalIn(app, () => window.__uniCliLongHistoryFault?.dispose(), { timeoutMs: 5_000, reattachAttempts: 0 }); }
       finally { await ancillaryFault.dispose(); }
     },
   };
@@ -2368,14 +2368,14 @@ export async function warmCachedLongHistory(seed: Seed) {
 
 async function warmHistoryFault(seed: Seed, app: Surface, workspaceId: string, sessionId: string) {
   await seed.evalIn(app, browserScript((workspaceId, sessionId, tail) => {
-    if (window.__uni-cliWarmHistoryFault) throw new Error("A warm history fault is already active");
+    if (window.__uniCliWarmHistoryFault) throw new Error("A warm history fault is already active");
     const port = localStorage.getItem("uni-cli.server.port");
     if (!port) throw new Error("Warm history fault requires the local server port");
     const origin = `http://127.0.0.1:${port}`;
     const paths = ["workspace", "w"].map((mount) =>
       `/${mount}/${encodeURIComponent(workspaceId)}/opencode/session/${encodeURIComponent(sessionId)}`);
     const originalFetch = window.fetch;
-    const state: NonNullable<Window["__uni-cliWarmHistoryFault"]>["state"] = {
+    const state: NonNullable<Window["__uniCliWarmHistoryFault"]>["state"] = {
       armed: false, released: false, expired: false, held: 0, mutations: 0, reads: [],
     };
     const pending = new Set<() => void>();
@@ -2442,7 +2442,7 @@ async function warmHistoryFault(seed: Seed, app: Surface, workspaceId: string, s
     };
     window.fetch = wrappedFetch;
     expiry = setTimeout(expire, 120_000);
-    window.__uni-cliWarmHistoryFault = {
+    window.__uniCliWarmHistoryFault = {
       state,
       arm: () => {
         if (state.armed || state.released) throw new Error("Warm history fault cannot be armed again");
@@ -2457,9 +2457,9 @@ async function warmHistoryFault(seed: Seed, app: Surface, workspaceId: string, s
 
   return {
     read: () => seed.evalIn(app, () => {
-      const fault = window.__uni-cliWarmHistoryFault;
+      const fault = window.__uniCliWarmHistoryFault;
       if (!fault) throw new Error("Warm history fault lost its document");
-      const composer: unknown = window.__uni-cli?.slice("composer");
+      const composer: unknown = window.__uniCli?.slice("composer");
       const snapshot = composer && typeof composer === "object" && "snapshotQuery" in composer ? composer.snapshotQuery : null;
       return {
         ...fault.state,
@@ -2472,19 +2472,19 @@ async function warmHistoryFault(seed: Seed, app: Surface, workspaceId: string, s
       };
     }),
     arm: () => seed.evalIn(app, () => {
-      const fault = window.__uni-cliWarmHistoryFault;
+      const fault = window.__uniCliWarmHistoryFault;
       if (!fault) throw new Error("Warm history fault lost its document");
       fault.arm();
     }),
     release: () => seed.evalIn(app, () => {
-      const fault = window.__uni-cliWarmHistoryFault;
+      const fault = window.__uniCliWarmHistoryFault;
       if (!fault || fault.state.held < 1 || fault.state.expired) throw new Error("No uncapped history response is held");
       fault.release();
     }),
     async [Symbol.asyncDispose]() {
       await seed.evalIn(app, () => {
-        window.__uni-cliWarmHistoryFault?.dispose();
-        delete window.__uni-cliWarmHistoryFault;
+        window.__uniCliWarmHistoryFault?.dispose();
+        delete window.__uniCliWarmHistoryFault;
       });
     },
   };
@@ -2505,7 +2505,7 @@ async function stoppingFeedbackFault(
   sessionId: string,
 ) {
   await seed.evalIn(app, browserScript((workspaceId, sessionId) => {
-    if (window.__uni-cliStoppingFault) throw new Error("A Stop feedback fault is already active");
+    if (window.__uniCliStoppingFault) throw new Error("A Stop feedback fault is already active");
     const port = localStorage.getItem("uni-cli.server.port");
     if (!port) throw new Error("Stop feedback fault requires the local server port");
     const serverOrigin = `http://127.0.0.1:${port}`;
@@ -2611,14 +2611,14 @@ async function stoppingFeedbackFault(
       cancelAnimationFrame(frame);
       window.removeEventListener("click", capture, true);
     };
-    window.__uni-cliStoppingFault = { state, fail: () => release(true), dispose };
+    window.__uniCliStoppingFault = { state, fail: () => release(true), dispose };
   }, [workspaceId, sessionId]));
 
   let disposed = false;
   return {
     async read() {
       return seed.evalIn(app, browserScript((sessionId) => {
-        const fault = window.__uni-cliStoppingFault;
+        const fault = window.__uniCliStoppingFault;
         if (!fault) throw new Error("Stop feedback fault lost its document");
         const root = [...document.querySelectorAll<HTMLElement>("[data-session-surface-id]")]
           .find((candidate) => candidate.dataset.sessionSurfaceId === sessionId) ?? null;
@@ -2627,7 +2627,7 @@ async function stoppingFeedbackFault(
         const run = root?.querySelector<HTMLButtonElement>('button[aria-label="Run task"]') ?? null;
         const error = root?.querySelector<HTMLElement>('[data-testid="session-error-card"]') ?? null;
         const aggregate = root?.querySelector<HTMLElement>("[data-tool-aggregate]") ?? null;
-        const composer: unknown = window.__uni-cli?.slice("composer");
+        const composer: unknown = window.__uniCli?.slice("composer");
         const snapshotQuery = composer && typeof composer === "object" && "snapshotQuery" in composer
           ? composer.snapshotQuery
           : null;
@@ -2656,7 +2656,7 @@ async function stoppingFeedbackFault(
     },
     async fail() {
       await seed.evalIn(app, () => {
-        const fault = window.__uni-cliStoppingFault;
+        const fault = window.__uniCliStoppingFault;
         if (!fault || fault.state.held < 1) throw new Error("No native Stop response is held");
         fault.fail();
       });
@@ -2665,8 +2665,8 @@ async function stoppingFeedbackFault(
       if (disposed) return;
       disposed = true;
       await seed.evalIn(app, () => {
-        window.__uni-cliStoppingFault?.dispose();
-        delete window.__uni-cliStoppingFault;
+        window.__uniCliStoppingFault?.dispose();
+        delete window.__uniCliStoppingFault;
       });
     },
   };
@@ -2873,9 +2873,9 @@ export async function workspaceEngineUpgrade(seed: Seed) {
         // issue an API request that could satisfy the refresh witness itself.
         return seed.evalIn(app, browserScript((workspaceId, engine, since) => {
           const sessionPath = `/workspace/${workspaceId}/${engine === "v2" ? "opencode2/api" : "opencode"}/session`;
-          const route = window.__uni-cli?.slice("route");
+          const route = window.__uniCli?.slice("route");
           const workspace = route?.workspaces.find(workspace => workspace.id === workspaceId);
-          const requests = (window.__uni-cli?.events(200) ?? []).flatMap(event => {
+          const requests = (window.__uniCli?.events(200) ?? []).flatMap(event => {
             const data = event.data;
             if (event.name !== "log.fetch" || typeof data !== "object" || data === null
               || !("url" in data) || typeof data.url !== "string"

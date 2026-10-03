@@ -38,7 +38,7 @@ type LlmProviderCredentialMode = typeof LlmProviderTable.$inferSelect.credential
 type MemberId = typeof MemberTable.$inferSelect.id
 type WorkerId = typeof WorkerTable.$inferSelect.id
 type WorkerTokenScope = typeof WorkerTokenTable.$inferSelect.scope
-type LlmProviderSource = typeof LlmProviderTable.$inferSelect.source | "uni-cli_gateway"
+type LlmProviderSource = typeof LlmProviderTable.$inferSelect.source | "uniCli_gateway"
 
 type EnvEntry = {
   key: string
@@ -298,7 +298,7 @@ export function gatewayMaterializationProvider(summary: GatewayProviderSummary, 
     : memberKey
   return {
     id: summary.id,
-    source: "uni-cli_gateway",
+    source: "uniCli_gateway",
     providerId: summary.providerId,
     name: summary.name,
     providerConfig: { ...summary.providerConfig, env: envNames },

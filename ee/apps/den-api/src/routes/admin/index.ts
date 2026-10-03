@@ -1961,7 +1961,7 @@ export function registerAdminRoutes<T extends { Variables: AuthContextVariables 
 
       if (body.data.enabled && await organizationHasOngoingUniCliWebSubscription(organizationId)) {
         return c.json({
-          error: "uni-cli_web_subscription_exists",
+          error: "uniCli_web_subscription_exists",
           message: "Cancel or finish the existing paid Uni-CLI Web subscription before granting complimentary access.",
         }, 409)
       }
@@ -2024,7 +2024,7 @@ export function registerAdminRoutes<T extends { Variables: AuthContextVariables 
       }
       if (result === "subscription_exists") {
         return c.json({
-          error: "uni-cli_web_subscription_exists",
+          error: "uniCli_web_subscription_exists",
           message: "Cancel or finish the existing paid Uni-CLI Web subscription before granting complimentary access.",
         }, 409)
       }

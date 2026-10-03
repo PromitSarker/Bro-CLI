@@ -22,7 +22,7 @@ export async function browserBackgroundWorld(seed: Seed) {
      */
     async commandFrom(sessionId: string, id: string, args: Record<string, unknown>): Promise<unknown> {
       return evaluate(base.app.client, browserScript((id, encodedArgs, sessionId) =>
-        window.__uni-cliControl.command({ id, args: JSON.parse(encodedArgs), origin: { sessionId } }),
+        window.__uniCliControl.command({ id, args: JSON.parse(encodedArgs), origin: { sessionId } }),
       [id, JSON.stringify(args), sessionId]), { awaitPromise: true, timeoutMs: 120_000 });
     },
     async [Symbol.asyncDispose]() { await fixture[Symbol.asyncDispose](); },

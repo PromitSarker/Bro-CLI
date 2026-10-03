@@ -11,7 +11,7 @@ const downloadSchema = {
   name: "Uni-CLI",
   description:
     "Open source Claude Cowork alternative. Download the Uni-CLI desktop app for macOS, Windows, or Linux. No account required.",
-  url: "https://uni-clilabs.com/download",
+  url: "https://uniClilabs.com/download",
   applicationCategory: "BusinessApplication",
   operatingSystem: "macOS, Windows, Linux",
   offers: {
@@ -22,7 +22,7 @@ const downloadSchema = {
   publisher: {
     "@type": "Organization",
     name: "Uni-CLI",
-    url: "https://uni-clilabs.com"
+    url: "https://uniClilabs.com"
   }
 };
 
@@ -35,7 +35,7 @@ export const metadata = withSocialMetadata({
   },
   openGraph: {
     ...baseOpenGraph,
-    url: "https://uni-clilabs.com/download"
+    url: "https://uniClilabs.com/download"
   }
 });
 
@@ -71,7 +71,7 @@ export default async function Download() {
           <p className="max-w-md text-[13px] text-gray-500">
             Joining a team?{" "}
             <a
-              href="https://app.uni-clilabs.com"
+              href="https://app.uniClilabs.com"
               className="text-gray-700 underline underline-offset-2"
             >
               Sign in

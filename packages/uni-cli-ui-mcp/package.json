@@ -2,7 +2,7 @@
   "name": "uni-cli-ui-mcp",
   "version": "0.2.0",
   "description": "MCP server for Uni-CLI app context and semantic UI control",
-  "author": "Uni-CLI <support@uni-clilabs.com>",
+  "author": "Uni-CLI <support@uniClilabs.com>",
   "license": "MIT",
   "type": "module",
   "bin": {

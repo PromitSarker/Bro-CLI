@@ -260,7 +260,7 @@ test("a gateway provider materializes on the desktop as its own ipr_ provider wi
   expect(Object.keys(runtimeModels)).toEqual([wireModelId]);
   expect(Object.keys(runtimeModels)).not.toContain(modelId);
   expect(syncEntry?.providerId, local.syncStatusRaw).toBe(iprId);
-  expect(syncEntry?.source).toBe("uni-cli_gateway");
+  expect(syncEntry?.source).toBe("uniCli_gateway");
   expect(syncEntry?.name).toBe(PROVIDER_NAME);
   evidence.recordAssertionEvidence(
     "Cloud provider sync materializes the gateway row as its own runtime provider pointed at the gateway",
@@ -268,7 +268,7 @@ test("a gateway provider materializes on the desktop as its own ipr_ provider wi
     runtimeProvider.api === gatewayUrl
       && stringAt(runtimeOptions, "baseURL") === gatewayUrl
       && runtimeEnv.includes(envName)
-      && syncEntry?.source === "uni-cli_gateway",
+      && syncEntry?.source === "uniCli_gateway",
   );
 
   // --- Env store: the member's Gateway key, never a Models or upstream key. ---

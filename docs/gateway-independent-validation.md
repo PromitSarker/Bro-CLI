@@ -76,7 +76,7 @@ The probe exited 0 and opened no database connection. Origin resolution follows
 `ee/apps/den-api/src/env.ts:819-825`. The disabled parser omits
 `modelsPublicBaseUrl`, so Den falls back to the canonical private proxy instead
 of the explicit legacy Models public origin. Missing enablement takes the same
-branch. `buildUni-CLIProviderConfig` (`src/inference.ts:135-146`) publishes that
+branch. `buildUniCliProviderConfig` (`src/inference.ts:135-146`) publishes that
 value when provisioning/repairing a Models provider (`:253-305`). Thus the
 documented management-only disable operation can give newly provisioned or
 repaired clients an unreachable internal URL, even while existing keys remain

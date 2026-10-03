@@ -48,7 +48,7 @@ async function fixture(gatewayIds = ["ipr_first", "ipr_second"], managedBinary?:
     const prefix = shortGatewayNames ? `IPR_${id.slice(-5).toUpperCase()}` : id.toUpperCase().replace(/[^A-Z0-9]/g, "_");
     const envName = `${prefix}_GOOGLE_GENERATIVE_AI_API_KEY`;
     return {
-      id, name: `Vertex ${id}`, providerId: "google-vertex", source: "uni-cli_gateway",
+      id, name: `Vertex ${id}`, providerId: "google-vertex", source: "uniCli_gateway",
       credentialMode: "org", credentialStatus: "ready", status: "active", updatedAt: "2026-09-07T00:00:00Z", authUrl: null,
       authorizationRequests: [], modelIds: ["fixture-model"],
       providerConfig: { npm: managedBinary ? "@ai-sdk/anthropic" : "@ai-sdk/google", env: [envName], options: { baseURL: managedBinary ? `${base}/gateway/${id}` : `https://gateway.example.test/api/v1/providers/${id}` } },
@@ -291,7 +291,7 @@ test("cold migration and logout remove only proven cloud credentials while two g
   }
   const synced = record(await (await f.request("/cloud-provider-sync/status", "GET", undefined, clientHeaders)).json());
   expect(synced.providers).toEqual(["ipr_first", "ipr_second"].map((id) => expect.objectContaining({
-    cloudProviderId: id, providerId: id, source: "uni-cli_gateway", modelIds: [gatewayModelId],
+    cloudProviderId: id, providerId: id, source: "uniCli_gateway", modelIds: [gatewayModelId],
   })));
   await f.restart();
   expect((await f.request("/den-session", "DELETE")).status).toBe(204);
@@ -341,7 +341,7 @@ test("gateway rows with the same last five ID characters retain independent full
   expect(record(providers[first])).toMatchObject({ name: `Vertex ${first}`, env: [firstEnv] });
   expect(record(providers[second])).toMatchObject({ name: `Vertex ${second}`, env: [secondEnv] });
   const status = record(await (await f.request("/cloud-provider-sync/status", "GET", undefined, clientHeaders)).json());
-  expect(status.providers).toEqual(expect.arrayContaining([first, second].map((id) => expect.objectContaining({ cloudProviderId: id, providerId: id, name: `Vertex ${id}`, source: "uni-cli_gateway" }))));
+  expect(status.providers).toEqual(expect.arrayContaining([first, second].map((id) => expect.objectContaining({ cloudProviderId: id, providerId: id, name: `Vertex ${id}`, source: "uniCli_gateway" }))));
   expect(record(await (await f.request(`/env/${firstEnv}`)).json()).item).toMatchObject({ value: key });
   expect(record(await (await f.request(`/env/${secondEnv}`)).json()).item).toMatchObject({ value: key });
   expect(f.engineAuth.get(first)).toBe(key);
@@ -435,7 +435,7 @@ test("real managed engine initializes and uses a granted gateway under restricte
   expect(record(models[gatewayModelId])).toMatchObject({ id: gatewayModelId, name: "Fixture model", api: { id: gatewayModelId } });
   const synced = record(await (await f.request("/cloud-provider-sync/status", "GET", undefined, clientHeaders)).json());
   expect(synced.providers).toEqual([expect.objectContaining({
-    cloudProviderId: "ipr_first", providerId: "ipr_first", source: "uni-cli_gateway", modelIds: [gatewayModelId],
+    cloudProviderId: "ipr_first", providerId: "ipr_first", source: "uniCli_gateway", modelIds: [gatewayModelId],
   })]);
   const initialized = record(await (await engine("/config")).json());
   expect(initialized.enabled_providers).toEqual(["ipr_first"]);

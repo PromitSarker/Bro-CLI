@@ -367,8 +367,8 @@ function RoadmapSectionBlock({ section }: { section: RoadmapSection }) {
 }
 
 export function UniCliRoadmap({
-  feedbackHref = "https://uni-clilabs.com/feedback?source=roadmap",
-  docsHref = "https://uni-clilabs.com/docs",
+  feedbackHref = "https://uniClilabs.com/feedback?source=roadmap",
+  docsHref = "https://uniClilabs.com/docs",
 }: {
   feedbackHref?: string
   docsHref?: string

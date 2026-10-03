@@ -90,7 +90,7 @@ export type NativeFileAction = { path: string; action: "open" | "reveal" };
  * file manager and never launched, so a referenced path cannot start a program.
  *
  * This is a string-level pre-check for menu affordances. The desktop process makes the
- * final decision on disk (`__uni-clispaceFile` / `__openWithApp`): it resolves symlinks
+ * final decision on disk (`__uniClispaceFile` / `__openWithApp`): it resolves symlinks
  * for both the workspace root and the file and launches only a real file that stays inside
  * the real workspace, revealing anything else instead.
  */

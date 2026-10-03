@@ -115,8 +115,8 @@ function ids(result: Record<string, unknown>): string[] {
 async function plugin() {
   const instance = await UniCliExtensionsPreview();
   return {
-    search: async (args: Record<string, unknown>) => resultOf(await instance.tool.uni-cli_query.execute({ id: "session.search", args }), "session.search"),
-    read: async (args: Record<string, unknown>) => resultOf(await instance.tool.uni-cli_query.execute({ id: "session.read", args }), "session.read"),
+    search: async (args: Record<string, unknown>) => resultOf(await instance.tool.uniCli_query.execute({ id: "session.search", args }), "session.search"),
+    read: async (args: Record<string, unknown>) => resultOf(await instance.tool.uniCli_query.execute({ id: "session.read", args }), "session.read"),
   };
 }
 

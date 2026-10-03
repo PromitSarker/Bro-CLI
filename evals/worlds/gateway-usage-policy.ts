@@ -29,7 +29,7 @@ export function usageRecords(value: unknown): Record<string, unknown>[] {
 export async function gatewayUsagePolicy(seed: Seed, { place }: { place: Place }) {
   if (place.kind !== "local") throw new SkipError("co-located Den, Gateway, MySQL and loopback upstream; this world cannot provision a remote Gateway");
   if (process.env.UNICLI_EVAL_DEN_API_URL?.trim() || process.env.UNICLI_EVAL_DEN_WEB_URL?.trim()) throw new Error("Gateway usage journey requires a fresh testkit Den, never an attached service");
-  if (!await localMysqlIsRunning()) throw new SkipError("local MySQL for a disposable uni-cli_eval_ database");
+  if (!await localMysqlIsRunning()) throw new SkipError("local MySQL for a disposable uniCli_eval_ database");
   await using setup = new AsyncDisposableStack();
   const witness = setup.use(await startInferenceWitness({ reportedCostUsd: 1 }));
   witness.mode("json");
@@ -55,7 +55,7 @@ export async function gatewayUsagePolicy(seed: Seed, { place }: { place: Place }
     },
   });
   const databaseUrl = den.database?.url;
-  if (!databaseUrl || !new URL(databaseUrl).pathname.startsWith("/uni-cli_eval_")) throw new Error("Expected testkit scratch database");
+  if (!databaseUrl || !new URL(databaseUrl).pathname.startsWith("/uniCli_eval_")) throw new Error("Expected testkit scratch database");
   for (const name of ["0105_gateway_incremental_usage", "0106_gateway_usage_lifecycle", "0107_gateway_usage_durable_capture", "0108_gateway_usage_organization_assignments"]) {
     const migration = await readFile(`${root}/ee/packages/den-db/drizzle/${name}.sql`, "utf8");
     const migrationHash = createHash("sha256").update(migration).digest("hex");
@@ -145,7 +145,7 @@ export async function gatewayUsagePolicy(seed: Seed, { place }: { place: Place }
       return { ...messages, data: messages.data.toReversed(), body: { ...body, data: usageRecords(body.data).toReversed() } };
     },
     async rejectedCalls() {
-      return usageRecords(await queryDenDatabase(databaseUrl, "SELECT id, status, error_code, org_membership_id, requested_model FROM gateway_request_logs WHERE gateway_provider_id = ? AND org_membership_id = ? AND error_code = 'uni-cli_gateway_usage_limit_exceeded' AND completed_at IS NOT NULL", [providerId, memberId]));
+      return usageRecords(await queryDenDatabase(databaseUrl, "SELECT id, status, error_code, org_membership_id, requested_model FROM gateway_request_logs WHERE gateway_provider_id = ? AND org_membership_id = ? AND error_code = 'uniCli_gateway_usage_limit_exceeded' AND completed_at IS NOT NULL", [providerId, memberId]));
     },
     streamSuccess: () => witness.mode("success"),
     upstreamCount: () => witness.requests.length,

@@ -25,7 +25,7 @@ export async function reauthPopup(seed: Seed) {
   if (den.placement?.kind !== "daytona") throw new Error("This journey requires Daytona placement");
   const sandbox = den.placement.sandboxId;
   const remote = async (script: string, timeoutMs = 30_000) => (await execInSandbox(defaultDaytonaExec, sandbox, script, { timeoutMs, context: "SSO fixture arrangement" })).stdout;
-  const sql = async (statement: string) => remote(`echo ${Buffer.from(statement).toString("base64")} | base64 -d | mysql -h127.0.0.1 -uroot -ppassword -N uni-cli_den`);
+  const sql = async (statement: string) => remote(`echo ${Buffer.from(statement).toString("base64")} | base64 -d | mysql -h127.0.0.1 -uroot -ppassword -N uniCli_den`);
   const preview = await defaultDaytonaExec(["preview-url", sandbox, "-p", "19190", "--expires", "86400"]);
   if (preview.code !== 0) throw new Error("Could not expose test IdP");
   const issuer = new URL(text(preview.stdout.match(/https:\/\/[^\s]+/)?.[0])).origin;

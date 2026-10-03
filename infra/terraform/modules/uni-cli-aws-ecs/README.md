@@ -48,7 +48,7 @@ document every setting you can add through `extra_environment`.
 module "uni-cli" {
   source = "github.com/different-ai/uni-cli//infra/terraform/modules/uni-cli-aws-ecs?ref=<commit>"
 
-  uni-cli_version = "0.18.54"
+  uniCli_version = "0.18.54"
   owner_emails     = ["admin@example.com"]
   org_name         = "Example Co"
 
@@ -114,8 +114,8 @@ After `terraform apply`:
   or set `allow_public_signup = true` for a while.
 - **Uni-CLI Web** (cloud chat sessions) is off by default. The dashboard's
   Uni-CLI Web button points at the hosted service unless you set
-  `uni-cli_web_url`. It needs a sandbox
-  provider; none runs inside this stack. Set `uni-cli_web_enabled = true`,
+  `uniCli_web_url`. It needs a sandbox
+  provider; none runs inside this stack. Set `uniCli_web_enabled = true`,
   `provisioner_mode = "daytona"`, and pass `DAYTONA_API_KEY` via `extra_secrets`.
 - **Anything else** (SSO, proxies, Gateway, observability): add env vars with
   `extra_environment` and secrets with `extra_secrets`.

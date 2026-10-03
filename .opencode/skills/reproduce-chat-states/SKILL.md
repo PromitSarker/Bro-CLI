@@ -41,4 +41,4 @@ sqlite3 ~/.config/uni-cli/opencode-v2/state/opencode.db \
   "select type, substr(data,1,400) from session_message where session_id='<ses_…>' order by seq"
 ```
 
-For a step inside Code Mode, check `state.metadata.toolCalls` and `state.metadata.uni-cliMcpResults` on the `execute` part.
+For a step inside Code Mode, check `state.metadata.toolCalls` and `state.metadata.uniCliMcpResults` on the `execute` part.

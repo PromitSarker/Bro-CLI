@@ -11,7 +11,7 @@
  *   Preferences) turns everything off; an explicitly blank PostHog key means
  *   no network.
  * - Every capture is mirrored into the local app inspector
- *   (`window.__uni-cli.record("analytics.<event>")`) so coded evals can
+ *   (`window.__uniCli.record("analytics.<event>")`) so coded evals can
  *   assert instrumentation without any analytics backend.
  */
 import { denSessionUpdatedEvent, type DenSessionUpdatedDetail } from "./den-session-events";

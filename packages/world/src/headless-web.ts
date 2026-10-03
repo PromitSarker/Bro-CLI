@@ -32,7 +32,7 @@ import { headlessBrowserEnvironment } from "./headless-browser.ts";
 
 const DEFAULT_WEB_PORT = "5178";
 const DEFAULT_SERVER_PORT = "8778";
-const DEFAULT_DEN_TARGET = "https://app.uni-clilabs.com";
+const DEFAULT_DEN_TARGET = "https://app.uniClilabs.com";
 
 export interface HeadlessWebLaunchOptions {
   repoRoot: string;

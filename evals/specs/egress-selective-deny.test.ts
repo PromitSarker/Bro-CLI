@@ -16,7 +16,7 @@ const manifestPath = join(repoRoot, "docs", "enterprise", "outbound-access.json"
 describe("selective egress deny", () => {
   test("documents desktop Auto free inference as an optional server route", async () => {
     const manifest = outboundManifestFromUnknown(JSON.parse(await readFile(manifestPath, "utf8")));
-    const entries = manifest?.hosts.filter((entry) => entry.host === "inference.uni-clilabs.com");
+    const entries = manifest?.hosts.filter((entry) => entry.host === "inference.uniClilabs.com");
     expect(entries).toHaveLength(1);
     expect(entries?.[0]).toMatchObject({
       kind: "fetched",

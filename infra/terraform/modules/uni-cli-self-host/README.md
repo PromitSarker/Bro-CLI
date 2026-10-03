@@ -27,7 +27,7 @@ The module deploys the app only. Before `terraform apply`, you need:
 
 - A Kubernetes cluster and a kubeconfig context for it.
 - **MySQL 8** reachable from the cluster, with an empty database (for
-  example `uni-cli_den`) and a user that can create tables.
+  example `uniCli_den`) and a user that can create tables.
 - An **ingress controller** (or your own load balancer: set
   `ingress.enabled = false` and point it at the `services` output).
 - **DNS** for your host, and a **TLS** Secret for it, such as one issued by
@@ -39,9 +39,9 @@ The module deploys the app only. Before `terraform apply`, you need:
 
 | Input | Example |
 | --- | --- |
-| `uni-cli_version` | `"0.18.54"`: pins the chart and every image |
+| `uniCli_version` | `"0.18.54"`: pins the chart and every image |
 | `web_origin` | `"https://uni-cli.example.com"` |
-| `database_url` | `"mysql://uni-cli:…@mysql.internal:3306/uni-cli_den?sslmode=verify-full"` |
+| `database_url` | `"mysql://uni-cli:…@mysql.internal:3306/uniCli_den?sslmode=verify-full"` |
 | `owner_emails` | `["admin@example.com"]` |
 | `initial_admin_bootstrap_code` | output of `openssl rand -hex 16` |
 | `ingress.web_host` | `"uni-cli.example.com"` (when ingress is enabled) |
@@ -55,7 +55,7 @@ single-org mode, Automations and Dashboards are off. See `variables.tf`.
 module "uni-cli" {
   source = "github.com/different-ai/uni-cli//infra/terraform/modules/uni-cli-self-host?ref=<commit>"
 
-  uni-cli_version             = "0.18.54"
+  uniCli_version             = "0.18.54"
   web_origin                   = "https://uni-cli.example.com"
   database_url                 = var.database_url
   owner_emails                 = ["admin@example.com"]

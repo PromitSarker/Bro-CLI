@@ -1,7 +1,7 @@
 import type { DownloadCardInstallers } from "@uni-cli/ui/react";
 
 // Stable, versionless download URLs for agents and scripts:
-//   https://uni-clilabs.com/download/<platform>
+//   https://uniClilabs.com/download/<platform>
 // Release asset names include the version (uni-cli-mac-arm64-0.18.54.dmg), so
 // a literal GitHub URL goes stale every release. These slugs redirect to the
 // current public installer resolved by getGithubData().

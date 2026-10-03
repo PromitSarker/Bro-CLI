@@ -46,11 +46,11 @@ set -euo pipefail
 email="${1:?email is required}"
 escaped_email="${email//\'/\'\'}"
 {
-  printf "SET @uni-cli_eval_email = '%s';\n" "$escaped_email"
+  printf "SET @uniCli_eval_email = '%s';\n" "$escaped_email"
   cat <<'SQL'
-UPDATE `user` SET email_verified = 1 WHERE email = @uni-cli_eval_email;
+UPDATE `user` SET email_verified = 1 WHERE email = @uniCli_eval_email;
 SQL
-} | "$HOME/mariadb/bin/mariadb" --protocol=tcp -h 127.0.0.1 -P 3306 -uroot uni-cli_den
+} | "$HOME/mariadb/bin/mariadb" --protocol=tcp -h 127.0.0.1 -P 3306 -uroot uniCli_den
 SH
 chmod +x "$H/mark-verified.sh"
 export UNICLI_EVAL_MARK_VERIFIED_CMD="bash $H/mark-verified.sh {email}"

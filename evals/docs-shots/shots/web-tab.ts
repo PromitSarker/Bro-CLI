@@ -6,7 +6,7 @@ import { shot } from "./shot.ts";
 const browser = webTab({ org });
 
 async function waitForUniCliWeb(surface: Awaited<ReturnType<typeof browser.load>>): Promise<void> {
-  await waitFor(surface, () => (Boolean(window.__uni-cliControl)), {
+  await waitFor(surface, () => (Boolean(window.__uniCliControl)), {
     timeoutMs: 120_000,
     label: "Uni-CLI Web booted",
   });

@@ -36,14 +36,14 @@ const EVIDENCE_LABEL_KEYS: Record<AgentContextDiagnosticEvidenceKind, string> = 
 };
 
 const OWNER_LABEL_KEYS: Record<AgentContextDiagnosticOwner, string> = {
-  "uni-cli-client": "connect.diagnostics_owner_uni-cli_client",
-  "uni-cli-server": "connect.diagnostics_owner_uni-cli_server",
+  "uni-cli-client": "connect.diagnostics_owner_uniCli_client",
+  "uni-cli-server": "connect.diagnostics_owner_uniCli_server",
   "opencode-engine": "connect.diagnostics_owner_opencode_engine",
   "network-admin": "connect.diagnostics_owner_network_admin",
   "organization-admin": "connect.diagnostics_owner_organization_admin",
   member: "connect.diagnostics_owner_member",
   "member-and-organization-admin": "connect.diagnostics_owner_member_and_organization_admin",
-  "uni-cli-support": "connect.diagnostics_owner_uni-cli_support",
+  "uni-cli-support": "connect.diagnostics_owner_uniCli_support",
 };
 
 const PERMISSION_LABEL_KEYS: Record<AgentContextToolPermission, string> = {

@@ -6,7 +6,7 @@
   "description": "Uni-CLI desktop shell",
   "author": {
     "name": "Uni-CLI",
-    "email": "support@uni-clilabs.com"
+    "email": "support@uniClilabs.com"
   },
   "main": "electron/main.mjs",
   "type": "module",

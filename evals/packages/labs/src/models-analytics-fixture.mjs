@@ -96,7 +96,7 @@ async function serveWitness() {
         ? await (await import("./paid-usage-fixture.mjs")).paidUsageFixture() : null;
     if (process.env.MODELS_DPA_FIXTURE === "1") {
         const url = new URL(process.env.DATABASE_URL);
-        if (url.hostname !== "127.0.0.1" || !/^\/(uni-cli_eval_|uni-cli_den$)/.test(url.pathname)) throw new Error("DPA witness requires an isolated testkit database");
+        if (url.hostname !== "127.0.0.1" || !/^\/(uniCli_eval_|uniCli_den$)/.test(url.pathname)) throw new Error("DPA witness requires an isolated testkit database");
         const { createConnection } = createRequire(new URL("../../env/package.json", import.meta.url))("mysql2/promise");
         const connection = await createConnection(process.env.DATABASE_URL);
         const lock = await createConnection(process.env.DATABASE_URL);

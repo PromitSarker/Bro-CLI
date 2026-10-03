@@ -30,7 +30,7 @@ export function ConnectionView({ payload, app, hostContext }: AppViewProps<z.inf
   const [status, setStatus] = useState("")
   const [outcome, setOutcome] = useState<"connected" | "skipped" | "dismissed" | null>(null)
   const [logoFailed, setLogoFailed] = useState(false)
-  const member = payload.actor === "member" && payload.action?.surface === "uni-cli_your_connections"
+  const member = payload.actor === "member" && payload.action?.surface === "uniCli_your_connections"
     && ((payload.state === "needs_connection" && payload.action.type === "connect")
       || (payload.state === "reauth_required" && payload.action.type === "reconnect"))
   const native = z.object({ "uni-cli/connection-actions": z.literal(true) }).safeParse(hostContext?.experimental).success

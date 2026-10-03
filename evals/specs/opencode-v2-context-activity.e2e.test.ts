@@ -65,9 +65,9 @@ test("V2-CONTEXT-ACTIVITY: query another chat and track a background child after
     const prompt = `Read the reference from the other conversation ${randomUUID()}`;
     const answer = `Context query complete ${randomUUID()}`;
     await world.prepareTurn(prompt, answer, [
-      { tool: "uni-cli_context", arguments: {} },
-      { tool: "uni-cli_query", arguments: { id: "session.search", args: { query: sourceTitle } } },
-      { tool: "uni-cli_query", arguments: { id: "session.read", args: { sessionId: source.id, workspaceId } } },
+      { tool: "uniCli_context", arguments: {} },
+      { tool: "uniCli_query", arguments: { id: "session.search", args: { query: sourceTitle } } },
+      { tool: "uniCli_query", arguments: { id: "session.read", args: { sessionId: source.id, workspaceId } } },
     ]);
     await user.type("composer", prompt);
     await user.click("Run task");
@@ -91,7 +91,7 @@ test("V2-CONTEXT-ACTIVITY: query another chat and track a background child after
     const completionReply = "The background review is now complete.";
     const response = await fetch(`${world.mock.url}/admin/agent-workloads`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ workloads: [
       { promptMarker: prompt, latestUserTurn: true, finalReply: parentReply, steps: [{ tool: "subagent", arguments: { description: title, prompt: childPrompt, agent: "general", background: true } }] },
-      { promptMarker: activityPrompt, latestUserTurn: true, finalReply: activityReply, steps: [{ tool: "uni-cli_query", arguments: { id: "session.read", args: { sessionId: parentId, workspaceId, summary: true } } }] },
+      { promptMarker: activityPrompt, latestUserTurn: true, finalReply: activityReply, steps: [{ tool: "uniCli_query", arguments: { id: "session.read", args: { sessionId: parentId, workspaceId, summary: true } } }] },
       { promptMarker: "Background review finished.", latestUserTurn: true, steps: [], finalReply: completionReply },
       { promptMarker: childPrompt, latestUserTurn: true, steps: [], finalReply: "Background review started. Background review finished.", finalReplyChunks: ["Background review started. ", "Background review finished."], finalReplyInitiallyReleasedChunks: 1 },
     ] }) });

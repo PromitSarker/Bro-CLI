@@ -15,10 +15,10 @@ type Tool = {
 
 const destinations: Record<string, string> = {
   home: "/",
-  download: "https://app.uni-clilabs.com?mode=sign-up",
+  download: "https://app.uniClilabs.com?mode=sign-up",
   pricing: "/pricing",
   enterprise: "/enterprise",
-  cloud: "https://app.uni-clilabs.com",
+  cloud: "https://app.uniClilabs.com",
   docs: "/docs",
   trust: "/trust",
   feedback: "/feedback",
@@ -36,7 +36,7 @@ const pricingSummary = {
         "macOS, Windows, and Linux downloads",
         "Bring your own provider keys",
       ],
-      cta: { label: "Get Started for free", href: "https://app.uni-clilabs.com?mode=sign-up" },
+      cta: { label: "Get Started for free", href: "https://app.uniClilabs.com?mode=sign-up" },
     },
     {
       id: "team",
@@ -50,7 +50,7 @@ const pricingSummary = {
         "Extension Marketplace",
         "Bring your own LLM keys, distributed to your team",
       ],
-      cta: { label: "Start team plan", href: "https://app.uni-clilabs.com/dashboard/billing" },
+      cta: { label: "Start team plan", href: "https://app.uniClilabs.com/dashboard/billing" },
     },
     {
       id: "enterprise",
@@ -73,18 +73,18 @@ const pricingSummary = {
 }
 
 const downloadLinks = {
-  page: "https://app.uni-clilabs.com?mode=sign-up",
+  page: "https://app.uniClilabs.com?mode=sign-up",
   platforms: {
     macos: {
-      page: "https://app.uni-clilabs.com?mode=sign-up",
+      page: "https://app.uniClilabs.com?mode=sign-up",
       note: "Sign up for Uni-CLI Cloud first, then use the guided desktop app access flow.",
     },
     windows: {
-      page: "https://app.uni-clilabs.com?mode=sign-up",
+      page: "https://app.uniClilabs.com?mode=sign-up",
       note: "Sign up for Uni-CLI Cloud first, then use the guided desktop app access flow.",
     },
     linux: {
-      page: "https://app.uni-clilabs.com?mode=sign-up",
+      page: "https://app.uniClilabs.com?mode=sign-up",
       note: "Sign up for Uni-CLI Cloud first, then use the guided desktop app access flow.",
     },
   },
@@ -94,7 +94,7 @@ const tools: Tool[] = [
   {
     name: "navigate_to",
     description:
-      "Navigate the current tab to a key section of uni-clilabs.com. Use this when the user expresses intent to view pricing, download, enterprise, cloud, docs, trust, or feedback.",
+      "Navigate the current tab to a key section of uniClilabs.com. Use this when the user expresses intent to view pricing, download, enterprise, cloud, docs, trust, or feedback.",
     inputSchema: {
       type: "object",
       properties: {

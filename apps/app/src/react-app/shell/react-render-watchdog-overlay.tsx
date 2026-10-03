@@ -163,7 +163,7 @@ export function ReactRenderWatchdogOverlay() {
         </div>
       )}
       <div className="border-t border-dls-border px-2.5 py-1 text-[10px] text-dls-secondary">
-        Cmd+Shift+L toggles. Also available in window.__uni-cli.slice("reactRenderWatchdog").
+        Cmd+Shift+L toggles. Also available in window.__uniCli.slice("reactRenderWatchdog").
       </div>
     </div>
   );

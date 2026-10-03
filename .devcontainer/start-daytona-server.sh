@@ -43,7 +43,7 @@ export DEN_ORG_MODE="${DEN_ORG_MODE:-multi_org}"
 # Eval sign-ups must not depend on the HIBP API.
 export DEN_PASSWORD_BREACH_SCREENING_ENABLED="${DEN_PASSWORD_BREACH_SCREENING_ENABLED:-false}"
 export DEN_GENERATED_ARTIFACT_VIEWS_ENABLED="${DEN_GENERATED_ARTIFACT_VIEWS_ENABLED:-false}"
-export DATABASE_URL="${DATABASE_URL:-mysql://root:password@127.0.0.1:3306/uni-cli_den}"
+export DATABASE_URL="${DATABASE_URL:-mysql://root:password@127.0.0.1:3306/uniCli_den}"
 export DEN_DB_ENCRYPTION_KEY="${DEN_DB_ENCRYPTION_KEY:-daytona-den-db-encryption-key-please-change-1234567890}"
 export BETTER_AUTH_SECRET="${BETTER_AUTH_SECRET:-daytona-den-auth-secret-please-change-1234567890}"
 export BETTER_AUTH_URL="${BETTER_AUTH_URL:-$DEN_WEB_PUBLIC_URL}"
@@ -149,7 +149,7 @@ for _ in $(seq 1 60); do
 done
 
 "${MYSQL_ROOT_CMD[@]}" <<'SQL'
-CREATE DATABASE IF NOT EXISTS uni-cli_den;
+CREATE DATABASE IF NOT EXISTS uniCli_den;
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'password';
 CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
@@ -249,7 +249,7 @@ fi
 
 if [ "${RUN_SEED:-0}" = "1" ]; then
   demo_email="${DEN_DEMO_OWNER_EMAIL:-alex@acme.test}"
-  demo_password="${DEN_DEMO_OWNER_PASSWORD:-Uni-CLIDemo123!}"
+  demo_password="${DEN_DEMO_OWNER_PASSWORD:-UniCliDemo123!}"
   signin_ok() {
     curl -sf -o /dev/null -X POST "http://127.0.0.1:$DEN_API_PORT/api/auth/sign-in/email" \
       -H 'content-type: application/json' \

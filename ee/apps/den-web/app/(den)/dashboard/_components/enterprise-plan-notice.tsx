@@ -3,7 +3,7 @@
 import { buttonVariants } from "../../_components/ui/button";
 
 const ENTERPRISE_CONTACT_URL =
-  process.env.NEXT_PUBLIC_ENTERPRISE_CONTACT_URL || "https://uni-clilabs.com/enterprise#book";
+  process.env.NEXT_PUBLIC_ENTERPRISE_CONTACT_URL || "https://uniClilabs.com/enterprise#book";
 
 type Props = {
   feature: string;

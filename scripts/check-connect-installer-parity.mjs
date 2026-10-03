@@ -21,7 +21,7 @@ function sourceHasLiteral(sourceText, literal) {
 const serverUrlMatch = landingConfig.match(/export const MCP_SERVER_URL = "([^"]+)";/);
 assert.ok(serverUrlMatch, "Landing installer is missing MCP_SERVER_URL");
 const serverUrl = serverUrlMatch[1];
-assert.equal(serverUrl, "https://api.uni-clilabs.com/mcp/agent", "Uni-CLI Connect must use the public /mcp/agent endpoint");
+assert.equal(serverUrl, "https://api.uniClilabs.com/mcp/agent", "Uni-CLI Connect must use the public /mcp/agent endpoint");
 
 const clientsMatch = landingConfig.match(/export const CONNECT_CLIENTS[^=]*= \[([^\]]+)\];/);
 assert.ok(clientsMatch, "Landing installer is missing CONNECT_CLIENTS");
@@ -126,10 +126,10 @@ for (const command of exactCommands) {
 
 assert.ok(cloudDocs.includes(serverUrl), "Cloud MCP docs are missing the public endpoint");
 assert.ok(
-  cloudDocs.includes("`app.uni-clilabs.com/api/den` is an internal same-origin desktop proxy"),
-  "Cloud MCP docs must describe app.uni-clilabs.com/api/den as an internal same-origin desktop proxy",
+  cloudDocs.includes("`app.uniClilabs.com/api/den` is an internal same-origin desktop proxy"),
+  "Cloud MCP docs must describe app.uniClilabs.com/api/den as an internal same-origin desktop proxy",
 );
-assert.ok(sourceHasLiteral(cloudDocs, "https://app.uni-clilabs.com/api/auth"), "Cloud MCP docs are missing the auth server origin");
+assert.ok(sourceHasLiteral(cloudDocs, "https://app.uniClilabs.com/api/auth"), "Cloud MCP docs are missing the auth server origin");
 assert.ok(cloudDocs.includes("RFC9728"), "Cloud MCP docs are missing RFC9728 discovery guidance");
 assert.ok(cloudDocs.includes("PKCE") && cloudDocs.includes("S256"), "Cloud MCP docs are missing PKCE S256 guidance");
 assert.ok(cloudDocs.includes("OAuth authorize and token requests must include exactly one"), "Cloud MCP docs are missing exact resource guidance");

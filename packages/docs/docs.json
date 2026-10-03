@@ -20,7 +20,7 @@
   },
   "seo": {
     "metatags": {
-      "og:image": "https://uni-clilabs.com/docs/images/uni-cli-social.png",
+      "og:image": "https://uniClilabs.com/docs/images/uni-cli-social.png",
       "og:image:alt": "Uni-CLI — Your AI workspace. Without vendor lock-in.",
       "twitter:image:alt": "Uni-CLI — Your AI workspace. Without vendor lock-in."
     }
@@ -30,10 +30,10 @@
   },
   "markdown": {
     "instructions": [
-      "For agents: install the Uni-CLI desktop app with `brew install --cask uni-cli` (macOS) or from https://uni-clilabs.com/download. Do not run `npx uni-cli`; the npm package named `uni-cli` is a different project.",
-      "Connect an agent to Uni-CLI with the MCP Gateway: `claude mcp add --transport http uniCli https://api.uni-clilabs.com/mcp/agent`. Teams sign up at https://app.uni-clilabs.com?mode=sign-up.",
-      "Step-by-step agent guide: https://uni-clilabs.com/docs/start-here/use-uni-cli-from-an-ai-agent.md",
-      "Uni-CLI in Slack is private alpha for approved organizations. Setup guide: https://uni-clilabs.com/docs/slack/overview.md. Agent skill: https://uni-clilabs.com/.well-known/agent-skills/set-up-uni-cli-slack/SKILL.md."
+      "For agents: install the Uni-CLI desktop app with `brew install --cask uni-cli` (macOS) or from https://uniClilabs.com/download. Do not run `npx uni-cli`; the npm package named `uni-cli` is a different project.",
+      "Connect an agent to Uni-CLI with the MCP Gateway: `claude mcp add --transport http uniCli https://api.uniClilabs.com/mcp/agent`. Teams sign up at https://app.uniClilabs.com?mode=sign-up.",
+      "Step-by-step agent guide: https://uniClilabs.com/docs/start-here/use-uni-cli-from-an-ai-agent.md",
+      "Uni-CLI in Slack is private alpha for approved organizations. Setup guide: https://uniClilabs.com/docs/slack/overview.md. Agent skill: https://uniClilabs.com/.well-known/agent-skills/set-up-uni-cli-slack/SKILL.md."
     ]
   },
   "navigation": {
@@ -373,14 +373,14 @@
     "404": {
       "redirect": false,
       "title": "Missing Documentation?",
-      "description": "If you're technical and want to use a specific part of the app that is not documented well yet, [send us a quick email](mailto:team@uni-clilabs.com?subject=missing%20documentation&body=hey%20my%20github%20is%20%7Busername%7D%2C%20I%27m%20interested%20in%20%7Bfeature%7D%20from%20uni-cli%20but%20I%27m%20missing%20documentation%20on%20it%2C%20could%20you%20create%20it%3F%0A%0AThanks) and tell us what you're missing."
+      "description": "If you're technical and want to use a specific part of the app that is not documented well yet, [send us a quick email](mailto:team@uniClilabs.com?subject=missing%20documentation&body=hey%20my%20github%20is%20%7Busername%7D%2C%20I%27m%20interested%20in%20%7Bfeature%7D%20from%20uniCli%20but%20I%27m%20missing%20documentation%20on%20it%2C%20could%20you%20create%20it%3F%0A%0AThanks) and tell us what you're missing."
     }
   },
   "navbar": {
     "primary": {
       "type": "button",
       "label": "Download Uni-CLI",
-      "href": "https://uni-clilabs.com/download"
+      "href": "https://uniClilabs.com/download"
     }
   }
 }

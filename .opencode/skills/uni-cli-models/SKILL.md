@@ -23,7 +23,7 @@ Managed file:
 `ee/apps/gateway/scripts/build-models.mjs` reads `uni-cli-models.json` and
 generates the Uni-CLI provider overlay in memory. It selects the API URL from
 `UNICLI_DEV_MODE`: dev uses `http://127.0.0.1:8791/api/v1`, otherwise prod
-uses `https://inference.uni-clilabs.com/api/v1`.
+uses `https://inference.uniClilabs.com/api/v1`.
 
 Do not inspect the full `base.json` in chat. Use the scripts so the large source
 model body stays out of context.

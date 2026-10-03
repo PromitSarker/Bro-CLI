@@ -3,7 +3,7 @@ import { capabilityMarkdown } from "./cowork-capabilities";
 import type { FaqEntry } from "./faq";
 
 export const CLAUDE_COWORK_ALTERNATIVE_PATH = "/alternatives/claude-cowork";
-export const CLAUDE_COWORK_ALTERNATIVE_URL = `https://uni-clilabs.com${CLAUDE_COWORK_ALTERNATIVE_PATH}`;
+export const CLAUDE_COWORK_ALTERNATIVE_URL = `https://uniClilabs.com${CLAUDE_COWORK_ALTERNATIVE_PATH}`;
 export const MIGRATION_GUIDE_PATH = "/docs/start-here/migrate-from-claude-cowork";
 
 export const claudeCoworkAlternativeHeading = "The free, open-source alternative to Claude Cowork";
@@ -73,11 +73,11 @@ ${capabilityMarkdown()}
 
 ## Why people switch
 
-${alternativeCards.map((card) => `- ${card.title}: [${card.link.label}](https://uni-clilabs.com${card.link.href})`).join("\n")}
+${alternativeCards.map((card) => `- ${card.title}: [${card.link.label}](https://uniClilabs.com${card.link.href})`).join("\n")}
 
 ## Cost
 
-The page includes a calculator comparing Claude Team, Claude Enterprise, and Uni-CLI plans for your team size, usage, and models, using list API prices from models.dev. On Bedrock, Vertex, or Foundry? Compare features in [Uni-CLI vs Claude Cowork on 3P](https://uni-clilabs.com/alternatives/claude-cowork-3p).
+The page includes a calculator comparing Claude Team, Claude Enterprise, and Uni-CLI plans for your team size, usage, and models, using list API prices from models.dev. On Bedrock, Vertex, or Foundry? Compare features in [Uni-CLI vs Claude Cowork on 3P](https://uniClilabs.com/alternatives/claude-cowork-3p).
 
 ## FAQ
 
@@ -85,6 +85,6 @@ ${claudeCoworkAlternativeFaq.map((entry) => `### ${entry.question}\n${entry.answ
 
 ## Next steps
 
-- [Download Uni-CLI for free](https://uni-clilabs.com/download)
-- [Migration guide](https://uni-clilabs.com${MIGRATION_GUIDE_PATH})
+- [Download Uni-CLI for free](https://uniClilabs.com/download)
+- [Migration guide](https://uniClilabs.com${MIGRATION_GUIDE_PATH})
 `;

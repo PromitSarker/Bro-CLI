@@ -83,7 +83,7 @@ export async function retainUsageStart(
   await tx
     .insert(E)
     .values({
-      id: canonical.uni-cli_request_id,
+      id: canonical.uniCli_request_id,
       ...scope,
       admittedAt: snapshotAdmission(snapshot, canonical.started_at),
       requestStartedAt: canonical.started_at,
@@ -95,7 +95,7 @@ export async function retainUsageStart(
   const [event] = await tx
     .select()
     .from(E)
-    .where(eq(E.id, canonical.uni-cli_request_id))
+    .where(eq(E.id, canonical.uniCli_request_id))
     .for("update")
   if (!event || event.organizationId !== scope.organizationId || event.memberId !== scope.memberId)
     return usageFail("request_identity_conflict", 409, "Durable request belongs to another member.")
@@ -139,11 +139,11 @@ export async function assertUsageRetentionSafe(tx: UsageTx, ids: (typeof Log.$in
     .where(
       inArray(
         E.id,
-        pending.map((row) => row.uni-cli_request_id),
+        pending.map((row) => row.uniCli_request_id),
       ),
     )
   for (const row of pending) {
-    const event = events.find((event) => event.id === row.uni-cli_request_id)
+    const event = events.find((event) => event.id === row.uniCli_request_id)
     if (!event?.pendingCounted || !event.requestStartedAt || event.admissionSnapshot == null)
       return usageFail(
         "pending_recovery_required",
@@ -210,7 +210,7 @@ export async function startGatewayUsageLog(
   const [canonical] = await tx
     .select()
     .from(Log)
-    .where(eq(Log.uni-cli_request_id, row.uni-cli_request_id))
+    .where(eq(Log.uniCli_request_id, row.uniCli_request_id))
     .for("update")
   if (
     !canonical ||

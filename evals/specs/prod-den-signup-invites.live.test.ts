@@ -332,7 +332,7 @@ test(title, { timeout: 240_000 }, async ({ evidence }) => {
   needs(requirements);
   const apiUrl = requiredEnv("UNICLI_EVAL_LIVE_DEN_API_URL").replace(/\/+$/, "");
   const agentMailApiKey = requiredEnv("AGENTMAIL_API_KEY");
-  const webUrl = apiUrl === "https://api.uni-clilabs.com" ? "https://app.uni-clilabs.com" : apiUrl;
+  const webUrl = apiUrl === "https://api.uniClilabs.com" ? "https://app.uniClilabs.com" : apiUrl;
   const den: DenRef = { apiUrl, webUrl };
   const runStartedAt = new Date().toISOString();
   const timestamp = runStartedAt.replace(/\D/g, "");

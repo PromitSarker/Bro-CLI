@@ -1,4 +1,4 @@
-export const UNICLI_FEEDBACK_URL = "https://uni-clilabs.com/feedback";
+export const UNICLI_FEEDBACK_URL = "https://uniClilabs.com/feedback";
 
 export function buildDenFeedbackUrl(options?: {
   pathname?: string;

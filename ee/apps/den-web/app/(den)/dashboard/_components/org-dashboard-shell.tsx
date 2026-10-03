@@ -62,7 +62,7 @@ import { useDashboardPrefetch } from "./use-dashboard-prefetch";
 import { useLibraryNeedsSignInCount } from "./library-data";
 import { UserProfileDialog } from "./user-profile-dialog";
 
-const UNICLI_DOCS_URL = "https://uni-clilabs.com/docs";
+const UNICLI_DOCS_URL = "https://uniClilabs.com/docs";
 
 /** The sidebar only tells people whether they can manage the organization. */
 function sidebarRoleLabel(role: string): string {

@@ -212,7 +212,7 @@ export function JoinOrganizationDialog({
 
     const settings = readDenSettings();
     const baseUrl = parsed.baseUrl ?? settings.baseUrl;
-    setStatus({ phase: "connecting", clientName: t("join_org.uni-cli_cloud"), host: hostFromUrl(baseUrl) });
+    setStatus({ phase: "connecting", clientName: t("join_org.uniCli_cloud"), host: hostFromUrl(baseUrl) });
     const result = await exchangeHandoffAndSignIn(parsed.grant, {
       baseUrl,
       // Pasted one-time codes are desktop-initiated sign-ins.
@@ -225,7 +225,7 @@ export function JoinOrganizationDialog({
       return true;
     }
 
-    setStatus({ phase: "success", clientName: t("join_org.uni-cli_cloud"), host: hostFromUrl(baseUrl) });
+    setStatus({ phase: "success", clientName: t("join_org.uniCli_cloud"), host: hostFromUrl(baseUrl) });
     finishConnected();
     return true;
   }, [finishConnected]);

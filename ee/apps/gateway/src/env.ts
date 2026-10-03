@@ -70,7 +70,7 @@ const input = {
   DATABASE_URL:
     process.env.DATABASE_URL ??
     (isDevMode
-      ? "mysql://root:password@127.0.0.1:3306/uni-cli_den"
+      ? "mysql://root:password@127.0.0.1:3306/uniCli_den"
       : undefined),
   DB_MODE: process.env.DB_MODE ?? (isDevMode ? "mysql" : undefined),
   DEN_DB_ENCRYPTION_KEY:

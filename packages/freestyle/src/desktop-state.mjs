@@ -45,7 +45,7 @@ export async function observeDesktop({ nonce, expectedWorkspacePath }, loadProdu
   import("/src/app/constants.ts"), import("/src/app/lib/desktop.ts"),
 ])) {
   const flags = {
-    reloaded: nonce === null || globalThis.__uni-cliPreviewReload === nonce,
+    reloaded: nonce === null || globalThis.__uniCliPreviewReload === nonce,
     rendererRead: false, productContractRead: false, firstRun: false, noAppCloudIdentity: false,
     signInOffered: false, ordinaryDefaultModel: false, routeReady: false, routeWorkspaceValid: false, noRouteConversations: false,
     nativeRead: false, nativeLocalOnly: false, nativeWorkspaceMatches: false, noNativeCloudSession: false,
@@ -67,7 +67,7 @@ export async function observeDesktop({ nonce, expectedWorkspacePath }, loadProdu
     flags.noAppCloudIdentity = ["authToken", "activeOrgId", "activeOrgSlug", "activeOrgName", "sessionOrigin", "mcp.sync"]
       .every((key) => !localStorage.getItem(`uni-cli.den.${key}`));
     flags.signInOffered = [...document.querySelectorAll("button, a, [role=button]")].some((element) => element.textContent?.trim() === "Sign in");
-    const route = window.__uni-cli?.slice("route");
+    const route = window.__uniCli?.slice("route");
     const workspace = route?.workspaces?.[0];
     flags.routeReady = route?.loading === false && route?.connected === true && route?.connectionPending === false && !route?.routeError;
     flags.routeWorkspaceValid = Array.isArray(route?.workspaces) && route.workspaces.length === 1
@@ -148,7 +148,7 @@ export async function inspectDesktop({ reload = false, timeoutMs = 60_000, loadC
     surface = await attachSurface({ name: "preview-desktop-only", kind: "electron", hostKind: "local", cdpUrl: "http://127.0.0.1:9825" }, { timeoutMs: Math.min(timeoutMs, 30_000) });
     const nonce = reload ? randomUUID() : null;
     if (reload) {
-      init = await addInitScript(surface.client, browserScript((value) => { globalThis.__uni-cliPreviewReload = value; }, [nonce]));
+      init = await addInitScript(surface.client, browserScript((value) => { globalThis.__uniCliPreviewReload = value; }, [nonce]));
       await surface.client.send("Page.reload", { ignoreCache: true }, { timeoutMs: 10_000 });
     }
     const deadline = Date.now() + timeoutMs;

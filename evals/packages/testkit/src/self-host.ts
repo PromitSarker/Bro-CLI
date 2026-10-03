@@ -180,7 +180,7 @@ export async function selfHostServer(options: SelfHostServerOptions): Promise<Se
   const services: SpawnedService[] = [];
   let database: DbHandle | undefined;
   try {
-    database = await options.place.db(ephemeralDatabaseName("uni-cli_selfhost_eval"));
+    database = await options.place.db(ephemeralDatabaseName("uniCli_selfhost_eval"));
     await runDbPush(database.url);
     const [apiPort, webPort] = await allocateFreePorts(2);
     if (apiPort === undefined || webPort === undefined) throw new Error("Could not allocate Den API/Web ports.");

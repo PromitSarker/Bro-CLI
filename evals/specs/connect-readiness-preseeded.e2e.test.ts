@@ -176,7 +176,7 @@ test("bundled engine recovers from a startup outage and uses preseeded organizat
   expect(connectionStatus).toMatchObject({
     state: "needs_connection", actor: "member", credentialMode: "per_member",
     connectionId: world.connection.id, connectionName: world.connectionName,
-    action: { type: "connect", surface: "uni-cli_your_connections" },
+    action: { type: "connect", surface: "uniCli_your_connections" },
   });
   evidence.recordAssertionEvidence("An unconnected member-owned connection requires member sign-in",
     JSON.stringify(connectionStatus), true);

@@ -22,7 +22,7 @@ import { observeAppWebNetwork } from "./app-web-network.ts";
 import { reloadOnceIfEntryFails } from "./app-web-entry.ts";
 
 declare global {
-  interface Window { __uni-cliEvalBootErrors?: string[] }
+  interface Window { __uniCliEvalBootErrors?: string[] }
 }
 
 const REPO_ROOT = fileURLToPath(new URL("../../../..", import.meta.url));
@@ -279,15 +279,15 @@ export async function appWeb(options: SeedAppWebOptions & { place: Place }): Pro
     // Observe entry-bundle failures before navigation. The static startup page
     // survives a broken module load, so a DOM timeout alone hides the cause.
     await addInitScript(browser.client, () => {
-      window.__uni-cliEvalBootErrors = [];
+      window.__uniCliEvalBootErrors = [];
       window.addEventListener("error", event => {
         const target = event.target;
         const source = target instanceof HTMLScriptElement ? new URL(target.src).pathname : event.filename?.split("?")[0];
-        if ((window.__uni-cliEvalBootErrors?.length ?? 0) < 10) window.__uni-cliEvalBootErrors?.push(`${event.message || "Resource failed"} (${source || "unknown"})`.slice(0, 1000));
+        if ((window.__uniCliEvalBootErrors?.length ?? 0) < 10) window.__uniCliEvalBootErrors?.push(`${event.message || "Resource failed"} (${source || "unknown"})`.slice(0, 1000));
       }, true);
       window.addEventListener("unhandledrejection", event => {
         const reason = event.reason;
-        if ((window.__uni-cliEvalBootErrors?.length ?? 0) < 10) window.__uni-cliEvalBootErrors?.push(String(reason instanceof Error ? reason.message : reason).slice(0, 1000));
+        if ((window.__uniCliEvalBootErrors?.length ?? 0) < 10) window.__uniCliEvalBootErrors?.push(String(reason instanceof Error ? reason.message : reason).slice(0, 1000));
       });
     });
     const network = await observeAppWebNetwork(browser.client.webSocketDebuggerUrl, runtime.webUrl);
@@ -306,7 +306,7 @@ export async function appWeb(options: SeedAppWebOptions & { place: Place }): Pro
       }
     } catch (error) {
       const boot = await evaluate(browser.client, () => ({
-        errors: (window.__uni-cliEvalBootErrors ?? []).slice(0, 10),
+        errors: (window.__uniCliEvalBootErrors ?? []).slice(0, 10),
         failedResources: performance.getEntriesByType("resource")
           .filter(entry => entry instanceof PerformanceResourceTiming && entry.responseStatus >= 400)
           .map(entry => ({ path: new URL(entry.name).pathname,

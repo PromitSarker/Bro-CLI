@@ -12,7 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-const SUPPORT_EMAIL = "team@uni-clilabs.com";
+const SUPPORT_EMAIL = "team@uniClilabs.com";
 const SUPPORT_MAILTO = `mailto:${SUPPORT_EMAIL}?subject=Uni-CLI%20Den%20remote%20worker%20upgrade`;
 
 /**

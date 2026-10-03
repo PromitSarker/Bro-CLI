@@ -77,7 +77,7 @@ function requireSeatPriceId() {
 function requireUniCliWebPriceId() {
   const priceId = env.stripe.uniCliWebPriceId
   if (!isUniCliWebAvailable() || !priceId) {
-    throw new Error("stripe_uni-cli_web_not_available")
+    throw new Error("stripe_uniCli_web_not_available")
   }
   return priceId
 }
@@ -168,7 +168,7 @@ function parseSubscriptionType(value: string | null | undefined): OrgSubscriptio
     case "seats":
       return SEAT_SUBSCRIPTION_TYPE
     case WEB_SUBSCRIPTION_TYPE:
-    case "uni-cli_web":
+    case "uniCli_web":
       return WEB_SUBSCRIPTION_TYPE
     default:
       return null
@@ -790,7 +790,7 @@ async function validateUniCliWebPrice(priceId: string) {
     || price.recurring.interval_count !== 1
     || price.recurring.usage_type !== "licensed"
   ) {
-    throw new Error("stripe_uni-cli_web_price_contract_invalid")
+    throw new Error("stripe_uniCli_web_price_contract_invalid")
   }
 }
 
@@ -818,14 +818,14 @@ async function createUniCliWebCheckoutSession(input: {
   await validateUniCliWebPrice(input.priceId)
   const quantity = await joinedMemberCount(input.organizationId)
   if (quantity < 1) {
-    throw new Error("stripe_uni-cli_web_quantity_empty")
+    throw new Error("stripe_uniCli_web_quantity_empty")
   }
 
   const storedWebSubscription = await findWebSubscriptionByOrg(input.organizationId)
   if (storedWebSubscription?.stripe_subscription_id) {
     const refreshedWebSubscription = await refreshOrgSubscriptionFromStripe(storedWebSubscription.stripe_subscription_id)
     if (isOngoingConfiguredUniCliWebSubscriptionRow(refreshedWebSubscription)) {
-      throw new Error("stripe_uni-cli_web_subscription_exists")
+      throw new Error("stripe_uniCli_web_subscription_exists")
     }
   }
 
@@ -836,7 +836,7 @@ async function createUniCliWebCheckoutSession(input: {
     metadata: {
       org_id: input.organizationId,
       created_by_org_member_id: input.orgMemberId,
-      uni-cli_product: "uni-cli_web",
+      uniCli_product: "uniCli_web",
     },
   })
 
@@ -854,7 +854,7 @@ async function createUniCliWebCheckoutSession(input: {
   })
   if (existingOngoingSubscription) {
     await upsertOrgSubscriptionFromStripe(existingOngoingSubscription)
-    throw new Error("stripe_uni-cli_web_subscription_exists")
+    throw new Error("stripe_uniCli_web_subscription_exists")
   }
 
   const checkoutSessions = await stripe().checkout.sessions.list({
@@ -936,14 +936,14 @@ export async function createOrgSubscriptionCheckoutSession(input: {
   }
   const priceId = requirePriceIdForSubscriptionType(input.subscriptionType)
   const uniCliProduct = input.subscriptionType === SEAT_SUBSCRIPTION_TYPE
-    ? "uni-cli_seats"
+    ? "uniCli_seats"
     : input.subscriptionType === WEB_SUBSCRIPTION_TYPE
-      ? "uni-cli_web"
-      : "uni-cli_models"
+      ? "uniCli_web"
+      : "uniCli_models"
   const metadata = {
     org_id: input.organizationId,
     created_by_org_member_id: input.orgMemberId,
-    uni-cli_product: uniCliProduct,
+    uniCli_product: uniCliProduct,
     subscription_type: input.subscriptionType,
   }
   if (input.subscriptionType === WEB_SUBSCRIPTION_TYPE) {
@@ -966,7 +966,7 @@ export async function createOrgSubscriptionCheckoutSession(input: {
     metadata: {
       org_id: input.organizationId,
       created_by_org_member_id: input.orgMemberId,
-      uni-cli_product: uniCliProduct,
+      uniCli_product: uniCliProduct,
     },
   })
 
@@ -1283,7 +1283,7 @@ async function createSeatSubscriptionFromSetupCheckoutSession(session: Stripe.Ch
       metadata: {
         org_id: metadata.organizationId,
         created_by_org_member_id: metadata.orgMemberId ?? "",
-        uni-cli_product: "uni-cli_seats",
+        uniCli_product: "uniCli_seats",
         subscription_type: SEAT_SUBSCRIPTION_TYPE,
       },
     },

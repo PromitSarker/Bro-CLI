@@ -12,7 +12,7 @@ import { createGatewayBearerKey, gatewayBearerKeyStorageDigest } from "@uni-cli-
 const databaseUrl = process.env.DATABASE_URL
 if (!databaseUrl) throw new Error("Scratch database required")
 const target = new URL(databaseUrl)
-if (!["localhost", "127.0.0.1"].includes(target.hostname) || !target.pathname.startsWith("/uni-cli_eval_")) throw new Error("Refusing non-scratch database")
+if (!["localhost", "127.0.0.1"].includes(target.hostname) || !target.pathname.startsWith("/uniCli_eval_")) throw new Error("Refusing non-scratch database")
 const { db } = createDenDb({ databaseUrl, mode: "mysql" })
 const table = GatewayProviderCredentialTable
 const memberId = createDenTypeId("member")

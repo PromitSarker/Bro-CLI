@@ -147,12 +147,12 @@ export function getMockAccountsFor(provider: IntegrationProvider): IntegrationAc
     return [
       { id: "acc_gh_user", name: "bshafii", kind: "user", avatarInitial: "B" },
       { id: "acc_gh_different_ai", name: "different-ai", kind: "org", avatarInitial: "D" },
-      { id: "acc_gh_uni-cli", name: "uni-cli-labs", kind: "org", avatarInitial: "O" },
+      { id: "acc_gh_uniCli", name: "uni-cli-labs", kind: "org", avatarInitial: "O" },
     ];
   }
   return [
     { id: "acc_bb_user", name: "bshafii", kind: "user", avatarInitial: "B" },
-    { id: "acc_bb_uni-cli", name: "uni-cli", kind: "org", avatarInitial: "O" },
+    { id: "acc_bb_uniCli", name: "uni-cli", kind: "org", avatarInitial: "O" },
   ];
 }
 

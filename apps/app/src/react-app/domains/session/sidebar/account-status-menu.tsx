@@ -58,7 +58,7 @@ import {
   useUniCliModelsPromoEligibility,
 } from "../../cloud/uni-cli-models-promo";
 
-const DOCS_URL = "https://uni-clilabs.com/docs";
+const DOCS_URL = "https://uniClilabs.com/docs";
 const BOOT_STARTED_AT = Date.now();
 const INITIALIZING_MS = 15_000;
 

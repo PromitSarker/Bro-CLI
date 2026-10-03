@@ -25,7 +25,7 @@ export function isHeadlessRunMcpToken(payload: Record<string, unknown>, source: 
  * verification sets it, from the database row, so it cannot be supplied by a
  * caller; consumers still re-check the row before trusting what it links to.
  */
-export const DEN_MCP_HEADLESS_RUN_TOKEN_ID_CLAIM = "uni-cli_run_token_id"
+export const DEN_MCP_HEADLESS_RUN_TOKEN_ID_CLAIM = "uniCli_run_token_id"
 
 export function headlessRunTokenId(payload: Record<string, unknown>): string | null {
   if (payload.client_id !== DEN_MCP_HEADLESS_RUN_CLIENT_ID) return null

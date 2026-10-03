@@ -393,7 +393,7 @@ const MOCK_PLUGINS: DenPlugin[] = [
     requiresProvider: "any",
   },
   {
-    id: "plg_uni-cli_release",
+    id: "plg_uniCli_release",
     name: "Uni-CLI Release Kit",
     slug: "uni-cli-release-kit",
     description:

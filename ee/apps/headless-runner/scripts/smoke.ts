@@ -2,8 +2,8 @@
  * End-to-end smoke test against a real AI Gateway and Uni-CLI MCP.
  *
  *   HEADLESS_API_TOKEN=... HEADLESS_MODEL_PROTOCOL=anthropic \
- *   HEADLESS_MODEL_BASE_URL=https://gateway.uni-clilabs.com/api/v1/providers/<ipr> \
- *   HEADLESS_MODEL=<gwm alias> HEADLESS_MCP_URL=https://api.uni-clilabs.com/mcp/agent \
+ *   HEADLESS_MODEL_BASE_URL=https://gateway.uniClilabs.com/api/v1/providers/<ipr> \
+ *   HEADLESS_MODEL=<gwm alias> HEADLESS_MCP_URL=https://api.uniClilabs.com/mcp/agent \
  *   SMOKE_MODEL_API_KEY=ow_gw_... SMOKE_MCP_TOKEN=... pnpm smoke "What's waiting on me?"
  *
  * Boots the real HTTP app on a random port with a throwaway database and

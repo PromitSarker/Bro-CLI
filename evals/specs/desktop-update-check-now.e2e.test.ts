@@ -64,7 +64,7 @@ test("A release that ships after a download replaces it in the background, so on
   expect(ready).toMatchObject({ stagedVersion: staged, downloads: [staged], installs: [], automaticChecksEnabled: true, automaticDownloadsEnabled: true, capsuleText: "Restart to update" });
 
   await step("an automatic check while ready downloads the newer release", async () => {
-    await world.uni-clispace();
+    await world.uniClispace();
     await world.advanceFeed();
     await world.triggerAutomaticChecks();
     await probe.eventually(world.snapshot, { within: 10_000, label: "the newer release replaces the staged one", until: (value) => value.downloads.length === 2 });
@@ -224,7 +224,7 @@ for (const replaceStaged of [false, true]) {
       expect(installedLayout.buttons.map((button) => button.disabled)).toEqual([false, true, false]);
       await user.screenshot();
     });
-    await world.uni-clispace();
+    await world.uniClispace();
     await user.see({ text: "Restart to update" });
     expect(await world.snapshot()).toMatchObject({ checks: discovered.checks, downloads: [staged, newer], stagedVersion: newer, installs: [], capsuleText: "Restart to update", updateInSidebar: false });
     await user.click("Restart to update");

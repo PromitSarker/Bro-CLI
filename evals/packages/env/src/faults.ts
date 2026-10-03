@@ -243,7 +243,7 @@ export async function faultProxy(ref: DenRef, options: FaultProxyOptions = {}): 
   const remote = await startFaultProxyOnSandbox({ sandbox: options.sandbox, upstream: apiUpstream ? "api" : "web" });
   const requests: FaultRequest[] = [];
   const control = async (path: string, init: RequestInit = {}): Promise<Response> => {
-    const response = await fetch(`${remote.url}/__uni-cli_faults/${path}`, {
+    const response = await fetch(`${remote.url}/__uniCli_faults/${path}`, {
       ...init,
       headers: { ...init.headers, "x-uni-cli-fault-token": remote.token },
     });

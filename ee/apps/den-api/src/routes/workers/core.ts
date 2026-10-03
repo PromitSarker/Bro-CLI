@@ -135,7 +135,7 @@ const paymentRequiredSchema = z.object({
 }).meta({ ref: "WorkerPaymentRequiredError" })
 
 const uniCliWebAccessRequiredSchema = z.object({
-  error: z.literal("uni-cli_web_access_required"),
+  error: z.literal("uniCli_web_access_required"),
   message: z.string(),
 }).meta({ ref: "WorkerUniCliWebAccessRequiredError" })
 

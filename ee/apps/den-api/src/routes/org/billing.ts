@@ -24,13 +24,13 @@ const managedModelsPolicyErrorSchema = z.object({
   message: z.string(),
 })
 const uniCliWebUnavailableSchema = z.object({
-  error: z.literal("uni-cli_web_not_available"),
+  error: z.literal("uniCli_web_not_available"),
   message: z.string(),
 }).meta({ ref: "UniCliWebUnavailableError" })
 
-function uniCliWebUnavailableResponse(): { error: "uni-cli_web_not_available"; message: string } {
+function uniCliWebUnavailableResponse(): { error: "uniCli_web_not_available"; message: string } {
   return {
-    error: "uni-cli_web_not_available",
+    error: "uniCli_web_not_available",
     message: "Uni-CLI Web is not available for this organization.",
   }
 }
@@ -227,7 +227,7 @@ export function registerOrgBillingRoutes<T extends { Variables: OrgRouteVariable
         const webBilling = await getUniCliWebBillingSummary(payload.organization.id)
         if (webBilling.complimentaryAccess) {
           return c.json({
-            error: "uni-cli_web_complimentary_access_exists",
+            error: "uniCli_web_complimentary_access_exists",
             message: "Uni-CLI Web is already included for this organization without a Stripe subscription.",
           }, 409)
         }
@@ -250,7 +250,7 @@ export function registerOrgBillingRoutes<T extends { Variables: OrgRouteVariable
         cancelUrl: subscriptionType === "web" ? uniCliWebCheckoutCancelUrl(c) : checkoutCancelUrl(c),
       }).catch((error) => {
         if (error instanceof ManagedModelsPolicyError) return error
-        if (error instanceof Error && error.message === "stripe_uni-cli_web_subscription_exists") {
+        if (error instanceof Error && error.message === "stripe_uniCli_web_subscription_exists") {
           return "subscription_exists" as const
         }
         if (error instanceof Error && error.message === "stripe_inference_subscription_exists") {

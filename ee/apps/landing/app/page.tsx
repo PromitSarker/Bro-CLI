@@ -14,7 +14,7 @@ export const metadata = withSocialMetadata({
     title: "Uni-CLI — Free, open-source Claude Cowork alternative",
     description:
       "Free, open-source desktop AI agent app for macOS, Windows, and Linux. Any model, local models, your own keys. Share skills and MCPs with your team.",
-    url: "https://uni-clilabs.com"
+    url: "https://uniClilabs.com"
   }
 });
 
@@ -24,19 +24,19 @@ const softwareApplicationSchema = {
   name: "Uni-CLI",
   description:
     "Free, open-source Claude Cowork alternative. Desktop app for macOS, Windows, and Linux that works with 50+ model providers, local models, and your own API keys, with shared skills and MCP servers for teams.",
-  url: "https://uni-clilabs.com",
+  url: "https://uniClilabs.com",
   applicationCategory: "BusinessApplication",
   operatingSystem: "macOS, Windows, Linux",
   offers: {
     "@type": "Offer",
     price: "0",
     priceCurrency: "USD",
-    url: "https://uni-clilabs.com/pricing"
+    url: "https://uniClilabs.com/pricing"
   },
   publisher: {
     "@type": "Organization",
     name: "Uni-CLI",
-    url: "https://uni-clilabs.com"
+    url: "https://uniClilabs.com"
   }
 };
 

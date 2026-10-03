@@ -1,7 +1,7 @@
 import { loopbackFetch } from "./server-fetch.js";
 
 const LOCAL_MODELS_URL = "http://localhost:8791/models";
-const PRODUCTION_MODELS_URL = "https://models.uni-clilabs.com/";
+const PRODUCTION_MODELS_URL = "https://models.uniClilabs.com/";
 
 type ResolveOpencodeModelsUrlOptions = {
   env?: NodeJS.ProcessEnv;

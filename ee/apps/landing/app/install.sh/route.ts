@@ -12,7 +12,7 @@
 // "install Uni-CLI" otherwise reach for this URL.
 //
 // Usage (the docs tell users to download + inspect before running):
-//   curl -fsSLo /tmp/uni-cli-install.sh https://uni-clilabs.com/install.sh
+//   curl -fsSLo /tmp/uni-cli-install.sh https://uniClilabs.com/install.sh
 //   less /tmp/uni-cli-install.sh
 //   sh /tmp/uni-cli-install.sh
 export const dynamic = "force-static";
@@ -24,16 +24,16 @@ const installScript = `#!/usr/bin/env sh
 #
 # This does NOT install the Uni-CLI desktop app. To install the app:
 #   macOS:   brew install --cask uniCli
-#   Any OS:  https://uni-clilabs.com/download
-#            (direct: https://uni-clilabs.com/download/<mac-arm64|mac-x64|win-x64|win-arm64|linux-x64|linux-arm64>)
-#   Or, after this script: uni-cli-bootstrap install app --manifest https://uni-clilabs.com/install-manifest.json
-# Agent setup guide: https://uni-clilabs.com/start.md
+#   Any OS:  https://uniClilabs.com/download
+#            (direct: https://uniClilabs.com/download/<mac-arm64|mac-x64|win-x64|win-arm64|linux-x64|linux-arm64>)
+#   Or, after this script: uni-cli-bootstrap install app --manifest https://uniClilabs.com/install-manifest.json
+# Agent setup guide: https://uniClilabs.com/start.md
 set -eu
 
 echo "Installing the uni-cli-bootstrap CLI (org setup for agents)."
 echo "This does not install the Uni-CLI desktop app; see the end of this script's output."
 
-CLI_URL="\${UNICLI_BOOTSTRAP_CLI_URL:-https://uni-clilabs.com/uni-cli-bootstrap.mjs}"
+CLI_URL="\${UNICLI_BOOTSTRAP_CLI_URL:-https://uniClilabs.com/uni-cli-bootstrap.mjs}"
 BIN_DIR="\${UNICLI_BIN_DIR:-$HOME/.local/bin}"
 INSTALL_DIR="\${UNICLI_INSTALL_DIR:-$HOME/.uni-cli/bootstrap}"
 
@@ -85,9 +85,9 @@ echo "  uni-cli-bootstrap doctor --json"
 echo
 echo "The Uni-CLI desktop app is installed separately:"
 echo "  macOS:   brew install --cask uni-cli"
-echo "  Any OS:  https://uni-clilabs.com/download"
-echo "  Or:      uni-cli-bootstrap install app --manifest https://uni-clilabs.com/install-manifest.json"
-echo "Agent setup guide: https://uni-clilabs.com/start.md"
+echo "  Any OS:  https://uniClilabs.com/download"
+echo "  Or:      uni-cli-bootstrap install app --manifest https://uniClilabs.com/install-manifest.json"
+echo "Agent setup guide: https://uniClilabs.com/start.md"
 `;
 
 export function GET() {

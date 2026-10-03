@@ -13,12 +13,12 @@ export function devDenProxy(env: NodeJS.ProcessEnv): Record<string, DevDenProxyO
   let hosted = false;
   try {
     const url = new URL(target);
-    hosted = url.origin === "https://app.uni-clilabs.com"
+    hosted = url.origin === "https://app.uniClilabs.com"
       && url.pathname === "/" && !url.username && !url.password && !url.search && !url.hash;
   } catch {}
   return {
     "/api/den": {
-      target: hosted ? "https://api.uni-clilabs.com" : target,
+      target: hosted ? "https://api.uniClilabs.com" : target,
       changeOrigin: true,
       ...(hosted || apiTarget ? { rewrite: (path: string) => path.replace(/^\/api\/den(?=\/|\?|$)/, "") || "/" } : {}),
     },

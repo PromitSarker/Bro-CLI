@@ -18,8 +18,8 @@ const organizationSchema = {
   "@type": "Organization",
   name: "Uni-CLI",
   legalName: "Different AI",
-  url: "https://uni-clilabs.com",
-  logo: "https://uni-clilabs.com/uni-cli-mark.svg",
+  url: "https://uniClilabs.com",
+  logo: "https://uniClilabs.com/uni-cli-mark.svg",
   sameAs: ["https://github.com/different-ai/uni-cli"]
 };
 
@@ -36,7 +36,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata = {
-  metadataBase: new URL("https://uni-clilabs.com"),
+  metadataBase: new URL("https://uniClilabs.com"),
   title: "Uni-CLI — Free, open-source Claude Cowork alternative",
   description:
     "Free, open-source desktop AI agent app for macOS, Windows, and Linux. Any model, local models, your own keys. Share skills and MCPs with your team.",

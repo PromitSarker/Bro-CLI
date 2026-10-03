@@ -23,7 +23,7 @@ export function SiteFooter() {
             Claude Cowork alternative
           </Link>
           <a
-            href="https://app.uni-clilabs.com"
+            href="https://app.uniClilabs.com"
             target="_blank"
             rel="noreferrer"
             className="whitespace-nowrap transition-colors hover:text-gray-800"

@@ -1,7 +1,7 @@
 import React, { type CSSProperties } from "react"
 import { Body, Button, Container, Head, Heading, Hr, Html, Img, Preview, Section, Text } from "@react-email/components"
 
-const LOGO_URL = "https://uni-clilabs.com/email/uni-cli-mark.png"
+const LOGO_URL = "https://uniClilabs.com/email/uni-cli-mark.png"
 
 export type OrganizationInviteEmailProps = {
   inviteLink: string
@@ -44,7 +44,7 @@ export function OrganizationInviteEmail({
           <Text style={styles.footer}>
             You received this email because someone invited you to an Uni-CLI workspace.
             <br />
-            Uni-CLI · uni-clilabs.com
+            Uni-CLI · uniClilabs.com
           </Text>
         </Container>
       </Body>

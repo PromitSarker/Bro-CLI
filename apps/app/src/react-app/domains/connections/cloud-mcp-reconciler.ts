@@ -230,9 +230,9 @@ export function isCloudMcpAuthTokenFailureCode(code: string | null | undefined):
   ) {
     return false;
   }
-  return normalized === "uni-cli_cloud_auth_required" ||
-    normalized === "uni-cli_cloud_auth_invalid" ||
-    normalized === "uni-cli_cloud_token_expired" ||
+  return normalized === "uniCli_cloud_auth_required" ||
+    normalized === "uniCli_cloud_auth_invalid" ||
+    normalized === "uniCli_cloud_token_expired" ||
     // The Den rejects an expired/missing first-party bearer with exactly these
     // codes; the `_mcp_` infix means the `invalid_token` substring below never
     // matches them (field incident: token sat expired for 7 days because the
@@ -248,7 +248,7 @@ export function isCloudMcpAuthTokenFailureCode(code: string | null | undefined):
 /**
  * Health failures carry the primary `code` plus optional `aliases` (e.g. the
  * direct-probe 401 reports code `invalid_mcp_token` with alias
- * `uni-cli_cloud_token_expired`). Remint decisions must consider both.
+ * `uniCli_cloud_token_expired`). Remint decisions must consider both.
  */
 export function isCloudMcpAuthTokenFailure(failure: Pick<uniCliCloudMcpFailure, "code" | "aliases"> | null | undefined): boolean {
   if (!failure) return false;

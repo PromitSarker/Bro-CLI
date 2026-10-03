@@ -8,8 +8,8 @@ const test = spec.world(renderCrashWorld);
 // query string carries a grant: the recovery screen and the copied report must
 // keep the path but never the query value.
 const SECRET = "eval-secret-grant-4242";
-const THROWN = `Local context is missing (eval render throw) after https://app.uni-clilabs.com/signin?code=${SECRET}`;
-const MESSAGE = "Local context is missing (eval render throw) after https://app.uni-clilabs.com/signin";
+const THROWN = `Local context is missing (eval render throw) after https://app.uniClilabs.com/signin?code=${SECRET}`;
+const MESSAGE = "Local context is missing (eval render throw) after https://app.uniClilabs.com/signin";
 const heading = { text: /Uni-CLI hit an unexpected error/ };
 
 test("a render throw shows a recovery screen with the error instead of a blank window", async ({ world, user, agent, probe, step }) => {
@@ -36,7 +36,7 @@ test("a render throw shows a recovery screen with the error instead of a blank w
     await user.see({ text: MESSAGE });
     // The URL keeps its path for diagnosis; the grant in its query never shows
     // anywhere on the page, message or stack.
-    expect(await probe.has("https://app.uni-clilabs.com/signin")).toBe(true);
+    expect(await probe.has("https://app.uniClilabs.com/signin")).toBe(true);
     expect(await probe.has(SECRET)).toBe(false);
     // The stack names the throwing component, so the failure is reportable.
     await user.see({ text: /at BrandThemeControlActions/ });
@@ -57,7 +57,7 @@ test("a render throw shows a recovery screen with the error instead of a blank w
     expect(header).toMatch(/^Uni-CLI \S+ \(desktop, (public|enterprise)\)$/);
     expect(message).toBe(MESSAGE);
     expect(stack).toMatch(/at BrandThemeControlActions/);
-    expect(clipboard).toContain("https://app.uni-clilabs.com/signin");
+    expect(clipboard).toContain("https://app.uniClilabs.com/signin");
     expect(clipboard).not.toContain(SECRET);
   });
 

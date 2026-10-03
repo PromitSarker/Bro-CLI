@@ -112,7 +112,7 @@ Create Cloud SQL for MySQL with private IP in the same VPC as the GKE cluster.
 The most important requirements are:
 
 - MySQL 8-compatible Cloud SQL instance.
-- Database name: `uni-cli_den`.
+- Database name: `uniCli_den`.
 - Private services access configured for the VPC.
 - Private IP enabled on the Cloud SQL instance.
 - GKE is VPC-native and can reach the private IP.
@@ -148,7 +148,7 @@ gcloud sql instances create "$SQL_INSTANCE" \
   --network="projects/$GCP_PROJECT/global/networks/$VPC_NETWORK" \
   --no-assign-ip
 
-gcloud sql databases create uni-cli_den \
+gcloud sql databases create uniCli_den \
   --instance="$SQL_INSTANCE"
 
 gcloud sql users create uni-cli \
@@ -166,7 +166,7 @@ gcloud sql instances describe "$SQL_INSTANCE" \
 Example database URL:
 
 ```text
-mysql://uni-cli:<password>@<cloud-sql-private-ip>:3306/uni-cli_den
+mysql://uni-cli:<password>@<cloud-sql-private-ip>:3306/uniCli_den
 ```
 
 This guide uses direct private IP because the current Uni-CLI chart does not

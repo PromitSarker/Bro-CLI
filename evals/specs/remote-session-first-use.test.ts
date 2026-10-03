@@ -161,7 +161,7 @@ test("first cloud task provisions once over MCP, recovers its workspace, and pre
     return bootstraps.length;
   }
 
-  expect((await call(writeToken, "create", {})).payload.error).toBe("uni-cli_web_access_required");
+  expect((await call(writeToken, "create", {})).payload.error).toBe("uniCli_web_access_required");
   expect(await workers()).toEqual([]);
   expect(witness.sandboxes).toHaveLength(0);
   evidence.recordAssertionEvidence("Paid access is checked before provisioning", "A valid write token in an organization without Web access was denied; zero worker rows and zero provider creates.", true);
@@ -364,7 +364,7 @@ test("first cloud task provisions once over MCP, recovers its workspace, and pre
   evidence.recordAssertionEvidence("Neutral instance reads keep Daytona rollback data current", "After provision, wake, endpoint refresh, rejected restore and successful recycle, both members retained one neutral instance row with provider and endpoint semantics. Its sandbox, volumes, URL and expiry matched the legacy Daytona row after every operation. Expiring only the neutral row triggered refresh, proving the new table owns reads.", true);
 
   await queryDenDatabase(databaseUrl, "UPDATE org_subscriptions SET status = 'canceled' WHERE organization_id = ?", [orgId]);
-  expect((await call(writeToken, "create", task)).payload.error).toBe("uni-cli_web_access_required");
+  expect((await call(writeToken, "create", task)).payload.error).toBe("uniCli_web_access_required");
   expect(witness.sessions).toHaveLength(2);
   expect(witness.sandboxes).toHaveLength(6);
   expect(await workers()).toHaveLength(2);

@@ -159,7 +159,7 @@ if (BLANK_SLATE_LAUNCH.enabled || process.env.UNICLI_ELECTRON_USE_MOCK_KEYCHAIN 
 }
 const RELEASE_DOWNLOAD_BASE_URL = "https://github.com/different-ai/uni-cli/releases/latest/download";
 const RELEASE_PAGE_URL = "https://github.com/different-ai/uni-cli/releases/latest";
-const DOCS_PAGE_URL = "https://uni-clilabs.com/docs";
+const DOCS_PAGE_URL = "https://uniClilabs.com/docs";
 const applicationMenu = createApplicationMenu({
   appName: APP_NAME,
   docsUrl: DOCS_PAGE_URL,
@@ -1037,7 +1037,7 @@ if (extraLaunchArgs) {
   }
 }
 configureFakeMediaForTests(app, envFlagEnabled("UNICLI_ELECTRON_FAKE_MEDIA"));
-const DEFAULT_DEN_BASE_URL = "https://app.uni-clilabs.com";
+const DEFAULT_DEN_BASE_URL = "https://app.uniClilabs.com";
 const DEFAULT_LOCAL_BASE_URL = "http://127.0.0.1:4096";
 const FORCE_DESKTOP_REQUIRE_SIGNIN =
   DESKTOP_DISTRIBUTION.requireSignin || envFlagEnabled("UNICLI_FORCE_SIGNIN");
@@ -2237,7 +2237,7 @@ const desktopCommandHandlers = {
       if (!target) return "Path is required.";
       return shell.openPath(target);
   },
-  "__uni-clispaceFile": async (event, ...args) => {
+  "__uniClispaceFile": async (event, ...args) => {
       // Chat links are renderer-derived text. Resolve them on disk here so only a real
       // file inside the real workspace launches; anything else is revealed, never run.
       const workspaceRoot = String(args[0] ?? "").trim();

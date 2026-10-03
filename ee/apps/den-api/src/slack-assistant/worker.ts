@@ -127,7 +127,7 @@ export async function processSlackEvent(event: EventRow, suppliedDeps = defaultW
               elements: [
                 {
                   type: "button",
-                  action_id: "connect_uni-cli",
+                  action_id: "connect_uniCli",
                   text: { type: "plain_text", text: "Connect Uni-CLI" },
                   url: uniCliYourConnectionsUrl(event.connectionId),
                 },
@@ -195,7 +195,7 @@ export async function processSlackEvent(event: EventRow, suppliedDeps = defaultW
               type: "button",
               text: { type: "plain_text", text: "Connect Uni-CLI" },
               url: uniCliYourConnectionsUrl(event.connectionId),
-              action_id: "connect_uni-cli",
+              action_id: "connect_uniCli",
             },
           ],
         },

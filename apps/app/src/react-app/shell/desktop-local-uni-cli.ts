@@ -148,7 +148,7 @@ export async function ensureDesktopLocaluniCliConnection(
     workspacePaths.unshift(workspaceRoot);
   }
 
-  recordInspectorEvent("route.local_uni-cli.ensure.start", {
+  recordInspectorEvent("route.local_uniCli.ensure.start", {
     route: options.route,
     workspaceId: workspace.id,
     workspaceRoot,
@@ -186,7 +186,7 @@ export async function ensureDesktopLocaluniCliConnection(
       emituniCliSettingsChanged();
     }
 
-    recordInspectorEvent("route.local_uni-cli.ensure.success", {
+    recordInspectorEvent("route.local_uniCli.ensure.success", {
       route: options.route,
       workspaceId: workspace.id,
       workspaceRoot,
@@ -197,7 +197,7 @@ export async function ensureDesktopLocaluniCliConnection(
   } catch (error) {
     const message = describeError(error);
     console.error(`[${options.route}-route] local workspace reconnect failed`, error);
-    recordInspectorEvent("route.local_uni-cli.ensure.error", {
+    recordInspectorEvent("route.local_uniCli.ensure.error", {
       route: options.route,
       workspaceId: workspace.id,
       workspaceRoot,

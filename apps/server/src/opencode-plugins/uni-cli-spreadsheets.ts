@@ -3,7 +3,7 @@ import { lstat, realpath } from "node:fs/promises";
 import { basename, dirname, extname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { z } from "zod";
 import { appendAgentInstructions, createInstructionSection } from "./agent-instruction-compose.js";
-import { WorkspaceFileError, uni-clispaceFileForReading, uni-clispaceFileForWriting } from "./workspace-file-identity.js";
+import { WorkspaceFileError, uniClispaceFileForReading, uniClispaceFileForWriting } from "./workspace-file-identity.js";
 import {
   MAX_COMPRESSED_BYTES,
   XLSX_WRITE_MAX_CELLS,
@@ -124,7 +124,7 @@ async function readWorkbookFile(root: string, input: string): Promise<{ file: Wo
   if (!READABLE_EXTENSIONS.has(extension)) throw new Error(describeUnsupportedExtension(extension));
   const label = `Workbook ${JSON.stringify(file.relativePath)}`;
   const { realRoot, path } = await workspaceLocation(root, file);
-  const { handle, info } = await uni-clispaceFileForReading(realRoot, path, label);
+  const { handle, info } = await uniClispaceFileForReading(realRoot, path, label);
   try {
     if (info.size > MAX_COMPRESSED_BYTES) throw new Error(`${label} is ${info.size} bytes; the limit is ${MAX_COMPRESSED_BYTES} bytes.`);
     return { file, bytes: await handle.readFile() };
@@ -154,7 +154,7 @@ async function writeWorkbookFile(root: string, file: WorkspaceFile, bytes: Uint8
   }
   let opened;
   try {
-    opened = await uni-clispaceFileForWriting(realRoot, path, existing, label);
+    opened = await uniClispaceFileForWriting(realRoot, path, existing, label);
   } catch (error) {
     if (error instanceof WorkspaceFileError && error.code === "folder-missing") {
       throw new Error(`${label}: the folder ${JSON.stringify(relativeFolder)} does not exist. Create it first (for example with the bash tool), then write the workbook again.`);

@@ -91,7 +91,7 @@ test("updates download outside Settings and offer a persistent, optional restart
   await world.openSettings();
   await user.click({ role: "switch", label: "Check automatically" });
   expect(await world.snapshot()).toMatchObject({ automaticChecksEnabled: false, checks: 4, downloads: 1 });
-  await world.uni-clispace();
+  await world.uniClispace();
   for (const [index, message] of [
     "Update native preparation failed.",
     "Update download connection failed.",
@@ -108,7 +108,7 @@ test("updates download outside Settings and offer a persistent, optional restart
       within: 5_000, label: "the user retries the failed download through Settings",
       until: (value) => typeof value === "object" && value !== null && Reflect.get(value, "downloads") === index + 2,
     });
-    await world.uni-clispace();
+    await world.uniClispace();
     await user.notSee({ text: "Restart to update" });
   }
   await world.finishDownload();
@@ -124,7 +124,7 @@ test("updates download outside Settings and offer a persistent, optional restart
     until: (value) => typeof value === "object" && value !== null && Reflect.get(value, "checks") === 7,
   });
   expect(await world.snapshot()).toMatchObject({ automaticChecksEnabled: true, checks: 7, downloads: 3 });
-  await world.uni-clispace();
+  await world.uniClispace();
   await world.returnToApp();
   await probe.eventually(world.snapshot, {
     within: 5_000, label: "returning after the interval checks again while ready",
@@ -197,7 +197,7 @@ test("updates download outside Settings and offer a persistent, optional restart
     });
     await user.notSee({ text: "Restart to update" });
     await world.finishDownload();
-    await world.uni-clispace();
+    await world.uniClispace();
     await user.see({ text: "Restart to update" });
     expect(await world.snapshot()).toMatchObject({ installAttempts: index + 1, installs: 0 });
   }

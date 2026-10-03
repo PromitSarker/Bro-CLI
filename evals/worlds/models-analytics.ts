@@ -58,7 +58,7 @@ async function createModelsWorld(seed: Seed, analyticsUpgrade: boolean, usageSet
   const host = remote ? createDaytonaHost({ sandboxId: remote, repoRoot: root, log: () => {} }) : null;
   const inferenceUrl = host ? await host.previewUrl(inferencePort) : `http://127.0.0.1:${inferencePort}`;
   const witnessUrl = host ? await host.previewUrl(witnessPort) : `http://127.0.0.1:${witnessPort}`;
-  const databaseUrl = remote ? "mysql://root:password@127.0.0.1:3306/uni-cli_den" : den.database?.url;
+  const databaseUrl = remote ? "mysql://root:password@127.0.0.1:3306/uniCli_den" : den.database?.url;
   if (!databaseUrl) throw new Error("The upgrade world requires its own isolated Den database");
   const env = {
     UNICLI_DEV_MODE: "1", DATABASE_URL: databaseUrl, DB_MODE: "mysql",

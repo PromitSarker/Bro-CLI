@@ -265,8 +265,8 @@ function isRetiredFirstPartyConfirmation(toolName: string, result: PreservedMcpA
   const launch = gatewayMcpAppLaunch(result?._meta)
   if (result?._meta?.["uni-cli/mcpApp"] !== undefined && !launch) return false
   if (launch?.connectionId !== undefined) return false
-  if (/^(?:uni-cli_|uni-cli-cloud_)(?:create_skill|update_skill|plugin_flow)$/.test(toolName)) return true
-  return /^(?:uni-cli_|uni-cli-cloud_)execute_capability$/.test(toolName)
+  if (/^(?:uniCli_|uni-cli-cloud_)(?:create_skill|update_skill|plugin_flow)$/.test(toolName)) return true
+  return /^(?:uniCli_|uni-cli-cloud_)execute_capability$/.test(toolName)
     && (launch?.resourceUri === "ui://uni-cli/skill-created/v1/view.html"
       || launch?.resourceUri === "ui://uni-cli/plugin-flow/v1/view.html")
 }
@@ -790,8 +790,8 @@ export function McpAppSandboxView({ origin, app, resolveLiveActions, toolName, i
 export function isNativeConnectionAppLaunch(part: DynamicToolUIPart): boolean {
   const result = preservedResult(part)
   const launch = gatewayMcpAppLaunch(result?._meta)
-  if (!launch) return /^(?:uni-cli_|uni-cli-cloud_)connection_action$/.test(part.toolName)
-  return /^(?:uni-cli_|uni-cli-cloud_)/.test(part.toolName) && !launch.connectionId
+  if (!launch) return /^(?:uniCli_|uni-cli-cloud_)connection_action$/.test(part.toolName)
+  return /^(?:uniCli_|uni-cli-cloud_)/.test(part.toolName) && !launch.connectionId
     && (launch.resourceUri === connectionActionAppResourceUri || launch.resourceUri === legacyConnectionActionAppResourceUri)
 }
 
@@ -821,7 +821,7 @@ function EmbeddedMcpAppFrame({ part, origin: surfaceOrigin }: { part: DynamicToo
   const result = resultCache.current.value
   const draft = useMemo(() => {
     if (part.toolName !== "save_artifact_view" && !part.toolName.endsWith("_save_artifact_view")
-      && !/^(?:uni-cli_|uni-cli-cloud_)?preview_artifact_/.test(part.toolName)) return null
+      && !/^(?:uniCli_|uni-cli-cloud_)?preview_artifact_/.test(part.toolName)) return null
     const reference = result?._meta?.["uni-cli/appDraft"]
     if (!isRecord(reference) || typeof reference.appId !== "string" || typeof reference.revisionId !== "string"
       || typeof reference.title !== "string" || (reference.receiptId !== undefined && typeof reference.receiptId !== "string")) return null

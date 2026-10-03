@@ -10,7 +10,7 @@ import { denApiAppVersion } from "./version.js"
 import { z } from "zod"
 import { readFreeInferenceConfig } from "@uni-cli/types/den/inference"
 
-export const DEFAULT_DEN_DIAGNOSTICS_ORIGIN = "https://diagnostic.uni-clilabs.com"
+export const DEFAULT_DEN_DIAGNOSTICS_ORIGIN = "https://diagnostic.uniClilabs.com"
 
 const EnvSchema = z.object({
   DATABASE_URL: z.string().min(1).optional(),

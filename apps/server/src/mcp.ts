@@ -471,7 +471,7 @@ function deniedToolIds(
 
 function isMcpDisabledByTools(config: Record<string, unknown>, name: string): boolean {
   const sanitizedName = name.replace(/[^a-zA-Z0-9_-]/g, "_");
-  return deniedToolIds([config], "", [`${sanitizedName}___uni-cli_mcp_probe__`]).length > 0;
+  return deniedToolIds([config], "", [`${sanitizedName}___uniCli_mcp_probe__`]).length > 0;
 }
 
 export async function listMcp(serverConfig: ServerConfig, workspaceId: string, workspaceRoot: string): Promise<McpItem[]> {

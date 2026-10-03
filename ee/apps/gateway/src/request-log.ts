@@ -90,7 +90,7 @@ export type RequestLogRecorder = {
 export const insertRequestLogIntoDb: InsertRequestLog = async (row, options) => {
   const { db, usageWriteDatabase } = await import("./db.js")
   if (row.route === "org_provider") {
-    return gatewayUsageWrites.start(row.org_membership_id, row.uni-cli_request_id, () => usageWriteDatabase().transaction((tx) => startGatewayUsageLog(tx, row, new Date(), options?.signal)), options?.signal)
+    return gatewayUsageWrites.start(row.org_membership_id, row.uniCli_request_id, () => usageWriteDatabase().transaction((tx) => startGatewayUsageLog(tx, row, new Date(), options?.signal)), options?.signal)
   }
   await db.insert(GatewayRequestLogTable).values(row)
     .onDuplicateKeyUpdate({ set: { id: sql`${GatewayRequestLogTable.id}` } })
@@ -100,7 +100,7 @@ export async function updateRequestLogInDb(row: GatewayRequestLogRow): Promise<b
   const { db, usageWriteDatabase } = await import("./db.js")
   if (row.route === "org_provider") {
     const { createGatewayUsageLimits } = await import("@uni-cli-ee/den-db/gateway-usage-limits")
-    return gatewayUsageWrites.settle(row.org_membership_id, row.uni-cli_request_id, () => createGatewayUsageLimits(usageWriteDatabase()).record(row))
+    return gatewayUsageWrites.settle(row.org_membership_id, row.uniCli_request_id, () => createGatewayUsageLimits(usageWriteDatabase()).record(row))
   }
   // A transaction/locking read also distinguishes a no-op retry from a missing
   // row without relying on driver-specific affectedRows/CLIENT_FOUND_ROWS.
@@ -207,7 +207,7 @@ export function createRequestLogRecorder(dependencies: RequestLogRecorderDepende
         stream: input.stream, started_at: startedAt, completed_at: null,
         // Existing enum placeholder; completed_at NULL is the pending marker.
         outcome: "client_aborted", usage_source: "missing",
-        uni-cli_request_id: input.uniCliRequestId, request_bytes: input.requestBytes ?? null,
+        uniCli_request_id: input.uniCliRequestId, request_bytes: input.requestBytes ?? null,
         metadata: {
           ...(input.requestedModelSource ? { requested_model_source: input.requestedModelSource } : {}),
           ...(input.gatewayUsage ? { gateway_usage: input.gatewayUsage } : {}),
@@ -268,7 +268,7 @@ export function createRequestLogRecorder(dependencies: RequestLogRecorderDepende
         usage_source: usage && hasUsageTokens(usage) ? usage.usageSource : "missing",
         cost_micro_usd: estimateCost(started, usage, upstreamModel, pricing),
         upstream_request_id: input.upstreamRequestId ?? usage?.upstreamRequestId ?? null,
-        uni-cli_request_id: started.uniCliRequestId,
+        uniCli_request_id: started.uniCliRequestId,
         started_at: startedAt,
         first_byte_at: firstByteAt,
         completed_at: now(),
@@ -283,7 +283,7 @@ export function createRequestLogRecorder(dependencies: RequestLogRecorderDepende
           if (!await startWrite) return
           const saved = await persist(() => (dependencies.updateRequestLog ?? updateRequestLogInDb)(row), "request_log_update_failed")
           if (!saved) report("request_log_not_finalized")
-        } finally { gatewayUsageWrites.releaseFailedSettlement(row.uni-cli_request_id) }
+        } finally { gatewayUsageWrites.releaseFailedSettlement(row.uniCli_request_id) }
       })()
       return finishWrite
     },

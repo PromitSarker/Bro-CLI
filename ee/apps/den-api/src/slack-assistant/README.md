@@ -113,7 +113,7 @@ on until the sandbox quality and disclosure checks below pass.
 ```sh
 pnpm --filter @uni-cli-ee/den-api test
 # Use a prepared, isolated database whose name ends in _test.
-DEN_SLACK_TEST_DATABASE_URL=mysql://.../uni-cli_slack_test \
+DEN_SLACK_TEST_DATABASE_URL=mysql://.../uniCli_slack_test \
   pnpm --filter @uni-cli-ee/den-api test:slack:db
 pnpm --filter @uni-cli-ee/den-web typecheck
 pnpm sdk:check

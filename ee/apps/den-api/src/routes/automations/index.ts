@@ -72,7 +72,7 @@ const runListSchema = z.object({ items: z.array(automationRunSchema), nextCursor
 const runResponseSchema = z.object({ run: automationRunSchema }).meta({ ref: "AutomationRunResponse" })
 const runnerClaimResponseSchema = z.object({ assignment: automationDesktopRunnerAssignmentSchema.nullable() })
 const uniCliWebAccessRequiredSchema = z.object({
-  error: z.literal("uni-cli_web_access_required"),
+  error: z.literal("uniCli_web_access_required"),
   message: z.string(),
 }).meta({ ref: "AutomationUniCliWebAccessRequiredError" })
 type McpDescribeRouteOptions = DescribeRouteOptions & { "x-mcp": true }

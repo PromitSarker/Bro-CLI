@@ -23,7 +23,7 @@ export const UniCliGatewayQuota = async () => ({
           responseBody: JSON.stringify({ error: {
             type: "usage_limit_error",
             code: GATEWAY_USAGE_LIMIT_ERROR_CODE,
-            source: "uni-cli_gateway",
+            source: "uniCli_gateway",
             message: GATEWAY_QUOTA_MESSAGE,
           } }),
           isRetryable: false,

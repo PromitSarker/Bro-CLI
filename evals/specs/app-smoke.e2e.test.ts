@@ -35,10 +35,10 @@ test("app boots with a control route and meaningful visible content", async ({ w
     expect(sessions.status).toBe(200);
     expect(sessions.body).toEqual([]);
     const tools = await world.packagedToolIds();
-    expect(tools).toEqual(expect.arrayContaining(["uni-cli_docs_search", "uni-cli_query"]));
+    expect(tools).toEqual(expect.arrayContaining(["uniCli_docs_search", "uniCli_query"]));
     evidence.recordAssertionEvidence(
       "The packaged engine loads Uni-CLI Connect canary tools",
-      "The automatically selected default workspace exposes uni-cli_docs_search and uni-cli_query through the real engine tool registry without test-driven workspace creation or engine startup. The engine resolves the shipped plugins outside app.asar without repository dependencies.",
+      "The automatically selected default workspace exposes uniCli_docs_search and uniCli_query through the real engine tool registry without test-driven workspace creation or engine startup. The engine resolves the shipped plugins outside app.asar without repository dependencies.",
       true,
     );
     evidence.recordAssertionEvidence(

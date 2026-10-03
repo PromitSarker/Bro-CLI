@@ -1,7 +1,7 @@
 export const UniCliConnectInstaller = () => {
-  const MCP_SERVER_URL = "https://api.uni-clilabs.com/mcp/agent";
+  const MCP_SERVER_URL = "https://api.uniClilabs.com/mcp/agent";
   const CURSOR_INSTALL_LINK = "cursor://anysphere.cursor-deeplink/mcp/install?name=uniCli&config=eyJ1cmwiOiJodHRwczovL2FwaS5vcGVud29ya2xhYnMuY29tL21jcC9hZ2VudCJ9";
-  const VS_CODE_INSTALL_LINK = "vscode:mcp/install?%7B%22name%22%3A%22uni-cli%22%2C%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fapi.uni-clilabs.com%2Fmcp%2Fagent%22%7D";
+  const VS_CODE_INSTALL_LINK = "vscode:mcp/install?%7B%22name%22%3A%22uniCli%22%2C%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fapi.uniClilabs.com%2Fmcp%2Fagent%22%7D";
   const CODEX_LOGIN_COMMAND = "codex mcp login uni-cli";
   const CODEX_RECONNECT_COMMAND = `codex mcp logout uniCli
 codex mcp login uni-cli`;
@@ -195,7 +195,7 @@ opencode mcp auth uni-cli`;
           </div>
         ) : null}
         <div className="mt-4 flex items-center justify-between gap-3">
-          <p className="m-0 text-xs text-gray-500">Works with your Uni-CLI account — <a href="https://app.uni-clilabs.com?mode=sign-up" className="font-medium underline">create one free</a>.</p>
+          <p className="m-0 text-xs text-gray-500">Works with your Uni-CLI account — <a href="https://app.uniClilabs.com?mode=sign-up" className="font-medium underline">create one free</a>.</p>
           <button type="button" aria-label="Copy the Uni-CLI MCP install command" onClick={() => copy(activeInstall.id, activeInstall.copyText)} className="shrink-0 rounded-lg bg-[#011627] px-4 py-2 text-xs font-medium text-white">
             {copied === activeInstall.id ? "Copied" : copied === "error" ? "Couldn't copy" : "Copy"}
           </button>

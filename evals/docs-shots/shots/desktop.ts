@@ -64,7 +64,7 @@ async function openEmptyTeamPromptSession(surface: DesktopShotSurface): Promise<
     const deadline = Date.now() + 60000;
     let last = null;
     while (Date.now() < deadline) {
-      last = await window.__uni-cliControl.execute("session.create_task", null);
+      last = await window.__uniCliControl.execute("session.create_task", null);
       if (last?.ok === true) return last;
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }

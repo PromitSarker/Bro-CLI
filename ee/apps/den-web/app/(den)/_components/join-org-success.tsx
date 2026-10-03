@@ -23,7 +23,7 @@ import { OnboardingCard } from "./onboarding-card";
 import { OnboardingShell } from "./onboarding-shell";
 import { OrganizationBrandIdentity, type OrganizationBrand } from "./organization-brand-identity";
 
-const UNICLI_DOWNLOAD_URL = "https://uni-clilabs.com/download";
+const UNICLI_DOWNLOAD_URL = "https://uniClilabs.com/download";
 
 function ReturnToUniCliStatus({
   uniCliUrl,

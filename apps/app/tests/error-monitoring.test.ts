@@ -57,10 +57,10 @@ describe("shouldMonitorWebErrors", () => {
 describe("sanitizePageUrl", () => {
   test("strips credential-bearing query strings and fragments", () => {
     expect(
-      sanitizePageUrl("https://app.uni-clilabs.com/signin?grant=secret-grant&uniCliToken=tok#accessToken=at"),
-    ).toBe("https://app.uni-clilabs.com/signin");
-    expect(sanitizePageUrl("https://app.uni-clilabs.com/chat/abc?accessToken=x")).toBe(
-      "https://app.uni-clilabs.com/chat/abc",
+      sanitizePageUrl("https://app.uniClilabs.com/signin?grant=secret-grant&uniCliToken=tok#accessToken=at"),
+    ).toBe("https://app.uniClilabs.com/signin");
+    expect(sanitizePageUrl("https://app.uniClilabs.com/chat/abc?accessToken=x")).toBe(
+      "https://app.uniClilabs.com/chat/abc",
     );
   });
 
@@ -76,7 +76,7 @@ describe("buildWebErrorEvent", () => {
       type: "TypeError",
       message: "x is not a function",
       stack: "TypeError: x is not a function\n  at boot",
-      url: "https://app.uni-clilabs.com/",
+      url: "https://app.uniClilabs.com/",
       release: "abc123",
       phase: "boot",
     });
@@ -86,7 +86,7 @@ describe("buildWebErrorEvent", () => {
     expect(event.environment).toBe("web");
     expect(event.release).toBe("abc123");
     expect(event.tags).toEqual({ boot_phase: "boot" });
-    expect(event.request).toEqual({ url: "https://app.uni-clilabs.com/" });
+    expect(event.request).toEqual({ url: "https://app.uniClilabs.com/" });
     expect(event.exception.values).toEqual([{ type: "TypeError", value: "x is not a function" }]);
     expect(event.extra).toEqual({ stack: "TypeError: x is not a function\n  at boot" });
     // Never any user/session/content fields.
@@ -108,7 +108,7 @@ describe("buildWebErrorEvent", () => {
     const event = buildWebErrorEvent({
       type: "Error",
       message: "m".repeat(5000),
-      url: "https://app.uni-clilabs.com/",
+      url: "https://app.uniClilabs.com/",
       phase: "runtime",
     });
     expect(event.exception.values[0].value).toHaveLength(1000);
@@ -122,7 +122,7 @@ describe("buildSentryEnvelope", () => {
     const event = buildWebErrorEvent({
       type: "Error",
       message: "boom",
-      url: "https://app.uni-clilabs.com/",
+      url: "https://app.uniClilabs.com/",
       phase: "runtime",
     });
     const lines = buildSentryEnvelope(event).split("\n");
@@ -139,7 +139,7 @@ describe("reportCaughtWebError", () => {
   // The boundary's componentDidCatch is the real caller, so the hand-off and
   // its redaction are exercised through it.
   test("boundary-caught errors redact quoted identity, message and stack in web envelopes, dedupe, and stay inert on desktop", async () => {
-    GlobalRegistrator.register({ url: "https://app.uni-clilabs.com/signin?grant=secret-grant" });
+    GlobalRegistrator.register({ url: "https://app.uniClilabs.com/signin?grant=secret-grant" });
     const actEnvironment = Reflect.get(globalThis, "IS_REACT_ACT_ENVIRONMENT");
     Reflect.set(globalThis, "IS_REACT_ACT_ENVIRONMENT", true);
     const container = document.createElement("div");
@@ -164,7 +164,7 @@ describe("reportCaughtWebError", () => {
       startWebErrorMonitoring();
       boundary.componentDidCatch(thrown, info);
       expect(fetchSpy).not.toHaveBeenCalled();
-      expect(window.__uni-cliWebErrorMonitorActive).toBeUndefined();
+      expect(window.__uniCliWebErrorMonitorActive).toBeUndefined();
 
       process.env.VITE_UNICLI_DEPLOYMENT = "web";
       startWebErrorMonitoring();
@@ -174,7 +174,7 @@ describe("reportCaughtWebError", () => {
       const event = JSON.parse(bodies[0].split("\n")[2]);
       expect(event.exception.values).toEqual([{ type: "Error", value: "Deep link rejected: uniCli://open" }]);
       expect(event.tags).toEqual({ boot_phase: "runtime" });
-      expect(event.request).toEqual({ url: "https://app.uni-clilabs.com/signin" });
+      expect(event.request).toEqual({ url: "https://app.uniClilabs.com/signin" });
       expect(event.extra.stack).toContain("Deep link rejected: uniCli://open");
       // Neither the page URL's grant nor the thrown URL's token leaves the page.
       expect(bodies[0]).not.toContain("secret-grant");
@@ -218,7 +218,7 @@ describe("reportCaughtWebError", () => {
         expect(stack).toContain("Error: recovery trace");
         expect(stack).toContain("at restoreSession (session-route.tsx:42:7)");
         expect(reported.tags).toEqual({ boot_phase: "runtime" });
-        expect(reported.request).toEqual({ url: "https://app.uni-clilabs.com/signin" });
+        expect(reported.request).toEqual({ url: "https://app.uniClilabs.com/signin" });
         for (const canary of canaries) {
           expect(body).not.toContain(canary);
           expect(identity).not.toContain(canary);

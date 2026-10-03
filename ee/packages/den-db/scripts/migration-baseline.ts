@@ -5,7 +5,7 @@ import { readMigrationFiles } from "drizzle-orm/migrator"
 import { ORGANIZATION_REPAIRS, type Executor } from "../src/schema-repairs.ts"
 
 export const journalTable = "__drizzle_migrations"
-export const stateTable = "__uni-cli_dev_migration_state"
+export const stateTable = "__uniCli_dev_migration_state"
 export class MigrationSafetyError extends Error {}
 export const recovery = "Stop writers and inspect a backup/restored copy with the migration owner. Reconcile the exact schema and migration receipts explicitly; do not use db:push, db:baseline, or delete the interruption marker to bypass this check."
 

@@ -15,7 +15,7 @@
  *
  * The pre-boot half lives as an inline script in `index.html` so a bundle
  * that never loads is still reported; once this module starts it takes over
- * via `window.__uni-cliWebErrorMonitorActive`.
+ * via `window.__uniCliWebErrorMonitorActive`.
  */
 import { isAnalyticsEnabled } from "./analytics";
 import { formatCrashDiagnostic, redactCrashText } from "./crash-diagnostics";
@@ -24,7 +24,7 @@ import { isElectronRuntime } from "./runtime-env";
 
 declare global {
   interface Window {
-    __uni-cliWebErrorMonitorActive?: boolean;
+    __uniCliWebErrorMonitorActive?: boolean;
   }
 }
 
@@ -171,7 +171,7 @@ export function startWebErrorMonitoring() {
   if (!target) return;
 
   // Hand off from the pre-boot beacon in index.html.
-  window.__uni-cliWebErrorMonitorActive = true;
+  window.__uniCliWebErrorMonitorActive = true;
   const release = String(import.meta.env.VITE_UNICLI_BUILD_SHA ?? "").trim()
     || String(import.meta.env.VITE_UNICLI_APP_VERSION ?? "").trim();
   monitor = { target, release };

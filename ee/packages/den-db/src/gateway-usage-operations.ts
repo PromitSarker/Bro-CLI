@@ -88,7 +88,7 @@ export async function recoverGatewayUsageRequests(
         const [event] = await tx.select().from(E).where(eq(E.id, requestId))
         const [raw] = event
           ? []
-          : await tx.select().from(Log).where(eq(Log.uni-cli_request_id, requestId))
+          : await tx.select().from(Log).where(eq(Log.uniCli_request_id, requestId))
         const organizationId = event?.organizationId ?? raw?.organization_id
         const memberId = event?.memberId ?? raw?.org_membership_id
         if (!memberId || !organizationId) return { requestId, status: "missing" }

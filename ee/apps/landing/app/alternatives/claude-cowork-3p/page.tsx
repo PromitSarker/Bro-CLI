@@ -14,7 +14,7 @@ export const metadata = withSocialMetadata({
   },
   openGraph: {
     ...baseOpenGraph,
-    url: "https://uni-clilabs.com/alternatives/claude-cowork-3p"
+    url: "https://uniClilabs.com/alternatives/claude-cowork-3p"
   }
 });
 
@@ -35,7 +35,7 @@ const breadcrumbSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Uni-CLI", item: "https://uni-clilabs.com" },
+    { "@type": "ListItem", position: 1, name: "Uni-CLI", item: "https://uniClilabs.com" },
     { "@type": "ListItem", position: 2, name: "Claude Cowork alternative", item: CLAUDE_COWORK_ALTERNATIVE_URL },
     { "@type": "ListItem", position: 3, name: "Claude Cowork on 3P", item: CLAUDE_COWORK_3P_URL }
   ]

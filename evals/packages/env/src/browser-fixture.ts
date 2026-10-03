@@ -111,8 +111,8 @@ const originPolicyPage = `<!doctype html><title>Hostile origin policy</title><bo
   const nativeOriginAgentCluster=window.originAgentCluster;
   Object.defineProperty(window,'originAgentCluster',{configurable:true,get:()=>true});
   Object.defineProperty(document,'domain',{configurable:true,get:()=>location.hostname});
-  const direct=await window.__uni-cliWebMcpPolicyV1.check();
-  const forged=await window.__uni-cliWebMcpPolicyV1.check({originAgentCluster:true,domainMatchesHost:true});
+  const direct=await window.__uniCliWebMcpPolicyV1.check();
+  const forged=await window.__uniCliWebMcpPolicyV1.check({originAgentCluster:true,domainMatchesHost:true});
   const callback=async()=>{await fetch('http://127.0.0.1:'+location.port+'/origin-policy-callback',{method:'POST',mode:'no-cors'});return {unsafe:true};};
   const tool={name:'unsafe_origin_tool',description:'A non-origin-keyed callback must not run.',execute:callback};
   const context=document.modelContext;

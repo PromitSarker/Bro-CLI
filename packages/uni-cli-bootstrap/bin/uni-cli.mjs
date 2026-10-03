@@ -102,8 +102,8 @@ function printHelp() {
     "                   new code, so pass the latest one.",
     "  --web-base-url   Browser-facing origin written into --prepare-desktop's",
     "                   config (used for the app's Sign In button and claim",
-    "                   links). Defaults to https://app.uni-clilabs.com when",
-    "                   --base-url is the hosted API (api.uni-clilabs.com);",
+    "                   links). Defaults to https://app.uniClilabs.com when",
+    "                   --base-url is the hosted API (api.uniClilabs.com);",
     "                   set explicitly for self-hosted/custom deployments.",
     "  --json           Print machine-readable JSON",
     "",
@@ -167,14 +167,14 @@ function defaultDeviceKeyPath() {
 // it opens in the user's browser for sign-in (e.g. for "Sign in" and claim
 // links) - it is a different host than the API origin used for CLI/API calls
 // (`--base-url`, `apiBaseUrl`). Reusing the API host here breaks sign-in: the
-// browser opens `https://api.uni-clilabs.com/?mode=sign-in...` and shows raw
+// browser opens `https://api.uniClilabs.com/?mode=sign-in...` and shows raw
 // API JSON instead of the sign-in page. Derive the correct web host instead
 // of assuming it equals the API host.
 function deriveWebBaseUrl(apiBaseUrl) {
   try {
     const url = new URL(apiBaseUrl)
-    if (url.hostname === "api.uni-clilabs.com") {
-      return "https://app.uni-clilabs.com"
+    if (url.hostname === "api.uniClilabs.com") {
+      return "https://app.uniClilabs.com"
     }
     // Local/self-hosted dev: den-web commonly proxies the API at a different
     // port on the same host (see ee/apps/den-web's /api/den proxy). Callers
@@ -187,7 +187,7 @@ function deriveWebBaseUrl(apiBaseUrl) {
 
 const DEVICE_CLIENT_ID = "uni-cli-cli"
 const DEVICE_CODE_GRANT = "urn:ietf:params:oauth:grant-type:device_code"
-const DEFAULT_API_BASE_URL = "https://api.uni-clilabs.com"
+const DEFAULT_API_BASE_URL = "https://api.uniClilabs.com"
 
 function defaultCredentialsPath() {
   return process.env.UNICLI_CREDENTIALS_PATH || join(process.env.HOME || process.env.USERPROFILE || process.cwd(), ".uni-cli", "credentials.json")
@@ -1152,7 +1152,7 @@ async function runCloudOnboard(args) {
 
 async function runCloudBootstrapWorkspace(args) {
   const json = hasFlag(args.flags, "json")
-  const baseUrl = getFlag(args.flags, "base-url", "https://api.uni-clilabs.com")?.replace(/\/$/, "")
+  const baseUrl = getFlag(args.flags, "base-url", "https://api.uniClilabs.com")?.replace(/\/$/, "")
   const workspaceName = getFlag(args.flags, "workspace-name")
   const skillName = getFlag(args.flags, "skill-name", "First Uni-CLI Skill")
   const ownerEmail = getFlag(args.flags, "owner-email")

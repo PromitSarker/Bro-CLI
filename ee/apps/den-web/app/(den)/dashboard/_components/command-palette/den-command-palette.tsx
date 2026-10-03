@@ -27,7 +27,7 @@ import { useOrgDashboard } from "../../_providers/org-dashboard-provider";
 import { useAutomations } from "../automation-data";
 import { usePluginSummaries } from "../plugin-data";
 
-const UNICLI_DOCS_URL = "https://uni-clilabs.com/docs";
+const UNICLI_DOCS_URL = "https://uniClilabs.com/docs";
 const RECENTS_STORAGE_KEY = "den.command-palette.recents";
 const RECENTS_LIMIT = 8;
 

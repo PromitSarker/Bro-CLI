@@ -57,7 +57,7 @@ export function LoadingOverlay() {
         if (!cancelled && result.ok) setReleases(result.releases);
       })
       .catch(() => undefined);
-    if (window.__uni-cliRecoveryControl) {
+    if (window.__uniCliRecoveryControl) {
       return () => {
         cancelled = true;
       };

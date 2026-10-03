@@ -142,9 +142,9 @@ const connectionStatusOutputSchema = uniCliCloudMcpConnectionActionSchema.extend
   errorCode: z.enum(["not_connected", "invalid_refresh_token", "invalid_grant", "unauthorized", "provider_error"]),
   message: z.string(),
   action: z.object({
-    type: z.enum(["connect", "reconnect", "update_credentials", "inspect_connection", "fix_provider", "fix_network", "contact_uni-cli"]),
+    type: z.enum(["connect", "reconnect", "update_credentials", "inspect_connection", "fix_provider", "fix_network", "contact_uniCli"]),
     label: z.string(),
-    surface: z.enum(["uni-cli_your_connections", "uni-cli_organization_connections", "provider_admin_console", "network_infrastructure", "uni-cli_support"]),
+    surface: z.enum(["uniCli_your_connections", "uniCli_organization_connections", "provider_admin_console", "network_infrastructure", "uniCli_support"]),
     retry: z.literal("search_capabilities"),
     url: z.string().url().optional(),
   }),

@@ -51,7 +51,7 @@ export function buildDetachedRespawnArgs(argv: string[]): string[] {
 }
 
 export function normalizeDenTarget(value: string | undefined): string {
-  const raw = (value ?? "https://app.uni-clilabs.com").trim();
+  const raw = (value ?? "https://app.uniClilabs.com").trim();
   const withProtocol = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
   return new URL(withProtocol).origin;
 }

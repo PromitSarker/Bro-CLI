@@ -274,7 +274,7 @@ const ADMIN_PATH: Record<AdminView, string> = {
 export function LpDemoCloud() {
   const [tab, setTab] = useState<BrowserTab>("web");
   const [adminView, setAdminView] = useState<AdminView>("members");
-  const url = tab === "web" ? "app.uni-clilabs.com/acme-studio/web" : `app.uni-clilabs.com/acme-studio/${ADMIN_PATH[adminView]}`;
+  const url = tab === "web" ? "app.uniClilabs.com/acme-studio/web" : `app.uniClilabs.com/acme-studio/${ADMIN_PATH[adminView]}`;
 
   return (
     <div className="flex h-full min-h-0 w-full flex-col">

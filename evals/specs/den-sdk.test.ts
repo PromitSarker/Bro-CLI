@@ -22,7 +22,7 @@ test.skipIf(!available)(
       },
     });
     const defaultHealth = await defaultClient.getHealth({ throwOnError: true });
-    expect(defaultUrl).toBe("https://api.uni-clilabs.com/health");
+    expect(defaultUrl).toBe("https://api.uniClilabs.com/health");
     expect(defaultHealth.response.status).toBe(200);
     const anonymous = createDenClient({ baseUrl: den.ref.apiUrl });
     const health = await anonymous.getHealth({ throwOnError: true });
@@ -34,7 +34,7 @@ test.skipIf(!available)(
     evidence.recordAssertionEvidence("Public health and protected identity", "Health succeeds without credentials; identity returns 401 with no data.",
       health.response.status === 200 && denied.response.status === 401 && denied.data === undefined);
     evidence.recordAssertionEvidence("Default URL and custom transport", "The default HTTPS health URL is passed to the custom fetch, which reaches the isolated Den successfully.",
-      defaultUrl === "https://api.uni-clilabs.com/health" && defaultHealth.response.status === 200);
+      defaultUrl === "https://api.uniClilabs.com/health" && defaultHealth.response.status === 200);
 
     const session = createDenClient({ baseUrl: den.ref.apiUrl, token: den.admin.token });
     const identity = await session.getV1Me({ throwOnError: true });

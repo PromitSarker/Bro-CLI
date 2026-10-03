@@ -486,7 +486,7 @@ export function DebugView(props: DebugViewProps) {
             {t("settings.debug_opencode_version", { version: props.runtimeSummary.opencodeVersionLabel })}
           </div>
           <div>
-            {t("settings.debug_uni-cli_server_version", {
+            {t("settings.debug_uniCli_server_version", {
               version: props.runtimeSummary.uniCliServerVersionLabel,
             })}
           </div>
@@ -521,8 +521,8 @@ export function DebugView(props: DebugViewProps) {
 
         <div className="grid gap-3 grid-cols-1 lg:grid-cols-2">
           <ServiceCard
-            title={t("settings.uni-cli_server_label")}
-            description={t("settings.uni-cli_config_sidecar_desc")}
+            title={t("settings.uniCli_server_label")}
+            description={t("settings.uniCli_config_sidecar_desc")}
             pill={props.uniCliCard}
             lines={props.uniCliCard.lines}
             stdout={props.uniCliCard.stdout ?? null}
@@ -530,7 +530,7 @@ export function DebugView(props: DebugViewProps) {
             execution={props.uniCliCard.execution ?? null}
             error={props.uniCliCard.error ?? null}
             restarting={props.uniCliServerRestarting}
-            restartLabel={t("settings.restart_uni-cli_server")}
+            restartLabel={t("settings.restart_uniCli_server")}
             onRestart={props.onRestartuniCliServer}
             serviceStatus={props.uniCliServiceStatus}
             logStatus={props.uniCliLogStatus}
@@ -614,7 +614,7 @@ export function DebugView(props: DebugViewProps) {
       {/* Section: Diagnostics */}
       <div className={cardClass}>
         <div className={sectionHeaderClass}>
-          <div className={sectionTitleClass}>{t("settings.uni-cli_diagnostics_title")}</div>
+          <div className={sectionTitleClass}>{t("settings.uniCli_diagnostics_title")}</div>
           <div className={sectionDescClass}>
             <span className="font-mono text-[11px] text-dls-secondary">
               {props.uniCliServerDiagnostics?.version ?? "—"}
@@ -1178,12 +1178,12 @@ export function DebugView(props: DebugViewProps) {
           <div className="flex items-start justify-between gap-3">
             <div>
               <div className="text-sm font-semibold tracking-[-0.1px] text-dls-text">
-                {t("settings.reset_uni-cli_title")}
+                {t("settings.reset_uniCli_title")}
               </div>
               <div className="text-[12px] text-dls-secondary">
                 {props.opencodeDevModeEnabled
-                  ? t("settings.reset_uni-cli_desc_dev")
-                  : t("settings.reset_uni-cli_desc_prod")}
+                  ? t("settings.reset_uniCli_desc_dev")
+                  : t("settings.reset_uniCli_desc_prod")}
               </div>
             </div>
             <div

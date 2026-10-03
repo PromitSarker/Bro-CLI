@@ -6,9 +6,9 @@
 // Sources: public/llms.txt, every public/.well-known/agent-skills/*/SKILL.md,
 // the MCP discovery files, and packages/docs/start-here/use-uni-cli-from-an-ai-agent.mdx.
 //
-// - uni-clilabs.com routes served by this app are fetched from --base-url
+// - uniClilabs.com routes served by this app are fetched from --base-url
 //   (a local `next start`), so new routes are checked before they deploy.
-// - uni-clilabs.com/docs/* is proxied to Mintlify. A live 404 passes as
+// - uniClilabs.com/docs/* is proxied to Mintlify. A live 404 passes as
 //   "pending deploy" when the page exists in packages/docs (fails with --strict).
 // - Everything else is fetched live. --offline skips external URLs.
 import { existsSync, readdirSync, readFileSync } from "node:fs";
@@ -49,11 +49,11 @@ const sources = [
 const ignored = [/<[^>]*>/, /example\.com/, /your-den-web-host/];
 // Endpoints that answer GET with an auth or method error by design.
 const expectedStatus = new Map([
-  ["https://api.uni-clilabs.com/mcp/agent", [401, 405, 406]],
+  ["https://api.uniClilabs.com/mcp/agent", [401, 405, 406]],
 ]);
 // OAuth issuer identifiers are not documents; check their RFC 8414 metadata instead.
 const probeInstead = new Map([
-  ["https://app.uni-clilabs.com/api/auth", "https://app.uni-clilabs.com/.well-known/oauth-authorization-server/api/auth"],
+  ["https://app.uniClilabs.com/api/auth", "https://app.uniClilabs.com/.well-known/oauth-authorization-server/api/auth"],
 ]);
 
 const urls = new Map();
@@ -89,7 +89,7 @@ async function probe(url, init = {}) {
 const results = [];
 for (const [url, files] of urls) {
   const parsed = new URL(url);
-  const isSite = parsed.hostname === "uni-clilabs.com";
+  const isSite = parsed.hostname === "uniClilabs.com";
   const isDocs = isSite && (parsed.pathname === "/docs" || parsed.pathname.startsWith("/docs/"));
   const local = isSite && !isDocs;
   if (!local && offline) {

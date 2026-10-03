@@ -540,7 +540,7 @@ export function SessionPage(props: SessionPageProps) {
   const activeWorkbenchPane = isMobile
     ? narrowPane === "split" ? "secondary" : "primary"
     : focusedWorkbenchPane;
-  const uni-clibenchTab = useWorkbenchStore((state) => state.openTab);
+  const uniClibenchTab = useWorkbenchStore((state) => state.openTab);
   const setWorkbenchSplit = useWorkbenchStore((state) => state.setSplit);
   const focusWorkbenchPane = useWorkbenchStore((state) => state.focusPane);
   const [conversationHistory, setConversationHistory] = useState(() => (
@@ -999,7 +999,7 @@ export function SessionPage(props: SessionPageProps) {
       splitSession?.sessionId ?? null,
     ));
   }, [
-    uni-clibenchTab,
+    uniClibenchTab,
     pendingConversationHistoryNavigation,
     props.selectedSessionId,
     props.selectedWorkspaceId,
@@ -1164,7 +1164,7 @@ export function SessionPage(props: SessionPageProps) {
   );
 
   const openSessionTab = useCallback((workspaceId: string, sessionId: string) => {
-    uni-clibenchTab({
+    uniClibenchTab({
       workspaceId,
       sessionId,
       title: sessionTitleForId(props.sidebar.workspaceSessionGroups, sessionId, workspaceId),
@@ -1172,7 +1172,7 @@ export function SessionPage(props: SessionPageProps) {
     });
     focusWorkbenchPane("primary");
     props.sidebar.onOpenSession(workspaceId, sessionId);
-  }, [focusWorkbenchPane, uni-clibenchTab, props.sidebar]);
+  }, [focusWorkbenchPane, uniClibenchTab, props.sidebar]);
 
   const handleOpenSessionReference = useCallback((reference: SessionReference) => {
     const workbench = useWorkbenchStore.getState();

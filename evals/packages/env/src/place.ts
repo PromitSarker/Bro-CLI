@@ -67,7 +67,7 @@ async function databaseExists(mysqlUrl: URL, name: string): Promise<boolean> {
   }
 }
 
-export function ephemeralDatabaseName(prefix = "uni-cli_eval"): string {
+export function ephemeralDatabaseName(prefix = "uniCli_eval"): string {
   const timestamp = Date.now().toString(36);
   const nonce = randomBytes(6).toString("hex");
   return `${prefix}_${process.pid}_${timestamp}_${nonce}`.toLowerCase();

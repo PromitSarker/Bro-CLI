@@ -79,7 +79,7 @@ export type RecoveryActionResult = {
 
 declare global {
   interface Window {
-    __uni-cliRecoveryControl?: {
+    __uniCliRecoveryControl?: {
       snapshot: () => Promise<unknown>;
       select: (id: string) => Promise<unknown>;
     };
@@ -563,7 +563,7 @@ export async function openDesktopPath(target: string): Promise<void> {
  * resolves outside (for example through a symlink) is revealed in its folder instead.
  */
 export async function openDesktopWorkspaceFile(workspaceRoot: string, target: string): Promise<"opened" | "revealed"> {
-  const result = await invokeElectronHelper("__uni-clispaceFile", workspaceRoot, target);
+  const result = await invokeElectronHelper("__uniClispaceFile", workspaceRoot, target);
   if (!result || typeof result !== "object" || !("ok" in result)) {
     throw new Error("Could not open this file.");
   }

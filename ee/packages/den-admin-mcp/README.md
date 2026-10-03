@@ -38,7 +38,7 @@ create a read-only MySQL user:
 
 ```sql
 CREATE USER 'den_readonly'@'%' IDENTIFIED BY '...';
-GRANT SELECT ON uni-cli_den.* TO 'den_readonly'@'%';
+GRANT SELECT ON uniCli_den.* TO 'den_readonly'@'%';
 ```
 
 ## Register in Uni-CLI
@@ -52,7 +52,7 @@ Add to `opencode.json` (workspace) or `~/.config/opencode/opencode.jsonc`
     "den-admin": {
       "type": "local",
       "command": ["node", "/path/to/ee/packages/den-admin-mcp/index.mjs"],
-      "environment": { "DATABASE_URL": "mysql://den_readonly:...@host:3306/uni-cli_den" },
+      "environment": { "DATABASE_URL": "mysql://den_readonly:...@host:3306/uniCli_den" },
       "enabled": true
     }
   }

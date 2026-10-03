@@ -104,7 +104,7 @@ function rejectedTokenMessage(target: RemoteWorkspaceConnectionTarget) {
 }
 
 function remoteSupportMessage(message: string) {
-  return `${message} Upgrade the Uni-CLI host and try again. If this continues, contact team@uni-clilabs.com.`;
+  return `${message} Upgrade the Uni-CLI host and try again. If this continues, contact team@uniClilabs.com.`;
 }
 
 export function redactRemoteDiagnosticText(value: string): string {

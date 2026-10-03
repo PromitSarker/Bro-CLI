@@ -505,14 +505,14 @@ async function additionalWorkspace(
 ): Promise<ShellWorkspace> {
   const previous = await seed.evalIn(app, () => (localStorage.getItem("uni-cli.react.activeWorkspace") ?? ""));
   // TODO(primitive): seed.workspace should always create the requested additional workspace.
-  const result = await seed.evalIn(app, browserScript((path) => window.__uni-cliControl.execute("workspace.create", { path }), [path]), { awaitPromise: true, timeoutMs: 120_000 });
+  const result = await seed.evalIn(app, browserScript((path) => window.__uniCliControl.execute("workspace.create", { path }), [path]), { awaitPromise: true, timeoutMs: 120_000 });
   if (!isRecord(result) || result.ok !== true) throw new Error(`Could not create workspace ${path}: ${JSON.stringify(result)}`);
   const deadline = Date.now() + 120_000;
   while (Date.now() < deadline) {
     const state = await seed.evalIn(app, () => (({
       workspaceId: localStorage.getItem("uni-cli.react.activeWorkspace") ?? "",
       route: window.location.hash,
-      ready: Boolean(window.__uni-cliControl),
+      ready: Boolean(window.__uniCliControl),
     })));
     if (isRecord(state)
       && typeof state.workspaceId === "string"
@@ -665,7 +665,7 @@ export async function sidebarExpansion(seed: Seed, mode: "workspace" | "group" |
     }, version: 0 }));
   }, [workspace.workspaceId, groups, assignments, [...sessions.map(session => session.sessionId), neighbor.sessionId]]));
   await app.client.send("Page.reload");
-  await waitFor(app, () => Boolean(document.querySelector('[data-sidebar-session-id]')) && Boolean(window.__uni-cliControl), {
+  await waitFor(app, () => Boolean(document.querySelector('[data-sidebar-session-id]')) && Boolean(window.__uniCliControl), {
     timeoutMs: 60_000, label: "sidebar expansion fixture reloaded",
   });
   const observation = await observeSidebarExpansion(app);
@@ -719,7 +719,7 @@ export async function workspaceNewTask(seed: Seed, { place }: { place: Place }) 
     providerId, modelId, modelName: "New task model", baseUrl: `${mock.url}/v1`,
   });
   await reload(app, { timeoutMs: 60_000 });
-  await waitFor(app, () => Boolean(window.__uni-cliControl?.listActions()
+  await waitFor(app, () => Boolean(window.__uniCliControl?.listActions()
     .some((entry) => entry.id === "session.model_picker.open" && entry.disabled === false)), {
     timeoutMs: 60_000,
     label: "reloaded renderer model picker is interactive",
@@ -1078,7 +1078,7 @@ export async function workspaceNewTask(seed: Seed, { place }: { place: Place }) 
     };
   }, [sessionId, role, marker]));
   const rendererDiagnostic = (expectedSessionId: string | null) => seed.evalIn(app, browserScript((expectedWorkspaceId, expectedSessionId) => {
-    const composer = window.__uni-cli?.slice("composer") ?? null;
+    const composer = window.__uniCli?.slice("composer") ?? null;
     const ownerWorkspaceId: unknown = composer ? Reflect.get(composer, "workspaceId") : null;
     const ownerSessionId: unknown = composer ? Reflect.get(composer, "sessionId") : null;
     return {
@@ -1404,7 +1404,7 @@ export async function pinnedSessions(seed: Seed) {
   // TODO(primitive): probe.context should expose the Uni-CLI context snapshot.
   async function context(): Promise<{ pinnedSessionIds: string[]; pinnedResourceRefs: string[] }> {
     const value = await seed.evalIn(app, () => {
-      const c = window.__uni-cliControl?.context?.();
+      const c = window.__uniCliControl?.context?.();
       return {
         pinnedSessionIds: c?.conversations?.pinnedSessionIds ?? null,
         pinnedResourceRefs: (c?.resources ?? [])
@@ -1461,7 +1461,7 @@ export async function commandPaletteSearch(seed: Seed) {
       },
     },
   });
-  await waitFor(app, () => Boolean(window.__uni-cliControl), {
+  await waitFor(app, () => Boolean(window.__uniCliControl), {
     timeoutMs: 60_000,
     label: "reloaded app-web command palette is interactive",
   });
@@ -1497,7 +1497,7 @@ type ArchiveMainState = {
 
 async function archiveMainControl(command: ArchiveControl): Promise<ArchiveMainState> {
   const response = await window.__UNICLI_ELECTRON__.invokeDesktop("__fetch",
-    "http://127.0.0.1/__uni-cli_archive_test_control", {
+    "http://127.0.0.1/__uniCli_archive_test_control", {
       method: "POST", body: JSON.stringify(command), timeoutMs: 25_000,
     });
   if (response.status !== 200) throw new Error("Archive main-fetch bootstrap is unavailable");
@@ -1648,7 +1648,7 @@ export async function archiveActiveSessions(seed: Seed, { place }: { place: Plac
     let lastState: unknown = null;
     while (Date.now() < deadline) {
       lastState = await seed.evalIn(app, browserScript((previousTimeOrigin, workspaceId, sessions) => {
-        const route = window.__uni-cli?.slice?.("route");
+        const route = window.__uniCli?.slice?.("route");
         const rows = sessions.map((session) => {
           const row = document.querySelector('[data-sidebar-workspace-id="' + session.workspaceId + '"] [data-sidebar-session-id="' + session.sessionId + '"]');
           return {
@@ -1659,7 +1659,7 @@ export async function archiveActiveSessions(seed: Seed, { place }: { place: Plac
         });
         return {
           hash: location.hash, selectedWorkspaceId: route?.selectedWorkspaceId, rows,
-          ready: performance.timeOrigin !== previousTimeOrigin && Boolean(window.__uni-cliControl)
+          ready: performance.timeOrigin !== previousTimeOrigin && Boolean(window.__uniCliControl)
             && route?.selectedWorkspaceId === workspaceId
             && !route.workspaces.find(workspace => workspace.id === workspaceId)?.loading
             && location.hash === "#/workspace/" + encodeURIComponent(workspaceId) + "/session"
@@ -1883,7 +1883,7 @@ export async function archiveActiveSessions(seed: Seed, { place }: { place: Plac
         requests: window.__archiveNetwork.requests,
         surfaces: [...document.querySelectorAll("[data-session-surface-id]")].map(el => el.getAttribute("data-session-surface-id")),
         activeRows: [...document.querySelectorAll("[data-sidebar-workspace-id] [data-sidebar-session-id]")].map(el => el.getAttribute("data-sidebar-session-id")),
-        tabs: window.__uni-cliControl.context().conversations.tabs.map(tab => tab.sessionId),
+        tabs: window.__uniCliControl.context().conversations.tabs.map(tab => tab.sessionId),
         memory: JSON.parse(localStorage.getItem("uni-cli.react.sessionByWorkspace") ?? "{}"),
       };
     }, [[workspaceA.workspaceId, workspaceB.workspaceId]]), { timeoutMs: 30_000 });
@@ -1971,15 +1971,15 @@ export async function archiveActiveSessions(seed: Seed, { place }: { place: Plac
       const renderer = await seed.evalIn(app, () => ({
         hash: location.hash,
         fault: { mode: window.__archiveNetwork.mode, sessionId: window.__archiveNetwork.sessionId, workspaceId: window.__archiveNetwork.workspaceId, held: window.__archiveNetwork.release !== null },
-        composer: window.__uni-cli?.slice("composer"),
-        events: window.__uni-cli?.events(80),
+        composer: window.__uniCli?.slice("composer"),
+        events: window.__uniCli?.events(80),
         drafts: localStorage.getItem("uni-cli.session-drafts.v2"),
         surfaces: [...document.querySelectorAll<HTMLElement>("[data-session-surface-id]")].map(surface => ({
           sessionId: surface.dataset.sessionSurfaceId,
           text: surface.innerText.slice(-6000),
           draft: surface.querySelector<HTMLElement>('[data-lexical-editor="true"]')?.innerText,
         })),
-        actions: window.__uni-cliControl.listActions().filter(action => action.id.startsWith("composer.")).map(action => ({ id: action.id, disabled: action.disabled })),
+        actions: window.__uniCliControl.listActions().filter(action => action.id.startsWith("composer.")).map(action => ({ id: action.id, disabled: action.disabled })),
         requests: window.__archiveNetwork.requests,
       }));
       const main = await mainControl({ action: "state" });
@@ -1989,7 +1989,7 @@ export async function archiveActiveSessions(seed: Seed, { place }: { place: Plac
     },
     surfaceReady: (sessionId: string) => seed.evalIn(app, browserScript((sessionId) => {
       const surface = document.querySelector<HTMLElement>(`[data-session-surface-id="${sessionId}"]`);
-      const snapshot = window.__uni-cli?.slice("composer")?.snapshotQuery;
+      const snapshot = window.__uniCli?.slice("composer")?.snapshotQuery;
       return Boolean(surface?.getClientRects().length && surface.querySelector('[data-lexical-editor="true"][contenteditable="true"]'))
         && snapshot?.intendedSessionId === sessionId && snapshot.currentSnapshotId === sessionId;
     }, [sessionId])),
@@ -2080,7 +2080,7 @@ export async function archiveSessionsInLinkedWorkspace(seed: Seed) {
     /** The path the desktop persisted for the workspace, exactly as it will address the engine. */
     storedWorkspacePath: async () => {
       const value = await seed.evalIn(app, browserScript((workspaceId) =>
-        window.__uni-cli?.slice?.("route")?.workspaces?.find(item => item.id === workspaceId)?.path ?? null, [world.workspace.workspaceId]));
+        window.__uniCli?.slice?.("route")?.workspaces?.find(item => item.id === workspaceId)?.path ?? null, [world.workspace.workspaceId]));
       if (typeof value !== "string") throw new Error(`Stored workspace path was malformed: ${JSON.stringify(value)}`);
       return value;
     },
@@ -2104,7 +2104,7 @@ export async function archiveSessionsInLinkedWorkspace(seed: Seed) {
       return Object.fromEntries(Object.entries(value).map(([id, directory]) => [id, String(directory)]));
     },
     splitFacts: () => seed.evalIn(app, () => {
-      const layout = window.__uni-cliControl?.context?.()?.conversations?.layout;
+      const layout = window.__uniCliControl?.context?.()?.conversations?.layout;
       return {
         primarySessionId: (layout?.kind === "split" ? layout.primarySessionId : undefined) ?? (layout?.kind === "single" ? layout.sessionId : undefined) ?? "",
         secondarySessionId: (layout?.kind === "split" ? layout.secondarySessionId : undefined) ?? "",
@@ -2559,7 +2559,7 @@ export async function externalSessionVisibility(seed: Seed) {
     // TODO(primitive): probe.route should expose the sidebar's per-workspace session lists.
     async route(): Promise<SidebarRouteFacts> {
       return parseSidebarRouteFacts(await seed.evalIn(app, () => {
-        const route = window.__uni-cli?.slice?.("route");
+        const route = window.__uniCli?.slice?.("route");
         if (!route) return null;
         return {
           selectedWorkspaceId: String(route.selectedWorkspaceId ?? ""),
@@ -2883,7 +2883,7 @@ export async function activeSessionStorm(seed: Seed) {
   await seed.evalIn(app, () => { location.reload(); return true; }).catch(() => undefined);
   const reloadDeadline = Date.now() + 60_000;
   while (Date.now() < reloadDeadline) {
-    const ready = await seed.evalIn(app, () => (Boolean(window.__uni-cliControl)
+    const ready = await seed.evalIn(app, () => (Boolean(window.__uniCliControl)
       && Boolean((localStorage.getItem("uni-cli.den.authToken") ?? "").trim())))
       .catch(() => false);
     if (ready === true) break;

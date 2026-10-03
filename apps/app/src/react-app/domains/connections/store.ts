@@ -759,7 +759,7 @@ export function createConnectionsStore(options: {
     const action = snapshot.mcpServers.some((server) => server.name === slug) ? "updated" : "added";
 
     if (conflictsWithuniCliConnect(entry)) {
-      const error = t("mcp.name_reserved_uni-cli_connect");
+      const error = t("mcp.name_reserved_uniCli_connect");
       setStateField("mcpStatus", error);
       finishPerf(options.developerMode(), "mcp.connect", "blocked", startedAt, {
         reason: "uni-cli-connect-name-reserved",

@@ -195,7 +195,7 @@ test("credential retry yields a correlated 503 without forwarding tokens or aski
     expect(state.requests).toHaveLength(0)
     expect(state.upstreamReads).toBe(0)
     expect(state.rows[0]).toMatchObject({ status: 503, outcome: "rejected", error_code: retryReason })
-    expect(f.output + JSON.stringify(state.reports)).not.toMatch(/EXPIRED_TOKEN_NEVER_FORWARD|REFRESH_TOKEN_NEVER_FORWARD|uni-cli_auth_required/)
+    expect(f.output + JSON.stringify(state.reports)).not.toMatch(/EXPIRED_TOKEN_NEVER_FORWARD|REFRESH_TOKEN_NEVER_FORWARD|uniCli_auth_required/)
   }
 })
 

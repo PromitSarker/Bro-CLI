@@ -4,7 +4,7 @@ import type { uniCliContextSnapshot } from "@uni-cli/types/uni-cli-context";
 /** Test-facing browser protocols. State is installed by the corresponding world before use. */
 declare global {
   interface Window {
-    __uni-cliControl: {
+    __uniCliControl: {
       listActions(): { id: string; disabled: boolean; args?: unknown; [key: string]: unknown }[];
       execute(action: string, args?: unknown): Promise<{ ok: boolean; error?: string; result?: unknown; value?: unknown }>;
       context(): uniCliContextSnapshot;
@@ -34,7 +34,7 @@ declare global {
         setChannel(channel: "stable" | "alpha"): Promise<{ channel: "stable" | "alpha"; currentVersion: string }>;
       };
     };
-    __uni-cli: {
+    __uniCli: {
       events(limit?: number): { at: number; name: string; data: unknown }[];
       slice(name: "composer"): {
         snapshotQuery: {
@@ -58,11 +58,11 @@ declare global {
         sessionsByWorkspaceId: Record<string, { id: string; title?: string }[]>;
       };
     };
-    __uni-cliRecoveryControl: { snapshot(): Promise<unknown>; select(id: string): Promise<unknown> };
-    __uni-cliApplyDesktopConfig(config: { allowAlphaUpdates?: boolean; brandAppName?: string; brandLogoUrl?: string }): void;
-    __uni-cliSetDesktopConfigRefreshResult(config: { allowAlphaUpdates?: boolean; brandAppName?: string; brandLogoUrl?: string }): void;
-    __uni-cliReadDesktopVersionMetadataEval(): { minAppVersion: string; latestAppVersion: string; publishedDesktopVersions: string[] };
-    __uni-cliUpdaterEvalBridge: {
+    __uniCliRecoveryControl: { snapshot(): Promise<unknown>; select(id: string): Promise<unknown> };
+    __uniCliApplyDesktopConfig(config: { allowAlphaUpdates?: boolean; brandAppName?: string; brandLogoUrl?: string }): void;
+    __uniCliSetDesktopConfigRefreshResult(config: { allowAlphaUpdates?: boolean; brandAppName?: string; brandLogoUrl?: string }): void;
+    __uniCliReadDesktopVersionMetadataEval(): { minAppVersion: string; latestAppVersion: string; publishedDesktopVersions: string[] };
+    __uniCliUpdaterEvalBridge: {
       getChannel(): Promise<{ channel: string; currentVersion: string }>;
       setChannel(channel: "stable" | "alpha"): Promise<{ channel: string; currentVersion: string }>;
       check(channel?: "stable" | "alpha"): Promise<unknown>;
@@ -71,8 +71,8 @@ declare global {
       onDownloadProgress(callback?: (progress: unknown) => void): () => void;
     };
     __backgroundUpdateWitness: { checks: number; downloads: number; installs: number; offset: number; finishDownload: (() => void) | null; intervalCheck: (() => void) | null };
-    __uni-cliAlphaUpdateEligibilityEvalState: { checks: (string | undefined)[]; currentVersion: string; latestVersion: string };
-    __uni-cliUpdaterEvalState: { checks: (string | undefined)[]; setChannels: string[]; stableStarted: boolean; finishStable: (() => void) | null };
+    __uniCliAlphaUpdateEligibilityEvalState: { checks: (string | undefined)[]; currentVersion: string; latestVersion: string };
+    __uniCliUpdaterEvalState: { checks: (string | undefined)[]; setChannels: string[]; stableStarted: boolean; finishStable: (() => void) | null };
     __issue3980NotificationProbe: { observer: MutationObserver; state: { rawSeen: boolean } };
     __libraryStability: { requests: string[]; denEvents: number; samples: { buttons: number; contentVisible: boolean }[]; sampler?: number };
     __libraryLifecycleReads: number;

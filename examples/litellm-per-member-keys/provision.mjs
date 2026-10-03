@@ -439,7 +439,7 @@ export async function reconcileMemberKeys(input) {
         body: JSON.stringify({
           models,
           key_alias: keyAlias,
-          metadata: { uni-cli_org_membership_id: orgMembershipId },
+          metadata: { uniCli_org_membership_id: orgMembershipId },
         }),
       },
       secrets,

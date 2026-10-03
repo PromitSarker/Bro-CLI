@@ -112,7 +112,7 @@ function ArtifactPanelView({ sessionId, client, workspaceId, workspaceRoot, isRe
   const canUseDesktopFileActions = target.kind === "file" && canUseDesktopWorkspaceActions;
   const workspaceName = workspaceRoot.split(/[/\\]/).filter(Boolean).pop() ?? "Workspace";
 
-  const uni-clispaceFile = (entry: { path: string; size: number; mtimeMs: number }) => {
+  const uniClispaceFile = (entry: { path: string; size: number; mtimeMs: number }) => {
     const nextTarget = openTargetFromWorkspaceFile(entry.path, { size: entry.size, updatedAt: entry.mtimeMs });
     if (!nextTarget) return;
     usePanelTabStore.getState().openTab(sessionId, {
@@ -395,7 +395,7 @@ function ArtifactPanelView({ sessionId, client, workspaceId, workspaceRoot, isRe
               workspaceId={workspaceId}
               workspaceName={workspaceName}
               selectedPath={target.value}
-              onOpenFile={uni-clispaceFile}
+              onOpenFile={uniClispaceFile}
               fileActions={[
                 { id: "download", label: "Download", run: (entry) => void downloadFile(entry.path, entry.path.split(/[/\\]/).pop() ?? entry.path) },
                 ...(canUseDesktopWorkspaceActions

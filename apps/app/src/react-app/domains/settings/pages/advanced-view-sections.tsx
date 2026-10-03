@@ -319,8 +319,8 @@ export function AdvancedRuntimeSection(props: AdvancedRuntimeSectionProps) {
         />
         <RuntimeStatusCard
           icon={<Server size={18} />}
-          title={t("settings.uni-cli_server_label")}
-          description={t("settings.uni-cli_server_desc")}
+          title={t("settings.uniCli_server_label")}
+          description={t("settings.uniCli_server_desc")}
           statusLabel={props.uniCliStatusLabel}
           tone={props.uniCliTone}
           detailLines={props.uniCliDetailLines}
@@ -986,7 +986,7 @@ export function AdvancedConnectionSection(props: AdvancedConnectionSectionProps)
               disabled={props.busy || props.restartBusy}
             >
               <RefreshCcw size={14} className={props.restartBusy ? "animate-spin" : ""} />
-              {props.restartBusy ? t("settings.restarting") : t("settings.restart_uni-cli_server")}
+              {props.restartBusy ? t("settings.restarting") : t("settings.restart_uniCli_server")}
             </Button>
           ) : null}
 

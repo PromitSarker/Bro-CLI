@@ -35,7 +35,7 @@ const test = spec.world(async (seed) => {
     const values = [enabled ? "enterprise" : "free", organizationId];
     if (den.placement?.kind === "daytona") {
       const script = `import { createConnection } from "/workspace/ee/packages/den-db/node_modules/mysql2/promise.js";
-        const connection = await createConnection("mysql://root:password@127.0.0.1:3306/uni-cli_den");
+        const connection = await createConnection("mysql://root:password@127.0.0.1:3306/uniCli_den");
         try { await connection.execute(${JSON.stringify(statement)}, ${JSON.stringify(values)}); } finally { await connection.end(); }`;
       const encoded = Buffer.from(script).toString("base64");
       const result = await execInSandbox(defaultDaytonaExec, den.placement.sandboxId, `printf %s ${encoded} | base64 -d | node --input-type=module`, { timeoutMs: 15_000, context: "Arrange isolated workspace plan" });

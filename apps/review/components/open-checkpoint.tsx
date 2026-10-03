@@ -57,7 +57,7 @@ export function CheckpointProvider({ children }: { children: ReactNode }) {
         || Date.parse(value.expiresAt) <= Date.now()) throw new Error("Invalid launch");
       const url = new URL(value.url);
       if (url.protocol !== "https:" || !/^evidence-[a-f0-9]{32}\.preview\.uniCli\.software$/.test(url.hostname)
-        || url.pathname !== "/__uni-cli_launch" || url.username || url.password) throw new Error("Invalid viewer");
+        || url.pathname !== "/__uniCli_launch" || url.username || url.password) throw new Error("Invalid viewer");
       pending.current.delete(key);
       update({ fork: { url: value.url, expiresAt: value.expiresAt }, unavailable: false });
     } catch { update({ error: "The checkpoint could not open. Try again." }); }

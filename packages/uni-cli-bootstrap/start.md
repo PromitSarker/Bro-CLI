@@ -30,7 +30,7 @@ pipe remote scripts directly into a shell. The script downloads the
 into `$HOME/.local/bin` - no npm or npx required.
 
 ```bash
-curl -fsSLo /tmp/uni-cli-install.sh https://uni-clilabs.com/install.sh
+curl -fsSLo /tmp/uni-cli-install.sh https://uniClilabs.com/install.sh
 less /tmp/uni-cli-install.sh
 sh /tmp/uni-cli-install.sh
 ```
@@ -47,7 +47,7 @@ Install the desktop app for this OS from the manifest:
 
 ```bash
 uni-cli-bootstrap install app \
-  --manifest https://uni-clilabs.com/install-manifest.json \
+  --manifest https://uniClilabs.com/install-manifest.json \
   --json
 ```
 
@@ -73,7 +73,7 @@ as) - they fire automatically the moment a human claims ownership.
 
 ```bash
 uni-cli-bootstrap cloud bootstrap-workspace \
-  --base-url https://api.uni-clilabs.com \
+  --base-url https://api.uniClilabs.com \
   --workspace-name "<workspace-name>" \
   --skill-name "First Uni-CLI Skill" \
   --claim-roles owner \
@@ -93,7 +93,7 @@ When the user already has an Uni-CLI account, or wants the CLI to act as them,
 sign in with a one-time code instead of a password:
 
 ```bash
-uni-cli-bootstrap login --base-url https://api.uni-clilabs.com --json
+uni-cli-bootstrap login --base-url https://api.uniClilabs.com --json
 ```
 
 The command prints a link (`verification_uri_complete`) and a code such as
@@ -151,13 +151,13 @@ If the user says yes:
    the agent they are currently using. The server URL is:
 
    ```text
-   https://api.uni-clilabs.com/mcp/agent
+   https://api.uniClilabs.com/mcp/agent
    ```
 
 3. For Codex, run:
 
    ```bash
-   codex mcp add uni-cli --url https://api.uni-clilabs.com/mcp/agent
+   codex mcp add uni-cli --url https://api.uniClilabs.com/mcp/agent
    codex mcp login uni-cli
    ```
 
@@ -165,7 +165,7 @@ If the user says yes:
    the existing entry instead. To switch organizations or recover stale auth,
    run `codex mcp logout uni-cli` before `codex mcp login uni-cli`.
 4. For another agent, use its current instructions from
-   `https://uni-clilabs.com/docs/cloud/run-in-the-cloud/cloud-mcp`; do not guess
+   `https://uniClilabs.com/docs/cloud/run-in-the-cloud/cloud-mcp`; do not guess
    unsupported client commands.
 5. Tell the user to restart or reopen the current agent after setup so the new
    MCP tools are loaded. Do not claim the connection works until the restarted

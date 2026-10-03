@@ -219,7 +219,7 @@ export function buildGatewayProviderConfig(
   const credentialEnv = swap?.env ?? (npm === "@ai-sdk/azure" ? ["AZURE_API_KEY"]
     : isAwsGatewayNpm(npm) ? ["AWS_BEARER_TOKEN_BEDROCK"]
       : inferenceCredentialEnvNames(readProviderEnvNames(config)))
-  const env = runtimeProviderEnvNames({ id: row.id, source: "uni-cli_gateway", providerConfig: { env: credentialEnv } })
+  const env = runtimeProviderEnvNames({ id: row.id, source: "uniCli_gateway", providerConfig: { env: credentialEnv } })
   return {
     ...config,
     ...(swap ? { npm: swap.npm } : {}),

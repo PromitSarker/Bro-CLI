@@ -27,7 +27,7 @@ const BUNDLED_ICONS_BY_APEX: Record<string, string> = {
   "context7.com": "/integrations/context7.png",
   "google.com": "/integrations/google.svg",
   "openai.com": "/integrations/openai.svg",
-  "uni-clilabs.com": "/uni-cli-mark.svg",
+  "uniClilabs.com": "/uni-cli-mark.svg",
 };
 
 const BUNDLED_ICONS_BY_SLUG: Record<string, string> = {

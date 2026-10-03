@@ -175,7 +175,7 @@ export interface GatewayProviderSummary {
   id: string;
   providerId: string;
   name: string;
-  source: "uni-cli_gateway";
+  source: "uniCli_gateway";
   /** Aggregate compatibility hints only; individual sets are authoritative. */
   credentialMode: InferenceProviderCredentialMode;
   credentialStatus: GatewayCredentialStatus;

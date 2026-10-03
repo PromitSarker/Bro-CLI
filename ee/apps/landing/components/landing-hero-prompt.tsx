@@ -11,7 +11,7 @@ import { capturePosthogEvent } from "../lib/posthog-client";
 import { LandingAgentGlyphs } from "./landing-agent-glyphs";
 
 const PROMPT_VARIANT = "hero";
-export const AGENT_START_PROMPT = `Install Uni-CLI on my computer, set up my first workspace, and open it ready to use. Follow the steps in https://uni-clilabs.com/start.md?v=${PROMPT_VARIANT}`;
+export const AGENT_START_PROMPT = `Install Uni-CLI on my computer, set up my first workspace, and open it ready to use. Follow the steps in https://uniClilabs.com/start.md?v=${PROMPT_VARIANT}`;
 
 type CopyMethod = "clipboard" | "execCommand" | "none";
 

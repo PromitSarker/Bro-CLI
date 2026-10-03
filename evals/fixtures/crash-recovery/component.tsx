@@ -28,7 +28,7 @@ function thrownValue(): unknown {
   return error;
 }
 function ThrowingChild(): React.ReactNode { if (witness) witness.throws++; throw thrownValue(); }
-function sync() { if (witness) { witness.analytics = isAnalyticsEnabled(); witness.active = window.__uni-cliWebErrorMonitorActive === true; } }
+function sync() { if (witness) { witness.analytics = isAnalyticsEnabled(); witness.active = window.__uniCliWebErrorMonitorActive === true; } }
 function button(label: string, action: () => void) {
   const element = document.createElement('button'); element.textContent = label;
   element.onclick = () => { action(); sync(); }; controls?.append(element);

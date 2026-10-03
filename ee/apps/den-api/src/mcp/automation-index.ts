@@ -2,7 +2,7 @@ import type { McpServer } from "@modelcontextprotocol/server"
 import type { AutomationList } from "@uni-cli/types/automations"
 
 export const AGENT_AUTOMATION_INDEX_URI = "automation://index.json"
-export const AGENT_AUTOMATION_INDEX_SCHEMA = "https://schemas.uni-clilabs.com/automations/discovery/0.2.0/schema.json"
+export const AGENT_AUTOMATION_INDEX_SCHEMA = "https://schemas.uniClilabs.com/automations/discovery/0.2.0/schema.json"
 
 /**
  * How many Automations the discovery index carries. The index rides in every

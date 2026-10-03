@@ -1,6 +1,6 @@
 # Uni-CLI Cloud App (`ee/apps/den-web`)
 
-Frontend for `app.uni-clilabs.com`.
+Frontend for `app.uniClilabs.com`.
 
 ## What it does
 
@@ -9,7 +9,7 @@ Frontend for `app.uni-clilabs.com`.
 - Lists and connects existing cloud workers.
 - Sends users to the organization billing page for subscription management.
 - Offers desktop handoff actions so users can open the generated worker directly in Uni-CLI or copy the connect credentials manually.
-- Calls the Den API directly at the matching `api.*` origin (for example, `app.uni-clilabs.com` -> `api.app.uni-clilabs.com`), including Better Auth traffic.
+- Calls the Den API directly at the matching `api.*` origin (for example, `app.uniClilabs.com` -> `api.app.uniClilabs.com`), including Better Auth traffic.
 - Keeps a same-origin auth proxy (`/api/auth/*`) only for compatibility with already-registered auth callbacks that still land on the web host.
 
 ## Current hosted user flow
@@ -59,15 +59,15 @@ Tailwind 4 requires Safari 16.4+, Chrome 111+, or Firefox 128+; see the
 - `DEN_AUTH_ORIGIN` (server-only): Origin header sent to Better Auth endpoints when the browser request does not include one. Required outside local dev wrappers.
 - `DEN_WEB_PUBLIC_ORIGIN` (server/runtime): public origin used for metadata.
 - `DEN_WEB_UNICLI_APP_CONNECT_URL` (runtime): Base URL for "Open in App" links.
-  - Example: `https://uni-clilabs.com/app`
+  - Example: `https://uniClilabs.com/app`
   - The web panel appends `/connect-remote` and injects worker URL/token params automatically.
 - `DEN_WEB_UNICLI_WEB_URL` (runtime): URL opened by the dashboard Web tab.
-  - default: `https://web.uni-clilabs.com`
+  - default: `https://web.uniClilabs.com`
 - `DEN_WEB_UNICLI_AUTH_CALLBACK_URL` (runtime): Canonical URL where the app returns after auth completes.
 - `NEXT_PUBLIC_POSTHOG_KEY` (public, build-time): the existing PostHog project key and primary setting. No new variable name is required. For rollout compatibility only, an unset key falls back to `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN`, then `DEN_WEB_POSTHOG_KEY`. An explicitly blank key disables analytics rather than falling back. There is no hardcoded key. Supply it before `next build`; runtime-only changes require a rebuild.
 - Vercel variable scopes matter: Preview/Development values are not available to Production builds. Enable the existing `NEXT_PUBLIC_POSTHOG_KEY` for Production before removing the transitional `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` entry, then rebuild. No hosting settings are changed by this code.
 - `NEXT_PUBLIC_POSTHOG_HOST` (public, build-time): the existing upstream setting. US/EU Cloud ingestion origins are supported; `app.posthog.com` and the US/EU UI origins are normalized to their region. Missing/blank values or `/ow` retain the US default. This controls server rewrite destinations and the SDK's UI links, never direct browser ingestion. Unsupported hosts fail enabled production builds with a value-free error; unused invalid values cannot prevent disabled preview/dev builds from starting.
-- The public key is emitted only when `NODE_ENV=production`, `VERCEL_ENV=production`, and no `UNICLI_DEV_MODE` override is active. Client initialization also requires the exact origin `https://app.uni-clilabs.com`. Previews, local builds and self-hosted deployments remain disabled. Auth/API URL settings do not control analytics.
+- The public key is emitted only when `NODE_ENV=production`, `VERCEL_ENV=production`, and no `UNICLI_DEV_MODE` override is active. Client initialization also requires the exact origin `https://app.uniClilabs.com`. Previews, local builds and self-hosted deployments remain disabled. Auth/API URL settings do not control analytics.
 - `instrumentation-client.ts` follows the [official Next.js SDK setup](https://posthog.com/docs/libraries/next-js): import the pinned `posthog-js` package and call `posthog.init` before hydration. The existing `window.posthog` analytics calls receive that same singleton. There is no inline CDN bootstrap, custom SDK queue, method replacement, or change to authentication helpers.
 - The SDK core is bundled with the app. Browser analytics requests always use `/ow`; ordered Next.js rewrites forward to the region selected by `NEXT_PUBLIC_POSTHOG_HOST`. Arbitrary upstream hosts and browser-side proxy bypass are unsupported. The `/ow` sanitizer strips outgoing Cookie, Authorization, and Referer headers and does not intercept auth routes or modify browser cookies.
 - SDK settings use localStorage persistence and route pageviews plus existing explicit events; autocapture, replay, surveys and automatic flags are disabled. The documented `before_send` hook removes query/fragment/userinfo from SDK URL properties and email/name from outbound event/person properties while preserving the public ingestion token. This is outbound filtering, not a guarantee that person properties never enter SDK memory or localStorage. Existing consent remains managed by the SDK; no forced opt-in or legacy-cookie cleanup is added.
@@ -95,7 +95,7 @@ Runtime logs and telemetry scrubbing avoid request bodies, cookies, authorizatio
 - `DEN_SINGLE_ORG_ALLOW_PUBLIC_SIGNUP`: whether unauthenticated users can self-serve signup into the singleton organization.
 - When SSO is configured on the singleton organization, auth becomes SSO-only.
 - `DEN_REQUIRE_EMAIL_VERIFICATION`: set `false` for the single-org default to avoid signup verification-code flows; hosted multi-org should set `true`.
-- `DEN_MCP_CLAIM_NAMESPACE`: namespace used for MCP token claim URIs. Leave blank to use `BETTER_AUTH_URL`; set a stable value before issuing tokens if hosts may change. Use `https://uni-clilabs.com` to preserve the original hosted MCP claim names.
+- `DEN_MCP_CLAIM_NAMESPACE`: namespace used for MCP token claim URIs. Leave blank to use `BETTER_AUTH_URL`; set a stable value before issuing tokens if hosts may change. Use `https://uniClilabs.com` to preserve the original hosted MCP claim names.
 - `DEN_BOOTSTRAP_ADMIN_EMAILS`: comma-separated platform admin emails seeded by `den-api` on startup. Blank disables bootstrap admin seeding.
 
 ## Deploy on Vercel
@@ -112,4 +112,4 @@ The filtered install includes Den Web's workspace dependency closure, so shared 
 
 Then assign custom domain:
 
-- `app.uni-clilabs.com`
+- `app.uniClilabs.com`

@@ -11,10 +11,10 @@ const maximumIncidentHistory = 10_000
 const retentionMs = CONNECT_DIAGNOSTIC_RETENTION_SECONDS * 1_000
 
 declare global {
-  var __uni-cliDiagnosticsConnectIncidents: StoredConnectDiagnosticIncident[] | undefined
+  var __uniCliDiagnosticsConnectIncidents: StoredConnectDiagnosticIncident[] | undefined
 }
 
-const localIncidents = globalThis.__uni-cliDiagnosticsConnectIncidents ??= []
+const localIncidents = globalThis.__uniCliDiagnosticsConnectIncidents ??= []
 
 type RedisReply = { result?: unknown; error?: string }
 

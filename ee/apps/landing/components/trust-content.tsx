@@ -166,5 +166,5 @@ export const sectionAnchors = [
 
 export const securityContact = {
   name: "Omar McAdam",
-  email: "team+security@uni-clilabs.com"
+  email: "team+security@uniClilabs.com"
 };

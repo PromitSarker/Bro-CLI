@@ -507,17 +507,17 @@ export function DesktopConfigProvider({ children }: DesktopConfigProviderProps) 
         normalizeDenDesktopConfig(configPayload),
       );
     };
-    Object.defineProperty(window, "__uni-cliApplyDesktopConfig", { value: bridge, configurable: true });
+    Object.defineProperty(window, "__uniCliApplyDesktopConfig", { value: bridge, configurable: true });
     const refreshBridge = (configPayload: unknown) => {
       devRefreshDesktopConfigRef.current = normalizeDenDesktopConfig(configPayload);
     };
-    Object.defineProperty(window, "__uni-cliSetDesktopConfigRefreshResult", {
+    Object.defineProperty(window, "__uniCliSetDesktopConfigRefreshResult", {
       value: refreshBridge,
       configurable: true,
     });
     return () => {
-      Object.defineProperty(window, "__uni-cliApplyDesktopConfig", { value: undefined, configurable: true });
-      Object.defineProperty(window, "__uni-cliSetDesktopConfigRefreshResult", { value: undefined, configurable: true });
+      Object.defineProperty(window, "__uniCliApplyDesktopConfig", { value: undefined, configurable: true });
+      Object.defineProperty(window, "__uniCliSetDesktopConfigRefreshResult", { value: undefined, configurable: true });
     };
   }, [applyDesktopConfigActions]);
 

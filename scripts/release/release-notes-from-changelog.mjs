@@ -76,7 +76,7 @@ const notes = [
   "",
   ...body,
   "",
-  `Full changelog: https://uni-clilabs.com/docs/changelog · [Compare](${compareUrl})`,
+  `Full changelog: https://uniClilabs.com/docs/changelog · [Compare](${compareUrl})`,
 ];
 if (preserved.length > 0) notes.push("", ...preserved);
 if (knownIssues.length > 0) notes.push("", ...knownIssues);

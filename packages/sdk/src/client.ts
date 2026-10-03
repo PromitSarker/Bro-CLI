@@ -18,7 +18,7 @@ export type DenClientConfig = Config & {
 export function createDenClient(config: DenClientConfig = {}) {
   const { token, apiKey, orgId, auditContext, ...options } = config;
   const auditCorrelationId = auditContext?.correlationId;
-  const client = createClient({ baseUrl: "https://api.uni-clilabs.com", ...options });
+  const client = createClient({ baseUrl: "https://api.uniClilabs.com", ...options });
   // Interceptors preserve all supported header forms and per-request overrides.
   client.interceptors.request.use((request) => {
     if (token && !request.headers.has("authorization")) request.headers.set("authorization", `Bearer ${token}`);

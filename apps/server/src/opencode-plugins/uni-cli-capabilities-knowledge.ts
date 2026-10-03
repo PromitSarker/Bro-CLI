@@ -39,14 +39,14 @@ export function automationRuntimeKnowledge(runtimeProvider = process.env.DEN_RUN
   }
   return [
     ...shared,
-    "This chat is running in Uni-CLI Desktop. For new recurring work, use uni-cli_execute id automation.propose so the person can review and create it in the app. Desktop creation fixes placement to Desktop and each occurrence requires the signed-in desktop runner.",
+    "This chat is running in Uni-CLI Desktop. For new recurring work, use uniCli_execute id automation.propose so the person can review and create it in the app. Desktop creation fixes placement to Desktop and each occurrence requires the signed-in desktop runner.",
     "Do not use createCloudAutomation from Desktop chat and never claim a Desktop Automation will run while the app is offline.",
   ].map((line) => `- ${line}`).join("\n");
 }
 
 const UNICLI_CAPABILITIES_KNOWLEDGE = `You are running inside Uni-CLI.
 
-For Uni-CLI product questions, use uni-cli_docs_search and uni-cli_docs_read as the first source of truth. Uni-CLI documentation tools answer product questions. Never use them as a substitute for performing an action against a connected service, marketplace capability, or remote skill. Read and summarize relevant docs before answering, and cite the docs-relative path (for example cloud/run-in-the-cloud/cloud-mcp.mdx) when it helps the user verify or continue. If the docs are missing, ambiguous, or appear stale, inspect the implementation code as a last resort and say that you are inferring from code.
+For Uni-CLI product questions, use uniCli_docs_search and uniCli_docs_read as the first source of truth. Uni-CLI documentation tools answer product questions. Never use them as a substitute for performing an action against a connected service, marketplace capability, or remote skill. Read and summarize relevant docs before answering, and cite the docs-relative path (for example cloud/run-in-the-cloud/cloud-mcp.mdx) when it helps the user verify or continue. If the docs are missing, ambiguous, or appear stale, inspect the implementation code as a last resort and say that you are inferring from code.
 
 Here is what you can help users with:
 
@@ -63,7 +63,7 @@ Here is what you can help users with:
 ## Connect and MCP servers
 - If the runtime steering says Uni-CLI Cloud is not ready, do not substitute documentation, browser, or UI tools for the connected-service action; direct the user to \`Settings > Library\` for inventory and \`Settings > Debug\` (developer mode) to repair and test agent access.
 - Prefer organization apps and connections listed in \`Settings > Library\` over adding the same managed service as a custom MCP. \`Settings > Library\` and custom MCP commands/URLs are also the path for a custom or local MCP server that Uni-CLI Cloud does not provide.
-- Uni-CLI Connect's public hosted endpoint for external MCP clients is \`https://api.uni-clilabs.com/mcp/agent\`; it exposes \`search_capabilities\` and \`execute_capability\`, governed by org membership, roles, policies, and exposure allowlists. \`app.uni-clilabs.com/api/den\` is an internal same-origin desktop proxy, not an external-client URL. Client setup (OpenCode, Codex, Cursor, ChatGPT Desktop, Claude Code, VS Code), OAuth flows, token lifetimes, and troubleshooting are documented — read cloud/run-in-the-cloud/cloud-mcp.mdx with uni-cli_docs_read before answering from memory.
+- Uni-CLI Connect's public hosted endpoint for external MCP clients is \`https://api.uniClilabs.com/mcp/agent\`; it exposes \`search_capabilities\` and \`execute_capability\`, governed by org membership, roles, policies, and exposure allowlists. \`app.uniClilabs.com/api/den\` is an internal same-origin desktop proxy, not an external-client URL. Client setup (OpenCode, Codex, Cursor, ChatGPT Desktop, Claude Code, VS Code), OAuth flows, token lifetimes, and troubleshooting are documented — read cloud/run-in-the-cloud/cloud-mcp.mdx with uniCli_docs_read before answering from memory.
 
 ## Other sessions
 - For questions about another chat (what was said, decided, or done), use the session affordances described under Uni-CLI app context; match by ID, title, workspace, or topic words, ask a short clarifying question if several sessions match, and answer only from the returned transcript — say so when it is limited or missing older context.
@@ -95,7 +95,7 @@ const docsSearchArgsSchema = z.object({
 });
 
 const docsReadArgsSchema = z.object({
-  path: z.string().min(1).describe("Docs-relative path returned by uni-cli_docs_search, for example start-here/connect-your-stack/connect-services.mdx."),
+  path: z.string().min(1).describe("Docs-relative path returned by uniCli_docs_search, for example start-here/connect-your-stack/connect-services.mdx."),
 });
 
 type DocsEntry = {
@@ -209,7 +209,7 @@ export const UniCliCapabilitiesKnowledge = async () => ({
     appendAgentInstructions(output.system, createInstructionSection("capabilities-knowledge", UNICLI_CAPABILITIES_KNOWLEDGE));
   },
   tool: {
-    uni-cli_docs_search: {
+    uniCli_docs_search: {
       description: "Search the bundled Uni-CLI documentation. Use this first for Uni-CLI product questions before inspecting implementation code.",
       args: docsSearchArgsSchema.shape,
       async execute(rawArgs: unknown) {
@@ -229,8 +229,8 @@ export const UniCliCapabilitiesKnowledge = async () => ({
         return JSON.stringify({ ok: true, matches }, null, 2);
       },
     },
-    uni-cli_docs_read: {
-      description: "Read a bundled Uni-CLI documentation page by docs-relative path returned from uni-cli_docs_search.",
+    uniCli_docs_read: {
+      description: "Read a bundled Uni-CLI documentation page by docs-relative path returned from uniCli_docs_search.",
       args: docsReadArgsSchema.shape,
       async execute(rawArgs: unknown) {
         const args = docsReadArgsSchema.parse(rawArgs);

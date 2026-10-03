@@ -12257,7 +12257,7 @@
         },
         "route": {
           "name": "route",
-          "type": "enum('uni-cli_openrouter','org_provider')",
+          "type": "enum('uniCli_openrouter','org_provider')",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -12402,8 +12402,8 @@
           "notNull": false,
           "autoincrement": false
         },
-        "uni-cli_request_id": {
-          "name": "uni-cli_request_id",
+        "uniCli_request_id": {
+          "name": "uniCli_request_id",
           "type": "varchar(32)",
           "primaryKey": false,
           "notNull": true,
@@ -12461,10 +12461,10 @@
         }
       },
       "indexes": {
-        "inference_request_logs_uni-cli_request_id": {
-          "name": "inference_request_logs_uni-cli_request_id",
+        "inference_request_logs_uniCli_request_id": {
+          "name": "inference_request_logs_uniCli_request_id",
           "columns": [
-            "uni-cli_request_id"
+            "uniCli_request_id"
           ],
           "isUnique": true
         },
@@ -12566,7 +12566,7 @@
         },
         "route": {
           "name": "route",
-          "type": "enum('uni-cli_openrouter','org_provider')",
+          "type": "enum('uniCli_openrouter','org_provider')",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false

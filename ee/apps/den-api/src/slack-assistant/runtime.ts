@@ -23,7 +23,7 @@ async function runtimeRequest(runtime: RemoteSessionRuntime, path: string, metho
 }
 export async function slackRuntime(actor: SlackActor) {
   if (!(await DEFAULT_REMOTE_SESSION_DEPS.getUniCliWebAccess(actor.organizationId)).hasAccess)
-    throw new Error("uni-cli_web_access_required")
+    throw new Error("uniCli_web_access_required")
   const result = await DEFAULT_REMOTE_SESSION_DEPS.resolveRuntime({
     organizationId: actor.organizationId,
     userId: actor.userId,

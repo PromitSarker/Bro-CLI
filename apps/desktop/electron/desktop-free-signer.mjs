@@ -28,7 +28,7 @@ export function desktopFreeBootstrapEligible(distribution, bootstrap, environmen
     const clean = (url) => !url.username && !url.password && !url.search && !url.hash;
     const hosted = (value) => {
       const url = new URL(value);
-      return clean(url) && ["https://app.uni-clilabs.com", "https://api.uni-clilabs.com", "https://api.app.uni-clilabs.com"].includes(url.origin);
+      return clean(url) && ["https://app.uniClilabs.com", "https://api.uniClilabs.com", "https://api.app.uniClilabs.com"].includes(url.origin);
     };
     // Developer mode: the named loopback control plane, whose API may live on another loopback port.
     const loopback = (value) => {

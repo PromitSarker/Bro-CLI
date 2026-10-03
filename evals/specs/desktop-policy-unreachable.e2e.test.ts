@@ -48,7 +48,7 @@ async function configureModel(surface: App, workspaceId: string, modelUrl: strin
   }, [workspaceId, modelUrl, providerId, modelId]), { awaitPromise: true, timeoutMs: 120_000 });
   expect(configured).toEqual({ configured: 200, reloaded: 200 });
   await evalIn(surface, () => { location.reload(); });
-  await waitFor(surface, () => Boolean(window.__uni-cliControl), { timeoutMs: 60_000, label: "configured signed-in desktop restored" });
+  await waitFor(surface, () => Boolean(window.__uniCliControl), { timeoutMs: 60_000, label: "configured signed-in desktop restored" });
 }
 
 async function runtimePlugins(surface: App, workspaceId: string): Promise<string[]> {

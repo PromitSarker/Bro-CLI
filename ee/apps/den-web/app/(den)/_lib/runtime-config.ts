@@ -14,7 +14,7 @@ export type DenWebRuntimeConfig = {
   singleOrgSsoConfigured: boolean;
 };
 
-export const DEFAULT_UNICLI_WEB_URL = "https://web.uni-clilabs.com";
+export const DEFAULT_UNICLI_WEB_URL = "https://web.uniClilabs.com";
 
 export const EMPTY_RUNTIME_CONFIG: DenWebRuntimeConfig = {
   denApiUrl: "",

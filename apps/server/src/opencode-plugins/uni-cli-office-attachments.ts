@@ -11,7 +11,7 @@ import {
   officeKindFromMimeOrFilename,
   type OfficeKind,
 } from "@uni-cli/workbook";
-import { uni-clispaceFileForReading, uni-clispaceFileForWriting } from "./workspace-file-identity.js";
+import { uniClispaceFileForReading, uniClispaceFileForWriting } from "./workspace-file-identity.js";
 
 const MATERIALIZED_DIR = join(".opencode", "uni-cli", "inbox", "chat-attachments");
 
@@ -156,7 +156,7 @@ function decodeDataUrl(url: string): Buffer {
  */
 async function readWorkspaceFile(realRoot: string, path: string, label: string): Promise<Buffer> {
   if (!isWithin(realRoot, path)) throw new Error(`${label} points outside the active workspace.`);
-  const { handle, info } = await uni-clispaceFileForReading(realRoot, path, label);
+  const { handle, info } = await uniClispaceFileForReading(realRoot, path, label);
   try {
     if (info.size > MAX_COMPRESSED_BYTES) throw new Error("Office attachment exceeds the compressed byte limit.");
     return await handle.readFile();
@@ -213,7 +213,7 @@ async function existingDigest(realRoot: string, path: string): Promise<string | 
  * pathname after validation.
  */
 async function writeMaterializedFile(realRoot: string, target: string, bytes: Buffer): Promise<void> {
-  const { handle } = await uni-clispaceFileForWriting(realRoot, target, null, "Materialized Office attachment");
+  const { handle } = await uniClispaceFileForWriting(realRoot, target, null, "Materialized Office attachment");
   try {
     await handle.writeFile(bytes);
     await handle.sync();

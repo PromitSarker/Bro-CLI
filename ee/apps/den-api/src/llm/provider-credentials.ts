@@ -88,7 +88,7 @@ export type RuntimeEnvProvider = {
  * Uni-CLI provider keeps `UNICLI_API_KEY`.
  */
 export function usesRuntimeProviderEnvTag(provider: Pick<RuntimeEnvProvider, "source">): boolean {
-  return provider.source === "models_dev" || provider.source === "uni-cli_gateway"
+  return provider.source === "models_dev" || provider.source === "uniCli_gateway"
 }
 
 /** The env name a member's machine or a cloud worker sees for one declared name. */

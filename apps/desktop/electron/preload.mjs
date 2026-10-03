@@ -355,7 +355,7 @@ if (
   process.env.UNICLI_EVAL_FATAL_DESKTOP_BOOTSTRAP_FAILURE
   && (process.env.UNICLI_EVAL_RECOVERY_CANDIDATES || process.env.UNICLI_EVAL_RECOVERY_RELEASES)
 ) {
-  contextBridge.exposeInMainWorld("__uni-cliRecoveryControl", {
+  contextBridge.exposeInMainWorld("__uniCliRecoveryControl", {
     snapshot() {
       return ipcRenderer.invoke("uni-cli:recovery:evalSnapshot");
     },

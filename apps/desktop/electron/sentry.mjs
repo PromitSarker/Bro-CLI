@@ -90,7 +90,7 @@ export async function inituniCliSentry({ app, distribution, packageMetadata }) {
   });
 
   initialized = true;
-  globalThis.__uni-cliDesktopTelemetry = {
+  globalThis.__uniCliDesktopTelemetry = {
     captureException,
     clearSession: clearuniCliSentrySession,
     setSession: setuniCliSentrySession,
@@ -106,7 +106,7 @@ export function setuniCliSentrySession(input) {
   telemetryActive = true;
   sentry.setUser({ id: userId });
   sentry.setTag("org_id", orgId);
-  sentry.setContext("uni-cli_cloud", {
+  sentry.setContext("uniCli_cloud", {
     organization_id: orgId,
     user_id: userId,
   });
@@ -118,7 +118,7 @@ export function clearuniCliSentrySession() {
   if (!initialized || !sentry) return false;
 
   sentry.setUser(null);
-  sentry.setContext("uni-cli_cloud", null);
+  sentry.setContext("uniCli_cloud", null);
   return true;
 }
 

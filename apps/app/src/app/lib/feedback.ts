@@ -5,7 +5,7 @@ const ENV_APP_VERSION = String(import.meta.env.VITE_UNICLI_APP_VERSION ?? "").tr
 const ENV_BUILD_SHA = String(import.meta.env.VITE_UNICLI_BUILD_SHA ?? "").trim();
 
 export const DEFAULT_FEEDBACK_URL =
-  ENV_FEEDBACK_URL || "https://uni-clilabs.com/feedback";
+  ENV_FEEDBACK_URL || "https://uniClilabs.com/feedback";
 
 type FeedbackUrlOptions = {
   entrypoint: string;

@@ -1,4 +1,4 @@
-export const DEFAULT_UNICLI_DOWNLOAD_URL = "https://uni-clilabs.com/download"
+export const DEFAULT_UNICLI_DOWNLOAD_URL = "https://uniClilabs.com/download"
 
 export type DesktopCapability = {
   title: string

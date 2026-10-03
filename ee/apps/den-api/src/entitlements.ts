@@ -129,8 +129,8 @@ export function checkEntitlement(
       feature: key,
       message:
         key === "sso"
-          ? `${ENTITLEMENT_FEATURE_LABELS[key]} requires a Team or Enterprise plan. Upgrade at uni-clilabs.com/pricing.`
-          : `${ENTITLEMENT_FEATURE_LABELS[key]} requires an Enterprise plan. Talk to us at uni-clilabs.com/enterprise.`,
+          ? `${ENTITLEMENT_FEATURE_LABELS[key]} requires a Team or Enterprise plan. Upgrade at uniClilabs.com/pricing.`
+          : `${ENTITLEMENT_FEATURE_LABELS[key]} requires an Enterprise plan. Talk to us at uniClilabs.com/enterprise.`,
     },
   }
 }

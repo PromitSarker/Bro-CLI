@@ -45,7 +45,7 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: metadataBaseFromOrigin(metadataOrigin),
     title: "Uni-CLI Cloud",
     description:
-      "Share your Uni-CLI setup with your team, manage billing, and use Uni-CLI Cloud from app.uni-clilabs.com.",
+      "Share your Uni-CLI setup with your team, manage billing, and use Uni-CLI Cloud from app.uniClilabs.com.",
     openGraph: {
       title: "Uni-CLI Cloud",
       description:
@@ -56,7 +56,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title: "Uni-CLI Cloud",
       description:
-        "Share your Uni-CLI setup with your team and manage Uni-CLI Cloud from app.uni-clilabs.com.",
+        "Share your Uni-CLI setup with your team and manage Uni-CLI Cloud from app.uniClilabs.com.",
       images: ["/opengraph-image"]
     },
     icons: {

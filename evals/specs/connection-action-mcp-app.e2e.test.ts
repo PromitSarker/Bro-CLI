@@ -132,7 +132,7 @@ test("a member can Authenticate or Skip in the native connection card and contin
       await user.screenshot();
     });
 
-    const expectedConnection = { connectionId: world.connection.id, connectionName: "Notion", state: "needs_connection", actor: "member", action: { type: "connect", surface: "uni-cli_your_connections" } };
+    const expectedConnection = { connectionId: world.connection.id, connectionName: "Notion", state: "needs_connection", actor: "member", action: { type: "connect", surface: "uniCli_your_connections" } };
 
     for (const [index, entry] of journeys.entries()) {
     if (index > 0) sessionId = await agent.createSession(`Connection decision ${index + 1}`);

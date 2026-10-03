@@ -22,7 +22,7 @@ pnpm --filter @uni-cli-ee/den-api seed:demo-org
 
 This creates `Acme Robotics` with demo users, teams, pending invites, and an imported Anthropic Knowledge Work Plugins marketplace. It is guarded by `UNICLI_DEV_MODE=1`, defaults to the local Den DB URL, and does not create workers or active external integrations.
 
-Default owner login: `alex@acme.test` / `Uni-CLIDemo123!`.
+Default owner login: `alex@acme.test` / `UniCliDemo123!`.
 
 ## Observability
 
@@ -42,7 +42,7 @@ Organization owners and super-admins approve self-hosted Uni-CLI Web instances i
 
 ## Current routes
 
-- `GET /` -> `302 https://uni-clilabs.com`
+- `GET /` -> `302 https://uniClilabs.com`
 - `GET /health`
 - Better Auth mount at `/api/auth/*`
 - desktop handoff routes under `/v1/auth/*`

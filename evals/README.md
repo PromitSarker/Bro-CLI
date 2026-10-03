@@ -172,7 +172,7 @@ Surface and substrate are independent axes:
 Run a live spec only by exact name and with explicit consent and endpoint values:
 
 ```bash
-UNICLI_EVAL_LIVE=1 UNICLI_EVAL_LIVE_DEN_API_URL=https://api.uni-clilabs.com UNICLI_EVAL_SECRET_LIVE_MAILBOX_EMAIL=<mailbox> pnpm evals:pr specs/prod-den-signup-invites.live.test.ts
+UNICLI_EVAL_LIVE=1 UNICLI_EVAL_LIVE_DEN_API_URL=https://api.uniClilabs.com UNICLI_EVAL_SECRET_LIVE_MAILBOX_EMAIL=<mailbox> pnpm evals:pr specs/prod-den-signup-invites.live.test.ts
 ```
 
 The live Den is attached and never deleted. Timestamped plus-addressed identities,
@@ -209,7 +209,7 @@ channels. Import them only from `@uni-cli/testkit`.
 | --- | --- | --- |
 | `seed` | Arrange the world | Create Den, desktops, browsers, data, mocks, sessions, and faults; this is the only API/state write channel. |
 | `user` | Act as a person | Trusted CDP mouse, keyboard, navigation, reload, visible assertions, screenshots, and vision checks. It cannot evaluate JS, fetch, or use app controls. |
-| `agent` | Use the product automation rail | Explicit `window.__uni-cliControl` actions, including agent sends and session actions. |
+| `agent` | Use the product automation rail | Explicit `window.__uniCliControl` actions, including agent sends and session actions. |
 | `probe` | Observe without changing state | Read text, composer/storage/hash/API/witness state, and poll with `eventually`. Probe API calls are GET-only. |
 
 A world is an imperative async function. Resources created through `seed` are
@@ -510,7 +510,7 @@ the pass/fail verdict.
 For an isolated Den API without Electron or Den Web, use the development helper:
 
 ```bash
-pnpm --dir evals dev:den -- up --port 8891 --database uni-cli_den_my_eval --seed
+pnpm --dir evals dev:den -- up --port 8891 --database uniCli_den_my_eval --seed
 pnpm --dir evals dev:den -- down --port 8891 --drop-database
 ```
 

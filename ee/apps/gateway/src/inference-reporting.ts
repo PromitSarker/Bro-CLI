@@ -132,7 +132,7 @@ export const sentryInferenceReporter: InferenceReporter = {
     // Exceptions often contain request/SQL parameters. Never send them to Sentry.
     Sentry.captureMessage(`Uni-CLI Gateway handled error: ${report.reason}`, {
       level: "error",
-      tags: { organization_id: report.organizationId, inference_key_id: report.inferenceKeyId, uni-cli_request_id: report.uniCliRequestId, route: report.route, method: report.method },
+      tags: { organization_id: report.organizationId, inference_key_id: report.inferenceKeyId, uniCli_request_id: report.uniCliRequestId, route: report.route, method: report.method },
       contexts: { inference: attributes },
     })
   },

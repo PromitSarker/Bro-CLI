@@ -151,7 +151,7 @@ try {
 
   const browserPage = await fetch(`${defaultBase}?desktopAuth=1`, { headers: { accept: "text/html" } })
   const browserCookies = browserPage.headers.getSetCookie()
-  const routeCookie = browserCookies.find((cookie) => cookie.startsWith("uni-cli_connect_debug_route="))?.split(";", 1)[0]
+  const routeCookie = browserCookies.find((cookie) => cookie.startsWith("uniCli_connect_debug_route="))?.split(";", 1)[0]
   const denCookie = browserCookies.find((cookie) => cookie.startsWith("den-session="))?.split(";", 1)[0]
   assert(browserPage.ok && routeCookie && denCookie, "Browser sign-in bootstrap did not return Den HTML and both routing/session cookies.")
   const browserCookie = `${routeCookie}; ${denCookie}`

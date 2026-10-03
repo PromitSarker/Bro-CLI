@@ -36,10 +36,10 @@ pnpm --filter @uni-cli-ee/diagnostics dev
 Open `http://localhost:3010` and sign in with:
 
 - username: `diagnostics-admin`
-- password: `Uni-CLIDiagnosticsLocal!`
+- password: `UniCliDiagnosticsLocal!`
 
 The local MCP endpoint is `http://localhost:3010/mcp` with synthetic bearer
-token `Uni-CLIDiagnosticsToken!`. Local history is process-memory only.
+token `UniCliDiagnosticsToken!`. Local history is process-memory only.
 
 The Connect debug proxy is available at:
 
@@ -76,7 +76,7 @@ To expose the controlled run in a local Den, set:
 
 ```dotenv
 DEN_DIAGNOSTICS_ORIGIN=http://localhost:3010
-DEN_DIAGNOSTICS_BEARER_TOKEN=Uni-CLIDiagnosticsToken!
+DEN_DIAGNOSTICS_BEARER_TOKEN=UniCliDiagnosticsToken!
 ```
 
 The standard `pnpm dev:den` command supplies these local defaults. The browser
@@ -101,9 +101,9 @@ Set these production environment variables:
 | `DIAGNOSTICS_SIGNING_SECRET` | Signs the one-hour dashboard cookie, short-lived synthetic OAuth access tokens, and stateless MCP session IDs; at least 32 characters. |
 | `DIAGNOSTICS_MCP_BEARER_TOKEN` | Synthetic diagnostic and Connect-intake token shared with Den, at least 24 characters. It also keys organization/client pseudonyms; never use a provider/customer credential. |
 | `DIAGNOSTICS_PROFILE` | `generic`, `microsoft`, or `servicenow`. |
-| `NEXT_PUBLIC_DIAGNOSTICS_ORIGIN` | Fixed production origin, normally `https://diagnostic.uni-clilabs.com`. Preview deployments use Vercel's deployment-specific `VERCEL_URL` instead. |
+| `NEXT_PUBLIC_DIAGNOSTICS_ORIGIN` | Fixed production origin, normally `https://diagnostic.uniClilabs.com`. Preview deployments use Vercel's deployment-specific `VERCEL_URL` instead. |
 | `DEBUG_PROXY_ACCESS_KEY` | URL-safe random value (16+ characters) required for the Connect debug proxy UI and traffic. It becomes a path segment in generated desktop-compatible URLs. |
-| `DEBUG_PROXY_DEFAULT_UPSTREAM` | Default Den origin. Falls back to `https://app.uni-clilabs.com`; set it explicitly on the Vercel project. |
+| `DEBUG_PROXY_DEFAULT_UPSTREAM` | Default Den origin. Falls back to `https://app.uniClilabs.com`; set it explicitly on the Vercel project. |
 | `DEBUG_PROXY_ALLOWED_UPSTREAMS` | Comma-separated HTTPS hosts or origins that generated override links may target. The default upstream remains allowed independently. |
 | `DEBUG_PROXY_SLOW_MS` | Optional Agent endpoint delay, clamped to 5,000–10,000 ms; default 7,000 ms. |
 | `DEBUG_PROXY_FLAKY_WINDOW_MS` | Optional per-instance rolling window for `flaky-N`; default 60,000 ms. |
@@ -113,12 +113,12 @@ enabled. Preview deployments derive their OAuth and MCP resource URLs from the
 deployment-specific `VERCEL_URL`; production continues to require the fixed
 `NEXT_PUBLIC_DIAGNOSTICS_ORIGIN` allowlist hostname.
 
-Attach `diagnostic.uni-clilabs.com` in the project's Vercel **Domains**
+Attach `diagnostic.uniClilabs.com` in the project's Vercel **Domains**
 settings, then create the CNAME value Vercel provides at the DNS provider. The
 stable customer allowlist entry is the same host; the MCP URL is:
 
 ```text
-https://diagnostic.uni-clilabs.com/mcp
+https://diagnostic.uniClilabs.com/mcp
 ```
 
 Before enabling public DNS, add Vercel Firewall rate-limit rules for `/mcp`,
@@ -217,7 +217,7 @@ pnpm --filter @uni-cli-ee/diagnostics smoke:debug-proxy
 After the production deployment is promoted, verify all of the following
 before sharing the allowlist hostname:
 
-1. `GET https://diagnostic.uni-clilabs.com/health` returns HTTP 200 and
+1. `GET https://diagnostic.uniClilabs.com/health` returns HTTP 200 and
    `{"service":"uni-cli-diagnostics","status":"ok"}`.
 2. The dashboard redirects to `/login` without a signed session, accepts the
    configured administrator credentials, and signs out by clearing the session.
@@ -289,13 +289,13 @@ OAuth, or MCP.
 
 For a customer-hosted Den, an organization admin enters the same synthetic
 secret in **Org settings → Den egress diagnostic**. Den encrypts it and never
-returns it to the browser. Den uses `https://diagnostic.uni-clilabs.com` by
+returns it to the browser. Den uses `https://diagnostic.uniClilabs.com` by
 default; set `DEN_DIAGNOSTICS_ORIGIN` only to override that fixed destination.
 `DEN_DIAGNOSTICS_BEARER_TOKEN` remains an optional deployment bootstrap
 fallback:
 
 ```dotenv
-DEN_DIAGNOSTICS_ORIGIN=https://diagnostic.uni-clilabs.com
+DEN_DIAGNOSTICS_ORIGIN=https://diagnostic.uniClilabs.com
 DEN_DIAGNOSTICS_BEARER_TOKEN=<same synthetic diagnostic token>
 ```
 

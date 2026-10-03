@@ -54,7 +54,7 @@ describe("install re-validates the organization's desktop version policy", () =>
     Object.defineProperty(globalThis, "IS_REACT_ACT_ENVIRONMENT", { configurable: true, value: true });
     // Bun aliases import.meta.env to process.env; DEV enables the metadata eval hook.
     process.env.DEV = "true";
-    window.__uni-cliReadDesktopVersionMetadataEval = () => metadata;
+    window.__uniCliReadDesktopVersionMetadataEval = () => metadata;
     installs = 0;
     refreshes = 0;
     statuses = [];

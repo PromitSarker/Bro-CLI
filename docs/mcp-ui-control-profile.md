@@ -49,7 +49,7 @@ This may navigate Uni-CLI away from the user's current session while the lookup 
 
 ### Uni-CLI agents
 
-Inside Uni-CLI, agents control the app through the semantic tools (`uni-cli_context`, `uni-cli_query`, `uni-cli_execute`) using affordance ids from context. External MCP clients can also use the hidden **Uni-CLI UI Control** MCP via **Settings -> Extensions -> Show hidden**.
+Inside Uni-CLI, agents control the app through the semantic tools (`uniCli_context`, `uniCli_query`, `uniCli_execute`) using affordance ids from context. External MCP clients can also use the hidden **Uni-CLI UI Control** MCP via **Settings -> Extensions -> Show hidden**.
 
 In-app agents do not need `session.open` to work with another session: `session.read` reads any session by id and `session.send { sessionId, text }` messages it, both without changing what the person sees (`docs/features/headless-session-control.md`). `composer.set_text` / `composer.send` type into the composer the person currently has focused.
 
@@ -252,6 +252,6 @@ The exact list depends on the current Uni-CLI route and state. Common actions in
 1. Uni-CLI desktop starts a private localhost HTTP bridge on a random port, protected by a bearer token.
 2. It writes a discovery file with the port and token so `uni-cli-ui-mcp` can find it.
 3. `uni-cli-ui-mcp` reads the discovery file, proxies MCP tool calls to the bridge, and returns structured results.
-4. The bridge calls `window.__uni-cliControl` inside the Electron renderer to snapshot state and execute actions.
+4. The bridge calls `window.__uniCliControl` inside the Electron renderer to snapshot state and execute actions.
 
 The bridge and discovery file are implementation details — you never need to touch them directly. Just point your MCP client at `uni-cli-ui-mcp`.

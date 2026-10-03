@@ -160,7 +160,7 @@ gh release view vX.Y.Z --repo different-ai/uni-cli   # published, not draft
 - Asset count looks right (macOS + Linux + Windows + updater `latest*.yml`
   manifests — the desktop updater 404s until the manifests are published)
 - `npm view uni-cli-server version` shows the new version
-- `curl -s https://api.uni-clilabs.com/v1/app-version` lists the new version
+- `curl -s https://api.uniClilabs.com/v1/app-version` lists the new version
   once den-api's cache refreshes (≤5 minutes)
 
 ## Where versions live now

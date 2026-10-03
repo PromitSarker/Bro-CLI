@@ -114,7 +114,7 @@ const PROBE_EXPRESSION = browserScript((value) => {
         ? "no-workspace"
         : null;
   return {
-    controlReady: Boolean(window.__uni-cliControl),
+    controlReady: Boolean(window.__uniCliControl),
     transitional,
     surface,
     // Report the id whenever the app knows one, even while the welcome surface

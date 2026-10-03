@@ -123,7 +123,7 @@ function isWebAppHost(hostname: string) {
     return true
   }
 
-  return normalized === "app.uni-clilabs.com"
+  return normalized === "app.uniClilabs.com"
     || normalized === "app.uniCli.software"
     || normalized.startsWith("app.")
     // Cloud Run hostnames serve the den-web frontend, which only exposes the

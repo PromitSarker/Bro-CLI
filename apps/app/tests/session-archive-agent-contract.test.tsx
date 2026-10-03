@@ -132,7 +132,7 @@ describe("control bridge contract: channel and structured codes", () => {
       <MemoryRouter><uniCliControlProvider><Register /></uniCliControlProvider></MemoryRouter>,
     ));
     cleanups.push(async () => { await act(async () => root.unmount()); host.remove(); });
-    const api = window.__uni-cliControl;
+    const api = window.__uniCliControl;
     if (!api) throw new Error("control API was not published");
     return api;
   }
@@ -540,7 +540,7 @@ describe("archiving a working session: the warning goes back through the request
     await mountArchive(engine, [session("ses_target", "Archive target", 2)]);
     const late = Promise.withResolvers<Response>();
     const requests = stubFetch(engine, request => new URL(request.url).pathname.endsWith("/message") ? late.promise : undefined);
-    const api = window.__uni-cliControl;
+    const api = window.__uniCliControl;
     if (!api) throw new Error("control API was not published");
     const started = performance.now();
     let result: unknown;
@@ -561,7 +561,7 @@ describe("archiving a working session: the warning goes back through the request
         return NativeResponse.json({ message: "Engine unavailable for archive" }, { status: 503 });
       }
     });
-    const api = window.__uni-cliControl;
+    const api = window.__uniCliControl;
     if (!api) throw new Error("control API was not published");
     const start = Date.now();
     let result: unknown;

@@ -199,7 +199,7 @@ function sanitizedInspectorDiagnosticText(value: string) {
 
 const MARKDOWN_PRIMITIVE_EVAL_TEXT = `# Markdown proof heading
 
-This shared renderer keeps **bold proof text**, inline \`renderMarkdownHtml\`, and [Uni-CLI link](https://uni-clilabs.com) readable in one message.
+This shared renderer keeps **bold proof text**, inline \`renderMarkdownHtml\`, and [Uni-CLI link](https://uniClilabs.com) readable in one message.
 
 \`\`\`ts
 const pipeline = "shared markdown primitive";
@@ -386,7 +386,7 @@ function createChatTranscriptEvalMessages(sessionId: string) {
         },
         {
           type: "text",
-          text: "Your plan is drafted — details in [Uni-CLI](https://uni-clilabs.com). Search token: chat-transcript-proof.",
+          text: "Your plan is drafted — details in [Uni-CLI](https://uniClilabs.com). Search token: chat-transcript-proof.",
         },
       ],
       // `completed` makes the finished turn fold behind a real

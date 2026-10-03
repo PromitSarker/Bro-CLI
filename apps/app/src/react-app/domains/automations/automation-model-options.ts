@@ -13,7 +13,7 @@ export type AutomationModelOption = {
   modelId: string
   providerName: string
   modelName: string
-  accessKind: "free" | "uni-cli_managed" | "authorized_custom"
+  accessKind: "free" | "uniCli_managed" | "authorized_custom"
 }
 
 export type ResolvedProposalModel = {
@@ -34,7 +34,7 @@ function uniCliManagedModels(provider: DenOrgLlmProvider): AutomationModelOption
       modelId,
       providerName: provider.name,
       modelName: model.displayName.replace(/^Uni-CLI:\s*/, ""),
-      accessKind: "uni-cli_managed" as const,
+      accessKind: "uniCli_managed" as const,
     }))
 }
 
@@ -65,7 +65,7 @@ export function automationModelOptions(
     ...(options.includeFreeStarter === false ? [] : [freeStarterModel]),
     ...managed,
   ].sort((left, right) => {
-    const kindOrder = ["free", "uni-cli_managed", "authorized_custom"]
+    const kindOrder = ["free", "uniCli_managed", "authorized_custom"]
     return kindOrder.indexOf(left.accessKind) - kindOrder.indexOf(right.accessKind)
       || left.providerName.localeCompare(right.providerName)
       || left.modelName.localeCompare(right.modelName)

@@ -4,7 +4,7 @@
 // Tools: den_overview, den_growth, den_retention, den_company_users,
 //        den_users_search, den_org_overview, den_query
 //
-// Config: DATABASE_URL (mysql://user:pass@host:3306/uni-cli_den).
+// Config: DATABASE_URL (mysql://user:pass@host:3306/uniCli_den).
 // Only SELECT statements are ever issued. For defense in depth, point it at a
 // read-only MySQL user. Activity definitions match den-api /v1/admin/overview:
 // a user is "active" on a day if they have a sign-in session day or a
@@ -28,7 +28,7 @@ function getPool() {
     const url = process.env.DATABASE_URL;
     if (!url) {
       throw new Error(
-        "DATABASE_URL is required (e.g. mysql://root:password@127.0.0.1:3306/uni-cli_den)",
+        "DATABASE_URL is required (e.g. mysql://root:password@127.0.0.1:3306/uniCli_den)",
       );
     }
     pool = mysql.createPool({ uri: url, connectionLimit: 4, dateStrings: true });

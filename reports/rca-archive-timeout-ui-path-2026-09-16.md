@@ -47,7 +47,7 @@ Source evidence: `evals/results/test-runs/2026-09-16T19-18-54-591Z-investigative
 
 ## Important correction: what the main-process affordance proves
 
-`apps/desktop/electron/ui-control-server.mjs` hosts the control bridge, but forwards `command` to `window.__uni-cliControl.command`. `session-control-actions.ts` invokes `useSessionArchive`, the same hook used by the human sidebar. Likewise, server `UiControlMailbox` delivers into the renderer. There is no separate native archive state machine on the inspected dev tree.
+`apps/desktop/electron/ui-control-server.mjs` hosts the control bridge, but forwards `command` to `window.__uniCliControl.command`. `session-control-actions.ts` invokes `useSessionArchive`, the same hook used by the human sidebar. Likewise, server `UiControlMailbox` delivers into the renderer. There is no separate native archive state machine on the inspected dev tree.
 
 Thus, success through a main-hosted affordance seconds after UI failure is **not proof of a different request pool**. The controlled recovery explicitly observes that affordance's successful PATCH in Chromium after pressure is released. Historical timing or route/registration recovery could explain the difference; the installed request path/timing was not captured.
 

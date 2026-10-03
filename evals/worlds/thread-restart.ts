@@ -65,7 +65,7 @@ function pidIsAlive(pid: number): boolean {
 
 declare global {
   interface Window {
-    __uni-cliSlowHistoryFault?: { state: { delayed: number; bounded: number }; dispose: () => void };
+    __uniCliSlowHistoryFault?: { state: { delayed: number; bounded: number }; dispose: () => void };
   }
 }
 
@@ -78,7 +78,7 @@ declare global {
  */
 export async function slowUncappedHistoryReads(app: Surface, workspaceId: string, sessionId: string, delayMs: number) {
   const script = await addInitScript(app.client, browserScript((workspaceId, sessionId, delayMs) => {
-    if (window.top !== window || window.__uni-cliSlowHistoryFault) return;
+    if (window.top !== window || window.__uniCliSlowHistoryFault) return;
     const paths = ["workspace", "w"].map((mount) =>
       `/${mount}/${encodeURIComponent(workspaceId)}/opencode/session/${encodeURIComponent(sessionId)}/message`);
     const originalFetch = window.fetch;
@@ -102,20 +102,20 @@ export async function slowUncappedHistoryReads(app: Surface, workspaceId: string
       return originalFetch.apply(window, args);
     };
     window.fetch = wrappedFetch;
-    window.__uni-cliSlowHistoryFault = {
+    window.__uniCliSlowHistoryFault = {
       state,
-      dispose: () => { if (window.fetch === wrappedFetch) window.fetch = originalFetch; delete window.__uni-cliSlowHistoryFault; },
+      dispose: () => { if (window.fetch === wrappedFetch) window.fetch = originalFetch; delete window.__uniCliSlowHistoryFault; },
     };
   }, [workspaceId, sessionId, delayMs]));
   return {
     read: () => evalIn(app, () => {
-      const fault = window.__uni-cliSlowHistoryFault;
+      const fault = window.__uniCliSlowHistoryFault;
       if (!fault) throw new Error("Slow history fault lost its document");
       return { ...fault.state };
     }),
     async dispose() {
       await script.dispose().catch(() => undefined);
-      await evalIn(app, () => { window.__uni-cliSlowHistoryFault?.dispose(); }).catch(() => undefined);
+      await evalIn(app, () => { window.__uniCliSlowHistoryFault?.dispose(); }).catch(() => undefined);
     },
   };
 }

@@ -931,7 +931,7 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
               ? "Reset Uni-CLI state. Restart the app to see changes."
               : "Reset onboarding state. Restart the app to see changes.",
           );
-          pushDeveloperLog(`reset_uni-cli_state mode=${mode}`);
+          pushDeveloperLog(`reset_uniCli_state mode=${mode}`);
         })
         .catch((error) => {
           setRouteError(error instanceof Error ? error.message : safeStringify(error));
@@ -1010,7 +1010,7 @@ export function useDebugViewModel(options: UseDebugViewModelOptions) {
       startupPreference: "server",
       startupLabel:
         uniCliServerSnapshot.uniCliServerStatus === "connected"
-          ? t("settings.uni-cli_server_label")
+          ? t("settings.uniCli_server_label")
           : t("status.disconnected_label"),
       runtimeSummary,
       runtimeDebugReportJson,

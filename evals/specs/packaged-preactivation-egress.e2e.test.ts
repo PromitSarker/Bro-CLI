@@ -12,7 +12,7 @@ import type { EgressRequest } from "../worlds/packaged-preactivation-egress.ts";
  * An enterprise install must not talk to anyone before the person tells it
  * which organization it belongs to. Until the workspace address is submitted
  * the only server the app could reach is a build default — the hosted
- * runtime-config probe at app.uni-clilabs.com — plus product analytics and
+ * runtime-config probe at app.uniClilabs.com — plus product analytics and
  * Cloud inventory, none of which the organization chose or can see. The
  * renderer made those requests above the activation gate on every fresh boot.
  *

@@ -185,7 +185,7 @@ generic `--env KEY` **before** the script-argument separator:
 
 ```sh
 UNICLI_DEV_HEADLESS_WEB_DEN_PROXY=1 \
-UNICLI_DEV_DEN_PROXY_TARGET=https://app.uni-clilabs.com \
+UNICLI_DEV_DEN_PROXY_TARGET=https://app.uniClilabs.com \
 pnpm world up preview-app-web --place daytona --stage pr-1234 --detach --timeout 600000 \
   --env UNICLI_DEV_HEADLESS_WEB_DEN_PROXY --env UNICLI_DEV_DEN_PROXY_TARGET \
   -- --ref <full-pushed-sha>
@@ -194,7 +194,7 @@ pnpm world up preview-app-web --place daytona --stage pr-1234 --detach --timeout
 Without those selections app-web ignores ambient proxy settings and stays
 Cloud-off. Only these two app keys are accepted; the target must be a nonsecret
 HTTP(S) origin, selected together with an enabled proxy. Remote app-web initially
-allows only `https://app.uni-clilabs.com`; other targets fail before provisioning.
+allows only `https://app.uniClilabs.com`; other targets fail before provisioning.
 Local app-web allows custom HTTP(S) origins, including loopback. Direct script
 execution without the CLI selection marker stays Cloud-off.
 Generic invocation identity fingerprints the selected nonsecret values
@@ -207,7 +207,7 @@ source changes require a new stage or down before up, across local worlds.
 
 The app-web `webUrl` is a secret, port-bound signed hostname. Reveal it only in a
 private terminal and open it directly; never put it in evidence or PR text.
-Loopback `runtimeWebUrl`/`runtimeuni-cliUrl` are process diagnostics, not human
+Loopback `runtimeWebUrl`/`runtimeuniCliUrl` are process diagnostics, not human
 browser links. Source SHA and placement are explicit outputs. Private HTTP,
 assets and WebSocket access must pass the launch checks; failures delete the
 owned sandbox, never fall back to public exposure. The source dev proxy preserves

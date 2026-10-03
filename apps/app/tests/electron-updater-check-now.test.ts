@@ -176,7 +176,7 @@ describe("Settings staged-update discovery", () => {
     autoCheck = false;
     autoDownload = true;
     activeRuns = false;
-    window.__uni-cliReadDesktopVersionMetadataEval = () => ({
+    window.__uniCliReadDesktopVersionMetadataEval = () => ({
       minAppVersion: "0.1.0",
       latestAppVersion: releaseChannel === "alpha" ? "0.18.46" : latestVersion,
       publishedDesktopVersions: releaseChannel === "alpha" ? ["0.18.46"] : [latestVersion],

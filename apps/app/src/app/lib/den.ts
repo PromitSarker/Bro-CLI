@@ -68,7 +68,7 @@ import type {
 
 declare global {
   interface Window {
-    __uni-cliOrgDropWarnings?: string[];
+    __uniCliOrgDropWarnings?: string[];
   }
 }
 
@@ -95,7 +95,7 @@ export const DEFAULT_DEN_AUTH_NAME = "Uni-CLI User";
 const BUILD_DEN_BASE_URL =
   (typeof import.meta !== "undefined" && typeof import.meta.env?.VITE_DEN_BASE_URL === "string"
     ? import.meta.env.VITE_DEN_BASE_URL
-    : "").trim() || "https://app.uni-clilabs.com";
+    : "").trim() || "https://app.uniClilabs.com";
 const BUILD_DEN_REQUIRE_SIGNIN =
   (typeof import.meta !== "undefined" && typeof import.meta.env?.VITE_DEN_REQUIRE_SIGNIN === "string"
     ? /^(1|true|yes|on)$/i.test(import.meta.env.VITE_DEN_REQUIRE_SIGNIN.trim())
@@ -122,8 +122,8 @@ function readForceEnvDenSettings(): boolean {
     : false);
 }
 
-export const HOSTED_DEFAULT_DEN_BASE_URL = "https://app.uni-clilabs.com";
-export const HOSTED_DEFAULT_DEN_API_BASE_URL = "https://api.app.uni-clilabs.com";
+export const HOSTED_DEFAULT_DEN_BASE_URL = "https://app.uniClilabs.com";
+export const HOSTED_DEFAULT_DEN_API_BASE_URL = "https://api.app.uniClilabs.com";
 export const DEFAULT_DEN_BASE_URL = BUILD_DEN_BASE_URL;
 export const DEN_INFERENCE_PATH = "/dashboard/inference";
 
@@ -745,7 +745,7 @@ export function denOriginComparisonKey(input: string | null | undefined): string
 
 /**
  * True when the effective Den control plane is not the hosted Uni-CLI Cloud
- * (app.uni-clilabs.com). Self-hosted deployments point the app at their own
+ * (app.uniClilabs.com). Self-hosted deployments point the app at their own
  * control plane via VITE_DEN_BASE_URL or the desktop bootstrap config, so
  * hosted-only surfaces (e.g. Uni-CLI Models upsells) should stay hidden.
  */
@@ -766,7 +766,7 @@ function isHostedWebAppHost(hostname: string): boolean {
 }
 
 function directHostedApiMcpResourceUrl(input: URL): string | null {
-  if (input.protocol !== "https:" || input.hostname.toLowerCase() !== "app.uni-clilabs.com") {
+  if (input.protocol !== "https:" || input.hostname.toLowerCase() !== "app.uniClilabs.com") {
     return null;
   }
   const pathname = input.pathname.replace(/\/+$/, "");
@@ -774,7 +774,7 @@ function directHostedApiMcpResourceUrl(input: URL): string | null {
     return null;
   }
   const output = new URL(input.toString());
-  output.hostname = "api.app.uni-clilabs.com";
+  output.hostname = "api.app.uniClilabs.com";
   output.pathname = "/mcp";
   output.search = "";
   output.hash = "";
@@ -818,7 +818,7 @@ function ensureDenApiBasePath(input: string | null | undefined): string | null {
   }
 }
 
-const HOSTED_DEN_APEX_HOST = "uni-clilabs.com";
+const HOSTED_DEN_APEX_HOST = "uniClilabs.com";
 
 function isHostedDenHost(hostname: string): boolean {
   const normalized = hostname.trim().toLowerCase();
@@ -830,7 +830,7 @@ function isHostedDenHost(hostname: string): boolean {
  *
  * Only two shapes are known ahead of time:
  * - An explicit API host (`api.*`) is already the API origin.
- * - Hosted Uni-CLI Cloud (`*.uni-clilabs.com`) serves its API at the
+ * - Hosted Uni-CLI Cloud (`*.uniClilabs.com`) serves its API at the
  *   `api.`-prefixed host.
  *
  * Every other deployment (self-hosted single host, localhost, tunnel or
@@ -927,7 +927,7 @@ export function getDenMcpUrl(): string {
 
 /**
  * Detects MCP URLs written by older builds that pointed `/mcp` at the bare
- * web-app origin (e.g. `https://app.uni-clilabs.com/mcp`). Nothing serves
+ * web-app origin (e.g. `https://app.uniClilabs.com/mcp`). Nothing serves
  * MCP there — those entries fail with a 404 and must be reconfigured.
  */
 export function isLegacyWebAppMcpUrl(input: string | null | undefined): boolean {
@@ -943,7 +943,7 @@ export function isLegacyWebAppMcpUrl(input: string | null | undefined): boolean 
 /**
  * Resolve the URL the cloud MCP entry should connect to from a minted
  * token's `resource`. Older den-api builds mint the bare web-app origin
- * (`https://app.uni-clilabs.com/mcp`) where nothing serves MCP — heal
+ * (`https://app.uniClilabs.com/mcp`) where nothing serves MCP — heal
  * those to the `/api/den` proxy on the same origin instead of trusting
  * them verbatim. Returns null when the resource is unusable so callers
  * can keep their bootstrap-derived URL.
@@ -1608,8 +1608,8 @@ function warnOnUnexpectedActiveOrgDrop(input: {
   const message = `[den-settings] activeOrgId dropped unexpectedly from ${previousActiveOrgId}`;
   const stack = new Error(message).stack ?? message;
   try {
-    window.__uni-cliOrgDropWarnings ??= [];
-    window.__uni-cliOrgDropWarnings.push(stack);
+    window.__uniCliOrgDropWarnings ??= [];
+    window.__uniCliOrgDropWarnings.push(stack);
     console.warn(stack);
   } catch {
     // Diagnostics must never block the settings write they observe.
@@ -2191,7 +2191,7 @@ function getDenOrgGatewayProviders(payload: unknown): DenOrgGatewayProvider[] {
       typeof provider.id !== "string" || !provider.id.trim() ||
       typeof provider.providerId !== "string" || !provider.providerId.trim() ||
       typeof provider.name !== "string" || !provider.name.trim() ||
-      provider.source !== "uni-cli_gateway"
+      provider.source !== "uniCli_gateway"
     ) {
       throw invalidPayload();
     }
@@ -3377,7 +3377,7 @@ export function createDenClient(options: {
       });
       const access = parseDenUniCliWebAccess(payload);
       if (!access) {
-        throw new DenApiError(500, "invalid_uni-cli_web_access_payload", "Uni-CLI Web access response was invalid.");
+        throw new DenApiError(500, "invalid_uniCli_web_access_payload", "Uni-CLI Web access response was invalid.");
       }
       return access;
     },

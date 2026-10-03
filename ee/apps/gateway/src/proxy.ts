@@ -492,7 +492,7 @@ async function prepareBody(request: Request, input: {
     generation_name: model.alias,
     org_membership_id: input.orgMembershipId,
     inference_key_id: input.inferenceKeyId,
-    uni-cli_request_id: input.uniCliRequestId,
+    uniCli_request_id: input.uniCliRequestId,
   }
   if (stream) {
     body.stream_options = { ...(isJsonObject(body.stream_options) ? body.stream_options : {}), include_usage: true }
@@ -580,7 +580,7 @@ export function registerProxyRoutes(app: Hono, dependencies: ProxyDependencies =
       recorder.start({
         identity: c.get("inference"),
         uniCliRequestId,
-        route: "uni-cli_openrouter",
+        route: "uniCli_openrouter",
         protocol: "openai_chat",
         upstreamProviderId: "openrouter",
         upstreamHost: upstreamUrl.hostname,

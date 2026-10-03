@@ -54,7 +54,7 @@ async function validatedRow(
   entry: GatewayUsageReconciliationEntry,
   lock: boolean,
 ) {
-  const [located] = await tx.select().from(Log).where(eq(Log.uni-cli_request_id, entry.requestId))
+  const [located] = await tx.select().from(Log).where(eq(Log.uniCli_request_id, entry.requestId))
   if (!located) return null
   const scope = { organizationId: located.organization_id, memberId: located.org_membership_id }
   if (scope.organizationId !== input.actor.organizationId || located.route !== "org_provider")

@@ -156,7 +156,7 @@ before running the new runtime. Do not deploy it against the old table names.
   recheck active membership/key/provider/group/set/grant/model links and current
   client configuration under local row locks; no lock crosses token HTTP calls.
   Recheck after token work and accounting awaits; never fall back to another set.
-- `uni-cli_auth_required` responses identify `provider_id` and
+- `uniCli_auth_required` responses identify `provider_id` and
   `credential_set_id`. Invalid/foreign selections fail closed with
   `invalid_gateway_selection`, `model_access_denied` or `provider_access_denied`.
   Concurrent revocation returns `gateway_selection_revoked`; credential changes

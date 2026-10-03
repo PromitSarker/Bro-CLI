@@ -1451,7 +1451,7 @@ echo detached`;
       let body: unknown = null;
       let responseOk = false;
       try {
-        const response = await fetchImpl(`${url}/__uni-cli_faults/health`, { signal: AbortSignal.timeout(5_000) });
+        const response = await fetchImpl(`${url}/__uniCli_faults/health`, { signal: AbortSignal.timeout(5_000) });
         body = await response.json();
         responseOk = response.ok;
         if (!response.ok) last = `HTTP ${response.status}`;

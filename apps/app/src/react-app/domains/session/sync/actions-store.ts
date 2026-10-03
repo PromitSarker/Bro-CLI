@@ -332,7 +332,7 @@ export function createSessionActionsStore(options: {
     const perfEnabled = options.developerMode();
     const startedAt = perfNow();
     const runId = (() => {
-      const key = "__uni-cli_create_session_run__";
+      const key = "__uniCli_create_session_run__";
       const w = window as typeof window & { [key]?: number };
       w[key] = (w[key] ?? 0) + 1;
       return w[key];

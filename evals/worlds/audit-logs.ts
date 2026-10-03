@@ -20,7 +20,7 @@ async function seedAuditDatabase(den: Den, statement: string, values: string[]) 
     const script = `
       import { createRequire } from "node:module";
       const { createConnection } = createRequire("/workspace/ee/packages/den-db/package.json")("mysql2/promise");
-      const connection = await createConnection("mysql://root:password@127.0.0.1:3306/uni-cli_den");
+      const connection = await createConnection("mysql://root:password@127.0.0.1:3306/uniCli_den");
       try {
         const [result] = await connection.execute(${JSON.stringify(statement)}, ${JSON.stringify(values)});
         if (result.affectedRows !== 1) throw new Error("Expected one organization-scoped audit seed write");
@@ -37,7 +37,7 @@ async function seedAuditDatabase(den: Den, statement: string, values: string[]) 
   const databaseUrl = den.database?.url;
   if (den.placement?.kind !== "local" || !databaseUrl) throw new Error("Audit journey requires a testkit-owned scratch database");
   const database = new URL(databaseUrl);
-  if (!["127.0.0.1", "localhost", "[::1]"].includes(database.hostname) || !database.pathname.startsWith("/uni-cli_eval_")) throw new Error("Refusing audit release-flag writes outside a disposable loopback testkit database");
+  if (!["127.0.0.1", "localhost", "[::1]"].includes(database.hostname) || !database.pathname.startsWith("/uniCli_eval_")) throw new Error("Refusing audit release-flag writes outside a disposable loopback testkit database");
   await queryDenDatabase(databaseUrl, statement, values);
 }
 

@@ -11,10 +11,10 @@ export type ConnectDebugProxyFaultAction =
 type FlakyWindow = { count: number; startedAt: number }
 
 declare global {
-  var __uni-cliConnectDebugProxyFlakyWindows: Map<string, FlakyWindow> | undefined
+  var __uniCliConnectDebugProxyFlakyWindows: Map<string, FlakyWindow> | undefined
 }
 
-const flakyWindows = globalThis.__uni-cliConnectDebugProxyFlakyWindows ??= new Map()
+const flakyWindows = globalThis.__uniCliConnectDebugProxyFlakyWindows ??= new Map()
 
 function jsonError(status: number, error: string, message: string, headers?: HeadersInit): Response {
   return Response.json({ error, message }, {

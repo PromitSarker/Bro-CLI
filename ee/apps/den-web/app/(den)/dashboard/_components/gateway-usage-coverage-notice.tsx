@@ -1,7 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import type { GatewayUsageResponse } from "@uni-cli/types/den/gateway-usage";
 
-const docsUrl = "https://uni-clilabs.com/docs/ai-gateway/counting-usage#uncountable-items";
+const docsUrl = "https://uniClilabs.com/docs/ai-gateway/counting-usage#uncountable-items";
 const categories: { outcome: keyof NonNullable<GatewayUsageResponse["usage"]["uncountableRequests"]>; label: string }[] = [
   { outcome: "upstream_error", label: "Provider errors" },
   { outcome: "upstream_unreachable", label: "Connection failures" },

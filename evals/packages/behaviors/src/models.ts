@@ -62,7 +62,7 @@ function stringField(value: unknown): string {
 async function openModelPicker(app: Surface): Promise<void> {
   const open = await evalIn(app, browserScript((MODEL_SEARCH_INPUT) => (Boolean(document.querySelector<HTMLElement>(MODEL_SEARCH_INPUT))), [MODEL_SEARCH_INPUT])).catch(() => false);
   if (open !== true) {
-    await waitFor(app, () => (window.__uni-cliControl?.listActions().some((entry) => entry.id === "session.model_picker.open" && entry.disabled === false)), {
+    await waitFor(app, () => (window.__uniCliControl?.listActions().some((entry) => entry.id === "session.model_picker.open" && entry.disabled === false)), {
       timeoutMs: 30_000,
       label: "session.model_picker.open enabled",
     });
@@ -252,7 +252,7 @@ export async function recoverInvalidModelSelection(
     setTimeout(() => location.reload(), 0);
     return true;
   });
-  await waitFor(app, () => (Boolean(window.__uni-cliControl)), {
+  await waitFor(app, () => (Boolean(window.__uniCliControl)), {
     timeoutMs: 60_000,
     label: "control API after clearing invalid selected model",
   });
@@ -315,7 +315,7 @@ export async function retryOrganizationModels(app: Surface): Promise<void> {
 }
 
 export async function seedUnavailableModel(app: Surface): Promise<UnavailableModelSeed> {
-  await waitFor(app, () => (window.__uni-cliControl?.listActions().some((entry) => entry.id === "eval.model_not_available.seed" && entry.disabled === false)), {
+  await waitFor(app, () => (window.__uniCliControl?.listActions().some((entry) => entry.id === "eval.model_not_available.seed" && entry.disabled === false)), {
     timeoutMs: 45_000,
     label: "eval.model_not_available.seed enabled",
   });

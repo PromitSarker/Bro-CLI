@@ -140,9 +140,9 @@ function denEnvironment(state: DevDenState): NodeJS.ProcessEnv {
     DEN_ORG_MODE: "multi_org",
     DEN_SINGLE_ORG_ALLOW_PUBLIC_SIGNUP: "true",
     PROVISIONER_MODE: "stub",
-    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY ?? "sk_test_uni-cli_eval",
-    STRIPE_INFERENCE_PRICE_ID: process.env.STRIPE_INFERENCE_PRICE_ID ?? "price_uni-cli_models_eval",
-    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET ?? "whsec_uni-cli_eval",
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY ?? "sk_test_uniCli_eval",
+    STRIPE_INFERENCE_PRICE_ID: process.env.STRIPE_INFERENCE_PRICE_ID ?? "price_uniCli_models_eval",
+    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET ?? "whsec_uniCli_eval",
     INFERENCE_PROXY_BASE_URL: process.env.INFERENCE_PROXY_BASE_URL ?? "http://127.0.0.1:8791",
   };
 }
@@ -216,7 +216,7 @@ async function seedDemoOrg(state: DevDenState): Promise<void> {
 
 async function up(portValue: string | undefined, databaseValue: string | undefined, seed: boolean): Promise<void> {
   const port = parsePort(portValue) ?? await pickPort();
-  const database = validateDatabase(databaseValue ?? `uni-cli_den_eval_${process.pid}_${Date.now().toString(36)}`);
+  const database = validateDatabase(databaseValue ?? `uniCli_den_eval_${process.pid}_${Date.now().toString(36)}`);
   await ensurePortFree(port);
   await mkdir(STATE_ROOT, { recursive: true });
 

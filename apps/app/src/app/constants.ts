@@ -153,9 +153,9 @@ export const MCP_QUICK_CONNECT: McpDirectoryInfo[] = [
     iconSrc: "/ext-context7.svg",
   },
   {
-    get name() { return t("mcp.quick_connect_uni-cli_cloud_title"); },
+    get name() { return t("mcp.quick_connect_uniCli_cloud_title"); },
     serverName: "uni-cli-cloud",
-    get description() { return t("mcp.quick_connect_uni-cli_cloud_desc"); },
+    get description() { return t("mcp.quick_connect_uniCli_cloud_desc"); },
     get url() {
       // The desktop app connects to the minimal, harness-facing surface
       // (/mcp/agent: search_capabilities + execute_capability only), not the
@@ -165,7 +165,7 @@ export const MCP_QUICK_CONNECT: McpDirectoryInfo[] = [
       try {
         return `${getDenMcpUrl()}/agent`;
       } catch {
-        return "https://api.app.uni-clilabs.com/mcp/agent";
+        return "https://api.app.uniClilabs.com/mcp/agent";
       }
     },
     type: "remote",
@@ -179,9 +179,9 @@ export const MCP_QUICK_CONNECT: McpDirectoryInfo[] = [
     defaultHidden: true,
   },
   {
-    get name() { return t("mcp.quick_connect_uni-cli_ui_title"); },
+    get name() { return t("mcp.quick_connect_uniCli_ui_title"); },
     serverName: "uni-cli-ui",
-    get description() { return t("mcp.quick_connect_uni-cli_ui_desc"); },
+    get description() { return t("mcp.quick_connect_uniCli_ui_desc"); },
     type: "local",
     // Dev builds replace this with the local checkout path before writing config.
     command: ["npx", "-y", "uni-cli-ui-mcp"],

@@ -14,7 +14,7 @@ import type { ReleaseChannel } from "../types";
 
 declare global {
   interface Window {
-    __uni-cliReadDesktopVersionMetadataEval?: () => DenAppVersionMetadata | Promise<DenAppVersionMetadata>;
+    __uniCliReadDesktopVersionMetadataEval?: () => DenAppVersionMetadata | Promise<DenAppVersionMetadata>;
   }
 }
 
@@ -229,8 +229,8 @@ async function readDenLatestAppVersion(): Promise<string | null> {
 }
 
 export async function readFreshDenAppVersionMetadata(): Promise<DenAppVersionMetadata> {
-  if (import.meta.env.DEV && typeof window !== "undefined" && window.__uni-cliReadDesktopVersionMetadataEval) {
-    return window.__uni-cliReadDesktopVersionMetadataEval();
+  if (import.meta.env.DEV && typeof window !== "undefined" && window.__uniCliReadDesktopVersionMetadataEval) {
+    return window.__uniCliReadDesktopVersionMetadataEval();
   }
   const settings = readDenSettings();
   const token = settings.authToken?.trim() ?? "";

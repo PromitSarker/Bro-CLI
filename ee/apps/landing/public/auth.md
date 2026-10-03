@@ -4,8 +4,8 @@ You are an agent. Uni-CLI supports **agentic registration**. The steps are disco
 
 Hosts used below:
 
-- Resource server (API and MCP gateway): `https://api.uni-clilabs.com`
-- Authorization server (OAuth, sign-in, claim pages): `https://app.uni-clilabs.com`, issuer `https://app.uni-clilabs.com/api/auth`
+- Resource server (API and MCP gateway): `https://api.uniClilabs.com`
+- Authorization server (OAuth, sign-in, claim pages): `https://app.uniClilabs.com`, issuer `https://app.uniClilabs.com/api/auth`
 
 Self-hosted Uni-CLI uses its own two hosts. Read them from the metadata in Step 1. If this file ever disagrees with that metadata, the metadata wins.
 
@@ -15,19 +15,19 @@ A request to the MCP gateway without a token returns 401 with the metadata URL:
 
 ```http
 HTTP/1.1 401 Unauthorized
-WWW-Authenticate: Bearer resource_metadata="https://api.uni-clilabs.com/.well-known/oauth-protected-resource/mcp/agent", scope="mcp:read mcp:write offline_access"
+WWW-Authenticate: Bearer resource_metadata="https://api.uniClilabs.com/.well-known/oauth-protected-resource/mcp/agent", scope="mcp:read mcp:write offline_access"
 ```
 
 ### 1a. Protected Resource Metadata
 
 ```http
-GET https://api.uni-clilabs.com/.well-known/oauth-protected-resource/mcp/agent
+GET https://api.uniClilabs.com/.well-known/oauth-protected-resource/mcp/agent
 ```
 
 ```json
 {
-  "resource": "https://api.uni-clilabs.com/mcp/agent",
-  "authorization_servers": ["https://app.uni-clilabs.com/api/auth"],
+  "resource": "https://api.uniClilabs.com/mcp/agent",
+  "authorization_servers": ["https://app.uniClilabs.com/api/auth"],
   "scopes_supported": ["mcp:read", "mcp:write", "offline_access"],
   "bearer_methods_supported": ["header"]
 }
@@ -36,18 +36,18 @@ GET https://api.uni-clilabs.com/.well-known/oauth-protected-resource/mcp/agent
 ### 1b. Authorization Server metadata
 
 ```http
-GET https://api.uni-clilabs.com/.well-known/oauth-authorization-server
+GET https://api.uniClilabs.com/.well-known/oauth-authorization-server
 ```
 
 These are the fields that matter for agents (the response has more):
 
 ```json
 {
-  "issuer": "https://app.uni-clilabs.com/api/auth",
-  "authorization_endpoint": "https://app.uni-clilabs.com/api/auth/oauth2/authorize",
-  "token_endpoint": "https://app.uni-clilabs.com/api/auth/oauth2/token",
-  "registration_endpoint": "https://app.uni-clilabs.com/api/auth/oauth2/register",
-  "revocation_endpoint": "https://app.uni-clilabs.com/api/auth/oauth2/revoke",
+  "issuer": "https://app.uniClilabs.com/api/auth",
+  "authorization_endpoint": "https://app.uniClilabs.com/api/auth/oauth2/authorize",
+  "token_endpoint": "https://app.uniClilabs.com/api/auth/oauth2/token",
+  "registration_endpoint": "https://app.uniClilabs.com/api/auth/oauth2/register",
+  "revocation_endpoint": "https://app.uniClilabs.com/api/auth/oauth2/revoke",
   "client_id_metadata_document_supported": true,
   "grant_types_supported": [
     "authorization_code",
@@ -56,9 +56,9 @@ These are the fields that matter for agents (the response has more):
     "urn:ietf:params:oauth:grant-type:jwt-bearer"
   ],
   "agent_auth": {
-    "skill": "https://uni-clilabs.com/auth.md",
-    "identity_endpoint": "https://api.uni-clilabs.com/v1/bootstrap/workspace",
-    "claim_endpoint": "https://api.uni-clilabs.com/v1/bootstrap/workspace/{bootstrap_id}/claim",
+    "skill": "https://uniClilabs.com/auth.md",
+    "identity_endpoint": "https://api.uniClilabs.com/v1/bootstrap/workspace",
+    "claim_endpoint": "https://api.uniClilabs.com/v1/bootstrap/workspace/{bootstrap_id}/claim",
     "identity_types_supported": ["anonymous"]
   }
 }
@@ -69,14 +69,14 @@ These are the fields that matter for agents (the response has more):
 
 ## Step 2: Pick a method
 
-1. **You are an interactive MCP client and a person is at the keyboard.** Use standard MCP OAuth: authorization code + PKCE (S256), `resource=https://api.uni-clilabs.com/mcp/agent`. Register with a Client ID Metadata Document (preferred) or dynamic client registration at `registration_endpoint`. The person signs in or signs up on the page Uni-CLI shows, picks a workspace, and approves. Skip to Step 6 with the access_token.
+1. **You are an interactive MCP client and a person is at the keyboard.** Use standard MCP OAuth: authorization code + PKCE (S256), `resource=https://api.uniClilabs.com/mcp/agent`. Register with a Client ID Metadata Document (preferred) or dynamic client registration at `registration_endpoint`. The person signs in or signs up on the page Uni-CLI shows, picks a workspace, and approves. Skip to Step 6 with the access_token.
 2. **You run a CLI or headless tool for a person who has, or will create, an account.** Use device login (below).
 3. **Nobody has an account yet and you need to start building now.** Use [anonymous](#anonymous). A person claims the workspace later (Step 4).
 
 ### Device login (RFC 8628)
 
 ```http
-POST https://api.uni-clilabs.com/api/auth/device/code
+POST https://api.uniClilabs.com/api/auth/device/code
 Content-Type: application/json
 
 { "client_id": "uni-cli-cli" }
@@ -86,8 +86,8 @@ Content-Type: application/json
 {
   "device_code": "…",
   "user_code": "ABCD2345",
-  "verification_uri": "https://app.uni-clilabs.com/device",
-  "verification_uri_complete": "https://app.uni-clilabs.com/device?user_code=ABCD2345",
+  "verification_uri": "https://app.uniClilabs.com/device",
+  "verification_uri_complete": "https://app.uniClilabs.com/device?user_code=ABCD2345",
   "expires_in": 900,
   "interval": 5
 }
@@ -96,7 +96,7 @@ Content-Type: application/json
 Show the person `verification_uri_complete` and the code (display it as `ABCD-2345`). They sign in or sign up, check that the code matches, choose the organization, and approve. Poll every `interval` seconds:
 
 ```http
-POST https://api.uni-clilabs.com/api/auth/device/token
+POST https://api.uniClilabs.com/api/auth/device/token
 Content-Type: application/json
 
 {
@@ -112,14 +112,14 @@ While you wait, the response is `400` with `authorization_pending`. `slow_down` 
 { "access_token": "…", "token_type": "Bearer", "expires_in": 604800, "scope": "" }
 ```
 
-This access_token is an Uni-CLI session for the REST API (`GET https://api.uni-clilabs.com/v1/me`). `uni-cli-bootstrap login` implements this flow and saves the token to `~/.uni-cli/credentials.json` (mode 0600). `UNICLI_API_TOKEN` takes precedence over the saved file.
+This access_token is an Uni-CLI session for the REST API (`GET https://api.uniClilabs.com/v1/me`). `uni-cli-bootstrap login` implements this flow and saves the token to `~/.uni-cli/credentials.json` (mode 0600). `UNICLI_API_TOKEN` takes precedence over the saved file.
 
 ## Step 3: Register
 
 ### anonymous
 
 ```http
-POST https://api.uni-clilabs.com/v1/bootstrap/workspace
+POST https://api.uniClilabs.com/v1/bootstrap/workspace
 Content-Type: application/json
 
 { "workspaceName": "Ada's studio", "claimRoles": ["owner"] }
@@ -133,15 +133,15 @@ Response (200, `Cache-Control: no-store`):
   "organization": { "id": "org_…", "name": "Ada's studio", "slug": "org_…", "status": "provisional" },
   "setup": { "id": "wbt_…", "expiresAt": "2026-09-27T12:00:00.000Z" },
   "skill": { "id": "cob_…", "title": "First Uni-CLI Skill", "output": "UNICLI_BOOTSTRAP_SKILL_TRIGGERED" },
-  "claimLinks": [{ "id": "wcl_…", "role": "owner", "token": "…", "url": "https://app.uni-clilabs.com/workspace-claim?token=…", "expiresAt": "…" }],
+  "claimLinks": [{ "id": "wcl_…", "role": "owner", "token": "…", "url": "https://app.uniClilabs.com/workspace-claim?token=…", "expiresAt": "…" }],
   "identity": {
     "type": "anonymous",
     "assertion": "<service-signed JWT>",
     "assertionType": "urn:ietf:params:oauth:grant-type:jwt-bearer",
-    "tokenEndpoint": "https://app.uni-clilabs.com/api/auth/oauth2/token",
+    "tokenEndpoint": "https://app.uniClilabs.com/api/auth/oauth2/token",
     "scope": "mcp:read mcp:write",
     "expiresAt": "2026-09-27T12:00:00.000Z",
-    "claimEndpoint": "https://api.uni-clilabs.com/v1/bootstrap/workspace/wbt_…/claim"
+    "claimEndpoint": "https://api.uniClilabs.com/v1/bootstrap/workspace/wbt_…/claim"
   }
 }
 ```
@@ -159,15 +159,15 @@ Do this when the person is ready to own the workspace. Uni-CLI never emails the 
 Send the assertion as the Bearer token:
 
 ```http
-POST https://api.uni-clilabs.com/v1/bootstrap/workspace/{bootstrap_id}/claim
+POST https://api.uniClilabs.com/v1/bootstrap/workspace/{bootstrap_id}/claim
 Authorization: Bearer <identity.assertion>
 ```
 
 ```json
 {
   "user_code": "WDJB-MJHT",
-  "verification_uri": "https://app.uni-clilabs.com/claim",
-  "verification_uri_complete": "https://app.uni-clilabs.com/claim?user_code=WDJB-MJHT",
+  "verification_uri": "https://app.uniClilabs.com/claim",
+  "verification_uri_complete": "https://app.uniClilabs.com/claim?user_code=WDJB-MJHT",
   "expires_in": 900,
   "interval": 5
 }
@@ -178,14 +178,14 @@ Each POST cancels the previous unused code. Request a new one when a code expire
 ### 4b. Hand off to the person
 
 > Open this link, sign in or create an account, and confirm the code **WDJB-MJHT**:
-> https://app.uni-clilabs.com/claim?user_code=WDJB-MJHT
+> https://app.uniClilabs.com/claim?user_code=WDJB-MJHT
 
 The person keeps the workspace as a new organization and becomes its owner.
 
 ### 4c. Poll for completion
 
 ```http
-GET https://api.uni-clilabs.com/v1/bootstrap/workspace/{bootstrap_id}/claim
+GET https://api.uniClilabs.com/v1/bootstrap/workspace/{bootstrap_id}/claim
 Authorization: Bearer <identity.assertion>
 ```
 
@@ -200,7 +200,7 @@ The claim links in `claimLinks` still work as an alternative. Claiming through a
 ## Step 5: Exchange the assertion
 
 ```http
-POST https://app.uni-clilabs.com/api/auth/oauth2/token
+POST https://app.uniClilabs.com/api/auth/oauth2/token
 Content-Type: application/x-www-form-urlencoded
 
 grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=<identity.assertion>
@@ -215,7 +215,7 @@ No refresh_token is issued. When the access_token expires, exchange the same ass
 ## Step 6: Use the access_token
 
 ```http
-POST https://api.uni-clilabs.com/mcp/agent
+POST https://api.uniClilabs.com/mcp/agent
 Authorization: Bearer <access_token>
 Content-Type: application/json
 Accept: application/json, text/event-stream
@@ -237,7 +237,7 @@ Den API operations that need a different person answer with one envelope. The ol
   "code": "requires_admin",
   "message": "Only workspace owners and admins can invite members.",
   "retryable": false,
-  "action_url": "https://app.uni-clilabs.com/dashboard/members"
+  "action_url": "https://app.uniClilabs.com/dashboard/members"
 }
 ```
 
@@ -258,4 +258,4 @@ Retry policy: on a 5xx, back off and retry. On a 4xx, do not resend the same req
 
 - Claiming (Step 4) revokes the assertion and every access_token minted from it. Tokens also stop working when the workspace expires after 24 hours.
 - MCP OAuth tokens can be revoked at `revocation_endpoint` (RFC 7009).
-- A device-login session ends with `POST https://api.uni-clilabs.com/api/auth/sign-out` using `Authorization: Bearer <access_token>` (`uni-cli-bootstrap logout`).
+- A device-login session ends with `POST https://api.uniClilabs.com/api/auth/sign-out` using `Authorization: Bearer <access_token>` (`uni-cli-bootstrap logout`).

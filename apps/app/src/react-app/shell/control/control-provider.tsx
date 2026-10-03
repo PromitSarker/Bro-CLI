@@ -138,7 +138,7 @@ export type uniCliControlAPI = {
 
 declare global {
   interface Window {
-    __uni-cliControl?: uniCliControlAPI;
+    __uniCliControl?: uniCliControlAPI;
   }
 }
 
@@ -635,11 +635,11 @@ export function uniCliControlProvider({ children }: { children: ReactNode }) {
       },
     };
 
-    window.__uni-cliControl = api;
+    window.__uniCliControl = api;
     apiRef.current = api;
     return () => {
-      if (window.__uni-cliControl === api) {
-        delete window.__uni-cliControl;
+      if (window.__uniCliControl === api) {
+        delete window.__uniCliControl;
       }
       if (apiRef.current === api) {
         apiRef.current = null;

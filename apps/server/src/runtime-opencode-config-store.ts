@@ -18,7 +18,7 @@ export type RuntimeOpencodeConfig = {
   provider?: Record<string, unknown>;
 };
 
-export const ENGINE_GLOBAL_RUNTIME_CONFIG_ID = "__uni-cli_engine_global__";
+export const ENGINE_GLOBAL_RUNTIME_CONFIG_ID = "__uniCli_engine_global__";
 
 /** Reserved Connect MCP name; kept in sync with UNICLI_CLOUD_MCP_NAME in cloud-mcp-health.ts. */
 const UNICLI_CLOUD_MCP_RESERVED_NAME = "uni-cli-cloud";

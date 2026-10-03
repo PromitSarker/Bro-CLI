@@ -26,7 +26,7 @@ const extraAppPorts = (process.env.UNICLI_EXTRA_APP_PORTS?.trim() || "5174")
   .split(",")
   .map((value) => value.trim())
   .filter(Boolean)
-const databaseUrl = process.env.DATABASE_URL?.trim() || "mysql://root:password@127.0.0.1:3306/uni-cli_den"
+const databaseUrl = process.env.DATABASE_URL?.trim() || "mysql://root:password@127.0.0.1:3306/uniCli_den"
 const databaseRedisUrl = process.env.DATABASE_REDIS_URL?.trim() || "redis://127.0.0.1:6379"
 const dbEncryptionKey =
   process.env.DEN_DB_ENCRYPTION_KEY?.trim() ||

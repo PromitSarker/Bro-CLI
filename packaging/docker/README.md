@@ -74,7 +74,7 @@ The seed is local/dev-only, idempotent for the `acme-robotics-demo` org, and doe
 Default demo login:
 
 - Email: `alex@acme.test`
-- Password: `Uni-CLIDemo123!`
+- Password: `UniCliDemo123!`
 
 For the Docker stack with randomized MySQL ports, source the printed runtime env file first and pass `DEN_MYSQL_URL` as `DATABASE_URL`:
 

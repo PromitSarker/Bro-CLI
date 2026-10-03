@@ -33,7 +33,7 @@ function parseOutputValue(output: unknown): unknown {
 }
 
 /**
- * Reads an `automation.propose` affordance result out of an uni-cli_execute
+ * Reads an `automation.propose` affordance result out of an uniCli_execute
  * tool part. Returns null for every other affordance so the generic capability
  * line keeps rendering them.
  */
@@ -49,7 +49,7 @@ export function parseAutomationProposal(output: unknown): AutomationProposal | n
 }
 
 export function isAutomationProposalToolPart(part: DynamicToolUIPart): boolean {
-  return part.toolName === "uni-cli_execute"
+  return part.toolName === "uniCli_execute"
     && part.state === "output-available"
     && parseAutomationProposal(part.output) !== null
 }

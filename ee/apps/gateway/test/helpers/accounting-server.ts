@@ -8,8 +8,8 @@ import { createDbRollupRepository, registerRollupRoutes, runRollups } from "../.
 const databaseUrl = process.env.DATABASE_URL
 if (!databaseUrl) throw new Error("Scratch database required")
 const url = new URL(databaseUrl)
-if (!["127.0.0.1", "localhost"].includes(url.hostname) || !url.pathname.startsWith("/uni-cli_eval_")) {
-  throw new Error("Only an isolated local uni-cli_eval database is allowed")
+if (!["127.0.0.1", "localhost"].includes(url.hostname) || !url.pathname.startsWith("/uniCli_eval_")) {
+  throw new Error("Only an isolated local uniCli_eval database is allowed")
 }
 const { db } = createDenDb({ databaseUrl, mode: "mysql" })
 const repository = createDbRollupRepository(db)

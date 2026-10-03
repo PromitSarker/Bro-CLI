@@ -10,8 +10,8 @@ import { createDenClient } from "@uni-cli/sdk";
 const den = createDenClient({
   apiKey: process.env.DEN_API_KEY,
   orgId: process.env.DEN_ORG_ID,
-  // Defaults to https://api.uni-clilabs.com. Set this for a self-hosted Den.
-  baseUrl: "https://api.uni-clilabs.com",
+  // Defaults to https://api.uniClilabs.com. Set this for a self-hosted Den.
+  baseUrl: "https://api.uniClilabs.com",
 });
 
 const { data, response } = await den.getV1MeOrgs({ throwOnError: true });

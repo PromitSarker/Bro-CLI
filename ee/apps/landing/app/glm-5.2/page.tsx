@@ -5,7 +5,7 @@ import { getGithubData } from "../../lib/github";
 import { baseOpenGraph, withSocialMetadata } from "../../lib/seo";
 
 const CLOUD_SIGNUP_URL =
-  "https://app.uni-clilabs.com?mode=sign-up&intent=models";
+  "https://app.uniClilabs.com?mode=sign-up&intent=models";
 const CALENDAR_URL =
   "https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0M6zjfdm9ntqokfGCWovfuM21J9C2sqB9R6E1v_plXo8MqKswICQET7-ncV4dOVM5W8pFn1RFM";
 const CHANGELOG_URL = "/docs/changelog";
@@ -17,7 +17,7 @@ const glmSchema = {
   name: "Uni-CLI — GLM 5.2",
   description:
     "GLM 5.2 is available through Uni-CLI Models with 2x usage. Run real agent work on an open model at a fraction of the cost.",
-  url: "https://uni-clilabs.com/glm-5.2",
+  url: "https://uniClilabs.com/glm-5.2",
   applicationCategory: "BusinessApplication",
   operatingSystem: "macOS, Windows, Linux",
   offers: {
@@ -29,7 +29,7 @@ const glmSchema = {
   publisher: {
     "@type": "Organization",
     name: "Uni-CLI",
-    url: "https://uni-clilabs.com"
+    url: "https://uniClilabs.com"
   }
 };
 
@@ -42,7 +42,7 @@ export const metadata = withSocialMetadata({
   },
   openGraph: {
     ...baseOpenGraph,
-    url: "https://uni-clilabs.com/glm-5.2"
+    url: "https://uniClilabs.com/glm-5.2"
   }
 });
 

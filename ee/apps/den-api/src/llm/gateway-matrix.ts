@@ -464,7 +464,7 @@ export async function gatewaySummary(provider: GatewayProvider, memberId: Gatewa
   const summary: GatewayProviderSummary = {
     modelIds: provider.model_ids,
     pinnedModelIds: manage ? pinnedModelIds : publicGatewayPinnedModelIds(pinnedModelIds, usableModels),
-    id: provider.id, providerId: provider.provider_id, name: provider.name, source: "uni-cli_gateway", credentialMode: sets.length > 0 && sets.every((set) => set.credential_mode === "member") ? "member" : "org", status: provider.status, updatedAt: provider.updated_at.toISOString(),
+    id: provider.id, providerId: provider.provider_id, name: provider.name, source: "uniCli_gateway", credentialMode: sets.length > 0 && sets.every((set) => set.credential_mode === "member") ? "member" : "org", status: provider.status, updatedAt: provider.updated_at.toISOString(),
     providerConfig: buildGatewayProviderConfig(provider, env.gatewayPublicBaseUrl), models: usableModels, authorizationRequests,
     credentialStatus: usableModels.length ? "ready" : authorizationRequests.length ? "member_auth_required" : "org_credential_missing", authUrl: authorizationRequests[0]?.authUrl ?? null,
   }

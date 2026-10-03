@@ -10,7 +10,7 @@ repo:
   files, skills, browser automation, scheduled automations, Anthropic-compatible
   plugins.
 * **Uni-CLI MCP gateway** (`ee/apps/den-api`) — one URL
-  (`api.uni-clilabs.com/mcp/agent`) that brings org-assigned skills, plugins,
+  (`api.uniClilabs.com/mcp/agent`) that brings org-assigned skills, plugins,
   and connections (Google Workspace, Microsoft 365, MCPs) into Codex, Claude
   Code, Cursor, or any MCP client via `search_capabilities` /
   `execute_capability`.

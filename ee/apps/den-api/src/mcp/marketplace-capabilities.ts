@@ -127,7 +127,7 @@ export type MarketplaceMcpRequirementState = "needs_admin_setup" | "needs_connec
 export type MarketplaceMcpRequirementAction = {
   type: "connect" | "none" | "reconnect" | "setup_connection"
   label: string
-  surface: "none" | "uni-cli_organization_connections" | "uni-cli_your_connections"
+  surface: "none" | "uniCli_organization_connections" | "uniCli_your_connections"
   retry: "execute_capability" | "search_capabilities"
   url?: string
 }
@@ -935,7 +935,7 @@ function marketplaceRequirementAction(input: {
     return {
       type: input.state === "reconnect" ? "reconnect" : "connect",
       label: `${input.state === "reconnect" ? "Reconnect" : "Connect"} ${connectionName}`,
-      surface: "uni-cli_your_connections",
+      surface: "uniCli_your_connections",
       retry: "search_capabilities",
       url: uniCliYourConnectionsUrl(input.connectionId),
     }
@@ -944,7 +944,7 @@ function marketplaceRequirementAction(input: {
   return {
     type: "setup_connection",
     label: `Ask an org admin to configure Connections for ${input.pluginName}`,
-    surface: "uni-cli_organization_connections",
+    surface: "uniCli_organization_connections",
     retry: "search_capabilities",
     url: uniCliOrganizationConnectionsUrl(),
   }

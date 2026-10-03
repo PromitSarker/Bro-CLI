@@ -272,7 +272,7 @@ test("GATEWAY-USAGE-01 admin policy blocks member Gateway calls until a reviewed
     expect(status.buckets).toEqual([{ ...initialBucket, usedMicroUsd: 1_000_000, remainingMicroUsd: 0, canRequestReset: true }]);
     expectSettledCoverage(status);
     const blocked = await world.generate();
-    expect(blocked).toMatchObject({ status: 429, errorCode: "uni-cli_gateway_usage_limit_exceeded", usageState: "blocked", body: { error: { source: "uni-cli_gateway", code: "uni-cli_gateway_usage_limit_exceeded", details: { exhaustedBuckets: [{ bucketId: initialBucket.id, usedMicroUsd: 1_000_000, allowanceMicroUsd: 1_000_000 }] } } } });
+    expect(blocked).toMatchObject({ status: 429, errorCode: "uniCli_gateway_usage_limit_exceeded", usageState: "blocked", body: { error: { source: "uniCli_gateway", code: "uniCli_gateway_usage_limit_exceeded", details: { exhaustedBuckets: [{ bucketId: initialBucket.id, usedMicroUsd: 1_000_000, allowanceMicroUsd: 1_000_000 }] } } } });
     expect(world.upstreamCount()).toBe(1);
     expect((await own()).buckets).toEqual(status.buckets);
     expect(await own(world.control)).toMatchObject({ state: "unlimited", buckets: [] });
@@ -301,7 +301,7 @@ test("GATEWAY-USAGE-01 admin policy blocks member Gateway calls until a reviewed
       within: 120_000, intervalMs: 500, label: "native engine request rejected by the real Gateway",
       until: (rows) => rows.length > rejectedBefore.length,
     });
-    for (const row of rejectedAfter) expect(row).toMatchObject({ status: 429, error_code: "uni-cli_gateway_usage_limit_exceeded", org_membership_id: world.memberId, requested_model: world.modelId });
+    for (const row of rejectedAfter) expect(row).toMatchObject({ status: 429, error_code: "uniCli_gateway_usage_limit_exceeded", org_membership_id: world.memberId, requested_model: world.modelId });
     const native = await probe.eventually(() => world.nativeMessages(sessionId), {
       within: 120_000, intervalMs: 500, label: "native engine records the submitted prompt and terminal assistant error",
       until: (value) => {

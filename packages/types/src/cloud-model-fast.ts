@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const CLOUD_MODEL_CONFIG_VERSION = 3;
-export const CATALOG_FAST_VARIANT = "__uni-cli_catalog_fast_v1";
-export const FAST_VARIANT_PREFIX = "__uni-cli_fast_v1/";
+export const CATALOG_FAST_VARIANT = "__uniCli_catalog_fast_v1";
+export const FAST_VARIANT_PREFIX = "__uniCli_fast_v1/";
 export const FAST_DEFAULT_VARIANT = `${FAST_VARIANT_PREFIX}default`;
 
 const fastMode = z.object({

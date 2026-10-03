@@ -20,7 +20,7 @@ export async function installedLiveGateway() {
     for (const [id, provider] of Object.entries(config.provider)) {
       if (!record(provider) || provider.npm !== "@ai-sdk/openai" || !record(provider.options) || typeof provider.options.baseURL !== "string" || !record(provider.models)) continue;
       const url = new URL(provider.options.baseURL);
-      if (url.origin !== "https://gateway.uni-clilabs.com" || url.username || url.password) continue;
+      if (url.origin !== "https://gateway.uniClilabs.com" || url.username || url.password) continue;
       const credential = record(auth) ? auth[id] : null;
       if (!record(credential) || credential.type !== "api" || typeof credential.key !== "string") continue;
       const models = Object.entries(provider.models).slice(0, 2).flatMap(([modelId, model], index) => record(model) ? [{ id: modelId, config: { ...model, name: `Live model ${index === 0 ? "one" : "two"}` } }] : []);

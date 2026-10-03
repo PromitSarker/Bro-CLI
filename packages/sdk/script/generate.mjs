@@ -36,7 +36,7 @@ try {
     plugins: [
       { name: "@hey-api/typescript", exportFromIndex: false },
       { name: "@hey-api/sdk", instance: "DenClient", exportFromIndex: false, auth: false, paramsStructure: "flat" },
-      { name: "@hey-api/client-fetch", exportFromIndex: false, baseUrl: "https://api.uni-clilabs.com" },
+      { name: "@hey-api/client-fetch", exportFromIndex: false, baseUrl: "https://api.uniClilabs.com" },
     ],
   });
   const generatedFiles = await files(output);

@@ -20,7 +20,7 @@ assert_contains "$default_rendered" 'DEN_UNICLI_WEB_ENABLED: "false"'
 
 enabled_values="$tmp_dir/enabled-values.yaml"
 enabled_rendered="$tmp_dir/enabled.yaml"
-printf '%s\n' 'config:' '  public:' '    uni-cliWebEnabled: "true"' > "$enabled_values"
+printf '%s\n' 'config:' '  public:' '    uniCliWebEnabled: "true"' > "$enabled_values"
 helm template uni-cli-ee "$chart_dir" -f "$enabled_values" > "$enabled_rendered"
 assert_contains "$enabled_rendered" 'DEN_UNICLI_WEB_ENABLED: "true"'
 

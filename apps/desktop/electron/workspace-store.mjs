@@ -116,8 +116,8 @@ const DEFAULT_DESKTOP_BOOTSTRAP_PATH = resolveDesktopBootstrapPath({ homeDir: os
 // LOCALAPPDATA and XDG_CONFIG_HOME. Keep reading that file when the canonical one
 // is missing so existing installs keep their deployment config.
 const LEGACY_DESKTOP_BOOTSTRAP_PATH = resolveLegacyDesktopBootstrapPath({ homeDir: os.homedir() });
-const HOSTED_DESKTOP_WEB_URL = "https://app.uni-clilabs.com";
-const HOSTED_DESKTOP_API_URL = "https://api.uni-clilabs.com";
+const HOSTED_DESKTOP_WEB_URL = "https://app.uniClilabs.com";
+const HOSTED_DESKTOP_API_URL = "https://api.uniClilabs.com";
 
 function bootstrapUrlOrigin(value) {
   if (typeof value !== "string" || !value.trim()) return "";

@@ -9,7 +9,7 @@ import { SiteNav } from "../../components/site-nav";
 import { getGithubData } from "../../lib/github";
 import { withSocialMetadata } from "../../lib/seo";
 
-const CLOUD_SIGNUP_URL = "https://app.uni-clilabs.com";
+const CLOUD_SIGNUP_URL = "https://app.uniClilabs.com";
 const MCP_APPS_URL = "https://github.com/modelcontextprotocol/ext-apps/tree/main";
 
 export const metadata: Metadata = withSocialMetadata({

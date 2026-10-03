@@ -58,10 +58,10 @@ the Entra group object mapping disabled.
 For the Uni-CLI Labs test tenant, use:
 
 - **Tenant ID**: `2b853de0-b14b-4433-90be-cced1b963647`
-- **Uni-CLI SSO domain**: `omaruni-clilabs.onmicrosoft.com`
+- **Uni-CLI SSO domain**: `omaruniClilabs.onmicrosoft.com`
 - **Test users**:
-  - `omar2@omaruni-clilabs.onmicrosoft.com`
-  - `omar_uni-clilabs.com#EXT#@omaruni-clilabs.onmicrosoft.com`
+  - `omar2@omaruniClilabs.onmicrosoft.com`
+  - `omar_uniClilabs.com#EXT#@omaruniClilabs.onmicrosoft.com`
 - **Uni-CLI organization**: `Omar Azure Test`
 
 As of July 7, 2026, both test users are assigned to the **Uni-CLI Labs**
@@ -123,7 +123,7 @@ For the Uni-CLI Labs test tenant, the Uni-CLI SAML fields are:
 
 - **IdP Issuer URL**:
   `https://sts.windows.net/2b853de0-b14b-4433-90be-cced1b963647/`
-- **Domain**: `omaruni-clilabs.onmicrosoft.com`
+- **Domain**: `omaruniClilabs.onmicrosoft.com`
 - **SAML Entry Point**:
   `https://login.microsoftonline.com/2b853de0-b14b-4433-90be-cced1b963647/saml2`
 - **Audience URL**: leave blank unless you also set a custom Entra Identifier.

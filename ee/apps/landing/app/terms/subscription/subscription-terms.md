@@ -14,7 +14,7 @@ A subscription entitles Customer to run the EE-licensed software in
 production for up to the number of users purchased, on Uni-CLI Cloud or
 self-hosted, for the subscription term shown on the applicable order or
 checkout confirmation. Pricing is published at
-[uni-clilabs.com/pricing](https://uni-clilabs.com/pricing).
+[uniClilabs.com/pricing](https://uniClilabs.com/pricing).
 
 ## 2. Users
 
@@ -96,4 +96,4 @@ published retain the terms of those agreements.
 ## 11. Contact
 
 Different AI, Inc. (d/b/a Uni-CLI Labs), 28 Geary St STE 650 Suite #188,
-San Francisco, CA 94108 — [sales@uni-clilabs.com](mailto:sales@uni-clilabs.com).
+San Francisco, CA 94108 — [sales@uniClilabs.com](mailto:sales@uniClilabs.com).

@@ -16,7 +16,7 @@ export const metadata = withSocialMetadata({
   },
   openGraph: {
     ...baseOpenGraph,
-    url: "https://uni-clilabs.com/alternatives/claude-cowork"
+    url: "https://uniClilabs.com/alternatives/claude-cowork"
   }
 });
 
@@ -31,17 +31,17 @@ const softwareApplicationSchema = {
   operatingSystem: "macOS, Windows, Linux",
   isAccessibleForFree: true,
   license: "https://github.com/different-ai/uni-cli/blob/dev/LICENSE",
-  downloadUrl: "https://uni-clilabs.com/download",
+  downloadUrl: "https://uniClilabs.com/download",
   offers: {
     "@type": "Offer",
     price: "0",
     priceCurrency: "USD",
-    url: "https://uni-clilabs.com/download"
+    url: "https://uniClilabs.com/download"
   },
   publisher: {
     "@type": "Organization",
     name: "Uni-CLI",
-    url: "https://uni-clilabs.com"
+    url: "https://uniClilabs.com"
   }
 };
 
@@ -62,7 +62,7 @@ const breadcrumbSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Uni-CLI", item: "https://uni-clilabs.com" },
+    { "@type": "ListItem", position: 1, name: "Uni-CLI", item: "https://uniClilabs.com" },
     {
       "@type": "ListItem",
       position: 2,

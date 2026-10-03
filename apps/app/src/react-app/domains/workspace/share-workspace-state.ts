@@ -267,7 +267,7 @@ export function useShareWorkspaceState(options: UseShareWorkspaceStateOptions) {
     const workspace = shareWorkspace;
     if (!workspace) return t("session.share_select_workspace");
     if (workspace.workspaceType === "remote" && workspace.remoteType !== "uni-cli") {
-      return t("session.share_uni-cli_workers_only");
+      return t("session.share_uniCli_workers_only");
     }
     if (workspace.workspaceType !== "remote") {
       const baseUrl = options.uniCliServerHostInfo?.baseUrl?.trim() ?? "";

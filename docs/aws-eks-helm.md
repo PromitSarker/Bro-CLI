@@ -138,7 +138,7 @@ Create a MySQL database reachable from the EKS worker security group. The exact
 VPC and subnet commands vary by account, so the important requirements are:
 
 - RDS MySQL 8-compatible engine.
-- Database name: `uni-cli_den`.
+- Database name: `uniCli_den`.
 - Private subnets in the same VPC as the EKS cluster.
 - RDS security group inbound TCP `3306` from the EKS node/pod security group.
 - Storage encryption enabled.
@@ -149,7 +149,7 @@ VPC and subnet commands vary by account, so the important requirements are:
 Example database URL:
 
 ```text
-mysql://uni-cli:<password>@<rds-endpoint>:3306/uni-cli_den?sslaccept=accept
+mysql://uni-cli:<password>@<rds-endpoint>:3306/uniCli_den?sslaccept=accept
 ```
 
 Use `?sslaccept=accept` for the simple private-RDS smoke path. This keeps TLS on

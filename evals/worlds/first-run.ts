@@ -228,7 +228,7 @@ async function sessionlessFirstSend(seed: Seed, options: { engine?: EvalEngine; 
     },
   }, engine);
   await waitForBehavior(app, browserScript((startedAt) => performance.timeOrigin !== startedAt
-    && Boolean(window.__uni-cliControl), [documentStartedAt]), {
+    && Boolean(window.__uniCliControl), [documentStartedAt]), {
     timeoutMs: 60_000, label: "provider-configured replacement document mounted",
   });
   const mount = `/workspace/${encodeURIComponent(workspace.workspaceId)}`;
@@ -280,9 +280,9 @@ export async function parentChildPermissionWorld(seed: Seed) {
   const base = await sessionWorld(seed);
   // TODO(primitive): seed a child-session permission request and parent activity row.
   const seeded = await seed.evalIn(base.app, async () => {
-    const child = await window.__uni-cliControl.execute("eval.child_permission.seed", null);
+    const child = await window.__uniCliControl.execute("eval.child_permission.seed", null);
     if (!child?.ok || !child.result || typeof child.result !== "object" || !("childSessionId" in child.result) || typeof child.result.childSessionId !== "string") return { child, activity: null };
-    const activity = await window.__uni-cliControl.execute("eval.task_activity.seed", {
+    const activity = await window.__uniCliControl.execute("eval.task_activity.seed", {
       childSessionId: child.result.childSessionId,
     });
     return { child, activity };
@@ -509,22 +509,22 @@ export async function artifactCodeBrowserWorld(seed: Seed) {
   if (wrote !== true) throw new Error("Could not seed artifact code files.");
   await waitForBehavior(
     base.app,
-    () => window.__uni-cliControl.listActions().some((action) => action.id === "eval.markdown_primitive.seed_chat" && !action.disabled),
+    () => window.__uniCliControl.listActions().some((action) => action.id === "eval.markdown_primitive.seed_chat" && !action.disabled),
     { timeoutMs: 30_000, label: "chat markdown seed action enabled" },
   );
   const fileLinkPath = `${base.workspacePath}/docs/Unlisted Report.pdf`;
   const fileLinkMarkdown = `[Unlisted report](file://${encodeURI(fileLinkPath)}) and [Relative report](docs/Unlisted-Relative.pdf)`;
-  const chat = await seed.evalIn(base.app, browserScript((text) => window.__uni-cliControl.execute("eval.markdown_primitive.seed_chat", { text }), [fileLinkMarkdown]), { awaitPromise: true });
+  const chat = await seed.evalIn(base.app, browserScript((text) => window.__uniCliControl.execute("eval.markdown_primitive.seed_chat", { text }), [fileLinkMarkdown]), { awaitPromise: true });
   if (!isRecord(chat) || chat.ok !== true) throw new Error("Could not seed chat file links.");
   // TODO(primitive): open an initial built-in browser artifact tab.
-  await seed.evalIn(base.app, () => (window.__uni-cliControl.execute("browser.open_url", { url: "about:blank" })), { awaitPromise: true });
+  await seed.evalIn(base.app, () => (window.__uniCliControl.execute("browser.open_url", { url: "about:blank" })), { awaitPromise: true });
   await waitForBehavior(
     base.app,
-    () => (window.__uni-cliControl.listActions().some((action) => action.id === "eval.artifact_tabs.seed_overflow" && !action.disabled)),
+    () => (window.__uniCliControl.listActions().some((action) => action.id === "eval.artifact_tabs.seed_overflow" && !action.disabled)),
     { timeoutMs: 30_000, label: "artifact seed action enabled" },
   );
   // TODO(primitive): seed artifact tabs through a first-class artifact fixture.
-  const tabs = await seed.evalIn(base.app, () => (window.__uni-cliControl.execute("eval.artifact_tabs.seed_overflow", { count: 12 })), { awaitPromise: true });
+  const tabs = await seed.evalIn(base.app, () => (window.__uniCliControl.execute("eval.artifact_tabs.seed_overflow", { count: 12 })), { awaitPromise: true });
   if (!isRecord(tabs) || tabs.ok !== true) throw new Error(`Could not seed artifact tabs: ${JSON.stringify(tabs)}`);
   return {
     ...base,
@@ -714,15 +714,15 @@ async function installAlphaUpdateBridge(app: Awaited<ReturnType<typeof desktop>>
   const installed = await evalIn(app, () => {
     const nativeUpdater = window.__UNICLI_ELECTRON__?.updater;
     if (!nativeUpdater?.getChannel || !nativeUpdater.setChannel) return false;
-    const state: Window["__uni-cliAlphaUpdateEligibilityEvalState"] = { checks: [], currentVersion: "0.18.37-alpha.2491+64d2d37", latestVersion: "0.18.37-alpha.2492+4921a02" };
-    window.__uni-cliAlphaUpdateEligibilityEvalState = state;
+    const state: Window["__uniCliAlphaUpdateEligibilityEvalState"] = { checks: [], currentVersion: "0.18.37-alpha.2491+64d2d37", latestVersion: "0.18.37-alpha.2492+4921a02" };
+    window.__uniCliAlphaUpdateEligibilityEvalState = state;
     localStorage.setItem("uni-cli.react.settings.update-auto-check", "0");
-    window.__uni-cliApplyDesktopConfig?.({ allowAlphaUpdates: true });
-    window.__uni-cliSetDesktopConfigRefreshResult?.({ allowAlphaUpdates: true });
-    window.__uni-cliReadDesktopVersionMetadataEval = () => ({
+    window.__uniCliApplyDesktopConfig?.({ allowAlphaUpdates: true });
+    window.__uniCliSetDesktopConfigRefreshResult?.({ allowAlphaUpdates: true });
+    window.__uniCliReadDesktopVersionMetadataEval = () => ({
       minAppVersion: "0.17.0", latestAppVersion: "0.18.35", publishedDesktopVersions: ["0.18.35"],
     });
-    window.__uni-cliUpdaterEvalBridge = {
+    window.__uniCliUpdaterEvalBridge = {
       getChannel: () => nativeUpdater.getChannel(),
       setChannel: (channel) => nativeUpdater.setChannel(channel),
       check: async (channel) => {
@@ -780,7 +780,7 @@ export async function compatibleReleaseWorld(_seed: Seed, { place }: { place: Pl
       ]),
     },
   });
-  const snapshot = () => evalIn(app, () => (window.__uni-cliRecoveryControl.snapshot()), { awaitPromise: true });
+  const snapshot = () => evalIn(app, () => (window.__uniCliRecoveryControl.snapshot()), { awaitPromise: true });
   return { app, snapshot, async [Symbol.asyncDispose]() { await app.stop(); } };
 }
 
@@ -814,7 +814,7 @@ export async function reliableRecoveryWorld(_seed: Seed, { place }: { place: Pla
       ]),
     },
   });
-  const snapshot = () => evalIn(app, () => (window.__uni-cliRecoveryControl.snapshot()), { awaitPromise: true });
+  const snapshot = () => evalIn(app, () => (window.__uniCliRecoveryControl.snapshot()), { awaitPromise: true });
   const workspaceNames = () => evalIn(
     app,
     () => (window.__UNICLI_ELECTRON__.invokeDesktop("workspaceBootstrap").then((state) => state.workspaces.map((entry) => entry.displayName))),
@@ -859,11 +859,11 @@ async function installUpdaterRaceBridge(app: Awaited<ReturnType<typeof desktop>>
   const installed = await evalIn(app, browserScript((delayStable) => {
     const nativeUpdater = window.__UNICLI_ELECTRON__?.updater;
     if (!nativeUpdater?.getChannel || !nativeUpdater.setChannel) return false;
-    const state: Window["__uni-cliUpdaterEvalState"] = { checks: [], setChannels: [], stableStarted: false, finishStable: null };
-    window.__uni-cliUpdaterEvalState = state;
-    window.__uni-cliApplyDesktopConfig?.({ allowAlphaUpdates: true });
-    window.__uni-cliSetDesktopConfigRefreshResult?.({ allowAlphaUpdates: true });
-    window.__uni-cliUpdaterEvalBridge = {
+    const state: Window["__uniCliUpdaterEvalState"] = { checks: [], setChannels: [], stableStarted: false, finishStable: null };
+    window.__uniCliUpdaterEvalState = state;
+    window.__uniCliApplyDesktopConfig?.({ allowAlphaUpdates: true });
+    window.__uniCliSetDesktopConfigRefreshResult?.({ allowAlphaUpdates: true });
+    window.__uniCliUpdaterEvalBridge = {
       getChannel: () => nativeUpdater.getChannel(),
       setChannel: async (channel) => { state.setChannels.push(channel); return nativeUpdater.setChannel(channel); },
       check: async (channel) => {
@@ -1007,7 +1007,7 @@ export async function enterpriseTlsWorld(seed: Seed, { place }: { place: Place }
     }
     await waitForBehavior(
       rawApp,
-      () => (window.__uni-cliControl?.listActions?.().some((action) => action.id === "auth.exchange-grant")),
+      () => (window.__uniCliControl?.listActions?.().some((action) => action.id === "auth.exchange-grant")),
       { timeoutMs: 60_000, label: "pre-trust sign-in reachability action" },
     );
     const grant = await createDesktopHandoffGrant(den.admin);
@@ -1445,14 +1445,14 @@ export async function backgroundUpdateWorld(seed: Seed) {
       return schedule(callback, delay, ...args);
     };
     Date.now = () => now() + state.offset;
-    window.__uni-cliReadDesktopVersionMetadataEval = () => ({
+    window.__uniCliReadDesktopVersionMetadataEval = () => ({
       minAppVersion: "0.1.0", latestAppVersion: "9.9.9", publishedDesktopVersions: ["9.9.9"],
     });
-    window.__uni-cliApplyDesktopConfig?.({});
-    window.__uni-cliSetDesktopConfigRefreshResult?.({});
+    window.__uniCliApplyDesktopConfig?.({});
+    window.__uniCliSetDesktopConfigRefreshResult?.({});
     // Like the main process, report which build is staged to checks that must preserve it.
     let stagedVersion: string | null = null;
-    window.__uni-cliUpdaterEvalBridge = {
+    window.__uniCliUpdaterEvalBridge = {
       getChannel: async () => ({ channel: "stable", currentVersion }),
       setChannel: async (channel) => ({ channel, currentVersion }),
       check: async (_channel?: string, _targetVersion?: string, options?: { preserveStaged?: boolean }) => {
@@ -1508,8 +1508,8 @@ export async function backgroundUpdateWorld(seed: Seed) {
     setCustomBranding: () => evalIn(app, () => {
       const logo = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="120" height="32"><rect width="120" height="32" rx="5" fill="#25262b"/><text x="12" y="22" font-family="sans-serif" font-size="18" fill="white">Studio</text></svg>');
       const config = { brandAppName: "Studio", brandLogoUrl: logo };
-      window.__uni-cliApplyDesktopConfig(config);
-      window.__uni-cliSetDesktopConfigRefreshResult(config);
+      window.__uniCliApplyDesktopConfig(config);
+      window.__uniCliSetDesktopConfigRefreshResult(config);
     }),
     tickUpdateInterval: () => evalIn(app, () => {
       const state = window.__backgroundUpdateWitness;
@@ -1528,7 +1528,7 @@ export async function backgroundUpdateWorld(seed: Seed) {
       window.dispatchEvent(new Event("online"));
     }),
     openSettings: () => go(app, `/workspace/${workspace.workspaceId}/settings/updates`),
-    uni-clispace: () => go(app, `/workspace/${workspace.workspaceId}/session`),
+    uniClispace: () => go(app, `/workspace/${workspace.workspaceId}/session`),
   };
 }
 
@@ -1553,10 +1553,10 @@ export async function savedUpdatePolicyWorld(seed: Seed) {
     const { currentVersion } = await window.__UNICLI_ELECTRON__.updater.getChannel();
     const state: Window["__backgroundUpdateWitness"] = { checks: 0, downloads: 0, installs: 0, offset: 0, finishDownload: null, intervalCheck: null };
     window.__backgroundUpdateWitness = state;
-    window.__uni-cliReadDesktopVersionMetadataEval = () => ({
+    window.__uniCliReadDesktopVersionMetadataEval = () => ({
       minAppVersion: "0.1.0", latestAppVersion: "9.9.9", publishedDesktopVersions: ["9.9.9"],
     });
-    window.__uni-cliUpdaterEvalBridge = {
+    window.__uniCliUpdaterEvalBridge = {
       getChannel: async () => ({ channel: "stable", currentVersion }),
       setChannel: async (channel) => ({ channel, currentVersion }),
       check: async () => {
@@ -1585,6 +1585,6 @@ export async function savedUpdatePolicyWorld(seed: Seed) {
       return { downloads, installs, installEnabled: installButton != null && !installButton.disabled };
     }),
     openSettings: () => go(app, `/workspace/${workspace.workspaceId}/settings/updates`),
-    uni-clispace: () => go(app, `/workspace/${workspace.workspaceId}/session`),
+    uniClispace: () => go(app, `/workspace/${workspace.workspaceId}/session`),
   };
 }

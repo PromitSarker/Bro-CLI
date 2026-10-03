@@ -99,7 +99,7 @@ export async function permissionPressure(seed: Seed, context: { place: Place }) 
   const mount = `/workspace/${encodeURIComponent(workspace.workspaceId)}/opencode`;
   const mainControl = async (configure: boolean): Promise<MainRequest[]> => {
     const value = await evaluate(app.client, browserScript(async (origin, mount, configure) => {
-      const result = await window.__UNICLI_ELECTRON__.invokeDesktop("__fetch", "http://127.0.0.1/__uni-cli_permission_test_control", {
+      const result = await window.__UNICLI_ELECTRON__.invokeDesktop("__fetch", "http://127.0.0.1/__uniCli_permission_test_control", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify(configure ? { action: "configure", origin, mount } : { action: "state" }),
       });

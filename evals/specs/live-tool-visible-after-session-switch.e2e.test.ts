@@ -134,7 +134,7 @@ async function configureWorkspaces(appSurface: App, workspaceIds: string[], base
   expect(result).toBe("ok");
 
   await evalIn(appSurface, () => { location.reload(); return true; });
-  await waitFor(appSurface, () => (Boolean(window.__uni-cliControl)), {
+  await waitFor(appSurface, () => (Boolean(window.__uniCliControl)), {
     timeoutMs: 60_000,
     label: "desktop restored after mock provider configuration",
   });

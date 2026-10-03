@@ -37,7 +37,7 @@ Agent-created resource names and defaults (change if required):
 - Kubernetes namespace: Kubernetes namespace for Uni-CLI workloads, default `uni-cli-ee`.
 - Helm release name: Helm's install/upgrade release name, default `uni-cli-ee`.
 - Cloud SQL instance name: GCP Cloud SQL resource to create, default `uni-cli-ee-mysql`.
-- Cloud SQL database name: MySQL database to create inside Cloud SQL, default `uni-cli_den`.
+- Cloud SQL database name: MySQL database to create inside Cloud SQL, default `uniCli_den`.
 - Cloud SQL user: MySQL user to create for Uni-CLI, default `uni-cli`.
 - Reserved global address name: GCP resource name for the static global IPv4 address used by the HTTPS load balancer, default `uni-cli-ee-ip`. This is not the IP address; the agent creates the address and reports the allocated IP.
 

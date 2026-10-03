@@ -372,7 +372,7 @@ async function openExactSessionRoute(desktopApp: App, plan: WorkspacePlan): Prom
   const route = `/workspace/${plan.workspaceId}/session/${plan.sessionId}`;
   await go(desktopApp, route, { timeoutMs: 60_000 });
   await waitFor(desktopApp, browserScript((inputRoute, workspaceId, sessionId) => {
-    const current = window.__uni-cliControl?.snapshot().route.split("?")[0].replace(/\/+$/, "") ?? "";
+    const current = window.__uniCliControl?.snapshot().route.split("?")[0].replace(/\/+$/, "") ?? "";
     return current === inputRoute
       && (localStorage.getItem("uni-cli.react.activeWorkspace") ?? "") === workspaceId
       && document.querySelector<HTMLElement>("[data-session-surface-id]")?.getAttribute("data-session-surface-id") === sessionId;
@@ -409,7 +409,7 @@ async function readSurfaceFacts(desktopApp: App, marker: string): Promise<Surfac
       .map((element) => (element.textContent ?? "").trim())
       .filter((text) => /^(sign in|reconnect|connect again|log in)$/i.test(text));
     return {
-      route: window.__uni-cliControl?.snapshot().route ?? window.location.hash,
+      route: window.__uniCliControl?.snapshot().route ?? window.location.hash,
       sessionId: document.querySelector<HTMLElement>("[data-session-surface-id]")?.getAttribute("data-session-surface-id") ?? "",
       authActions,
       crash: /aw, snap|renderer process gone|application error|uncaught exception/i.test(body),
@@ -562,7 +562,7 @@ test.skipIf(!runnable)(
     // once, before any session exists, so every workspace sees the same mock
     // provider without perturbing an in-flight engine event subscription.
     await evalIn(desktopApp, () => { location.reload(); return true; });
-    await waitFor(desktopApp, () => (Boolean(window.__uni-cliControl)), {
+    await waitFor(desktopApp, () => (Boolean(window.__uniCliControl)), {
       timeoutMs: 60_000,
       label: "desktop reloaded with the storm model preference",
     });

@@ -3,7 +3,7 @@
   "mcpServers": {
     "uni-cli": {
       "type": "streamable-http",
-      "url": "https://api.uni-clilabs.com/mcp/agent"
+      "url": "https://api.uniClilabs.com/mcp/agent"
     }
   }
 }

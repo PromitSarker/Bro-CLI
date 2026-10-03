@@ -93,7 +93,7 @@ kill_pid_file() {
   fi
 }
 
-discover_uni-cli_server_port() {
+discover_uniCli_server_port() {
   ps -Ao command \
     | grep -E "uni-cli-server" \
     | grep -v grep \
@@ -184,7 +184,7 @@ snapshot() {
   echo
   echo "=== uni-cli-server ==="
   local port
-  port=$(discover_uni-cli_server_port)
+  port=$(discover_uniCli_server_port)
   if [[ -z "$port" ]]; then
     echo "  (no dev uni-cli-server running)"
   else
@@ -332,7 +332,7 @@ diagnose_hang() {
   echo
   echo "=== sidecar health ==="
   local port
-  port=$(discover_uni-cli_server_port)
+  port=$(discover_uniCli_server_port)
   if [[ -n "$port" ]]; then
     echo "  uni-cli-server port=$port"
     curl -sS --max-time 2 "http://127.0.0.1:$port/health" || echo "unreachable"
@@ -446,7 +446,7 @@ wait_healthy() {
   local deadline=$((SECONDS + WAIT_HEALTHY_SECS))
   while (( SECONDS < deadline )); do
     local port
-    port=$(discover_uni-cli_server_port)
+    port=$(discover_uniCli_server_port)
     if [[ -n "$port" ]]; then
       local code
       code=$(curl -sS --max-time 2 -o /dev/null -w "%{http_code}" "http://127.0.0.1:$port/health" 2>/dev/null || true)

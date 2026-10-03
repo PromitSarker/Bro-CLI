@@ -48,8 +48,8 @@ function usesHostedDirectApiMigration(): boolean {
   const api = new URL(env.apiPublicUrl)
   return web.protocol === "https:"
     && api.protocol === "https:"
-    && web.hostname === "app.uni-clilabs.com"
-    && (api.hostname === "api.app.uni-clilabs.com" || api.hostname === "api.uni-clilabs.com")
+    && web.hostname === "app.uniClilabs.com"
+    && (api.hostname === "api.app.uniClilabs.com" || api.hostname === "api.uniClilabs.com")
 }
 
 export function externalMcpHostedWebProxyCallbackUrl(input: {

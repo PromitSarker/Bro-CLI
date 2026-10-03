@@ -14,7 +14,7 @@ function parseuniCliWorkspaceConfig(configJson: string): Record<string, unknown>
 }
 
 const uniCliWorkspaceConfigStore = createWorkspaceKvStore<Record<string, unknown>>({
-  tableName: "uni-cli_workspace_configs",
+  tableName: "uniCli_workspace_configs",
   valueColumn: "config_json",
   parse: parseuniCliWorkspaceConfig,
   serialize: (value) => JSON.stringify(value),

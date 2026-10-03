@@ -191,7 +191,7 @@ const cloudGatewayInstanceResponseSchema = z.object({
 }).meta({ ref: "CloudGatewayInstanceResponse" })
 
 const uniCliWebAccessRequiredSchema = z.object({
-  error: z.literal("uni-cli_web_access_required"),
+  error: z.literal("uniCli_web_access_required"),
   message: z.string(),
 }).meta({ ref: "UniCliWebAccessRequiredError" })
 

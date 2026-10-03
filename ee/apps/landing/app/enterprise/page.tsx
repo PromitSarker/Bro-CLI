@@ -11,7 +11,7 @@ export const metadata = withSocialMetadata({
   },
   openGraph: {
     ...baseOpenGraph,
-    url: "https://uni-clilabs.com/enterprise"
+    url: "https://uniClilabs.com/enterprise"
   }
 });
 

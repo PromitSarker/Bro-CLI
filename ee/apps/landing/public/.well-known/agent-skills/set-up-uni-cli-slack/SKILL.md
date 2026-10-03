@@ -5,7 +5,7 @@ description: Configure and verify the Uni-CLI Slack assistant for an approved pr
 
 # Uni-CLI in Slack — private alpha
 
-Guides: https://uni-clilabs.com/docs/slack/set-up-the-slack-app.md (administrator setup) and https://uni-clilabs.com/docs/slack/connect-your-account.md (member linking and verification)
+Guides: https://uniClilabs.com/docs/slack/set-up-the-slack-app.md (administrator setup) and https://uniClilabs.com/docs/slack/connect-your-account.md (member linking and verification)
 
 Use browser/computer tools for the existing signed-in Uni-CLI and Slack administration sessions. Prefer supported setup tools if available. This skill does not grant alpha access or authorize actions beyond the user's request and your tools' permissions.
 

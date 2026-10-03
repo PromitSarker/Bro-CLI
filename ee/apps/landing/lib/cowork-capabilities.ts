@@ -305,7 +305,7 @@ export function footnoteId(row: CapabilityRow, key: ProductKey): string {
 }
 
 function absolute(href: string): string {
-  return href.startsWith("/") ? `https://uni-clilabs.com${href}` : href;
+  return href.startsWith("/") ? `https://uniClilabs.com${href}` : href;
 }
 
 /** The matrix as GitHub-flavoured markdown for agent views. */
@@ -334,7 +334,7 @@ export function capabilityMarkdown(): string {
     totals,
     price,
     "",
-    "Planned means the Uni-CLI gap is on the [public roadmap](https://uni-clilabs.com/roadmap) and is not counted as Yes.",
+    "Planned means the Uni-CLI gap is on the [public roadmap](https://uniClilabs.com/roadmap) and is not counted as Yes.",
     "",
     ...notes,
     "",

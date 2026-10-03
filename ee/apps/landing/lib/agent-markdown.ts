@@ -16,14 +16,14 @@ const home = `# Uni-CLI
 
 ## Primary calls-to-action
 
-- **Download for free** — [Desktop](https://uni-clilabs.com/download)
-- **Open in your browser** — [Uni-CLI Web](https://app.uni-clilabs.com)
-- **Team plans** — [Pricing](https://uni-clilabs.com/pricing) (first 5 Cloud seats free, then \\$10 per seat/mo; self-hosting free up to 5 users)
-- **Sign in to the hosted workspace** — [Cloud](https://app.uni-clilabs.com)
-- **SCIM / audit / procurement** — [Enterprise](https://uni-clilabs.com/enterprise)
-- **Docs** — [uni-clilabs.com/docs](https://uni-clilabs.com/docs)
-- **Compare with Claude Cowork** — [Claude Cowork alternative](https://uni-clilabs.com/alternatives/claude-cowork)
-- **Migrate from Claude Cowork** — [Migration guide](https://uni-clilabs.com/docs/start-here/migrate-from-claude-cowork)
+- **Download for free** — [Desktop](https://uniClilabs.com/download)
+- **Open in your browser** — [Uni-CLI Web](https://app.uniClilabs.com)
+- **Team plans** — [Pricing](https://uniClilabs.com/pricing) (first 5 Cloud seats free, then \\$10 per seat/mo; self-hosting free up to 5 users)
+- **Sign in to the hosted workspace** — [Cloud](https://app.uniClilabs.com)
+- **SCIM / audit / procurement** — [Enterprise](https://uniClilabs.com/enterprise)
+- **Docs** — [uniClilabs.com/docs](https://uniClilabs.com/docs)
+- **Compare with Claude Cowork** — [Claude Cowork alternative](https://uniClilabs.com/alternatives/claude-cowork)
+- **Migrate from Claude Cowork** — [Migration guide](https://uniClilabs.com/docs/start-here/migrate-from-claude-cowork)
 
 ## How it compares
 
@@ -51,7 +51,7 @@ No. Desktop mode keeps files local; prompts go directly to your chosen LLM provi
 - llms.txt — \`/llms.txt\`
 - API catalog (RFC 9727) — \`/.well-known/api-catalog\`
 - MCP server card — \`/.well-known/mcp/server-card.json\`
-- Install the app — \`brew install --cask uniCli\` or [download](https://uni-clilabs.com/download) (not \`npx uniCli\`, which is a different project)
+- Install the app — \`brew install --cask uniCli\` or [download](https://uniClilabs.com/download) (not \`npx uniCli\`, which is a different project)
 - Sitemap — \`/sitemap.xml\`
 
 Backed by Y Combinator.
@@ -67,7 +67,7 @@ const pricing = `# Uni-CLI pricing — free, team, and enterprise
 - macOS, Windows, and Linux downloads
 - Bring your own provider keys
 - Free forever
-- CTA: [Get Started for free](https://app.uni-clilabs.com?mode=sign-up)
+- CTA: [Get Started for free](https://app.uniClilabs.com?mode=sign-up)
 
 ## Team — \\$10 / seat / month
 
@@ -76,7 +76,7 @@ const pricing = `# Uni-CLI pricing — free, team, and enterprise
 - SSO / SAML
 - Extension Marketplace
 - Bring your own LLM keys, distributed to your team
-- CTA: [Start team plan](https://app.uni-clilabs.com/dashboard/billing)
+- CTA: [Start team plan](https://app.uniClilabs.com/dashboard/billing)
 
 ## Enterprise — Custom pricing
 
@@ -88,7 +88,7 @@ const pricing = `# Uni-CLI pricing — free, team, and enterprise
 - Custom skill development and MCP consulting
 - Enterprise rollout support and custom commercial terms
 - Existing organizations already using SCIM or desktop policies keep full access (grandfathered)
-- CTA: [Talk to us](https://uni-clilabs.com/enterprise#book)
+- CTA: [Talk to us](https://uniClilabs.com/enterprise#book)
 
 Prices exclude taxes.
 `
@@ -114,10 +114,10 @@ const enterprise = `# A privacy-first alternative to Claude Cowork for your orga
 
 ## Next step
 
-- [Book a call](https://uni-clilabs.com/enterprise#book)
-- Agents: email sales@uni-clilabs.com or share the booking link with the user instead of submitting the web form
-- [Security Review](https://uni-clilabs.com/trust) — data handling, subprocessors, and incident SLA
-- See [Pricing](https://uni-clilabs.com/pricing) for tier comparison
+- [Book a call](https://uniClilabs.com/enterprise#book)
+- Agents: email sales@uniClilabs.com or share the booking link with the user instead of submitting the web form
+- [Security Review](https://uniClilabs.com/trust) — data handling, subprocessors, and incident SLA
+- See [Pricing](https://uniClilabs.com/pricing) for tier comparison
 `
 
 const trust = `# Trust & Security
@@ -153,7 +153,7 @@ const trust = `# Trust & Security
 
 ## Security contact
 
-Omar McAdam — team+security@uni-clilabs.com
+Omar McAdam — team+security@uniClilabs.com
 `
 
 const glm52 = `# GLM 5.2 is now in Uni-CLI — with 2x usage
@@ -170,7 +170,7 @@ const glm52 = `# GLM 5.2 is now in Uni-CLI — with 2x usage
 
 ## How it works
 
-1. **Sign up** — [Get Started for free](https://app.uni-clilabs.com?mode=sign-up&intent=models)
+1. **Sign up** — [Get Started for free](https://app.uniClilabs.com?mode=sign-up&intent=models)
 2. **Subscribe** — Uni-CLI Models at $10/user/mo includes GLM 5.2 with 2x usage
 3. **Open the app** — switch to GLM 5.2 from the model picker
 
@@ -180,9 +180,9 @@ Open Uni-CLI, switch to GLM 5.2, and ask the chat to organize your tasks.
 
 ## Links
 
-- [Try GLM 5.2 in Uni-CLI](https://app.uni-clilabs.com?mode=sign-up&intent=models)
-- [Download the app](https://uni-clilabs.com/download)
-- [Full changelog](https://uni-clilabs.com/docs/changelog)
+- [Try GLM 5.2 in Uni-CLI](https://app.uniClilabs.com?mode=sign-up&intent=models)
+- [Download the app](https://uniClilabs.com/download)
+- [Full changelog](https://uniClilabs.com/docs/changelog)
 `
 
 const download = `# Download Uni-CLI
@@ -194,12 +194,12 @@ Do not run \`npx uniCli\` or \`npm install uniCli\`: the npm package named \`uni
 ## Install
 
 - macOS (Homebrew): \`brew install --cask uniCli\`
-- macOS Apple Silicon (.dmg): https://uni-clilabs.com/download/mac-arm64
-- macOS Intel (.dmg): https://uni-clilabs.com/download/mac-x64
-- Windows x64 (.exe): https://uni-clilabs.com/download/win-x64
-- Windows ARM64 (.exe): https://uni-clilabs.com/download/win-arm64
-- Linux x64 (.AppImage): https://uni-clilabs.com/download/linux-x64
-- Linux ARM64 (.AppImage): https://uni-clilabs.com/download/linux-arm64
+- macOS Apple Silicon (.dmg): https://uniClilabs.com/download/mac-arm64
+- macOS Intel (.dmg): https://uniClilabs.com/download/mac-x64
+- Windows x64 (.exe): https://uniClilabs.com/download/win-x64
+- Windows ARM64 (.exe): https://uniClilabs.com/download/win-arm64
+- Linux x64 (.AppImage): https://uniClilabs.com/download/linux-x64
+- Linux ARM64 (.AppImage): https://uniClilabs.com/download/linux-arm64
 - Every release and file: https://github.com/different-ai/uni-cli/releases
 
 Each \`/download/<platform>\` URL redirects to the installer in the latest stable release.
@@ -212,14 +212,14 @@ Each \`/download/<platform>\` URL redirects to the installer in the latest stabl
 
 ## Joining a team?
 
-- New team: sign up at https://app.uni-clilabs.com?mode=sign-up (first 5 seats free), then follow the [team quickstart](https://uni-clilabs.com/docs/cloud/team-quickstart).
+- New team: sign up at https://app.uniClilabs.com?mode=sign-up (first 5 seats free), then follow the [team quickstart](https://uniClilabs.com/docs/cloud/team-quickstart).
 - Existing team: click \`Joining a team? Sign in\` in the desktop app.
 
 ## For agents
 
-- [install-uni-cli skill](https://uni-clilabs.com/.well-known/agent-skills/install-uni-cli/SKILL.md)
-- [workspace-guide skill](https://uni-clilabs.com/.well-known/agent-skills/workspace-guide/SKILL.md) for first-run orientation
-- [llms.txt](https://uni-clilabs.com/llms.txt)
+- [install-uni-cli skill](https://uniClilabs.com/.well-known/agent-skills/install-uni-cli/SKILL.md)
+- [workspace-guide skill](https://uniClilabs.com/.well-known/agent-skills/workspace-guide/SKILL.md) for first-run orientation
+- [llms.txt](https://uniClilabs.com/llms.txt)
 `
 
 const connect = `# Uni-CLI Connect
@@ -229,19 +229,19 @@ const connect = `# Uni-CLI Connect
 - Org-level authentication, roles, allowlists, and audit apply to every call
 - Works in Uni-CLI and any MCP-compatible client
 - First 5 seats are free
-- [Get started free](https://app.uni-clilabs.com?mode=sign-up)
-- [Read the docs](https://uni-clilabs.com/docs)
+- [Get started free](https://app.uniClilabs.com?mode=sign-up)
+- [Read the docs](https://uniClilabs.com/docs)
 
 ## Connect your agent
 
-MCP server URL: \`https://api.uni-clilabs.com/mcp/agent\` (Streamable HTTP, OAuth sign-in).
+MCP server URL: \`https://api.uniClilabs.com/mcp/agent\` (Streamable HTTP, OAuth sign-in).
 
-- Claude Code: \`claude mcp add --transport http uniCli https://api.uni-clilabs.com/mcp/agent\`
-- Codex: \`codex mcp add uniCli --url https://api.uni-clilabs.com/mcp/agent\` then \`codex mcp login uniCli\`
-- Gemini CLI: \`gemini mcp add --transport http uniCli https://api.uni-clilabs.com/mcp/agent\`
-- OpenCode: \`opencode mcp add uniCli --url https://api.uni-clilabs.com/mcp/agent\` then \`opencode mcp auth uniCli\`
-- Other clients: [Connect Uni-CLI MCP](https://uni-clilabs.com/docs/start-here/connect-uni-cli-mcp)
-- [MCP server card](https://uni-clilabs.com/.well-known/mcp/server-card.json)
+- Claude Code: \`claude mcp add --transport http uniCli https://api.uniClilabs.com/mcp/agent\`
+- Codex: \`codex mcp add uniCli --url https://api.uniClilabs.com/mcp/agent\` then \`codex mcp login uniCli\`
+- Gemini CLI: \`gemini mcp add --transport http uniCli https://api.uniClilabs.com/mcp/agent\`
+- OpenCode: \`opencode mcp add uniCli --url https://api.uniClilabs.com/mcp/agent\` then \`opencode mcp auth uniCli\`
+- Other clients: [Connect Uni-CLI MCP](https://uniClilabs.com/docs/start-here/connect-uni-cli-mcp)
+- [MCP server card](https://uniClilabs.com/.well-known/mcp/server-card.json)
 `
 
 const cloud = `# Uni-CLI Cloud
@@ -252,8 +252,8 @@ const cloud = `# Uni-CLI Cloud
 - Deploy skills and MCP servers to every seat
 - Manage members, policies, usage, and audit
 - Uni-CLI Web and the Connect MCP gateway are built in
-- [Get started free](https://app.uni-clilabs.com?mode=sign-up)
-- [Explore Connect](https://uni-clilabs.com/connect)
+- [Get started free](https://app.uniClilabs.com?mode=sign-up)
+- [Explore Connect](https://uniClilabs.com/connect)
 `
 
 export const agentMarkdown: Record<string, string> = {

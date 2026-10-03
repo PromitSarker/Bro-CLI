@@ -472,8 +472,8 @@ async function relayErrorResponse(upstream: Response, protocol: GatewayRequestPr
       const value = pending.pop()
       if (Array.isArray(value)) { pending.push(...value); continue }
       if (!isJsonObject(value)) continue
-      if (value.source === "uni-cli_gateway") delete value.source
-      if (typeof value.code === "string" && value.code.startsWith("uni-cli_gateway_")) value.code = "upstream_error"
+      if (value.source === "uniCli_gateway") delete value.source
+      if (typeof value.code === "string" && value.code.startsWith("uniCli_gateway_")) value.code = "upstream_error"
       if (value.type === "usage_limit_error" || value.type === "accounting_unavailable_error") value.type = "upstream_error"
       for (const child of Object.values(value)) if (typeof child === "object" && child !== null) pending.push(child)
     }
@@ -864,7 +864,7 @@ export function registerGatewayRoutes(api: Hono<GatewayEnv>, input: GatewayRoute
         case "auth_required": {
           const response = gatewayError(
             401,
-            "uni-cli_auth_required",
+            "uniCli_auth_required",
             `Connect your ${provider.provider_id} account in Uni-CLI to use this provider (${credential.reason === "missing" ? "no credential" : `credential ${credential.reason}`}).`,
             { provider_id: provider.id, credential_set_id: selection.row.credentialSet.id },
           )
@@ -941,7 +941,7 @@ export function registerGatewayRoutes(api: Hono<GatewayEnv>, input: GatewayRoute
       return reject(gatewayError(503, "request_log_unavailable", "Inference accounting is temporarily unavailable."), "request_log_unavailable", "Request log unavailable")
     }
 
-    if (usageRejection) return reject(usageRejection, usageRejection.headers.get("x-uni-cli-error-code") ?? "uni-cli_gateway_accounting_unavailable", "Gateway usage admission rejected")
+    if (usageRejection) return reject(usageRejection, usageRejection.headers.get("x-uni-cli-error-code") ?? "uniCli_gateway_accounting_unavailable", "Gateway usage admission rejected")
 
     // Recheck after accounting awaits. Never reselect or materialize a fallback.
     const currentSelection = selectGatewayGrant(await dependencies.loadGatewayAccess(scope), prepared.requestedModel, selection.row.grant.id)

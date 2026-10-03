@@ -70,13 +70,13 @@ test("session.create binds the requested reasoning effort and session.read expos
   const createOutput = await step("an agent creates a session with model.variant low through session.create", async () => {
     const result = await world.engine("POST", `/session/${encodeURIComponent(orchestrator)}/message`, {
       model: engineModel,
-      parts: [{ type: "text", text: scripted("uni-cli_execute", {
+      parts: [{ type: "text", text: scripted("uniCli_execute", {
         id: "session.create",
         args: { model: requested, sessions: [{ title: CREATED_TITLE, prompt: CREATED_PROMPT }] },
       }) }],
     });
     const output = await probe.eventually(
-      async () => completedToolOutput(await world.engine("GET", `/session/${encodeURIComponent(orchestrator)}/message`), "uni-cli_execute"),
+      async () => completedToolOutput(await world.engine("GET", `/session/${encodeURIComponent(orchestrator)}/message`), "uniCli_execute"),
       { within: 60_000, label: "completed session.create tool call", until: (value) => value !== null },
     );
     if (output === null) throw new Error("session.create did not complete");
@@ -127,10 +127,10 @@ test("session.create binds the requested reasoning effort and session.read expos
   await step("session.read returns the same model without opening the session", async () => {
     await world.engine("POST", `/session/${encodeURIComponent(orchestrator)}/message`, {
       model: engineModel,
-      parts: [{ type: "text", text: scripted("uni-cli_query", { id: "session.read", args: { sessionId: createdId, count: 5 } }) }],
+      parts: [{ type: "text", text: scripted("uniCli_query", { id: "session.read", args: { sessionId: createdId, count: 5 } }) }],
     });
     const output = await probe.eventually(
-      async () => completedToolOutput(await world.engine("GET", `/session/${encodeURIComponent(orchestrator)}/message`), "uni-cli_query"),
+      async () => completedToolOutput(await world.engine("GET", `/session/${encodeURIComponent(orchestrator)}/message`), "uniCli_query"),
       { within: 60_000, label: "completed session.read tool call", until: (value) => value !== null },
     );
     if (output === null) throw new Error("session.read did not complete");

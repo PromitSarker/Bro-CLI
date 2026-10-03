@@ -4,16 +4,16 @@ const { withBotId } = require("botid/next/config");
 const mintlifyOrigin = "https://differentai.mintlify.dev";
 
 const ALIAS_HOSTS = [
-  "www.uni-clilabs.com",
+  "www.uniClilabs.com",
   "uni-cli.software",
   "www.uniCli.software",
-  "uni-cliapp.com",
-  "www.uni-cliapp.com",
+  "uniCliapp.com",
+  "www.uniCliapp.com",
   "uni-cli.studio",
   "www.uniCli.studio",
-  "uni-clico.com",
-  "www.uni-clico.com",
-  "www.uni-clilabs.com",
+  "uniClico.com",
+  "www.uniClico.com",
+  "www.uniClilabs.com",
 ];
 
 const nextConfig = {
@@ -33,7 +33,7 @@ const nextConfig = {
     return ALIAS_HOSTS.map((host) => ({
       source: "/:path*",
       has: [{ type: "host", value: host }],
-      destination: "https://uni-clilabs.com/:path*",
+      destination: "https://uniClilabs.com/:path*",
       permanent: true,
     }));
   },

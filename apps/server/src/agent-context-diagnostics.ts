@@ -160,7 +160,7 @@ function assessEffectiveToolPolicy(
       status: "unavailable",
       decisions: {},
       deniedToolIds: [],
-      unavailableReasons: ["effective_uni-cli_agent_missing"],
+      unavailableReasons: ["effective_uniCli_agent_missing"],
     };
   }
   if (
@@ -172,7 +172,7 @@ function assessEffectiveToolPolicy(
       status: "unavailable",
       decisions: {},
       deniedToolIds: [],
-      unavailableReasons: ["effective_uni-cli_agent_unusable_as_default"],
+      unavailableReasons: ["effective_uniCli_agent_unusable_as_default"],
     };
   }
   const decisions: Record<string, EffectiveToolPolicyDecision> = {};
@@ -1159,7 +1159,7 @@ function engineAgentCheck(
     id: "engine-agent",
     status: agent ? "passed" : "failed",
     evidenceKind: "observed",
-    code: agent ? "effective_uni-cli_agent_observed" : "effective_uni-cli_agent_missing",
+    code: agent ? "effective_uniCli_agent_observed" : "effective_uniCli_agent_missing",
     message: agent
       ? "The selected engine resolved the Uni-CLI agent."
       : "The selected engine did not resolve an Uni-CLI agent.",
@@ -1611,14 +1611,14 @@ export async function runAgentContextDiagnostics(input: {
         : runtimeInspection.status === "available" ? "expected" : "unavailable",
       code: effectiveEngine
         ? !effectiveuniCliAgent
-          ? "effective_uni-cli_agent_missing"
+          ? "effective_uniCli_agent_missing"
           : effectiveEngine.defaultAgent !== "uni-cli"
             ? "effective_default_agent_mismatch"
             : effectiveuniCliAgent.hidden
-              ? "effective_uni-cli_agent_hidden"
+              ? "effective_uniCli_agent_hidden"
               : !effectiveAgentModeUsable
-                ? "effective_uni-cli_agent_not_primary"
-            : "effective_uni-cli_agent_selected"
+                ? "effective_uniCli_agent_not_primary"
+            : "effective_uniCli_agent_selected"
         : projectOverrideDetected
           ? "configured_agent_has_override_layers"
           : "runtime_agent_intent_only",

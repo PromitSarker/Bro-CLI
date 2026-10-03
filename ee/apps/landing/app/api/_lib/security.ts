@@ -8,8 +8,8 @@ type FixedWindowEntry = {
 const minimumSubmissionAgeMs = 1500;
 const maximumSubmissionAgeMs = 1000 * 60 * 60;
 const defaultAllowedOrigins = [
-  "https://uni-clilabs.com",
-  "https://www.uni-clilabs.com",
+  "https://uniClilabs.com",
+  "https://www.uniClilabs.com",
   "https://uni-cli.software",
   "https://www.uniCli.software",
   "http://localhost:3000",
@@ -19,11 +19,11 @@ const defaultAllowedOrigins = [
 ];
 
 const store = globalThis as typeof globalThis & {
-  __uni-cliLandingRateLimitStore?: Map<string, FixedWindowEntry>;
+  __uniCliLandingRateLimitStore?: Map<string, FixedWindowEntry>;
 };
 
-const rateLimitStore = store.__uni-cliLandingRateLimitStore ?? new Map<string, FixedWindowEntry>();
-store.__uni-cliLandingRateLimitStore = rateLimitStore;
+const rateLimitStore = store.__uniCliLandingRateLimitStore ?? new Map<string, FixedWindowEntry>();
+store.__uniCliLandingRateLimitStore = rateLimitStore;
 
 function currentTime() {
   return Date.now();
@@ -113,9 +113,9 @@ export function rateLimitFormRequest(request: Request, route: string) {
   });
 }
 
-export const SALES_EMAIL = "sales@uni-clilabs.com";
-export const TEAM_EMAIL = "team@uni-clilabs.com";
-export const ENTERPRISE_BOOKING_URL = "https://uni-clilabs.com/enterprise#book";
+export const SALES_EMAIL = "sales@uniClilabs.com";
+export const TEAM_EMAIL = "team@uniClilabs.com";
+export const ENTERPRISE_BOOKING_URL = "https://uniClilabs.com/enterprise#book";
 export const GITHUB_ISSUES_URL = "https://github.com/different-ai/uni-cli/issues";
 
 export type FormAlternatives = Record<string, string>;

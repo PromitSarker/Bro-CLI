@@ -79,7 +79,7 @@ export function withImportedModelMetadata(options: readonly ModelOption[], impor
   const pins = new Map<string, number>();
   const sources = new Map<string, ModelOption["source"]>();
   for (const provider of Object.values(imports)) {
-    sources.set(provider.providerId, provider.source === "uni-cli_gateway" ? "gateway" : "cloud");
+    sources.set(provider.providerId, provider.source === "uniCli_gateway" ? "gateway" : "cloud");
     for (const id of provider.pinnedModelIds ?? []) {
       const key = modelRefKey({ providerID: provider.providerId, modelID: id });
       if (provider.modelIds.includes(id) && !pins.has(key)) pins.set(key, pins.size);

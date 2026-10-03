@@ -196,7 +196,7 @@ const test = spec.world(myWorld, {
 | --- | --- |
 | `seed` | Arrange the world: Den, orgs, members, workspaces, sessions, mocks, faults. Only `seed` writes state. All `seed.*` goes in the world, before the first act. |
 | `user` | Act as the person: `click`, `type`, `press`, `reload`, `see`, `notSee`, `looks`, `screenshot`. Trusted CDP input; no JS evaluation. |
-| `agent` | Drive the product's automation rail (`window.__uni-cliControl`): sends, session actions. |
+| `agent` | Drive the product's automation rail (`window.__uniCliControl`): sends, session actions. |
 | `probe` | Observe without changing state: `text`, `hash`, `storage`, `api` (GET), `dom`, `eventually`. |
 | `step` | Name a claim. Nests. A failed step is recorded and rethrown; later steps show `not-reached`. |
 

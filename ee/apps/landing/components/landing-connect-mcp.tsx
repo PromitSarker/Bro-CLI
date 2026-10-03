@@ -25,8 +25,8 @@ import {
 } from "./uni-cli-connect-installer-config";
 import type { UniCliConnectClientId } from "./uni-cli-connect-installer-config";
 
-const DOCS_URL = "https://uni-clilabs.com/docs/cloud/run-in-the-cloud/cloud-mcp#connect-mcp-install-opencode";
-const SIGNUP_URL = "https://app.uni-clilabs.com?mode=sign-up";
+const DOCS_URL = "https://uniClilabs.com/docs/cloud/run-in-the-cloud/cloud-mcp#connect-mcp-install-opencode";
+const SIGNUP_URL = "https://app.uniClilabs.com?mode=sign-up";
 
 type CopyMethod = "clipboard" | "execCommand" | "none";
 type ClientId = UniCliConnectClientId;

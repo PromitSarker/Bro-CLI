@@ -81,7 +81,7 @@ export function AddMcpModal(props: AddMcpModalProps) {
       return;
     }
     if (conflictsWithuniCliConnect({ name: trimmedName })) {
-      dispatch({ error: t("mcp.name_reserved_uni-cli_connect") });
+      dispatch({ error: t("mcp.name_reserved_uniCli_connect") });
       return;
     }
 

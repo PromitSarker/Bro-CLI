@@ -1512,7 +1512,7 @@ function DraftSessionRow({ workspaceId, groupId, title, pending }: { workspaceId
   </SidebarMenuSubItem>;
 }
 const EMPTY_PINNED_IDS = new Set<string>();
-const UNGROUPED_GROUP_ID = "__uni-cli_ungrouped";
+const UNGROUPED_GROUP_ID = "__uniCli_ungrouped";
 
 function SessionGroupActions({ group, groups, workspaceId, count }: {
   group: SessionGroupDefinition;

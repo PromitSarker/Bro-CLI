@@ -171,9 +171,9 @@ async function witness() {
     requests, catalogs, sessions, transcripts, unavailable, host,
     hostQueries: () => requests.filter((request) => isRecord(request.body) && request.body.kind === "query"),
     writes: () => requests.filter((request) => request.method !== "GET" && !(isRecord(request.body) && request.body.kind === "query")),
-    query: (id: string, args: Record<string, unknown>) => plugin.tool.uni-cli_query.execute({ id, args }),
-    create: (args: Record<string, unknown>) => plugin.tool.uni-cli_execute.execute({ id: "session.create", args }, {}),
-    read: async (sessionId: string, args: Record<string, unknown> = {}) => resultOf(await plugin.tool.uni-cli_query.execute({
+    query: (id: string, args: Record<string, unknown>) => plugin.tool.uniCli_query.execute({ id, args }),
+    create: (args: Record<string, unknown>) => plugin.tool.uniCli_execute.execute({ id: "session.create", args }, {}),
+    read: async (sessionId: string, args: Record<string, unknown> = {}) => resultOf(await plugin.tool.uniCli_query.execute({
       id: "session.read", args: { workspaceId: "ws_one", sessionId, ...args },
     }), "session.read"),
   };

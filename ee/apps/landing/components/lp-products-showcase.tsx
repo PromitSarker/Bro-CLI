@@ -48,7 +48,7 @@ const STAGES: Record<LpProductKey, Stage> = {
     tall: true,
     note: "Nothing to install. Admins set models, skills and access for everyone.",
     action: (
-      <a href="https://app.uni-clilabs.com" className="lp-pill-primary lp-pill-sm">
+      <a href="https://app.uniClilabs.com" className="lp-pill-primary lp-pill-sm">
         Open Uni-CLI Web
       </a>
     )

@@ -138,7 +138,7 @@ test("desktop retires every local Google action without using or changing legacy
       });
       expect(result, `${action}, Connect=${connectEnabled}`).toMatchObject({
         status: 200, body: {
-          ok: false, error: "use_uni-cli_cloud", message: expect.stringContaining("local credentials cannot be used"),
+          ok: false, error: "use_uniCli_cloud", message: expect.stringContaining("local credentials cannot be used"),
           nextAction: { recommendedAction: "Open Settings > Library > Connections to check your Cloud connections, or Settings > Debug to diagnose Uni-CLI Cloud agent access for this workspace." },
         },
       });
@@ -154,7 +154,7 @@ test("desktop retires every local Google action without using or changing legacy
     for (const [path, bytes] of calendar.legacyFiles) expect(await readFile(path)).toEqual(bytes);
   }
   evidence.recordAssertionEvidence("Legacy Google cannot be discovered, executed, or reused for uploads",
-    "With Connect absent, off, and on, all 24 retired/unknown actions refuse with use_uni-cli_cloud, including status and lifecycle/config calls. Both Cloud uploads require member auth; OpenAI status still executes. Zero external requests or uploads; all three seeded OAuth files remain byte-identical.", true);
+    "With Connect absent, off, and on, all 24 retired/unknown actions refuse with use_uniCli_cloud, including status and lifecycle/config calls. Both Cloud uploads require member auth; OpenAI status still executes. Zero external requests or uploads; all three seeded OAuth files remain byte-identical.", true);
 });
 
 test("desktop file bridge uploads exact bytes through Cloud member auth without local Google tokens", async ({ evidence, place }) => {
@@ -163,7 +163,7 @@ test("desktop file bridge uploads exact bytes through Cloud member auth without 
   expect(await readdir(calendar.extensions)).toEqual([]);
   expect(await calendar.request("/experimental/extensions/actions?extensionId=google-workspace")).toMatchObject({ status: 200, body: { actions: [] } });
   expect(await calendar.call("google-workspace", "calendar_list_events", { timeMin: "2026-09-01T07:00:00Z", timeMax: "2026-09-01T08:00:00Z" }))
-    .toMatchObject({ status: 200, body: { ok: false, error: "use_uni-cli_cloud" } });
+    .toMatchObject({ status: 200, body: { ok: false, error: "use_uniCli_cloud" } });
   expect(await calendar.call("uni-cli-cloud-uploads", "drive_upload_file", uploadArgs)).toEqual({ status: 200, body: { ok: true, file: { id: "cloud-file" } } });
   expect(await calendar.call("uni-cli-cloud-uploads", "gmail_create_draft_with_attachments", uploadArgs)).toEqual({ status: 200, body: { ok: true, draftId: "cloud-draft", threadId: "cloud-thread" } });
   const file = { name: "review.docx", type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", bytes: [...calendar.bytes] };

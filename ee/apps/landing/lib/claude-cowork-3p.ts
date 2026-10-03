@@ -3,7 +3,7 @@ import { capabilityMarkdown } from "./cowork-capabilities";
 import type { FaqEntry } from "./faq";
 
 export const CLAUDE_COWORK_3P_PATH = "/alternatives/claude-cowork-3p";
-export const CLAUDE_COWORK_3P_URL = `https://uni-clilabs.com${CLAUDE_COWORK_3P_PATH}`;
+export const CLAUDE_COWORK_3P_URL = `https://uniClilabs.com${CLAUDE_COWORK_3P_PATH}`;
 
 export const claudeCowork3pHeading = "Uni-CLI vs Claude Cowork on 3P";
 
@@ -68,7 +68,7 @@ ${capabilityMarkdown()}
 
 ## Why teams on 3P switch
 
-${threePCards.map((card) => `- ${card.title}: [${card.link.label}](https://uni-clilabs.com${card.link.href})`).join("\n")}
+${threePCards.map((card) => `- ${card.title}: [${card.link.label}](https://uniClilabs.com${card.link.href})`).join("\n")}
 
 ## FAQ
 
@@ -76,7 +76,7 @@ ${claudeCowork3pFaq.map((entry) => `### ${entry.question}\n${entry.answer}`).joi
 
 ## Next steps
 
-- [Talk to us about Enterprise](https://uni-clilabs.com/enterprise#book)
-- [Download Uni-CLI](https://uni-clilabs.com/download)
-- [Claude Cowork alternative overview](https://uni-clilabs.com/alternatives/claude-cowork)
+- [Talk to us about Enterprise](https://uniClilabs.com/enterprise#book)
+- [Download Uni-CLI](https://uniClilabs.com/download)
+- [Claude Cowork alternative overview](https://uniClilabs.com/alternatives/claude-cowork)
 `;

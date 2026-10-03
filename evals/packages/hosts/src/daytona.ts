@@ -709,13 +709,13 @@ export function createDaytonaHost(options: DaytonaHostOptions): DaytonaHost {
           "--enable-unsafe-swiftshader",
           ...(opts.launchArgs ?? []),
         ];
-        const isolatedShell = `uni-cli_dbus="\${DBUS_SESSION_BUS_ADDRESS-}"
-uni-cli_xauthority="\${XAUTHORITY-}"
-for uni-cli_env_name in $(compgen -e); do unset "$uni-cli_env_name" 2>/dev/null || true; done
+        const isolatedShell = `uniCli_dbus="\${DBUS_SESSION_BUS_ADDRESS-}"
+uniCli_xauthority="\${XAUTHORITY-}"
+for uniCli_env_name in $(compgen -e); do unset "$uniCli_env_name" 2>/dev/null || true; done
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 export LANG=C.UTF-8
-if [ -n "$uni-cli_dbus" ]; then export DBUS_SESSION_BUS_ADDRESS="$uni-cli_dbus"; fi
-if [ -n "$uni-cli_xauthority" ]; then export XAUTHORITY="$uni-cli_xauthority"; fi
+if [ -n "$uniCli_dbus" ]; then export DBUS_SESSION_BUS_ADDRESS="$uniCli_dbus"; fi
+if [ -n "$uniCli_xauthority" ]; then export XAUTHORITY="$uniCli_xauthority"; fi
 ${shellExport(env)}
 cd "$HOME"`;
         const launcher = `#!/usr/bin/env bash\nset -euo pipefail\n${isolatedShell}\nexec ${shellQuote(binaryPath)} ${binaryArgs.map(shellQuote).join(" ")} "$@"\n`;

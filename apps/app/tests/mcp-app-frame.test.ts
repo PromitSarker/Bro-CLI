@@ -1148,7 +1148,7 @@ describe("MCP App resolution", () => {
       state: "output-available", input: { name: "mcp:emc_notes:*" },
       output: { schemaVersion: "1", connectionId: "emc_notes", connectionName: "Notes", state: "needs_connection",
         actor: "member", message: "Connect Notes to continue.",
-        action: { type: "connect", label: "Connect Notes", surface: "uni-cli_your_connections" } },
+        action: { type: "connect", label: "Connect Notes", surface: "uniCli_your_connections" } },
     }
     expect(hasPreservedMcpAppResult(part)).toBe(false)
     const host = resolutionFixture(false)
@@ -1333,7 +1333,7 @@ describe("MCP App resolution", () => {
   })
 
   test.each(["skill-created", "plugin-flow"].flatMap(resource =>
-    ["uni-cli_", "uni-cli-cloud_"].flatMap(prefix =>
+    ["uniCli_", "uni-cli-cloud_"].flatMap(prefix =>
       ["mcpResult", "mcpApp"].map(alias => ({ resource, prefix, alias })))
   ))("suppresses retained historical $resource for $prefix through $alias before resolution", async ({ resource, prefix, alias }) => {
     const host = resolutionFixture(true)
@@ -1379,7 +1379,7 @@ describe("MCP App resolution", () => {
 
   test.each(["skill-created", "plugin-flow"].flatMap(resource => [
     { resource, toolName: "uni-cli-cloud_execute_capability", connectionId: "emc_fixture" },
-    { resource, toolName: "uni-cli_create_skill", connectionId: "emc_fixture" },
+    { resource, toolName: "uniCli_create_skill", connectionId: "emc_fixture" },
     { resource, toolName: "provider_create_skill", connectionId: undefined },
     { resource, toolName: "uni-cli-other_execute_capability", connectionId: undefined },
     { resource, toolName: "uni-cli-cloud_execute_capability", connectionId: "" },
@@ -1401,7 +1401,7 @@ describe("MCP App resolution", () => {
     } finally { await host.dispose() }
   })
 
-  test.each(["uni-cli_", "uni-cli-cloud_"].flatMap(prefix =>
+  test.each(["uniCli_", "uni-cli-cloud_"].flatMap(prefix =>
     ["create_skill", "update_skill", "plugin_flow"].flatMap(name =>
       ["mcpResult", "mcpApp"].flatMap(alias => [false, true].map(launch => ({ prefix, name, alias, launch }))))
   ))("suppresses backend binding $prefix$name ($alias, launch: $launch) without embedding or resolving", async ({ prefix, name, alias, launch }) => {
@@ -1428,7 +1428,7 @@ describe("MCP App resolution", () => {
 
   test.each([
     { toolName: "uni-cli-cloud_execute_capability", arguments: null, connectionId: undefined },
-    { toolName: "uni-cli_execute_capability", arguments: {}, connectionId: null },
+    { toolName: "uniCli_execute_capability", arguments: {}, connectionId: null },
     { toolName: "uni-cli-cloud_unknown", arguments: {}, connectionId: undefined },
   ])("keeps malformed or unknown $toolName launches on the diagnostic path", async ({ toolName, arguments: args, connectionId }) => {
     const host = resolutionFixture(false)
@@ -1468,14 +1468,14 @@ describe("MCP App resolution", () => {
 
   test.each(["execute_capability", "run_artifact_fixture", "preview_artifact_fixture", "save_artifact_view"])("%s connection-action v2 launch is presented natively, never as an iframe", async toolName => {
     const connection = { schemaVersion: "1", connectionId: "connection", connectionName: "Fixture", state: "needs_connection",
-      actor: "member", message: "Connect Fixture", action: { type: "connect", label: "Authenticate", surface: "uni-cli_your_connections" } }
+      actor: "member", message: "Connect Fixture", action: { type: "connect", label: "Authenticate", surface: "uniCli_your_connections" } }
     const launch = { toolName: "connection_action", resourceUri: "ui://uni-cli/connection-action/v2/view.html", arguments: { connectionId: "connection" } }
     const part: DynamicToolUIPart = { type: "dynamic-tool", toolName: `uni-cli-cloud_${toolName}`, toolCallId: `connection-native-${toolName}`,
       state: "output-available", input: {}, output: connection,
       callProviderMetadata: { uniCli: { mcpResult: { content: [], isError: true, structuredContent: connection, _meta: { "uni-cli/mcpApp": launch } } } } }
     expect(hasPreservedMcpAppResult(part)).toBe(true)
     expect(isNativeConnectionAppLaunch(part)).toBe(true)
-    expect(isNativeConnectionAppLaunch({ ...part, toolName: `uni-cli_${toolName}` })).toBe(true)
+    expect(isNativeConnectionAppLaunch({ ...part, toolName: `uniCli_${toolName}` })).toBe(true)
     expect(McpAppFrame({ part })).toBeNull()
     const host = resolutionFixture(false)
     host.resolveSpy.mockResolvedValue({ app: { ...fixture({ toolName: "connection_action", resourceUri: launch.resourceUri }), hostConnectionActions: true } })
@@ -1491,12 +1491,12 @@ describe("MCP App resolution", () => {
   })
 
   test("bare connection_action results are native even without launch metadata", () => {
-    for (const toolName of ["uni-cli_connection_action", "uni-cli-cloud_connection_action"]) {
+    for (const toolName of ["uniCli_connection_action", "uni-cli-cloud_connection_action"]) {
       const part: DynamicToolUIPart = { type: "dynamic-tool", toolName, toolCallId: "bare", state: "output-available", input: {}, output: {} }
       expect(isNativeConnectionAppLaunch(part)).toBe(true)
       expect(McpAppFrame({ part })).toBeNull()
     }
-    const other: DynamicToolUIPart = { type: "dynamic-tool", toolName: "uni-cli_execute_capability", toolCallId: "bare-other", state: "output-available", input: {}, output: {} }
+    const other: DynamicToolUIPart = { type: "dynamic-tool", toolName: "uniCli_execute_capability", toolCallId: "bare-other", state: "output-available", input: {}, output: {} }
     expect(isNativeConnectionAppLaunch(other)).toBe(false)
   })
 

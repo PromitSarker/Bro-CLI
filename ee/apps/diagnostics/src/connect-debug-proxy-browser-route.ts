@@ -1,6 +1,6 @@
 import { parseConnectDebugProxyScenario } from "./connect-debug-proxy-scenarios"
 
-export const CONNECT_DEBUG_PROXY_BROWSER_ROUTE_COOKIE = "uni-cli_connect_debug_route"
+export const CONNECT_DEBUG_PROXY_BROWSER_ROUTE_COOKIE = "uniCli_connect_debug_route"
 export const CONNECT_DEBUG_PROXY_BROWSER_ROUTE_SECONDS = 10 * 60
 
 function validProxyPath(value: string): boolean {

@@ -275,7 +275,7 @@ virtual network reachability boundary as AKS. The most important requirements
 are:
 
 - MySQL 8-compatible Flexible Server.
-- Database name: `uni-cli_den`.
+- Database name: `uniCli_den`.
 - Private access through VNet integration or Private Link.
 - AKS pods can resolve and reach the MySQL FQDN on TCP `3306`.
 - TLS enforcement remains enabled.
@@ -295,7 +295,7 @@ az mysql flexible-server create \
   --name "$MYSQL_SERVER_NAME" \
   --admin-user "$MYSQL_ADMIN_USER" \
   --admin-password "$MYSQL_ADMIN_PASSWORD" \
-  --database-name uni-cli_den \
+  --database-name uniCli_den \
   --version 8.0.21 \
   --vnet "$VNET_NAME" \
   --subnet "$MYSQL_SUBNET_NAME" \
@@ -344,7 +344,7 @@ documented Azure Database path.
 Example database URL:
 
 ```text
-mysql://uni-cli:<password>@<server>.mysql.database.azure.com:3306/uni-cli_den?sslaccept=accept
+mysql://uni-cli:<password>@<server>.mysql.database.azure.com:3306/uniCli_den?sslaccept=accept
 ```
 
 Use `?sslaccept=accept` for the simple private-MySQL smoke path. This keeps TLS

@@ -169,7 +169,7 @@ export async function isolatedMcpApps(seed: Seed) {
 
 declare global {
   interface Window {
-    __uni-cliSlowDraftResolve?: {
+    __uniCliSlowDraftResolve?: {
       state: { delayed: number; completed: number; aborted: number };
       sends: { approved: boolean; status: number; code: string | null }[];
       dispose: () => void;
@@ -359,9 +359,9 @@ export async function cloudDraftRouting(seed: Seed) {
       }
     };
     window.fetch = wrappedFetch;
-    window.__uni-cliSlowDraftResolve = {
+    window.__uniCliSlowDraftResolve = {
       state, sends,
-      dispose: () => { if (window.fetch === wrappedFetch) window.fetch = originalFetch; delete window.__uni-cliSlowDraftResolve; },
+      dispose: () => { if (window.fetch === wrappedFetch) window.fetch = originalFetch; delete window.__uniCliSlowDraftResolve; },
     };
   }, [workspace.workspaceId, connection.id]));
   return { app, session, den, connectionId: connection.id, reconciled,
@@ -380,17 +380,17 @@ export async function cloudDraftRouting(seed: Seed) {
       throw new Error("The Slack draft's isolated frame is not available for a trusted Send click");
     },
     sendRequests: () => seed.evalIn(app, () => {
-      const fault = window.__uni-cliSlowDraftResolve;
+      const fault = window.__uniCliSlowDraftResolve;
       if (!fault) throw new Error("Draft send observation lost its document");
       return fault.sends.map(call => ({ ...call }));
     }),
     resolveDelay: () => seed.evalIn(app, () => {
-      const fault = window.__uni-cliSlowDraftResolve;
+      const fault = window.__uniCliSlowDraftResolve;
       if (!fault) throw new Error("Slow draft resolve fault lost its document");
       return { ...fault.state };
     }),
     async [Symbol.asyncDispose]() {
-      await seed.evalIn(app, () => { window.__uni-cliSlowDraftResolve?.dispose(); });
+      await seed.evalIn(app, () => { window.__uniCliSlowDraftResolve?.dispose(); });
     },
     async launchDiagnostics(sinceIso: string) {
       const sanitize = (value: string) => [field(credentials, "token"), field(credentials, "appHostToken")]
@@ -530,7 +530,7 @@ export async function savedAppCreation(seed: Seed) {
       const email = `CONVERT(0x${Buffer.from(den.admin.email).toString("hex")} USING utf8mb4)`;
       const statement = `UPDATE session SET created_at=DATE_SUB(NOW(3), INTERVAL 180 MINUTE) WHERE user_id IN (SELECT id FROM user WHERE email=${email});`;
       await execInSandbox(defaultDaytonaExec, den.placement.sandboxId,
-        `echo ${Buffer.from(statement).toString("base64")} | base64 -d | mysql -h127.0.0.1 -uroot -ppassword -N uni-cli_den`,
+        `echo ${Buffer.from(statement).toString("base64")} | base64 -d | mysql -h127.0.0.1 -uroot -ppassword -N uniCli_den`,
         { timeoutMs: 30_000, context: "Age the synthetic sharing admin's session" });
     },
     async refreshFixtureAdmin() {

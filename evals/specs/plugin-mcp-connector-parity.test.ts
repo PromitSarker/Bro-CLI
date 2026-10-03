@@ -310,7 +310,7 @@ test("persisted GitHub bindings preserve desktop readiness without allowing new 
     });
     const executed = await callTool("execute_capability", { name: skill.name });
     if (requiredAuthType === "oauth") {
-      expect(executed).toMatchObject({ status: "needs_admin_setup", action: { surface: "uni-cli_organization_connections" } });
+      expect(executed).toMatchObject({ status: "needs_admin_setup", action: { surface: "uniCli_organization_connections" } });
       expect(executed.content).toBeUndefined();
     } else {
       expect(executed.content).toBe(skillSource);
@@ -348,11 +348,11 @@ test("persisted GitHub bindings preserve desktop readiness without allowing new 
   const signinMatches = Array.isArray(signinSearch.matches) ? signinSearch.matches.filter(isRecord) : [];
   expect(signinMatches.find((entry) => entry.name === skill.name)).toMatchObject({
     status: "needs_connection",
-    action: { surface: "uni-cli_your_connections" },
+    action: { surface: "uniCli_your_connections" },
     mcpRequirements: [{ connectionId, state: "needs_connection", connectedForMe: false }],
   });
   const blocked = await callTool("execute_capability", { name: skill.name });
-  expect(blocked).toMatchObject({ status: "needs_admin_setup", action: { surface: "uni-cli_organization_connections" } });
+  expect(blocked).toMatchObject({ status: "needs_admin_setup", action: { surface: "uniCli_organization_connections" } });
   expect(blocked.content).toBeUndefined();
   evidence.recordAssertionEvidence(
     "Legacy OAuth desktop sign-in readiness does not authorize execution",
@@ -381,7 +381,7 @@ test("persisted GitHub bindings preserve desktop readiness without allowing new 
     mcpRequirements: [{ connectionId, state: "ready", connectedForMe: true }],
   });
   const credentialedBlocked = await callTool("execute_capability", { name: skill.name });
-  expect(credentialedBlocked).toMatchObject({ status: "needs_admin_setup", action: { surface: "uni-cli_organization_connections" } });
+  expect(credentialedBlocked).toMatchObject({ status: "needs_admin_setup", action: { surface: "uniCli_organization_connections" } });
   expect(credentialedBlocked.content).toBeUndefined();
   evidence.recordAssertionEvidence(
     "Legacy OAuth credentials preserve readiness and search without bypassing mandatory-client execution",

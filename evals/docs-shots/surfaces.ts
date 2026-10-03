@@ -98,8 +98,8 @@ async function configureWorkspaceModel(app: App, model: WorkspaceModel): Promise
   }, { awaitPromise: true, timeoutMs: 90_000 });
   if (configured !== "ok") throw new Error(`Configuring the workspace model failed: ${String(configured)}`);
   await inPage(app, () => { location.reload(); return true; }, {});
-  await waitFor(app, () => (Boolean(window.__uni-cliControl)), { timeoutMs: 60_000, label: "desktop control after reload" });
-  await waitFor(app, () => (window.__uni-cliControl.listActions().some((action) => action.id === "session.create_task" && !action.disabled)), {
+  await waitFor(app, () => (Boolean(window.__uniCliControl)), { timeoutMs: 60_000, label: "desktop control after reload" });
+  await waitFor(app, () => (window.__uniCliControl.listActions().some((action) => action.id === "session.create_task" && !action.disabled)), {
     timeoutMs: 60_000,
     label: "desktop ready after model configuration",
   });

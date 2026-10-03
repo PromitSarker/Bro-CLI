@@ -54,7 +54,7 @@ export type RemoteCall = (
 export function webLink(sessionId: string) {
   const url = new URL(
     `/session/${encodeURIComponent(sessionId)}`,
-    process.env.DEN_WEB_UNICLI_WEB_URL ?? "https://web.uni-clilabs.com",
+    process.env.DEN_WEB_UNICLI_WEB_URL ?? "https://web.uniClilabs.com",
   )
   return url.toString()
 }

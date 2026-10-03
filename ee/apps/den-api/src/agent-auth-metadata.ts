@@ -1,7 +1,7 @@
 import { JWT_BEARER_GRANT_TYPE } from "./workspace-preclaim.js"
 
 /** Published agent registration guide (WorkOS auth.md profile). */
-export const UNICLI_AUTH_MD_URL = "https://uni-clilabs.com/auth.md"
+export const UNICLI_AUTH_MD_URL = "https://uniClilabs.com/auth.md"
 
 /**
  * Add the `agent_auth` discovery block and the JWT-bearer grant to OAuth

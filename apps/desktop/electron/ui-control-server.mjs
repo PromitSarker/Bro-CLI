@@ -1,6 +1,6 @@
 // Local UI-control HTTP bridge: a loopback server exposing the legacy
 // /snapshot, /actions and /execute routes plus the semantic /context, /query
-// and /command surface. Dispatched to the renderer's window.__uni-cliControl.
+// and /command surface. Dispatched to the renderer's window.__uniCliControl.
 // Extracted from main.mjs; state and lifecycle live in this factory
 // (createRuntimeManager pattern).
 import { randomBytes } from "node:crypto";
@@ -76,7 +76,7 @@ export function createUiControlServer({
     const argsJsonLiteral = jsonForJavaScript(args);
     if (command === "snapshot") {
       return evaluateuniCliControl(`(async () => {
-        const control = window.__uni-cliControl;
+        const control = window.__uniCliControl;
         if (!control) return { ok: false, error: "Uni-CLI control surface is not available yet." };
         control.setEnabled?.(true);
         return { ok: true, ...control.snapshot() };
@@ -84,7 +84,7 @@ export function createUiControlServer({
     }
     if (command === "actions") {
       return evaluateuniCliControl(`(async () => {
-        const control = window.__uni-cliControl;
+        const control = window.__uniCliControl;
         if (!control) return { ok: false, error: "Uni-CLI control surface is not available yet." };
         control.setEnabled?.(true);
         return { ok: true, actions: control.listActions() };
@@ -92,14 +92,14 @@ export function createUiControlServer({
     }
     if (command === "context") {
       return evaluateuniCliControl(`(async () => {
-        const control = window.__uni-cliControl;
+        const control = window.__uniCliControl;
         if (!control) return { ok: false, error: "Uni-CLI control surface is not available yet." };
         return { ok: true, context: control.context() };
       })()`);
     }
     if (command === "query" || command === "command") {
       return evaluateuniCliControl(`(async () => {
-        const control = window.__uni-cliControl;
+        const control = window.__uniCliControl;
         const input = JSON.parse(${argsJsonLiteral});
         if (!control) return { ok: false, error: "Uni-CLI control surface is not available yet." };
         if (!input || typeof input.id !== "string" || !input.id.trim()) {
@@ -110,7 +110,7 @@ export function createUiControlServer({
     }
     if (command === "execute") {
       return evaluateuniCliControl(`(async () => {
-        const control = window.__uni-cliControl;
+        const control = window.__uniCliControl;
         const input = JSON.parse(${argsJsonLiteral});
         if (!control) return { ok: false, error: "Uni-CLI control surface is not available yet." };
         if (!input || typeof input.actionId !== "string" || !input.actionId.trim()) {

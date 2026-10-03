@@ -48,7 +48,7 @@ export async function isGatewayQuotaResponse(base: URL, url: URL, response: Resp
     const body: unknown = JSON.parse(text + decoder.decode());
     return record(body) && record(body.error)
       && body.error.code === GATEWAY_USAGE_LIMIT_ERROR_CODE
-      && body.error.source === "uni-cli_gateway"
+      && body.error.source === "uniCli_gateway"
       && body.error.type === "usage_limit_error"
       && body.error.message === GATEWAY_QUOTA_MESSAGE;
   };

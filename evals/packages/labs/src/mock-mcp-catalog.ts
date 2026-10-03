@@ -45,7 +45,7 @@ export async function startCatalogWitness(privateAuthorization: string) {
     }
     if (path === "/mcp") return sendJson(response, 200, Object.fromEntries([...connected].map((name) => [name, { status: "connected" }])));
     if (path === "/global/health") return sendJson(response, 200, { healthy: true, version: "1.17.11" });
-    if (path === "/experimental/tool/ids") return sendJson(response, 200, ["uni-cli-cloud_search_capabilities", "uni-cli-cloud_execute_capability", "uni-cli_docs_search", "uni-cli_query"]);
+    if (path === "/experimental/tool/ids") return sendJson(response, 200, ["uni-cli-cloud_search_capabilities", "uni-cli-cloud_execute_capability", "uniCli_docs_search", "uniCli_query"]);
     if (path === "/provider") return sendJson(response, 200, { all: [], default: {}, connected: [] });
     if (path === "/session" || path === "/experimental/tool") return sendJson(response, 200, []);
     return sendJson(response, 200, {});

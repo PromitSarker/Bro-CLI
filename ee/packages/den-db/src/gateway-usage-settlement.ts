@@ -193,7 +193,7 @@ async function settleReceipt(
   const [located] = await tx
     .select({ id: Log.id })
     .from(Log)
-    .where(eq(Log.uni-cli_request_id, requestId))
+    .where(eq(Log.uniCli_request_id, requestId))
   const [canonical] = located
     ? await tx.select().from(Log).where(eq(Log.id, located.id)).for("update")
     : []
@@ -402,7 +402,7 @@ export function settleGatewayUsage(tx: UsageTx, input: UsageLogRow, now: Date) {
   return settleReceipt(
     tx,
     { organizationId: input.organization_id, memberId: input.org_membership_id },
-    input.uni-cli_request_id,
+    input.uniCli_request_id,
     now,
     input,
   )

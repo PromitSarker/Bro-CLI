@@ -162,7 +162,7 @@ const server = new McpServer({
 
 // ── uniCli://context/current ──
 server.resource(
-  "current_uni-cli_context",
+  "current_uniCli_context",
   "uni-cli://context/current",
   async (uri) => {
     const result = await bridgeRequest("/context");

@@ -16,8 +16,8 @@ Current components:
 
 - `PaperMeshGradient`
 - `PaperGrainGradient`
-- `Uni-CLIRoadmap`
-- `DownloadUni-CLICard`
+- `UniCliRoadmap`
+- `DownloadUniCliCard`
 
 Both accept a `seed` prop. Pass a TypeID-like string such as `om_01kmhbscaze02vp04ykqa4tcsb` and the component will deterministically derive colors and shader params from it. The same seed always produces the same result.
 
@@ -29,7 +29,7 @@ Explicit props still work and override the seeded values, so the merge order is:
 
 ## Roadmap component
 
-`Uni-CLIRoadmap` is the shared visual roadmap used by the landing and docs
+`UniCliRoadmap` is the shared visual roadmap used by the landing and docs
 routes. Its typed sections are exported as `roadmapSections` so other Uni-CLI
 surfaces can reuse the same source of truth.
 

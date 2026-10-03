@@ -26,7 +26,7 @@ function safeUrl(value) {
 // Runs in Electron's isolated world. It has DOM access but no page globals,
 // Node, IPC, browser profile or network tools. References never enter page DOM.
 function observePage(id) {
-  const key = "__uni-cliBrowserObservation";
+  const key = "__uniCliBrowserObservation";
   globalThis[key]?.observer?.disconnect();
   const nodes = new Map();
   const elements = [];
@@ -54,7 +54,7 @@ function observePage(id) {
     limitations: ["DOM references cover the top document and open controls; use a fresh image for frames or canvas."] };
 }
 function prepareAction(id, action) {
-  const state = globalThis.__uni-cliBrowserObservation;
+  const state = globalThis.__uniCliBrowserObservation;
   if (!state || state.id !== id || state.changed || state.width !== innerWidth || state.height !== innerHeight || state.x !== scrollX || state.y !== scrollY) throw new Error("stale_observation");
   const element = action.ref ? state.nodes.get(action.ref) : null;
   if (action.ref && (!element || !element.isConnected)) throw new Error("stale_element");

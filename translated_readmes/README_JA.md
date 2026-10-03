@@ -25,10 +25,10 @@ Uni-CLIは、エージェントワークフローを再現可能なプロダク�
 
 ## クイックスタート
 
-デスクトップアプリを[uni-clilabs.com/download](https://uni-clilabs.com/download)からダウンロードするか、最新の[GitHubリリース](https://github.com/different-ai/uni-cli/releases)を取得するか、以下の手順でソースからインストールしてください。
+デスクトップアプリを[uniClilabs.com/download](https://uniClilabs.com/download)からダウンロードするか、最新の[GitHubリリース](https://github.com/different-ai/uni-cli/releases)を取得するか、以下の手順でソースからインストールしてください。
 
 - macOSおよびLinux向けのダウンロードが直接利用可能です。
-- Windowsへのアクセスは現在、[uni-clilabs.com/pricing#windows-support](https://uni-clilabs.com/pricing#windows-support)の有料サポートプランで提供されています。
+- Windowsへのアクセスは現在、[uniClilabs.com/pricing#windows-support](https://uniClilabs.com/pricing#windows-support)の有料サポートプランで提供されています。
 - ホステッドUni-CLI Cloudワーカーは、チェックアウト後にWebアプリから起動し、デスクトップアプリから`Add a worker` -> `Connect remote`で接続します。
 
 ## なぜUni-CLIか
@@ -224,7 +224,7 @@ WEBKIT_DISABLE_COMPOSITING_MODE=1 uni-cli
 
 ## チーム・企業向け
 
-組織でのUni-CLI利用に興味がありますか？ぜひお聞かせください — [ben@uni-clilabs.com](mailto:ben@uni-clilabs.com) までユースケースについてご連絡ください。
+組織でのUni-CLI利用に興味がありますか？ぜひお聞かせください — [ben@uniClilabs.com](mailto:ben@uniClilabs.com) までユースケースについてご連絡ください。
 
 ## ライセンス
 

@@ -398,7 +398,7 @@ export class AutomationService {
     const target = options.executionTarget ?? savedTarget
     // Cloud Automations execute on the headless runner or an Uni-CLI VM, so a
     // manual run is gated like every other cloud boundary. Desktop-target
-    // Automations are untouched. uni-cli_web_access_required is already part
+    // Automations are untouched. uniCli_web_access_required is already part
     // of the shared Automation contract (packages/types/src/automations.ts) and
     // published desktops surface the returned message in the action toast.
     // Running once on the other target is checked like moving there.
@@ -1010,9 +1010,9 @@ export class AutomationService {
         "model_access_lost",
         "provider_unavailable",
         "connect_access_unavailable",
-        "uni-cli_web_access_required",
+        "uniCli_web_access_required",
         "execution_runtime_unavailable",
-      ].includes(result.code) ? result.code as "owner_membership_lost" | "model_access_lost" | "provider_unavailable" | "connect_access_unavailable" | "uni-cli_web_access_required" | "execution_runtime_unavailable" : "execution_runtime_unavailable"
+      ].includes(result.code) ? result.code as "owner_membership_lost" | "model_access_lost" | "provider_unavailable" | "connect_access_unavailable" | "uniCli_web_access_required" | "execution_runtime_unavailable" : "execution_runtime_unavailable"
       await automationRepository.markNeedsAttention({
         automationId: claimed.automation.id,
         expectedRevisionId: claimed.revision.id,

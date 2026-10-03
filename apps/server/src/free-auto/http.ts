@@ -4,7 +4,7 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 export function jsonError(status: number, code: string, message: string): Response {
-  return Response.json({ error: { message, type: "uni-cli_anonymous_error", code } }, { status });
+  return Response.json({ error: { message, type: "uniCli_anonymous_error", code } }, { status });
 }
 /** Only these gateway headers reach the engine. */
 export function responseHeaders(headers: Headers): Headers {

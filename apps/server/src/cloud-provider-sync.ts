@@ -164,7 +164,7 @@ type DenProviderConnection = DenProvider & {
   authorizationRequests?: GatewayAuthorizationRequest[];
 };
 
-const gatewayProviderSource = "uni-cli_gateway";
+const gatewayProviderSource = "uniCli_gateway";
 
 type EnvEntry = {
   key: string;
@@ -400,7 +400,7 @@ function parseCredentialStatus(value: unknown): DenInferenceProviderSummary["cre
 }
 
 // Gateway rows (`ipr_*`) are a distinct Den resource: one runtime provider per
-// row, `source` pinned to "uni-cli_gateway" so the desktop can badge them.
+// row, `source` pinned to "uniCli_gateway" so the desktop can badge them.
 function parseInferenceProvider(value: unknown): DenInferenceProviderSummary | null {
   const provider = parseProvider(value, /^ipr_/i);
   if (!provider || !isRecord(value)) return null;

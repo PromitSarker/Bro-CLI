@@ -1164,7 +1164,7 @@ async function reloadConfiguredApp(app: import("@uni-cli/cdp").Surface): Promise
   await rawEvalIn(app, () => { location.reload(); return true; }).catch(() => undefined);
   const deadline = Date.now() + 60_000;
   while (Date.now() < deadline) {
-    if (await rawEvalIn(app, () => (Boolean(window.__uni-cliControl))).catch(() => false) === true) return;
+    if (await rawEvalIn(app, () => (Boolean(window.__uniCliControl))).catch(() => false) === true) return;
     await new Promise((resolve) => setTimeout(resolve, 250));
   }
   throw new Error("The configured desktop control did not return after reload.");

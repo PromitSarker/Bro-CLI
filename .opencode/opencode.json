@@ -6,7 +6,7 @@
     "uni-cli": {
       "type": "remote",
       "enabled": true,
-      "url": "https://api.uni-clilabs.com/mcp/agent",
+      "url": "https://api.uniClilabs.com/mcp/agent",
       "oauth": {}
     }
   }

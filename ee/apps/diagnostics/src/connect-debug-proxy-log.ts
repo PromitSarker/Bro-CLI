@@ -9,11 +9,11 @@ export type ConnectDebugProxyLogEntry = {
 }
 
 declare global {
-  var __uni-cliConnectDebugProxyLog: ConnectDebugProxyLogEntry[] | undefined
+  var __uniCliConnectDebugProxyLog: ConnectDebugProxyLogEntry[] | undefined
 }
 
 const maximumEntries = 100
-const entries = globalThis.__uni-cliConnectDebugProxyLog ??= []
+const entries = globalThis.__uniCliConnectDebugProxyLog ??= []
 
 export function recordConnectDebugProxyRequest(entry: ConnectDebugProxyLogEntry): void {
   entries.unshift(entry)

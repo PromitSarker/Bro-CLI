@@ -126,7 +126,7 @@ export function renderUniCliAutomationInstruction(index: UniCliAutomationIndex |
   if (index.automations.length === 0) {
     return [
       "This member owns no Automations. If they ask what Automations they have, say there are none.",
-      "If they describe recurring work, propose one with uni-cli_execute id automation.propose.",
+      "If they describe recurring work, propose one with uniCli_execute id automation.propose.",
     ].join("\n");
   }
   // No fetched-at stamp and no run state: those values change every run (or

@@ -136,8 +136,8 @@ temporary navigation to Settings, but it does not replace route identity.
 
 `shell/uni-cli-context-projector.ts` combines route state, the workbench store,
 UI chrome state, and panel-tab state into the shared
-`uni-cliContextSnapshot` contract. `uni-cliContextPublisher` publishes that
-snapshot through `window.__uni-cliControl`; the desktop loopback bridge and
+`uniCliContextSnapshot` contract. `uniCliContextPublisher` publishes that
+snapshot through `window.__uniCliControl`; the desktop loopback bridge and
 `uni-cli-ui-mcp` expose the same contract without requiring every element to
 be mounted or visible.
 

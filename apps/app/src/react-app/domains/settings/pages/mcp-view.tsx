@@ -1851,7 +1851,7 @@ export function McpView(props: McpViewProps) {
     mine: firstSharedOwned
       ? t("extensions.section_mine_shared", { count: String(sharedOwned.length), audience: libraryAudienceName(libraryCloud.audienceFor(firstSharedOwned.id)) })
       : t("extensions.section_mine_just_me", { count: String(ownedPlugins.length) }),
-    uniCli: uniCliRowCount > 0 ? t("extensions.section_uni-cli_meta", { count: String(uniCliRowCount) }) : null,
+    uniCli: uniCliRowCount > 0 ? t("extensions.section_uniCli_meta", { count: String(uniCliRowCount) }) : null,
   };
 
   const inventory = (
@@ -2338,7 +2338,7 @@ function librarySectionLabel(section: LibrarySection) {
     case "mine":
       return t("extensions.section_mine");
     case "uni-cli":
-      return t("extensions.section_uni-cli");
+      return t("extensions.section_uniCli");
   }
 }
 
@@ -2434,7 +2434,7 @@ export function LibraryInventory(props: {
       )}
       {showLocked ? (
         <div className="space-y-2.5" data-library-section="locked">
-          <LibrarySectionHeader section="uni-cli" label={t("extensions.section_uni-cli_locked")} />
+          <LibrarySectionHeader section="uni-cli" label={t("extensions.section_uniCli_locked")} />
           <div className={containerClassName}>
             {lockedLibraryPreviews.map((preview) => (
               <div key={preview.name} className="opacity-60" data-library-locked={preview.name}>

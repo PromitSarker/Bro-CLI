@@ -75,7 +75,7 @@ export async function engineLiveDesktop(seed: Seed) {
       return { session, pages, mutations: log.split("\n").filter(line => /revert|interrupt|fork/.test(line)).slice(-15) };
     },
     async openProviderSettings() {
-      await seed.evalIn(app, () => window.__uni-cliControl.execute("route.settings.providers"), { awaitPromise: true });
+      await seed.evalIn(app, () => window.__uniCliControl.execute("route.settings.providers"), { awaitPromise: true });
     },
     async signInOrganization() {
       const den = await seed.den({ web: true, org: { name: "Cold send parity" } });

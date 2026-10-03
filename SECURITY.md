@@ -11,7 +11,7 @@ Please do not open public GitHub issues for security vulnerabilities.
 
 Instead, report vulnerabilities privately to:
 
-- Email: `ben@uni-clilabs.com`
+- Email: `ben@uniClilabs.com`
 - Subject: `[Uni-CLI security] <short summary>`
 
 Please include:

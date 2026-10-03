@@ -38,7 +38,7 @@ export interface SelectedWorkspaceFacts {
 }
 
 export async function signInDesktopAs(app: Surface, den: DenRef, member: DenSession): Promise<void> {
-  await waitFor(app, () => (Boolean(window.__uni-cliControl?.listActions?.().some((action) => action.id === 'auth.exchange-grant'))), {
+  await waitFor(app, () => (Boolean(window.__uniCliControl?.listActions?.().some((action) => action.id === 'auth.exchange-grant'))), {
     timeoutMs: 60_000,
     label: "auth.exchange-grant action registered",
   });
@@ -114,7 +114,7 @@ async function resolveWorkspaceId(app: Surface): Promise<string> {
 /** The folder the product reports for a workspace, or null when it is not listed yet. */
 async function workspacePath(app: Surface, workspaceId: string): Promise<string | null> {
   const value = await evalIn(app, browserScript((id) => (
-    window.__uni-cli?.slice?.("route")?.workspaces?.find((workspace) => workspace.id === id)?.path ?? null
+    window.__uniCli?.slice?.("route")?.workspaces?.find((workspace) => workspace.id === id)?.path ?? null
   ), [workspaceId]));
   return typeof value === "string" ? value : null;
 }
@@ -155,7 +155,7 @@ export async function createAndSelectWorkspace(
     // selected workspace only satisfies the caller when it sits at the requested folder.
     const selectedPath = workspaceId ? await workspacePath(app, workspaceId) : null;
     if (!workspaceId || input.create || selectedPath !== input.path) {
-      await waitFor(app, () => (window.__uni-cliControl.listActions()
+      await waitFor(app, () => (window.__uniCliControl.listActions()
         .some((action) => action.id === "workspace.create" && !action.disabled)), {
         timeoutMs: 60_000,
         label: "workspace.create enabled",

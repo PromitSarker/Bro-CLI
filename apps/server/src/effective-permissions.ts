@@ -49,7 +49,7 @@ const PROBES: ReadonlyArray<{ key: EffectivePermissionKey; permission: string; p
   { key: "edit", permission: "edit", pattern: "*" },
   { key: "web", permission: "webfetch", pattern: "*" },
   // A tool name no config is expected to spell out, so only catch-all rules decide it.
-  { key: "mcp", permission: "uni-cli_effective_mcp_probe", pattern: "*" },
+  { key: "mcp", permission: "uniCli_effective_mcp_probe", pattern: "*" },
   { key: "outside_folders", permission: "external_directory", pattern: "*" },
   { key: "env_files", permission: "read", pattern: "/workspace/.env" },
   { key: "doom_loop", permission: "doom_loop", pattern: "*" },

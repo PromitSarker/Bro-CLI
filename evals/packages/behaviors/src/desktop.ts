@@ -321,7 +321,7 @@ export async function waitForConnectionCard(app: Surface, name: string, workspac
       await new Promise((resolve) => setTimeout(resolve, 1_500));
       continue;
     }
-    await evalIn(app, () => (window.__uni-cliControl.execute('extensions.refresh-marketplace', null)), { awaitPromise: true, timeoutMs: 15_000 })
+    await evalIn(app, () => (window.__uniCliControl.execute('extensions.refresh-marketplace', null)), { awaitPromise: true, timeoutMs: 15_000 })
       .catch(() => undefined);
     await evalIn(app, () => {
       const button = [...document.querySelectorAll('button')]
@@ -414,7 +414,7 @@ export async function enabledButtons(app: Surface): Promise<string[]> {
   return labels;
 }
 
-/** Invoke a registered `window.__uni-cliControl` action, the product's own automation seam. */
+/** Invoke a registered `window.__uniCliControl` action, the product's own automation seam. */
 export async function control(
   app: Surface,
   action: string,
@@ -424,7 +424,7 @@ export async function control(
   // Control actions are non-idempotent; a timeout must surface, not re-fire.
   const result = await evalIn(
     app,
-    browserScript((action, value) => (window.__uni-cliControl.execute(action, value)), [action, args ?? null]),
+    browserScript((action, value) => (window.__uniCliControl.execute(action, value)), [action, args ?? null]),
     { timeoutMs: 60_000, reattachAttempts: 0, ...opts, awaitPromise: true },
   );
   if (!isRecord(result) || result.ok !== true) {

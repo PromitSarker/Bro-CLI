@@ -15,13 +15,13 @@ export default {
   id: "uni-cli.context",
   async setup(context: Context) {
     const registration = await context.tool.transform(editor => {
-      for (const name of ["uni-cli_context", "uni-cli_query"]) {
+      for (const name of ["uniCli_context", "uniCli_query"]) {
         editor.add({
           name,
-          description: name === "uni-cli_context"
+          description: name === "uniCli_context"
             ? "Read Uni-CLI app context and available read-only affordances. Use this to discover session.search and session.read for other conversations."
-            : "Read an Uni-CLI affordance without changing the app or navigating. Use the exact id and arguments from uni-cli_context; session.read includes live background-agent activity.",
-          input: name === "uni-cli_context" ? { type: "object", properties: {}, additionalProperties: false } : {
+            : "Read an Uni-CLI affordance without changing the app or navigating. Use the exact id and arguments from uniCli_context; session.read includes live background-agent activity.",
+          input: name === "uniCli_context" ? { type: "object", properties: {}, additionalProperties: false } : {
             type: "object", properties: { id: { type: "string" }, args: { type: "object", additionalProperties: true } },
             required: ["id"], additionalProperties: false,
           },

@@ -30,7 +30,7 @@ export async function dispatchFreeCompletion(input: {
   const charge = (receipt: FreeUsageReceipt | null) => retryFreeSettlement(
     () => store.charge({ requestId, principal, windows: admission.windows, receipt }),
     () => Sentry.captureMessage("Free Auto charge pending database recovery", {
-      level: "error", tags: { route: principal.kind === "member" ? "uni-cli_free" : "anonymous_free" },
+      level: "error", tags: { route: principal.kind === "member" ? "uniCli_free" : "anonymous_free" },
       extra: { requestId, receipt, principal, windows: admission.windows },
     }),
   )

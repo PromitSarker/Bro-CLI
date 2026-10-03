@@ -332,7 +332,7 @@ test("provider-less Gateway routes list and invoke every granted model across pr
     },
   });
   const databaseUrl = den.database?.url;
-  if (!databaseUrl || !new URL(databaseUrl).pathname.startsWith("/uni-cli_eval_")) throw new Error("An isolated testkit scratch database is required.");
+  if (!databaseUrl || !new URL(databaseUrl).pathname.startsWith("/uniCli_eval_")) throw new Error("An isolated testkit scratch database is required.");
   const granted = den.members.granted;
   const outsider = den.members.outsider;
   if (!granted || !outsider) throw new Error("The local Den did not provision both members.");

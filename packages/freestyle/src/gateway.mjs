@@ -86,7 +86,7 @@ export const server = createServer(async (req, res) => {
   res.setHeader("x-robots-tag", "noindex, nofollow, noarchive");
   const auth = await access(req);
   const url = new URL(req.url, "http://localhost");
-  if (url.pathname === "/__uni-cli_launch" && req.method === "GET" && auth
+  if (url.pathname === "/__uniCli_launch" && req.method === "GET" && auth
     && equal(url.searchParams.get("token"), auth.config.token)) {
     const seconds = Math.max(0, Math.floor((Date.parse(auth.config.expiresAt) - Date.now()) / 1000));
     res.writeHead(303, {

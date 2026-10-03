@@ -1093,7 +1093,7 @@ export function useWorkspaceRouteState(input: UseWorkspaceRouteStateInput) {
 
   // Inspector wiring: publish the route's current state so an external
   // operator (or an AI driver using browser tools) can call
-  // `window.__uni-cli.snapshot()` or `window.__uni-cli.slice("route")` and
+  // `window.__uniCli.snapshot()` or `window.__uniCli.slice("route")` and
   // see workspaces / sessions / connection info without walking the DOM.
   useEffect(() => {
     const dispose = publishInspectorSlice("route", () => ({

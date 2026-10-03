@@ -183,7 +183,7 @@ function usageMetadataFromSpan(input: {
 function parseSpan(span: JsonRecord, attrs: JsonRecord): ParsedSpan | null {
   const orgMembershipId = stringAttr(attrs, ["trace.metadata.org_membership_id", "trace.org_membership_id", "metadata.org_membership_id", "org_membership_id"])
   const inferenceKeyId = stringAttr(attrs, ["trace.metadata.inference_key_id", "trace.inference_key_id", "metadata.inference_key_id", "inference_key_id"])
-  const uniCliRequestId = stringAttr(attrs, ["trace.metadata.uni-cli_request_id", "trace.uni-cli_request_id", "metadata.uni-cli_request_id", "uni-cli_request_id", "trace_id"])
+  const uniCliRequestId = stringAttr(attrs, ["trace.metadata.uniCli_request_id", "trace.uniCli_request_id", "metadata.uniCli_request_id", "uniCli_request_id", "trace_id"])
     ?? (typeof span.traceId === "string" ? span.traceId : null)
   const requestModel = stringAttr(attrs, ["gen_ai.request.model"])
   const responseModel = stringAttr(attrs, ["gen_ai.response.model"])
@@ -267,7 +267,7 @@ const sentryWebhookReporter: OpenRouterUsageWebhookReporter = {
       level: "fatal",
       tags: {
         organization_id: report.organizationId,
-        uni-cli_request_id: report.uniCliRequestId,
+        uniCli_request_id: report.uniCliRequestId,
         external_event_id: report.externalEventId ?? "none",
         reported_model: report.reportedModel,
       },

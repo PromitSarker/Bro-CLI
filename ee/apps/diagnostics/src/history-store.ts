@@ -8,12 +8,12 @@ const maximumRunHistory = 50
 const retentionSeconds = 86_400
 
 declare global {
-  var __uni-cliDiagnosticsLocalHistory: WireExchange[] | undefined
-  var __uni-cliDiagnosticsLocalRunHistory: Map<string, WireExchange[]> | undefined
+  var __uniCliDiagnosticsLocalHistory: WireExchange[] | undefined
+  var __uniCliDiagnosticsLocalRunHistory: Map<string, WireExchange[]> | undefined
 }
 
-const localHistory = globalThis.__uni-cliDiagnosticsLocalHistory ??= []
-const localRunHistory = globalThis.__uni-cliDiagnosticsLocalRunHistory ??= new Map()
+const localHistory = globalThis.__uniCliDiagnosticsLocalHistory ??= []
+const localRunHistory = globalThis.__uniCliDiagnosticsLocalRunHistory ??= new Map()
 
 function runHistoryKey(runId: string): string {
   return `${historyKey}:run:${runId}`

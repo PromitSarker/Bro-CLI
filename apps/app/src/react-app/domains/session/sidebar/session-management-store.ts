@@ -355,7 +355,7 @@ export const useSessionManagementStore = create<SessionManagementStore>()(
           const ws = state.groupsByWorkspace[workspaceId] ?? EMPTY_GROUP_STATE;
           const knownGroupIds = new Set(serverState.groups.map((group) => group.id));
           const collapsedGroupIds = (ws.collapsedGroupIds ?? []).filter(
-            (id) => id === "__uni-cli_ungrouped" || knownGroupIds.has(id),
+            (id) => id === "__uniCli_ungrouped" || knownGroupIds.has(id),
           );
           if (
             sameGroupDefinitions(ws.groups, serverState.groups)

@@ -231,7 +231,7 @@ export const GatewayRequestLogTable = mysqlTable(
     usage_source: mysqlEnum("usage_source", GATEWAY_USAGE_SOURCES).notNull(),
     cost_micro_usd: bigint("cost_micro_usd", { mode: "number" }),
     upstream_request_id: varchar("upstream_request_id", { length: 255 }),
-    uni-cli_request_id: varchar("uni-cli_request_id", { length: 32 }).notNull(),
+    uniCli_request_id: varchar("uniCli_request_id", { length: 32 }).notNull(),
     started_at: timestamp("started_at", { fsp: 3 }).notNull(),
     first_byte_at: timestamp("first_byte_at", { fsp: 3 }),
     completed_at: timestamp("completed_at", { fsp: 3 }),
@@ -241,7 +241,7 @@ export const GatewayRequestLogTable = mysqlTable(
     created_at: timestamps.created_at,
   },
   (table) => [
-    uniqueIndex("gateway_request_logs_uni-cli_request_id").on(table.uni-cli_request_id),
+    uniqueIndex("gateway_request_logs_uniCli_request_id").on(table.uniCli_request_id),
     index("gateway_request_logs_org_started").on(table.organization_id, table.started_at),
     index("gateway_request_logs_member_started").on(table.org_membership_id, table.started_at),
     index("gateway_request_logs_provider_started").on(

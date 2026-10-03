@@ -30,8 +30,8 @@ const UNICLI_CLOUD_DIRECT_TOOL_NAMES = [
   "execute_capability",
 ] satisfies string[];
 export const UNICLI_CLOUD_PLUGIN_CANARIES = [
-  "uni-cli_docs_search",
-  "uni-cli_query",
+  "uniCli_docs_search",
+  "uniCli_query",
 ] satisfies string[];
 
 const POLL_DELAYS_MS = [0, 250, 750, 1500, 3000];
@@ -86,14 +86,14 @@ export type CloudMcpFailureCode =
   | "opencode_unreachable"
   | "cloud_status_missing"
   | "cloud_disabled"
-  | "uni-cli_cloud_auth_required"
-  | "uni-cli_cloud_auth_invalid"
-  | "uni-cli_cloud_token_expired"
-  | "uni-cli_cloud_membership_required"
-  | "uni-cli_cloud_scope_missing"
-  | "uni-cli_cloud_resource_forbidden"
-  | "uni-cli_cloud_resource_not_found"
-  | "uni-cli_cloud_client_registration_required"
+  | "uniCli_cloud_auth_required"
+  | "uniCli_cloud_auth_invalid"
+  | "uniCli_cloud_token_expired"
+  | "uniCli_cloud_membership_required"
+  | "uniCli_cloud_scope_missing"
+  | "uniCli_cloud_resource_forbidden"
+  | "uniCli_cloud_resource_not_found"
+  | "uniCli_cloud_client_registration_required"
   | "cloud_connection_failed"
   | "cloud_registration_failed"
   | "cloud_tools_denied"
@@ -692,8 +692,8 @@ function normalizeCloudEndpointUrl(value: string): string | null {
     if (url.search || url.hash) return null;
     const normalizedPath = url.pathname.replace(/\/+$/, "") || "/";
     if (!normalizedPath.endsWith("/mcp/agent")) return null;
-    if (url.protocol === "https:" && url.hostname.toLowerCase() === "app.uni-clilabs.com" && normalizedPath === "/api/den/mcp/agent") {
-      url.hostname = "api.app.uni-clilabs.com";
+    if (url.protocol === "https:" && url.hostname.toLowerCase() === "app.uniClilabs.com" && normalizedPath === "/api/den/mcp/agent") {
+      url.hostname = "api.app.uniClilabs.com";
       url.pathname = "/mcp/agent";
       return url.toString();
     }
@@ -711,8 +711,8 @@ function canonicalizeCloudMcpConfig(config: Record<string, unknown>): Record<str
 }
 
 const BUILT_IN_CLOUD_MCP_ORIGINS = new Set([
-  "https://api.uni-clilabs.com",
-  "https://api.app.uni-clilabs.com",
+  "https://api.uniClilabs.com",
+  "https://api.app.uniClilabs.com",
 ]);
 
 function isLoopbackHostname(hostname: string): boolean {
@@ -816,7 +816,7 @@ function strictCloudMcpDesiredConfigProblem(config: Record<string, unknown>, met
       retryable: false,
       recommendedAction: "Reconnect Uni-CLI Cloud",
       message: "uni-cli-cloud desired config is missing an Authorization header.",
-      aliases: ["uni-cli_cloud_auth_required"],
+      aliases: ["uniCli_cloud_auth_required"],
     };
   }
 
@@ -827,7 +827,7 @@ function strictCloudMcpDesiredConfigProblem(config: Record<string, unknown>, met
       retryable: false,
       recommendedAction: "Reconnect Uni-CLI Cloud",
       message: "uni-cli-cloud desired config must use the minted bearer token, not OAuth.",
-      aliases: ["uni-cli_cloud_auth_invalid"],
+      aliases: ["uniCli_cloud_auth_invalid"],
       details: { oauth: config.oauth === undefined ? "missing" : "configured" },
     };
   }
@@ -1276,7 +1276,7 @@ function directCloudAuthFailure(response: Response, payload: unknown, endpoint: 
       retryable: false,
       recommendedAction: "Reconnect Uni-CLI Cloud",
       message: "The Uni-CLI Cloud MCP endpoint rejected the persisted Authorization header.",
-      aliases: ["uni-cli_cloud_auth_invalid"],
+      aliases: ["uniCli_cloud_auth_invalid"],
       details: { endpoint, status: response.status, response: payload },
     });
   }
@@ -1287,7 +1287,7 @@ function directCloudAuthFailure(response: Response, payload: unknown, endpoint: 
       retryable: false,
       recommendedAction: "Check organization policy and resource access",
       message: "The Uni-CLI Cloud MCP endpoint denied access to this resource.",
-      aliases: ["uni-cli_cloud_resource_forbidden"],
+      aliases: ["uniCli_cloud_resource_forbidden"],
       details: { endpoint, status: response.status, response: payload },
     });
   }
@@ -1784,7 +1784,7 @@ function statusFailure(status: McpStatus | undefined): CloudMcpFailure {
       retryable: false,
       recommendedAction: "Reconnect Uni-CLI Cloud",
       message: "uni-cli-cloud MCP needs authentication.",
-      aliases: ["uni-cli_cloud_auth_required"],
+      aliases: ["uniCli_cloud_auth_required"],
     });
   }
   if (status.status === "needs_client_registration") {
@@ -1794,7 +1794,7 @@ function statusFailure(status: McpStatus | undefined): CloudMcpFailure {
       retryable: false,
       recommendedAction: "Reconnect Uni-CLI Cloud or update Uni-CLI",
       message: "uni-cli-cloud MCP needs OAuth client registration.",
-      aliases: ["uni-cli_cloud_client_registration_required"],
+      aliases: ["uniCli_cloud_client_registration_required"],
       details: { error: status.error },
     });
   }
@@ -1827,31 +1827,31 @@ function inferFailedStatus(error: string): CloudMcpFailure {
     lower.includes("self signed") ||
     lower.includes("self-signed");
   if (!certTransport && lower.includes("expired")) {
-    return failure({ code: "invalid_mcp_token", stage: "transport_auth", retryable: false, recommendedAction: "Reconnect Uni-CLI Cloud", message: "uni-cli-cloud token is expired.", aliases: ["uni-cli_cloud_token_expired"], details: { error } });
+    return failure({ code: "invalid_mcp_token", stage: "transport_auth", retryable: false, recommendedAction: "Reconnect Uni-CLI Cloud", message: "uni-cli-cloud token is expired.", aliases: ["uniCli_cloud_token_expired"], details: { error } });
   }
   if (!certTransport && (lower.includes("missing_mcp_token") || lower.includes("missing mcp token") || lower.includes("provide a bearer token"))) {
-    return failure({ code: "missing_mcp_token", stage: "transport_auth", retryable: false, recommendedAction: "Refresh Uni-CLI Cloud authentication", message: "uni-cli-cloud token is missing.", aliases: ["uni-cli_cloud_auth_required"], details: { error } });
+    return failure({ code: "missing_mcp_token", stage: "transport_auth", retryable: false, recommendedAction: "Refresh Uni-CLI Cloud authentication", message: "uni-cli-cloud token is missing.", aliases: ["uniCli_cloud_auth_required"], details: { error } });
   }
   if (!certTransport && (lower.includes("invalid_token") || lower.includes("unauthorized") || lower.includes("401") || lower.includes("auth"))) {
-    return failure({ code: "invalid_mcp_token", stage: "transport_auth", retryable: false, recommendedAction: "Reconnect Uni-CLI Cloud", message: "uni-cli-cloud authentication failed.", aliases: ["uni-cli_cloud_auth_invalid"], details: { error } });
+    return failure({ code: "invalid_mcp_token", stage: "transport_auth", retryable: false, recommendedAction: "Reconnect Uni-CLI Cloud", message: "uni-cli-cloud authentication failed.", aliases: ["uniCli_cloud_auth_invalid"], details: { error } });
   }
   if (!certTransport && (lower.includes("invalid_grant") || lower.includes("session") || lower.includes("revoked"))) {
     return failure({ code: "mcp_session_revoked", stage: "transport_auth", retryable: false, recommendedAction: "Reconnect Uni-CLI Cloud", message: "uni-cli-cloud session was revoked.", details: { error } });
   }
   if (lower.includes("membership") || lower.includes("member")) {
-    return failure({ code: "mcp_membership_revoked", stage: "transport_auth", retryable: false, recommendedAction: "Ask an organization admin to grant access", message: "Uni-CLI Cloud membership is required.", aliases: ["uni-cli_cloud_membership_required"], details: { error } });
+    return failure({ code: "mcp_membership_revoked", stage: "transport_auth", retryable: false, recommendedAction: "Ask an organization admin to grant access", message: "Uni-CLI Cloud membership is required.", aliases: ["uniCli_cloud_membership_required"], details: { error } });
   }
   if (lower.includes("insufficient_scope") || lower.includes("scope")) {
-    return failure({ code: "insufficient_mcp_scope", stage: "transport_auth", retryable: false, recommendedAction: "Reconnect Uni-CLI Cloud with the required scopes", message: "uni-cli-cloud token is missing required scopes.", aliases: ["uni-cli_cloud_scope_missing"], details: { error } });
+    return failure({ code: "insufficient_mcp_scope", stage: "transport_auth", retryable: false, recommendedAction: "Reconnect Uni-CLI Cloud with the required scopes", message: "uni-cli-cloud token is missing required scopes.", aliases: ["uniCli_cloud_scope_missing"], details: { error } });
   }
   if (lower.includes("forbidden") || lower.includes("403") || lower.includes("policy")) {
-    return failure({ code: "wrong_mcp_resource", stage: "transport_auth", retryable: false, recommendedAction: "Check organization policy and resource access", message: "Uni-CLI Cloud denied access to this resource.", aliases: ["uni-cli_cloud_resource_forbidden"], details: { error } });
+    return failure({ code: "wrong_mcp_resource", stage: "transport_auth", retryable: false, recommendedAction: "Check organization policy and resource access", message: "Uni-CLI Cloud denied access to this resource.", aliases: ["uniCli_cloud_resource_forbidden"], details: { error } });
   }
   if (lower.includes("not found") || lower.includes("404") || lower.includes("resource")) {
-    return failure({ code: "wrong_mcp_resource", stage: "transport_auth", retryable: false, recommendedAction: "Reconnect Uni-CLI Cloud or choose an accessible organization", message: "Uni-CLI Cloud resource was not found.", aliases: ["uni-cli_cloud_resource_not_found"], details: { error } });
+    return failure({ code: "wrong_mcp_resource", stage: "transport_auth", retryable: false, recommendedAction: "Reconnect Uni-CLI Cloud or choose an accessible organization", message: "Uni-CLI Cloud resource was not found.", aliases: ["uniCli_cloud_resource_not_found"], details: { error } });
   }
   if (lower.includes("client registration")) {
-    return failure({ code: "opencode_mcp_sync_failed", stage: "engine_delivery", retryable: false, recommendedAction: "Reconnect Uni-CLI Cloud or update Uni-CLI", message: "uni-cli-cloud needs client registration.", aliases: ["uni-cli_cloud_client_registration_required"], details: { error } });
+    return failure({ code: "opencode_mcp_sync_failed", stage: "engine_delivery", retryable: false, recommendedAction: "Reconnect Uni-CLI Cloud or update Uni-CLI", message: "uni-cli-cloud needs client registration.", aliases: ["uniCli_cloud_client_registration_required"], details: { error } });
   }
   return failure({
     code: "opencode_mcp_sync_failed",
@@ -2143,11 +2143,11 @@ function phaseFromFailure(firstFailure: CloudMcpFailure | null): CloudMcpHealthP
     firstFailure.code === "mcp_membership_revoked" ||
     firstFailure.code === "insufficient_mcp_scope" ||
     firstFailure.code === "wrong_mcp_resource" ||
-    firstFailure.code === "uni-cli_cloud_auth_required" ||
-    firstFailure.code === "uni-cli_cloud_auth_invalid" ||
-    firstFailure.code === "uni-cli_cloud_token_expired"
+    firstFailure.code === "uniCli_cloud_auth_required" ||
+    firstFailure.code === "uniCli_cloud_auth_invalid" ||
+    firstFailure.code === "uniCli_cloud_token_expired"
   ) return "engine_needs_auth";
-  if (firstFailure.code === "uni-cli_cloud_client_registration_required") return "engine_needs_client_registration";
+  if (firstFailure.code === "uniCli_cloud_client_registration_required") return "engine_needs_client_registration";
   if (firstFailure.code === "opencode_mcp_sync_failed" || firstFailure.code === "cloud_registration_failed") return "registration_failed";
   if (firstFailure.code === "cloud_tools_denied") return "denied_by_tools";
   if (firstFailure.code === "opencode_tool_ids_unsupported") return "tool_ids_unsupported";

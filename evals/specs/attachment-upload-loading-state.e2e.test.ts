@@ -127,7 +127,7 @@ test(`sending an image in ${entryPoint} immediately moves it into the thread whi
   expect(await probe.eventually(() => probe.eval(() => {
     const rows = document.querySelectorAll('[data-message-role="user"]');
     const image = rows[0]?.querySelector<HTMLImageElement>("img");
-    return globalThis.__attachmentUploadingSeen === true && window.__uni-cliSubmissionFault?.attempts === 1
+    return globalThis.__attachmentUploadingSeen === true && window.__uniCliSubmissionFault?.attempts === 1
       && rows.length === 1 && Boolean(image?.complete && image.naturalWidth > 0)
       && !document.querySelector("[data-attachment-id]")
       && document.querySelector('[contenteditable="true"]')?.textContent === "";

@@ -28,14 +28,14 @@ export const uniCliCloudMcpConnectionActionSchema = z.object({
       "inspect_connection",
       "fix_provider",
       "fix_network",
-      "contact_uni-cli",
+      "contact_uniCli",
     ]),
     surface: z.enum([
-      "uni-cli_your_connections",
-      "uni-cli_organization_connections",
+      "uniCli_your_connections",
+      "uniCli_organization_connections",
       "provider_admin_console",
       "network_infrastructure",
-      "uni-cli_support",
+      "uniCli_support",
     ]),
     retry: z.literal("search_capabilities"),
   }),
@@ -53,7 +53,7 @@ export const uniCliCloudMcpInlineReconnectSchema = uniCliCloudMcpConnectionActio
   actor: z.literal("member"),
   action: z.object({
     type: z.literal("reconnect"),
-    surface: z.literal("uni-cli_your_connections"),
+    surface: z.literal("uniCli_your_connections"),
     retry: z.literal("search_capabilities"),
   }),
 })

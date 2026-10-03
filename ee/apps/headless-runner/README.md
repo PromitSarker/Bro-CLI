@@ -78,10 +78,10 @@ The model sees these tools:
 |---|---|---|
 | `HEADLESS_API_TOKEN` | required | Service token for callers, ≥32 chars |
 | `HEADLESS_MODEL_PROTOCOL` | required | `anthropic` or `openai` |
-| `HEADLESS_MODEL_BASE_URL` | required | e.g. `https://gateway.uni-clilabs.com/api/v1/providers/ipr_…` |
+| `HEADLESS_MODEL_BASE_URL` | required | e.g. `https://gateway.uniClilabs.com/api/v1/providers/ipr_…` |
 | `HEADLESS_MODEL` | required | Default model alias (`gwm_…`) |
 | `HEADLESS_MODEL_API_KEY` | unset | Fallback key for single-tenant use; callers normally send their own |
-| `HEADLESS_MCP_URL` | unset | e.g. `https://api.uni-clilabs.com/mcp/agent` |
+| `HEADLESS_MCP_URL` | unset | e.g. `https://api.uniClilabs.com/mcp/agent` |
 | `HEADLESS_MCP_TOOL_ALLOWLIST` | all | Comma-separated MCP tool names |
 | `HEADLESS_DB_PATH` | `./data/headless.sqlite` | Put it on a persistent volume |
 | `HEADLESS_PORT` | `8795` | |
@@ -99,7 +99,7 @@ The model sees these tools:
 pnpm --filter @uni-cli-ee/headless-runner test
 pnpm --filter @uni-cli-ee/headless-runner build
 HEADLESS_API_TOKEN=… HEADLESS_MODEL_PROTOCOL=anthropic HEADLESS_MODEL_BASE_URL=… HEADLESS_MODEL=gwm_… \
-  HEADLESS_MCP_URL=https://api.uni-clilabs.com/mcp/agent node ee/apps/headless-runner/dist/server.js
+  HEADLESS_MCP_URL=https://api.uniClilabs.com/mcp/agent node ee/apps/headless-runner/dist/server.js
 ```
 
 `pnpm --filter @uni-cli-ee/headless-runner smoke "<prompt>"` runs one real turn through the HTTP API with a throwaway database. Pass credentials as `SMOKE_MODEL_API_KEY` and `SMOKE_MCP_TOKEN`. It prints the status, token usage (including cached tokens), tools used, files written, elapsed time and RSS. It never prints credentials.

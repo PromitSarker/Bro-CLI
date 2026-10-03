@@ -16,7 +16,7 @@ export const metadata: Metadata = withSocialMetadata({
     title: "Migrate from Claude Cowork to Uni-CLI",
     description:
       "A step-by-step guide to moving your Cowork setup to open-source Uni-CLI.",
-    url: "https://uni-clilabs.com/docs/start-here/migrate-from-claude-cowork"
+    url: "https://uniClilabs.com/docs/start-here/migrate-from-claude-cowork"
   }
 });
 

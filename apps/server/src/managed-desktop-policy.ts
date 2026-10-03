@@ -323,7 +323,7 @@ class ManagedDesktopPolicy {
           const items = isRecord(catalog) ? catalog[field] : null;
           if (!Array.isArray(items)) throw new Error("Invalid catalog");
           return items.filter(isRecord).some((item) =>
-            (gateway ? /^ipr_/.test(providerID) && item.source === "uni-cli_gateway" && item.status === "active" && item.id === providerID
+            (gateway ? /^ipr_/.test(providerID) && item.source === "uniCli_gateway" && item.status === "active" && item.id === providerID
               : /^(?:lpr_|uniCli$)/i.test(providerID) && (item.source === "uni-cli" ? "uni-cli" : item.id) === providerID)
             && (item.organizationId === undefined || item.organizationId === session.orgId)
             && Array.isArray(item.models) && item.models.filter(isRecord).some((model) => model.id === modelID));

@@ -9,7 +9,7 @@ import type { DesktopRelease, ElectronStartupObservation } from "./types.ts";
 
 const SNAPSHOT = "windows-medium";
 const INSTALLER = "C:\\ow\\release.exe";
-const BINARY = "C:\\Users\\Administrator\\AppData\\Local\\Programs\\@uni-clidesktop\\Uni-CLI.exe";
+const BINARY = "C:\\Users\\Administrator\\AppData\\Local\\Programs\\@uniClidesktop\\Uni-CLI.exe";
 const PROFILE = "C:\\Users\\Administrator\\AppData\\Roaming\\com.differentai.uni-cli";
 const LOG = "C:\\ow\\desktop.log";
 const CDP_PORT = 9223; // The packaged app overrides the requested 9222 port with 9223.

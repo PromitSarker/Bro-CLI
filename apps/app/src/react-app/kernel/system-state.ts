@@ -55,7 +55,7 @@ function clearuniCliLocalStorage(mode: ResetuniCliMode) {
     for (const key of keys) {
       if (/uni-cli/.test(key)) window.localStorage.removeItem(key);
     }
-    window.localStorage.removeItem("uni-cli_mode_pref");
+    window.localStorage.removeItem("uniCli_mode_pref");
   } catch {
     // ignore
   }

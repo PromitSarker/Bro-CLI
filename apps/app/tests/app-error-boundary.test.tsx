@@ -74,20 +74,20 @@ test("the copy payload omits an empty stack", () => {
 
 test("redaction drops query strings and fragments from URLs in the message and stack", () => {
   const error = new Error(
-    "Sign-in failed for https://app.uni-clilabs.com/signin?code=eval-secret-code&state=xyz#accessToken=at",
+    "Sign-in failed for https://app.uniClilabs.com/signin?code=eval-secret-code&state=xyz#accessToken=at",
   );
-  error.stack = `Error: ${error.message}\n    at finishSignIn (https://app.uni-clilabs.com/assets/index-abc.js:1:2345)`;
+  error.stack = `Error: ${error.message}\n    at finishSignIn (https://app.uniClilabs.com/assets/index-abc.js:1:2345)`;
 
   const crash = describeCrash(error);
   const report = buildCrashReport(crash, context);
 
-  expect(crash.message).toBe("Sign-in failed for https://app.uni-clilabs.com/signin");
+  expect(crash.message).toBe("Sign-in failed for https://app.uniClilabs.com/signin");
   expect(crash.stack).toBe(
-    "Error: Sign-in failed for https://app.uni-clilabs.com/signin\n    at finishSignIn (https://app.uni-clilabs.com/assets/index-abc.js:1:2345)",
+    "Error: Sign-in failed for https://app.uniClilabs.com/signin\n    at finishSignIn (https://app.uniClilabs.com/assets/index-abc.js:1:2345)",
   );
   expect(report).not.toContain("eval-secret-code");
   expect(report).not.toContain("accessToken");
-  expect(report).toContain("https://app.uni-clilabs.com/signin");
+  expect(report).toContain("https://app.uniClilabs.com/signin");
 });
 
 test("redaction drops credentials embedded in a URL authority", () => {

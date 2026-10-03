@@ -25,9 +25,9 @@ const serverCsr = join(certsDir, "server.csr");
 const serverCert = join(certsDir, "server.crt");
 const opensslConfig = join(tmp, "openssl.cnf");
 const mysqlConfig = join(tmp, "tls.cnf");
-const databaseName = "uni-cli_den";
+const databaseName = "uniCli_den";
 const databaseUser = "uni-cli";
-const databasePassword = "uni-cli_tls_test_password";
+const databasePassword = "uniCli_tls_test_password";
 let containerStarted = false;
 
 function run(command, args, options = {}) {
@@ -117,7 +117,7 @@ function startMysqlContainer() {
     "--publish",
     "127.0.0.1::3306",
     "--env",
-    "MYSQL_ROOT_PASSWORD=uni-cli_root_password",
+    "MYSQL_ROOT_PASSWORD=uniCli_root_password",
     "--env",
     "MYSQL_ROOT_HOST=%",
     "--env",

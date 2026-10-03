@@ -62,8 +62,8 @@ const DEN_TRUSTED_ORIGINS = [
 
 // Override with UNICLI_EVAL_DATABASE_URL to isolate a run from the shared
 // dev database (e.g. a dedicated schema on the same MySQL container).
-const DEN_DATABASE_URL = process.env.UNICLI_EVAL_DATABASE_URL ?? "mysql://root:password@127.0.0.1:3306/uni-cli_den";
-const DEN_DATABASE_NAME = new URL(DEN_DATABASE_URL).pathname.replace(/^\//, "") || "uni-cli_den";
+const DEN_DATABASE_URL = process.env.UNICLI_EVAL_DATABASE_URL ?? "mysql://root:password@127.0.0.1:3306/uniCli_den";
+const DEN_DATABASE_NAME = new URL(DEN_DATABASE_URL).pathname.replace(/^\//, "") || "uniCli_den";
 if (!/^[A-Za-z0-9_]+$/.test(DEN_DATABASE_NAME)) {
   throw new Error(`Unsupported Den database name: ${DEN_DATABASE_NAME}`);
 }
@@ -87,9 +87,9 @@ export function denEvalEnvironment(options: DenEvalEnvironmentOptions = {}): Nod
     DEN_BETTER_AUTH_TRUSTED_ORIGINS: DEN_TRUSTED_ORIGINS,
     CORS_ORIGINS: DEN_TRUSTED_ORIGINS,
     PROVISIONER_MODE: "stub",
-    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY ?? "sk_test_uni-cli_eval",
-    STRIPE_INFERENCE_PRICE_ID: process.env.STRIPE_INFERENCE_PRICE_ID ?? "price_uni-cli_models_eval",
-    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET ?? "whsec_uni-cli_eval",
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY ?? "sk_test_uniCli_eval",
+    STRIPE_INFERENCE_PRICE_ID: process.env.STRIPE_INFERENCE_PRICE_ID ?? "price_uniCli_models_eval",
+    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET ?? "whsec_uniCli_eval",
     INFERENCE_PROXY_BASE_URL: process.env.INFERENCE_PROXY_BASE_URL ?? "http://127.0.0.1:8791",
   };
   if (options.orgMode) env.DEN_ORG_MODE = options.orgMode;

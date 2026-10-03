@@ -11,7 +11,7 @@ function scrubUrls(properties: Properties): Properties {
     const value = cleaned[key];
     if (typeof value !== "string" || value === "$direct") continue;
     try {
-      const url = new URL(value, "https://app.uni-clilabs.com");
+      const url = new URL(value, "https://app.uniClilabs.com");
       cleaned[key] = url.protocol === "https:" || url.protocol === "http:"
         ? `${url.origin}${url.pathname}`
         : "[redacted URL]";

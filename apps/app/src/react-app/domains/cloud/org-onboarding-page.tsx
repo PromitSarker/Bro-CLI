@@ -98,13 +98,13 @@ type OnboardingUpdaterBridge = NonNullable<Window["__UNICLI_ELECTRON__"]>["updat
 
 declare global {
   interface Window {
-    __uni-cliOnboardingUpdaterEvalBridge?: OnboardingUpdaterBridge;
+    __uniCliOnboardingUpdaterEvalBridge?: OnboardingUpdaterBridge;
   }
 }
 
 function onboardingUpdaterBridge(): OnboardingUpdaterBridge | undefined {
-  if (import.meta.env.DEV && window.__uni-cliOnboardingUpdaterEvalBridge) {
-    return window.__uni-cliOnboardingUpdaterEvalBridge;
+  if (import.meta.env.DEV && window.__uniCliOnboardingUpdaterEvalBridge) {
+    return window.__uniCliOnboardingUpdaterEvalBridge;
   }
   return window.__UNICLI_ELECTRON__?.updater;
 }

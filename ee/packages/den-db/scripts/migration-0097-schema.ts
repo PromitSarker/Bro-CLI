@@ -200,8 +200,8 @@ export async function assertNoPartialMatrix(executor: Executor) {
   const names = await matrixTableNames(executor)
   if (names.some((name) => name.toLowerCase().startsWith("gateway_"))) rejectMatrix("gateway tables already exist without the canonical receipt (partial 0097)")
   if (names.some((name) => name !== name.toLowerCase() && matrixSources.includes(name.toLowerCase()))) rejectMatrix("affected table name has unexpected casing")
-  if (names.includes("__uni-cli_dev_migration_state")) {
-    if ((await executor.query("SELECT 1 FROM `__uni-cli_dev_migration_state` LIMIT 1")).length) rejectMatrix("local migration interruption marker exists")
+  if (names.includes("__uniCli_dev_migration_state")) {
+    if ((await executor.query("SELECT 1 FROM `__uniCli_dev_migration_state` LIMIT 1")).length) rejectMatrix("local migration interruption marker exists")
   }
   await assertMatrixEmpty(executor, matrixSources.filter((name) => names.includes(name)))
 }

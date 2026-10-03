@@ -23,7 +23,7 @@ type Props = {
   isMobileVisitor: boolean;
 };
 
-const CLOUD_SIGNUP_URL = "https://app.uni-clilabs.com";
+const CLOUD_SIGNUP_URL = "https://app.uniClilabs.com";
 
 export function LandingHome(props: Props) {
   const primaryHref = props.isMobileVisitor ? CLOUD_SIGNUP_URL : "/download";

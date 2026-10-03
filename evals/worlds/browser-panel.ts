@@ -264,7 +264,7 @@ export async function createBuiltinBrowserWorld(seed: Seed, env?: Record<string,
       const deadline = Date.now() + 30_000;
       let routed = false;
       while (Date.now() < deadline) {
-        const actions = await seed.evalIn(app, () => (window.__uni-cliControl.listActions().map((action) => action.id)));
+        const actions = await seed.evalIn(app, () => (window.__uniCliControl.listActions().map((action) => action.id)));
         if (Array.isArray(actions) && actions.includes("session.open")) {
           await control(app, "session.open", { sessionId });
           return;
@@ -287,12 +287,12 @@ export async function createBuiltinBrowserWorld(seed: Seed, env?: Record<string,
     /**
      * Open a page the way an agent in a given conversation does: the request
      * reaches the UI command bus stamped with that conversation as its origin,
-     * exactly as the Uni-CLI bridge stamps `uni-cli_execute` calls.
+     * exactly as the Uni-CLI bridge stamps `uniCli_execute` calls.
      */
     async openTabAs(name: string, ownerSessionId: string, url = `${origin}/?viewport-probe=${encodeURIComponent(name)}`): Promise<OpenedTab> {
       const result = await seed.evalIn(
         app,
-        browserScript((value) => (window.__uni-cliControl.command(value)), [{
+        browserScript((value) => (window.__uniCliControl.command(value)), [{
           id: "browser.open_url",
           args: { url, provider: "builtin" },
           origin: { sessionId: ownerSessionId },

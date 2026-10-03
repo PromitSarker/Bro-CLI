@@ -69,7 +69,7 @@ export function LinkOpenDialog() {
             {t("links.open_external")}
           </Button>
           <Button variant={prefs.linkOpenDestination === "uni-cli" ? "default" : "outline"} onClick={() => void choose("uni-cli")}>
-            {t("links.open_uni-cli")}
+            {t("links.open_uniCli")}
           </Button>
         </DialogFooter>
       </DialogContent>

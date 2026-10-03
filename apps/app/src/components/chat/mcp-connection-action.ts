@@ -119,7 +119,7 @@ export function createConnectionActionController(source: ConnectionActionHost) {
       if (intent.action === "authenticate") {
         if (!authenticated) {
           const connection = parsed.data
-          if (!onReconnect || connection.actor !== "member" || connection.action?.surface !== "uni-cli_your_connections"
+          if (!onReconnect || connection.actor !== "member" || connection.action?.surface !== "uniCli_your_connections"
             || !((connection.state === "needs_connection" && connection.action.type === "connect")
               || (connection.state === "reauth_required" && connection.action.type === "reconnect"))) {
             throw new Error("This connection requires setup in Settings > Library.")

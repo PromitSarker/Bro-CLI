@@ -70,7 +70,7 @@ The stronger v1 skill experiment exposed an existing limitation: after an absent
 
 The renderer, Uni-CLI server, OpenCode executables, Den, MySQL and Gateway are real processes. Only the paid model responses and the external connector are local deterministic witnesses. Administrators change assignments and skill files through the real Den/Uni-CLI APIs; model selection, task submission, streaming and answers are exercised in the visible app. The model emits protocol-valid tool calls; engines and Den must perform the work and return the real result. This proves integration behavior, not the reasoning quality of a live model or the health of an external provider account.
 
-Every app has an isolated profile, engine database, home, configuration and environment store. Den uses a disposable `uni-cli_eval_` database. Fixtures use synthetic identities and credentials. No production account is needed.
+Every app has an isolated profile, engine database, home, configuration and environment store. Den uses a disposable `uniCli_eval_` database. Fixtures use synthetic identities and credentials. No production account is needed.
 
 ## Reading launch measurements
 

@@ -148,7 +148,7 @@ export function CloudProvidersView({
       });
       const providerDetail = provider.source === "uni-cli"
         ? `Organization credential · ${provider.models.length ? `${provider.models.length} models` : "All models"}`
-        : `${imported?.source === "uni-cli_gateway" ? "Uni-CLI Gateway" : "Organization credential"} · ${provider.credentialMode === "per_member" ? "Each member signs in" : "Shared org key"}`;
+        : `${imported?.source === "uniCli_gateway" ? "Uni-CLI Gateway" : "Organization credential"} · ${provider.credentialMode === "per_member" ? "Each member signs in" : "Shared org key"}`;
       const detail = status === "blocked"
         ? t("den.cloud_provider_blocked")
         : status === "unavailable"
@@ -175,7 +175,7 @@ export function CloudProvidersView({
     const importedRows: CloudProviderRow[] = Object.values(importedCloudProviders).filter((provider) => !cloudOrgProviders.some((live) => live.id === provider.cloudProviderId)).map((provider) => ({
       key: `imported:${provider.cloudProviderId}`, cloudProviderId: provider.cloudProviderId, provider: null, imported: provider, name: provider.name,
       status: resolveCloudProviderRowStatus({ imported: true, outOfSync: false, allowed: isProviderAllowedByDesktopPolicy({ providerId: provider.providerId, restrictToCloud, checkRestriction: checkDesktopAppRestriction }), importsUnavailable, needsCredential: false, needsServer: false, syncError: null, reloadPending: serverSync?.reloadPending, skippedByServer: Boolean(serverSync?.skippedProviders[provider.cloudProviderId]) }),
-      detail: provider.source === "uni-cli_gateway" ? "Uni-CLI Gateway · Organization credential" : "Managed in Den",
+      detail: provider.source === "uniCli_gateway" ? "Uni-CLI Gateway · Organization credential" : "Managed in Den",
       metaId: provider.cloudProviderId,
       credentialReady: true,
     }));

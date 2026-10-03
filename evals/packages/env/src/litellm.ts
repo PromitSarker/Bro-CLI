@@ -90,7 +90,7 @@ class Handler(BaseHTTPRequestHandler):
                 "data": [{"id": MODEL, "object": "model", "owned_by": "uni-cli-testkit"}],
             })
             return
-        if parsed.path not in ("/__uni-cli_litellm/health", "/__uni-cli_litellm/requests"):
+        if parsed.path not in ("/__uniCli_litellm/health", "/__uniCli_litellm/requests"):
             self.send_json(404, {"error": {"message": "not found"}})
             return
         if not self.control_authorized():
@@ -98,7 +98,7 @@ class Handler(BaseHTTPRequestHandler):
             return
         with LOCK:
             sequence = SEQUENCE
-            if parsed.path == "/__uni-cli_litellm/health":
+            if parsed.path == "/__uniCli_litellm/health":
                 self.send_json(200, {"ok": True, "sequence": sequence})
                 return
             values = parse_qs(parsed.query).get("after", ["0"])
@@ -336,7 +336,7 @@ function makeHandle(input: HandleInput): LiteLlmHandle {
     const cursor = validCursor(after);
     try {
       return parseRequests(
-        await controlJson(input.fetchImpl, input.controlUrl, input.controlKey, `/__uni-cli_litellm/requests?after=${cursor}`),
+        await controlJson(input.fetchImpl, input.controlUrl, input.controlKey, `/__uniCli_litellm/requests?after=${cursor}`),
         cursor,
       );
     } catch (error) {
@@ -354,7 +354,7 @@ function makeHandle(input: HandleInput): LiteLlmHandle {
           input.fetchImpl,
           input.controlUrl,
           input.controlKey,
-          "/__uni-cli_litellm/health",
+          "/__uniCli_litellm/health",
         ));
       } catch (error) {
         throw redactedError(error, secrets);
@@ -406,12 +406,12 @@ function startWitness(
       return;
     }
     if (request.method === "GET"
-      && (url.pathname === "/__uni-cli_litellm/health" || url.pathname === "/__uni-cli_litellm/requests")) {
+      && (url.pathname === "/__uniCli_litellm/health" || url.pathname === "/__uniCli_litellm/requests")) {
       if (tokenId(bearerToken(request.headers.authorization)) !== controlTokenId) {
         writeJson(response, 401, { error: "unauthorized" });
         return;
       }
-      if (url.pathname === "/__uni-cli_litellm/health") {
+      if (url.pathname === "/__uniCli_litellm/health") {
         writeJson(response, 200, { ok: true, sequence: state.sequence });
         return;
       }
@@ -832,7 +832,7 @@ async function waitForDaytonaReady(
   while (Date.now() < deadline) {
     let healthResponse: Response;
     try {
-      healthResponse = await fetchImpl(`${controlUrl}/__uni-cli_litellm/health`, {
+      healthResponse = await fetchImpl(`${controlUrl}/__uniCli_litellm/health`, {
         headers: { authorization: `Bearer ${secrets.controlKey}` },
         signal: AbortSignal.timeout(5_000),
       });

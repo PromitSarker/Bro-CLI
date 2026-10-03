@@ -8,10 +8,10 @@ const redisKeyPrefix = "uni-cli:diagnostics:mock-authorization:v1"
 const subjectPattern = /^[a-f0-9]{64}$/u
 
 declare global {
-  var __uni-cliDiagnosticsMockAuthorizations: Map<string, number> | undefined
+  var __uniCliDiagnosticsMockAuthorizations: Map<string, number> | undefined
 }
 
-const localAuthorizations = globalThis.__uni-cliDiagnosticsMockAuthorizations ??= new Map()
+const localAuthorizations = globalThis.__uniCliDiagnosticsMockAuthorizations ??= new Map()
 
 type RedisReply = { result?: unknown; error?: string }
 

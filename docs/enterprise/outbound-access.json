@@ -55,7 +55,7 @@
       "override": "self-hosted Den API origin"
     },
     {
-      "host": "api.uni-clilabs.com",
+      "host": "api.uniClilabs.com",
       "kind": "fetched",
       "components": ["installer", "server"],
       "purpose": "Legacy hosted Uni-CLI public API origin retained for older install and Cloud configurations.",
@@ -64,10 +64,10 @@
       "override": "installer apiUrl / self-hosted Den API origin"
     },
     {
-      "host": "api.app.uni-clilabs.com",
+      "host": "api.app.uniClilabs.com",
       "kind": "fetched",
       "components": ["desktop", "renderer", "server"],
-      "purpose": "Hosted Uni-CLI Den API origin derived from app.uni-clilabs.com for desktop Den API and Uni-CLI Connect MCP calls.",
+      "purpose": "Hosted Uni-CLI Den API origin derived from app.uniClilabs.com for desktop Den API and Uni-CLI Connect MCP calls.",
       "requirement": "required-for-cloud",
       "blockedEffect": "Hosted Cloud desktop configuration, telemetry, sign-out, and Uni-CLI Connect MCP calls cannot reach the Den API.",
       "override": "desktop apiBaseUrl / self-hosted Den API origin"
@@ -82,7 +82,7 @@
       "override": "desktop base URL (self-hosted Den replaces this host)"
     },
     {
-      "host": "app.uni-clilabs.com",
+      "host": "app.uniClilabs.com",
       "kind": "fetched",
       "components": ["desktop", "renderer", "bootstrap"],
       "purpose": "Hosted Uni-CLI Cloud web origin; the desktop derives Den API and MCP calls from this base URL.",
@@ -136,7 +136,7 @@
       "override": null
     },
     {
-      "host": "inference.uni-clilabs.com",
+      "host": "inference.uniClilabs.com",
       "kind": "fetched",
       "components": ["server"],
       "purpose": "Hosted gateway for desktop Auto free inference, including anonymous and signed-in member free-access sessions, status, model catalog, and chat requests.",
@@ -217,7 +217,7 @@
       "override": "MCP server URL setting"
     },
     {
-      "host": "models.uni-clilabs.com",
+      "host": "models.uniClilabs.com",
       "kind": "fetched",
       "components": ["server"],
       "purpose": "First-party OpenCode model catalog mirror passed to managed OpenCode as OPENCODE_MODELS_URL.",
@@ -280,7 +280,7 @@
       "override": null
     },
     {
-      "host": "uni-clilabs.com",
+      "host": "uniClilabs.com",
       "kind": "link-only",
       "components": ["desktop", "renderer"],
       "purpose": "Documentation, feedback, support, and sample Uni-CLI links.",

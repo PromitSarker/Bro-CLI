@@ -1,14 +1,14 @@
 ---
 name: connect-uni-cli-mcp
-description: Connect the Uni-CLI MCP Gateway (https://api.uni-clilabs.com/mcp/agent) to Claude Code, Codex, Gemini CLI, Cursor, VS Code, Claude Desktop, or ChatGPT so the agent can use the user's Uni-CLI organization skills, plugins, and connections.
+description: Connect the Uni-CLI MCP Gateway (https://api.uniClilabs.com/mcp/agent) to Claude Code, Codex, Gemini CLI, Cursor, VS Code, Claude Desktop, or ChatGPT so the agent can use the user's Uni-CLI organization skills, plugins, and connections.
 ---
 
 # Connect the Uni-CLI MCP Gateway
 
-Server URL: `https://api.uni-clilabs.com/mcp/agent`
+Server URL: `https://api.uniClilabs.com/mcp/agent`
 Transport: Streamable HTTP. Auth: OAuth (PKCE, dynamic client registration); the client opens a browser for sign-in. No API key is needed.
 
-The user needs an Uni-CLI Cloud account. If they don't have one, send them to https://app.uni-clilabs.com?mode=sign-up first.
+The user needs an Uni-CLI Cloud account. If they don't have one, send them to https://app.uniClilabs.com?mode=sign-up first.
 
 ## 1. Add the server
 
@@ -17,31 +17,31 @@ Use the command for the client you are running in. If an `uni-cli` entry already
 Claude Code:
 
 ```sh
-claude mcp add --transport http uni-cli https://api.uni-clilabs.com/mcp/agent
+claude mcp add --transport http uni-cli https://api.uniClilabs.com/mcp/agent
 # add `-s user` to make it available in every project
 ```
 
 Codex:
 
 ```sh
-codex mcp add uni-cli --url https://api.uni-clilabs.com/mcp/agent
+codex mcp add uni-cli --url https://api.uniClilabs.com/mcp/agent
 codex mcp login uni-cli
 ```
 
 Gemini CLI:
 
 ```sh
-gemini mcp add --transport http uni-cli https://api.uni-clilabs.com/mcp/agent
+gemini mcp add --transport http uni-cli https://api.uniClilabs.com/mcp/agent
 ```
 
 OpenCode:
 
 ```sh
-opencode mcp add uni-cli --url https://api.uni-clilabs.com/mcp/agent
+opencode mcp add uni-cli --url https://api.uniClilabs.com/mcp/agent
 opencode mcp auth uni-cli
 ```
 
-Cursor, VS Code, Claude Desktop, ChatGPT, Windsurf, Zed: add `https://api.uni-clilabs.com/mcp/agent` as a remote MCP server. Per-client steps: https://uni-clilabs.com/docs/start-here/connect-uni-cli-mcp
+Cursor, VS Code, Claude Desktop, ChatGPT, Windsurf, Zed: add `https://api.uniClilabs.com/mcp/agent` as a remote MCP server. Per-client steps: https://uniClilabs.com/docs/start-here/connect-uni-cli-mcp
 
 ## 2. Sign in
 
@@ -64,6 +64,6 @@ Don't claim the connection works until step 3 passes.
 ## If it fails
 
 - 401 or `invalid_grant`: log out of `uni-cli` in the client and sign in again.
-- No person can sign in yet (headless agent): see https://uni-clilabs.com/auth.md for anonymous workspaces a person claims later.
+- No person can sign in yet (headless agent): see https://uniClilabs.com/auth.md for anonymous workspaces a person claims later.
 - Self-hosted Uni-CLI: use your own Den API origin, for example `https://api.<your-den-web-host>/mcp/agent`.
-- Reference: https://uni-clilabs.com/docs/cloud/run-in-the-cloud/cloud-mcp
+- Reference: https://uniClilabs.com/docs/cloud/run-in-the-cloud/cloud-mcp

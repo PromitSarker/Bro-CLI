@@ -121,7 +121,7 @@ exists: `automation-index.ts`, `resource.ts`) — explicitly out of scope for v1
 `remoteSession.create` and `remoteSession.send` results include a standard
 MCP Apps `ui://` card (pattern: `plugin-flow-app.ts` +
 `packages/mcp-apps` renderer): session title, state, last activity, and an
-**Open in Uni-CLI Web** link (`https://web.uni-clilabs.com/...` deep link,
+**Open in Uni-CLI Web** link (`https://web.uniClilabs.com/...` deep link,
 resolved from runtime config — same origin den-web's "Web tab" uses). Clients
 without MCP Apps get text fallback with the same URL.
 
@@ -137,7 +137,7 @@ without MCP Apps get text fallback with the same URL.
   complimentary grant — rather than a separate per-organization rollout flag.
   When the deployment cannot host Cloud, the source is invisible in
   `search_capabilities` and execute reports `unknown_capability`. Execution
-  re-checks Web access live (`uni-cli_web_access_required`) and the runtime
+  re-checks Web access live (`uniCli_web_access_required`) and the runtime
   re-checks hosting availability (`cloud_not_available`) as defense in depth;
   first-use provisioning requires a valid `create` request with `mcp:write`
   and active Web access. Concurrent first-use requests and browser access use

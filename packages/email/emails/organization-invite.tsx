@@ -8,7 +8,7 @@ export default function OrganizationInvitePreview(props: OrganizationInviteEmail
 }
 
 OrganizationInvitePreview.PreviewProps = {
-  inviteLink: "https://app.uni-clilabs.com/join-org?invite=invitation_preview",
+  inviteLink: "https://app.uniClilabs.com/join-org?invite=invitation_preview",
   invitedByName: "Ada Lovelace",
   invitedByEmail: "ada@example.com",
   organizationName: "Uni-CLI Preview",

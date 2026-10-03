@@ -18,7 +18,7 @@ function installWebMcpRuntime() {
   }
 
   const INTERNAL = Symbol.for("webmcp.model-context.internal");
-  const POLICY_BRIDGE = "__uni-cliWebMcpPolicyV1";
+  const POLICY_BRIDGE = "__uniCliWebMcpPolicyV1";
   const contexts = new WeakMap();
   const TOOL_NAME = /^[A-Za-z0-9_.-]{1,128}$/;
 
@@ -351,7 +351,7 @@ if (typeof window !== "undefined" && typeof document !== "undefined") {
   });
   try {
     if (typeof contextBridge?.exposeInMainWorld === "function" && ipcRenderer?.invoke) {
-      contextBridge.exposeInMainWorld("__uni-cliWebMcpPolicyV1", {
+      contextBridge.exposeInMainWorld("__uniCliWebMcpPolicyV1", {
         check: () => ipcRenderer.invoke("uni-cli:webmcp:frame-policy"),
       });
     }

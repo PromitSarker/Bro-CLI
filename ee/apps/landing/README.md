@@ -36,7 +36,7 @@ Before enabling the forms in a deployment:
    use `ee/apps/landing/.env.local`). Never use a `NEXT_PUBLIC_` variable for it.
 3. Configure [email sending](https://www.plain.com/docs/product/channels/email-sending)
    and [email receiving](https://www.plain.com/docs/product/channels/email-receiving)
-   in Plain for `team@uni-clilabs.com` so the team can reply from Plain and
+   in Plain for `team@uniClilabs.com` so the team can reply from Plain and
    receive follow-up emails there. This also routes the forms' direct email link
    into Plain.
 4. Submit each form and verify the thread, customer email, diagnostic context,
@@ -50,10 +50,10 @@ for filtering. Everything else is stored as formatted JSON in a single Text fiel
 
 | Plain field key | Label | Type |
 | --- | --- | --- |
-| `uni-cli_os_name` | Uni-CLI OS | Text |
-| `uni-cli_app_version` | Uni-CLI app version | Text |
-| `uni-cli_deployment` | Uni-CLI deployment | Text |
-| `uni-cli_metadata` | Uni-CLI metadata | Text (JSON) |
+| `uniCli_os_name` | Uni-CLI OS | Text |
+| `uniCli_app_version` | Uni-CLI app version | Text |
+| `uniCli_deployment` | Uni-CLI deployment | Text |
+| `uniCli_metadata` | Uni-CLI metadata | Text (JSON) |
 
 Metadata includes the submitted name/email, form mode, source, entrypoint,
 Uni-CLI server and OpenCode versions, OS version, platform, and submission time.

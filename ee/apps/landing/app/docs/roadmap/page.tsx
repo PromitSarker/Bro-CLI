@@ -14,7 +14,7 @@ export const metadata = withSocialMetadata({
     title: "Uni-CLI Roadmap | A workspace for everyone, on any platform",
     description:
       "What is ready, being built, and coming soon across every Uni-CLI product.",
-    url: "https://uni-clilabs.com/roadmap"
+    url: "https://uniClilabs.com/roadmap"
   }
 });
 

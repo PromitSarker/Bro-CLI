@@ -28,14 +28,14 @@ export const CONNECT_MCP_APP_HOST_CAPABILITY_HEADER = "x-uni-cli-mcp-client-capa
 export const CONNECT_MCP_APP_HOST_CAPABILITY = "mcp-app-host-v1";
 
 const BUILTIN_APP_HOST_CLOUD_ORIGINS = new Set([
-  "https://api.uni-clilabs.com",
-  "https://app.uni-clilabs.com",
+  "https://api.uniClilabs.com",
+  "https://app.uniClilabs.com",
   "https://api.uniCli.software",
   "https://app.uniCli.software",
 ]);
 
 const BUILTIN_APP_HOST_GATEWAY_PROXY_ORIGINS = new Map([
-  ["https://app.uni-clilabs.com", "https://api.uni-clilabs.com"],
+  ["https://app.uniClilabs.com", "https://api.uniClilabs.com"],
   ["https://app.uniCli.software", "https://api.uniCli.software"],
 ]);
 

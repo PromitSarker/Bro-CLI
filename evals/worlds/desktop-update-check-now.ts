@@ -49,13 +49,13 @@ export async function desktopUpdateCheckNowWorld(seed: Seed) {
       if (delay === 15 * 60 * 1000 && typeof callback === "function") state.intervalCheck = () => callback(...args);
       return schedule(callback, delay, ...args);
     };
-    window.__uni-cliApplyDesktopConfig({ allowAlphaUpdates: true });
-    window.__uni-cliSetDesktopConfigRefreshResult({ allowAlphaUpdates: true });
-    window.__uni-cliReadDesktopVersionMetadataEval = () => {
+    window.__uniCliApplyDesktopConfig({ allowAlphaUpdates: true });
+    window.__uniCliSetDesktopConfigRefreshResult({ allowAlphaUpdates: true });
+    window.__uniCliReadDesktopVersionMetadataEval = () => {
       const latestAppVersion = releases.channel === "alpha" ? "0.18.46" : state.latestVersion;
       return { minAppVersion: "0.1.0", latestAppVersion, publishedDesktopVersions: [latestAppVersion] };
     };
-    window.__uni-cliUpdaterEvalBridge = {
+    window.__uniCliUpdaterEvalBridge = {
       getChannel: async () => ({ channel: state.channel, currentVersion }),
       setChannel: async (channel) => {
         state.channel = channel;
@@ -181,6 +181,6 @@ export async function desktopUpdateCheckNowWorld(seed: Seed) {
       document.dispatchEvent(new Event("visibilitychange"));
     }),
     openSettings: () => go(app, `/workspace/${workspace.workspaceId}/settings/updates`),
-    uni-clispace: () => go(app, `/workspace/${workspace.workspaceId}/session`),
+    uniClispace: () => go(app, `/workspace/${workspace.workspaceId}/session`),
   };
 }

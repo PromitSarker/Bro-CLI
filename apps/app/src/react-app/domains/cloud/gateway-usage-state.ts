@@ -22,7 +22,7 @@ export const gatewayUsageErrorEvidenceSchema = z.object({
 });
 export type GatewayUsageErrorEvidence = z.infer<typeof gatewayUsageErrorEvidenceSchema>;
 const envelope = z.object({ error: z.object({
-  code: z.literal(GATEWAY_USAGE_LIMIT_ERROR_CODE), source: z.literal("uni-cli_gateway"),
+  code: z.literal(GATEWAY_USAGE_LIMIT_ERROR_CODE), source: z.literal("uniCli_gateway"),
   type: z.literal("usage_limit_error"), details: gatewayUsageErrorDetailsSchema,
 }) });
 

@@ -306,8 +306,8 @@ export function gatewayWinningPolicies(policies: GatewayUsageLimitPolicy[]) {
     return candidates.slice(0, 1)
   })
 }
-export const GATEWAY_USAGE_LIMIT_ERROR_CODE = "uni-cli_gateway_usage_limit_exceeded"
-export const GATEWAY_USAGE_ACCOUNTING_ERROR_CODE = "uni-cli_gateway_accounting_unavailable"
+export const GATEWAY_USAGE_LIMIT_ERROR_CODE = "uniCli_gateway_usage_limit_exceeded"
+export const GATEWAY_USAGE_ACCOUNTING_ERROR_CODE = "uniCli_gateway_accounting_unavailable"
 export function hasGatewayUsageLimitHttpMarker(
   response: Pick<Response, "status" | "headers">,
 ): boolean {
@@ -339,7 +339,7 @@ export function gatewayUsageLimitResponse(status: GatewayUsageStatus): Response 
       error: {
         type: "usage_limit_error",
         code: GATEWAY_USAGE_LIMIT_ERROR_CODE,
-        source: "uni-cli_gateway",
+        source: "uniCli_gateway",
         message: "You have reached your AI Gateway usage limit.",
         details: { exhaustedBuckets, retryAt },
       },
@@ -362,7 +362,7 @@ export function gatewayAccountingUnavailableResponse(): Response {
       error: {
         type: "accounting_unavailable_error",
         code: GATEWAY_USAGE_ACCOUNTING_ERROR_CODE,
-        source: "uni-cli_gateway",
+        source: "uniCli_gateway",
         message: "Gateway estimated-cost accounting is unavailable for this request.",
       },
     },

@@ -800,7 +800,7 @@ async function mysqlQuery(runtime: KubeRuntime, sql: string): Promise<string> {
     "mysql",
     "-uuniCli",
     "-puniCli",
-    "uni-cli_den",
+    "uniCli_den",
     "-N",
     "-e",
     sql,

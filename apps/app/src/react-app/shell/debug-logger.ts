@@ -145,7 +145,7 @@ async function flushQueue() {
   const available = await sinkIsAvailable(base);
   if (!available) {
     // Drop the queued entries; they're still retained in
-    // window.__uni-cli.events() for any operator who needs them.
+    // window.__uniCli.events() for any operator who needs them.
     queue = [];
     return;
   }
@@ -162,7 +162,7 @@ async function flushQueue() {
   } catch {
     // Keep this silent; we don't want the logger to itself create a log
     // storm when the server is unreachable. Events are still retained in
-    // window.__uni-cli.events().
+    // window.__uniCli.events().
   }
 }
 

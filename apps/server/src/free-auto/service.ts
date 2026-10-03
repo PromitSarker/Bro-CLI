@@ -490,7 +490,7 @@ export class AnonymousInferenceService {
       if (endpoint !== "models") {
         const status = await this.status(true);
         signal.throwIfAborted();
-        if (status.state !== "ready") return Response.json({ error: { ...status, message: "Auto is not available.", type: "uni-cli_anonymous_error" } }, {
+        if (status.state !== "ready") return Response.json({ error: { ...status, message: "Auto is not available.", type: "uniCli_anonymous_error" } }, {
           status: statusHttpCode(status.state),
         });
       }

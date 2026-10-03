@@ -11,8 +11,8 @@ export type DevLogRecord = {
 };
 
 type DevRoot = typeof globalThis & {
-  __uni-cliDevLogSeq?: number;
-  __uni-cliDevLogs?: DevLogRecord[];
+  __uniCliDevLogSeq?: number;
+  __uniCliDevLogs?: DevLogRecord[];
 };
 
 const DEV_LOG_LIMIT = 1500;
@@ -39,8 +39,8 @@ export const recordDevLog = (
   if (!enabled) return;
 
   const root = globalThis as DevRoot;
-  const id = (root.__uni-cliDevLogSeq ?? 0) + 1;
-  root.__uni-cliDevLogSeq = id;
+  const id = (root.__uniCliDevLogSeq ?? 0) + 1;
+  root.__uniCliDevLogSeq = id;
 
   const entry: DevLogRecord = {
     id,
@@ -52,17 +52,17 @@ export const recordDevLog = (
     payload: input.payload,
   };
 
-  const logs = root.__uni-cliDevLogs ?? [];
+  const logs = root.__uniCliDevLogs ?? [];
   logs.push(entry);
   if (logs.length > DEV_LOG_LIMIT) {
     logs.splice(0, logs.length - DEV_LOG_LIMIT);
   }
-  root.__uni-cliDevLogs = logs;
+  root.__uniCliDevLogs = logs;
 };
 
 export const readDevLogs = (limit = 200) => {
   const root = globalThis as DevRoot;
-  const logs = root.__uni-cliDevLogs ?? [];
+  const logs = root.__uniCliDevLogs ?? [];
   if (limit === 0) return logs.slice();
   if (limit < 0) return [];
   if (logs.length <= limit) return logs.slice();
@@ -71,8 +71,8 @@ export const readDevLogs = (limit = 200) => {
 
 export const clearDevLogs = () => {
   const root = globalThis as DevRoot;
-  root.__uni-cliDevLogs = [];
-  root.__uni-cliDevLogSeq = 0;
+  root.__uniCliDevLogs = [];
+  root.__uniCliDevLogSeq = 0;
 };
 
 export const formatDevLogLine = (entry: DevLogRecord) => {

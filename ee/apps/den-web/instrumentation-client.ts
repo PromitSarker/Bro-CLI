@@ -15,7 +15,7 @@ import {
 // next.config.js exposes a token only for eligible hosted production builds.
 const posthogToken = process.env.NEXT_PUBLIC_POSTHOG_KEY;
 if (process.env.NODE_ENV === "production" && posthogToken && typeof window !== "undefined"
-  && window.location.origin === "https://app.uni-clilabs.com" && !window.posthog) {
+  && window.location.origin === "https://app.uniClilabs.com" && !window.posthog) {
   try {
     posthog.init(posthogToken, {
       api_host: "/ow",

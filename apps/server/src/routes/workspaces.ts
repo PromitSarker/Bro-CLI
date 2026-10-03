@@ -143,14 +143,14 @@ async function fetchuniCliWorkspaceList(hostUrl: string, token: string, hostToke
     if (!response.ok) {
       throw new ApiError(
         502,
-        "uni-cli_workspace_discovery_failed",
+        "uniCli_workspace_discovery_failed",
         `Uni-CLI workspace discovery failed (${response.status} ${response.statusText || "HTTP error"})`,
       );
     }
     return await response.json();
   } catch (error) {
     if (error instanceof ApiError) throw error;
-    throw new ApiError(502, "uni-cli_workspace_discovery_failed", "Uni-CLI workspace discovery failed", {
+    throw new ApiError(502, "uniCli_workspace_discovery_failed", "Uni-CLI workspace discovery failed", {
       error: String(error),
     });
   } finally {
@@ -368,7 +368,7 @@ export function registerWorkspaceRoutes(options: RegisterWorkspaceRoutesOptions)
       if (!uniCliWorkspaceId) {
         throw new ApiError(
           400,
-          "uni-cli_workspace_not_found",
+          "uniCli_workspace_not_found",
           directory
             ? `Uni-CLI server has no workspace matching ${directory}.`
             : "Uni-CLI server returned no workspaces.",

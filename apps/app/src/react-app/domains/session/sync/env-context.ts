@@ -3,7 +3,7 @@ import type { uniCliServerClient } from "../../../../app/lib/uni-cli-server";
 import { readuniCliEnvPendingChanges } from "../../../../app/lib/uni-cli-env-runtime";
 import { readuniCliRuntimeFacts, renderuniCliRuntimeContext } from "./runtime-context";
 
-const DEFAULT_CACHE_KEY = "__uni-cli_env_default__";
+const DEFAULT_CACHE_KEY = "__uniCli_env_default__";
 const MAX_CONTEXT_CACHE_ENTRIES = 100;
 
 const envSystemContextCache = new Map<string, string | undefined>();

@@ -45,7 +45,7 @@ Sentry queries were `error.type:ProviderModelNotFoundError` in desktop-app and b
 
 There are two stores/paths, not a universal automatic replacement:
 
-1. Engine session records carry the bound provider/model. Headless `session.send` posts only message ID/text to `prompt_async` and returns acceptance; it does not resolve a replacement (`apps/server/src/opencode-plugins/uni-cli-extensions-preview.ts`, `sendUni-CLISession`, originally `:961–980`). A retained removed identity can therefore reach the same engine lookup failure. The observed original session remains bound to the removed identity and appears idle with no assistant. We did not re-send to establish a second live failure.
+1. Engine session records carry the bound provider/model. Headless `session.send` posts only message ID/text to `prompt_async` and returns acceptance; it does not resolve a replacement (`apps/server/src/opencode-plugins/uni-cli-extensions-preview.ts`, `sendUniCliSession`, originally `:961–980`). A retained removed identity can therefore reach the same engine lookup failure. The observed original session remains bound to the removed identity and appears idle with no assistant. We did not re-send to establish a second live failure.
 2. Composer session overrides persist in `uni-cli.sessionModels.v1` (`apps/app/src/react-app/domains/session/surface/session-model-store.ts:21,143–164`). They win over the new-task default. Changing that default does not migrate existing overrides.
 
 The composer is **not wholly unguarded**:

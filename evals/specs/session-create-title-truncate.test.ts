@@ -28,7 +28,7 @@ test("session.create advertises clipping and returns every validation issue with
   expect(description).toContain("title (≤120 chars, longer is clipped)");
   expect(description).toContain("prompt (≤100000 chars)");
   const plugin = await UniCliExtensionsPreview();
-  const output = outputOf(await plugin.tool.uni-cli_execute.execute({ id: "session.create", args: { sessions: [
+  const output = outputOf(await plugin.tool.uniCli_execute.execute({ id: "session.create", args: { sessions: [
     { title: "", prompt: "Valid prompt" },
     { title: "First", prompt: "P".repeat(100_001) },
     { title: "Second", prompt: "P".repeat(100_412) },
@@ -59,7 +59,7 @@ test("session.create clips a 145-character title and session.list_sessions retur
     const title = "T".repeat(145);
     const clipped = `${title.slice(0, 119)}…`;
     const boundary = "B".repeat(120);
-    const result = outputOf(await plugin.tool.uni-cli_execute.execute({
+    const result = outputOf(await plugin.tool.uniCli_execute.execute({
       id: "session.create", args: {
         model: { providerId: "title-test-unconfigured", modelId: "unused" },
         sessions: [{ title, prompt: "Keep this label." }, { title: boundary, prompt: "Keep this other label." }],
@@ -73,7 +73,7 @@ test("session.create clips a 145-character title and session.list_sessions retur
     expect(clipped).toHaveLength(120);
 
     const listed = await eventually(async () => {
-      const output = outputOf(await plugin.tool.uni-cli_query.execute({ id: "session.list_sessions", args: {} }));
+      const output = outputOf(await plugin.tool.uniCli_query.execute({ id: "session.list_sessions", args: {} }));
       return records(output.result);
     }, { within: 30_000, intervalMs: 250, label: "created labels visible through session.list_sessions", until: (entries) => created.every((session) => entries.some((entry) => entry.sessionId === session.sessionId)) });
     expect(listed.find((entry) => entry.sessionId === created[0]?.sessionId)?.title).toBe(clipped);

@@ -194,7 +194,7 @@ export function isMacPlatform() {
 
 const STARTUP_PREF_KEY = "uni-cli.startupPref";
 const LEGACY_PREF_KEY = "uni-cli.modePref";
-const LEGACY_PREF_KEY_ALT = "uni-cli_mode_pref";
+const LEGACY_PREF_KEY_ALT = "uniCli_mode_pref";
 
 export function readStartupPreference(): "local" | "server" | null {
   if (typeof window === "undefined") return null;

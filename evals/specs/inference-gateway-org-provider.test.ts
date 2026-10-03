@@ -477,7 +477,7 @@ for (const providerId of ["google", "anthropic"]) {
     const api = `${upstream.baseUrl}/${google ? "v1beta" : "v1"}`;
     const config = { npm: `@ai-sdk/${providerId}`, env, api, options: { baseURL: api } };
     const apiKeys = Object.fromEntries(env.map((name) => [name, key]));
-    const summary = { id, providerId, source: "uni-cli_gateway", name: `Managed native ${providerId}`, credentialStatus: "ready",
+    const summary = { id, providerId, source: "uniCli_gateway", name: `Managed native ${providerId}`, credentialStatus: "ready",
       providerConfig: config, models: [{ id: modelAlias, name: modelId, upstreamModelId: modelId, modelGroupId, modelGroupName: "Fixture models", credentialSetId, credentialSetName: "Fixture credentials", config: { id: modelAlias, limit: { context: 1000000, output: 8192 } } }] };
     const denRequests: string[] = [];
     const den = createServer((request, response) => {
@@ -541,7 +541,7 @@ test("an org inference provider routes native member requests with the org crede
     },
   });
   const databaseUrl = den.database?.url;
-  if (!databaseUrl || !new URL(databaseUrl).pathname.startsWith("/uni-cli_eval_")) throw new Error("An isolated testkit scratch database is required.");
+  if (!databaseUrl || !new URL(databaseUrl).pathname.startsWith("/uniCli_eval_")) throw new Error("An isolated testkit scratch database is required.");
   const granted = den.members.granted;
   const outsider = den.members.outsider;
   if (!granted || !outsider) throw new Error("The local Den did not provision both members.");
@@ -567,7 +567,7 @@ test("an org inference provider routes native member requests with the org crede
   const createdConfig = isRecord(scoped.body.providerConfig) ? scoped.body.providerConfig : null;
   const createdOptions = createdConfig && isRecord(createdConfig.options) ? createdConfig.options : null;
   expect(scoped.id.startsWith("ipr_")).toBe(true);
-  expect(scoped.body.source).toBe("uni-cli_gateway");
+  expect(scoped.body.source).toBe("uniCli_gateway");
   expect(scoped.body.credentialStatus).toBe("org_credential_missing");
   expect(scoped.body.models).toEqual([]);
   expect(stringAt(createdConfig, "api")).toBe(scopedGatewayUrl);
@@ -576,7 +576,7 @@ test("an org inference provider routes native member requests with the org crede
   evidence.recordAssertionEvidence(
     "An admin creates a gateway provider whose config points at the gateway and never echoes the upstream key",
     `POST /v1/inference-providers returned 201 for ${scoped.id} (source=${String(scoped.body.source)}, credentialStatus=${String(scoped.body.credentialStatus)}); providerConfig.api and options.baseURL were ${scopedGatewayUrl}; the response text did not contain the upstream secret.`,
-    scoped.body.source === "uni-cli_gateway"
+    scoped.body.source === "uniCli_gateway"
       && stringAt(createdConfig, "api") === scopedGatewayUrl
       && stringAt(createdOptions, "baseURL") === scopedGatewayUrl
       && !scoped.text.includes(FAKE_UPSTREAM_KEY),
@@ -736,7 +736,7 @@ test("an org inference provider routes native member requests with the org crede
   let pendingId = "";
   try {
     await eventually(() => upstream.requests.length === 1, { within: 10_000, intervalMs: 50, label: "upstream reached while response held" });
-    const pendingRows = await queryDenDatabase(databaseUrl, "SELECT id, organization_id, org_membership_id, uni-cli_request_id, completed_at, status, usage_source, cost_micro_usd FROM gateway_request_logs WHERE gateway_provider_id = ?", [scoped.id]);
+    const pendingRows = await queryDenDatabase(databaseUrl, "SELECT id, organization_id, org_membership_id, uniCli_request_id, completed_at, status, usage_source, cost_micro_usd FROM gateway_request_logs WHERE gateway_provider_id = ?", [scoped.id]);
     expect(pendingRows).toHaveLength(1);
     const pending = pendingRows.filter(isRecord)[0];
     if (!pending) throw new Error("Upstream was reached before the write-ahead row existed.");
@@ -744,7 +744,7 @@ test("an org inference provider routes native member requests with the org crede
     expect(pendingId).not.toBe("");
     expect(pending.organization_id).toBe(orgId);
     expect(pending.org_membership_id).toBe(grantedMemberId);
-    expect(pending.uni-cli_request_id).toBe(upstream.requests[0]?.headers["x-uni-cli-request-id"]);
+    expect(pending.uniCli_request_id).toBe(upstream.requests[0]?.headers["x-uni-cli-request-id"]);
     expect(pending.completed_at).toBeNull();
     expect(pending.status).toBeNull();
     expect(pending.usage_source).toBe("missing");
@@ -787,7 +787,7 @@ test("an org inference provider routes native member requests with the org crede
   const logRows = await eventually(
     () => queryDenDatabase(
       databaseUrl,
-      "SELECT id, organization_id, completed_at, cost_micro_usd, metadata, route, protocol, outcome, status, stream, usage_source, input_tokens, output_tokens, total_tokens, requested_model, upstream_model, upstream_host, upstream_path, upstream_provider_id, upstream_request_id, uni-cli_request_id, org_membership_id, gateway_provider_id FROM gateway_request_logs WHERE gateway_provider_id = ?",
+      "SELECT id, organization_id, completed_at, cost_micro_usd, metadata, route, protocol, outcome, status, stream, usage_source, input_tokens, output_tokens, total_tokens, requested_model, upstream_model, upstream_host, upstream_path, upstream_provider_id, upstream_request_id, uniCli_request_id, org_membership_id, gateway_provider_id FROM gateway_request_logs WHERE gateway_provider_id = ?",
       [scoped.id],
     ),
     { within: LOG_ROW_TIMEOUT_MS, intervalMs: 500, label: `completed gateway_request_logs row for ${scoped.id}`, until: (rows) => rows.some((row) => isRecord(row) && row.completed_at != null) },
@@ -820,7 +820,7 @@ test("an org inference provider routes native member requests with the org crede
   expect(logRow.upstream_host).toBe("127.0.0.1");
   expect(logRow.upstream_path).toBe("/v1/messages");
   expect(logRow.upstream_request_id).toBe(UPSTREAM_REQUEST_ID);
-  expect(logRow.uni-cli_request_id).toBe(relayed.requestId);
+  expect(logRow.uniCli_request_id).toBe(relayed.requestId);
   expect(logRow.org_membership_id).toBe(grantedMemberId);
   evidence.recordAssertionEvidence(
     "One write-ahead row is finalized with the route, protocol, member, stream usage and catalog cost",
@@ -963,7 +963,7 @@ test("an org inference provider routes native member requests with the org crede
       expect(sdkRequest.headers["x-goog-api-key"]).toBeUndefined();
     }
     const sdkRows = await eventually(() => queryDenDatabase(databaseUrl,
-      "SELECT organization_id, org_membership_id, gateway_provider_id, protocol, outcome, status, usage_source, input_tokens, output_tokens, cost_micro_usd, completed_at FROM gateway_request_logs WHERE uni-cli_request_id = ?",
+      "SELECT organization_id, org_membership_id, gateway_provider_id, protocol, outcome, status, usage_source, input_tokens, output_tokens, cost_micro_usd, completed_at FROM gateway_request_logs WHERE uniCli_request_id = ?",
       [sdkRequest.headers["x-uni-cli-request-id"]]),
     { within: LOG_ROW_TIMEOUT_MS, intervalMs: 500, label: `${native.npm} finalized usage`, until: (rows) => rows.some((row) => isRecord(row) && row.completed_at != null) });
     expect(sdkRows).toHaveLength(1);

@@ -9,12 +9,12 @@
  * the access screen before any Cloud instance, worker, or remote-session route
  * is called. Desktop builds older than v0.18.42 are covered too: since #4214
  * the hosted origin itself (`/v1/cloud/gateway/resolve`, consumed by
- * den-gateway) has returned `403 uni-cli_web_access_required` for an
+ * den-gateway) has returned `403 uniCli_web_access_required` for an
  * organization without Web access, so no published build in an unentitled
  * organization reaches the Cloud instance, worker token, proxy, or
  * remote-session routes without already having been denied at the origin.
  *
- * The den-side `403 uni-cli_web_access_required` responses that use this
+ * The den-side `403 uniCli_web_access_required` responses that use this
  * module are the second phase: defense in depth for callers that bypass the
  * gate and for entitlement that lapses mid-session. An organization with
  * active Web access observes no wire change on any existing route, and the

@@ -70,7 +70,7 @@ function mockProvider(requests: AgentUiContextProviderRequest[]): Server {
         sendStream(response, toolResults.length === 0
           ? [
             { id, object: "chat.completion.chunk", choices: [{ index: 0, delta: { role: "assistant" }, finish_reason: null }] },
-            { id, object: "chat.completion.chunk", choices: [{ index: 0, delta: { tool_calls: [{ index: 0, id: `call_uni-cli_context_${requests.length}`, type: "function", function: { name: "uni-cli_context", arguments: JSON.stringify({}) } }] }, finish_reason: null }] },
+            { id, object: "chat.completion.chunk", choices: [{ index: 0, delta: { tool_calls: [{ index: 0, id: `call_uniCli_context_${requests.length}`, type: "function", function: { name: "uniCli_context", arguments: JSON.stringify({}) } }] }, finish_reason: null }] },
             { id, object: "chat.completion.chunk", choices: [{ index: 0, delta: {}, finish_reason: "tool_calls" }] },
           ]
           : [

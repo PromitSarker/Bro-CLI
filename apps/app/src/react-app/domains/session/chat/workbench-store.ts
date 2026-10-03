@@ -155,7 +155,7 @@ export function useRouteWorkbench(input: SyncWorkbenchInput): WorkbenchSnapshot 
   return snapshot;
 }
 
-export function uni-clibenchTab(
+export function uniClibenchTab(
   current: WorkbenchSnapshot,
   tab: WorkbenchSessionTab,
 ): WorkbenchSnapshot {
@@ -251,7 +251,7 @@ type WorkbenchStore = WorkbenchSnapshot & {
 export const useWorkbenchStore = create<WorkbenchStore>()(persist((set) => ({
   ...initialWorkbenchSnapshot,
   sync: (input) => set((state) => syncWorkbenchSnapshot(state, input)),
-  openTab: (tab) => set((state) => uni-clibenchTab(state, tab)),
+  openTab: (tab) => set((state) => uniClibenchTab(state, tab)),
   closeTab: (tab) => set((state) => closeWorkbenchTab(state, tab)),
   archiveTab: (tab) => set((state) => closeWorkbenchTab(state, tab, false)),
   setSplit: (session) => set((state) => setWorkbenchSplit(state, session)),

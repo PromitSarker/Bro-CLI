@@ -75,7 +75,7 @@ async function captureCrawlerHit(
           crawler_kind: crawler.kind,
           path: pathname,
           markdown_requested: markdown,
-          $current_url: `https://uni-clilabs.com${pathname}`,
+          $current_url: `https://uniClilabs.com${pathname}`,
           $process_person_profile: false,
         },
       }),

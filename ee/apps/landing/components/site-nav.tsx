@@ -44,7 +44,7 @@ export function SiteNav(props: Props) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   const callHref = props.callUrl || "/enterprise#book";
-  const cloudSignupHref = "https://app.uni-clilabs.com?mode=sign-up";
+  const cloudSignupHref = "https://app.uniClilabs.com?mode=sign-up";
   const mobilePrimaryHref = props.mobilePrimaryHref || cloudSignupHref;
   const mobilePrimaryLabel = props.mobilePrimaryLabel || "Get Started for free";
   const callExternal = /^https?:\/\//.test(callHref);

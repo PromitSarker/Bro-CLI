@@ -175,8 +175,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\support\setup-uni-cl
 powershell -NoProfile -ExecutionPolicy Bypass -Command "while (`$true) { Start-Sleep -Seconds 3600 }"
 "@
 Set-Content -LiteralPath $cmdPath -Value $cmd -Encoding ASCII
-schtasks /create /f /sc onstart /ru SYSTEM /tn Uni-CLITlsRepro /tr $cmdPath
-schtasks /run /tn Uni-CLITlsRepro
+schtasks /create /f /sc onstart /ru SYSTEM /tn UniCliTlsRepro /tr $cmdPath
+schtasks /run /tn UniCliTlsRepro
 '''
 print(base64.b64encode(script.encode("utf-16le")).decode())
 PY
@@ -341,7 +341,7 @@ Stop the scheduled repro, remove the certificates/hosts/bindings through the
 checked-in setup script, delete the sandbox, and delete the temporary prerelease:
 
 ```bash
-daytona exec "$SANDBOX_ID" -- cmd /c 'schtasks /end /tn Uni-CLITlsRepro'
+daytona exec "$SANDBOX_ID" -- cmd /c 'schtasks /end /tn UniCliTlsRepro'
 # Core repro cleanup shape: setup-uni-cli-tls-repro.ps1 -Cleanup
 daytona exec "$SANDBOX_ID" -- powershell -NoProfile -ExecutionPolicy Bypass -File 'C:\ow\uni-cli\scripts\support\setup-uni-cli-tls-repro.ps1' -Cleanup
 daytona sandbox delete <ID>

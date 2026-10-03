@@ -71,7 +71,7 @@ eliminates those costs for provider changes
 | --- | --- |
 | Engine binary | Uni-CLI uses the anomalyco/opencode fork pinned in `constants.json` as `"opencodeVersion": "v1.18.18"`; desktop sidecar preparation downloads it in `apps/desktop/scripts/prepare-sidecar.mjs:35-48`. |
 | Spawn | `apps/server/src/managed-opencode.ts:147-234` runs `opencode serve --hostname --port --cors '*'`, supplies `OPENCODE_SERVER_USERNAME` and `OPENCODE_SERVER_PASSWORD`, waits for stdout `opencode server listening on <url>`, and sets `OPENCODE_CONFIG` to the runtime configuration file. |
-| Desktop boot | `apps/desktop/electron/main.mjs:1385-1445` enters `apps/desktop/electron/runtime.mjs:1882-2028` through `startuni-cliServerInner`, then starts the in-process server at `apps/server/src/embedded.ts:190-281`, which owns the child engine. |
+| Desktop boot | `apps/desktop/electron/main.mjs:1385-1445` enters `apps/desktop/electron/runtime.mjs:1882-2028` through `startuniCliServerInner`, then starts the in-process server at `apps/server/src/embedded.ts:190-281`, which owns the child engine. |
 | Server client | The engine client factory is `apps/server/src/server.ts:1246-1280`. |
 | Raw proxy | The raw engine proxy begins at `apps/server/src/server.ts:1302+` and mounts at `:986` and `:1038`. |
 | Dispose | The dispose URL builder is `apps/server/src/server.ts:3930-3942`. |
@@ -331,7 +331,7 @@ Keep `apps/server/src/runtime-opencode-config-store.ts` as the Uni-CLI source
 of truth.
 Render a v2 dialect using the `providers` key and v2 schema into
 `OPENCODE_CONFIG_DIR/opencode.json`, following the existing
-`builduni-cliRuntimeConfigObjectFromSnapshot` materialization style at
+`builduniCliRuntimeConfigObjectFromSnapshot` materialization style at
 `apps/server/src/uni-cli-runtime-config.ts:102-143`.
 
 After that write, do not call reload.

@@ -31,7 +31,7 @@ export async function readEvidenceSession(id: string, sourceSha: string, api = c
     || typeof value.origins.desktop !== "string" || typeof value.origins.cdp !== "string"
     || !/^https:\/\/evidence-[a-f0-9]{32}\.preview\.uniCli\.software$/.test(value.origins.desktop)
     || !/^https:\/\/cdp-[a-f0-9]{32}\.preview\.uniCli\.software$/.test(value.origins.cdp)) throw new Error("Invalid evidence access configuration");
-  return { id, sourceSha, url: `${value.origins.desktop}/__uni-cli_launch?token=${value.token}`,
+  return { id, sourceSha, url: `${value.origins.desktop}/__uniCli_launch?token=${value.token}`,
     cdpOrigin: value.origins.cdp, cookie: `__Host-uni-cli-preview=${value.token}`, expiresAt: value.expiresAt };
 }
 

@@ -55,7 +55,7 @@ const redisCheck: PreflightCheck = {
 export { parseWorldArgs };
 
 function isEphemeralDatabaseName(name: string): boolean {
-  const prefix = "uni-cli_eval_";
+  const prefix = "uniCli_eval_";
   if (!name.startsWith(prefix)) return false;
   const suffix = name.slice(prefix.length);
   if (suffix.length < 1 || suffix.length > 60) return false;

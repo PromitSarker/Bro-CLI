@@ -115,7 +115,7 @@ export const getCloudManagedProviderId = (
 export const isCloudManagedProviderKey = (providerId: string) =>
   /^(lpr|ipr)_/i.test(providerId) || providerId.trim() === "uni-cli";
 
-export const UNICLI_GATEWAY_PROVIDER_SOURCE = "uni-cli_gateway";
+export const UNICLI_GATEWAY_PROVIDER_SOURCE = "uniCli_gateway";
 /** Badge copy for providers routed through the Uni-CLI inference gateway. */
 export const UNICLI_GATEWAY_BADGE_LABEL = "via Uni-CLI Gateway";
 

@@ -17,7 +17,7 @@ const runtime = await launchHeadlessWeb({
     UNICLI_SERVER_STATE_PATH: `${root}/data/uni-cli/server-state.json`,
     UNICLI_SERVER_TOKEN_STORE_PATH: `${root}/data/uni-cli/server-tokens.json`,
     OPENCODE_CONFIG_DIR: `${root}/config/opencode`, OPENCODE_DB: `${root}/data/opencode/opencode.db`,
-    UNICLI_DEV_HEADLESS_WEB_DEN_PROXY: "1", UNICLI_DEV_DEN_PROXY_TARGET: "https://app.uni-clilabs.com", VITE_DISABLE_UNICLI_MODELS: "0",
+    UNICLI_DEV_HEADLESS_WEB_DEN_PROXY: "1", UNICLI_DEV_DEN_PROXY_TARGET: "https://app.uniClilabs.com", VITE_DISABLE_UNICLI_MODELS: "0",
     VITE_UNICLI_POSTHOG_KEY: "", VITE_UNICLI_SENTRY_DSN: "",
     UNICLI_PORT: "8778", UNICLI_WEB_PORT: "5178", HOST: "127.0.0.1", VITE_HOST: "127.0.0.1",
   },
