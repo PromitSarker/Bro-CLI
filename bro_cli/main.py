@@ -16,6 +16,9 @@ from .engine.manager import Manager
 from .engine.memory import KnowledgeBase
 from .utils.shell import run_and_confirm_command
 
+# Auth & License
+from .auth import verify_license_sync, handle_auth_login, handle_auth_logout
+
 # Providers
 from .providers.gemini import GeminiClient, map_exception as gemini_map_exception, ClientError as GeminiClientError
 from .providers.groq import GroqClient, ClientError as GroqClientError
@@ -73,7 +76,7 @@ def run_config() -> int:
 
     return 0
 
-def _load_agent(use_search: bool = False, provider: str | None = None):
+def _load_agent(use_search: bool = False, provider: str | None = None, analyst_mode: bool = False):
     provider = provider or resolve_provider()
     api_key = resolve_api_key(provider)
     
@@ -84,7 +87,7 @@ def _load_agent(use_search: bool = False, provider: str | None = None):
     if provider == "groq":
         client = GroqClient(api_key=api_key, use_search=use_search, executor_callback=run_and_confirm_command, console=console)
     else:
-        client = GeminiClient(api_key=api_key, use_search=use_search, executor_callback=run_and_confirm_command, console=console)
+        client = GeminiClient(api_key=api_key, use_search=use_search, executor_callback=run_and_confirm_command, console=console, analyst_mode=analyst_mode)
     
     # Initialize Engine
     db_path = get_config_path().parent / "knowledge.db"
@@ -111,6 +114,23 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     if args.command == "config":
         return run_config()
+
+    if args.command == "auth":
+        if args.prompt and args.prompt[0] == "login":
+            if len(args.prompt) > 1:
+                return handle_auth_login(args.prompt[1])
+            else:
+                console.print("[red]Usage: bro auth login <key>[/red]")
+                return 1
+        elif args.prompt and args.prompt[0] == "logout":
+            return handle_auth_logout()
+        else:
+            console.print("[red]Usage: bro auth login <key> | bro auth logout[/red]")
+            return 1
+            
+    # Verify license before any other command
+    if not verify_license_sync():
+        return 1
 
     prompt = " ".join([args.command, *args.prompt]).strip() if args.command else None
     

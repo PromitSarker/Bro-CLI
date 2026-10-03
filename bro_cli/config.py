@@ -41,7 +41,7 @@ def load_config() -> Dict[str, Any]:
         return {}
 
 
-def save_config(gemini_api_key: Optional[str] = None, groq_api_key: Optional[str] = None, provider: Optional[str] = None) -> Path:
+def save_config(gemini_api_key: Optional[str] = None, groq_api_key: Optional[str] = None, provider: Optional[str] = None, license_key: Optional[str] = None, last_verified: Optional[float] = None) -> Path:
     """Persist settings to config file with mode 0600."""
     config_path = get_config_path()
     config_path.parent.mkdir(parents=True, exist_ok=True)
@@ -53,6 +53,13 @@ def save_config(gemini_api_key: Optional[str] = None, groq_api_key: Optional[str
         data["groq_api_key"] = groq_api_key
     if provider is not None:
         data["provider"] = provider
+    if license_key is not None:
+        if license_key == "":
+            data.pop("license_key", None)
+        else:
+            data["license_key"] = license_key
+    if last_verified is not None:
+        data["last_verified"] = last_verified
 
     with config_path.open("w", encoding="utf-8") as f:
         json.dump(data, f)

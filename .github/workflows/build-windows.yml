@@ -1,0 +1,38 @@
+name: Build Windows Installer
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: # Allows manual triggering from the GitHub Actions tab
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+        pip install pyinstaller
+
+    - name: Build Executable with PyInstaller
+      run: |
+        python build_exe.py
+
+    - name: Compile Windows Installer (Inno Setup)
+      run: |
+        "C:\Program Files (x86)\Inno Setup 6\iscc.exe" installer.iss
+
+    - name: Upload Setup.exe Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Bro-CLI-Setup
+        path: Output/Bro-CLI-Setup.exe

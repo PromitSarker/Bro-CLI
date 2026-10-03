@@ -10,9 +10,12 @@ readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "Aether" }]
 dependencies = [
-  "google-genai>=1.20.0",
+  "google-genai",
   "groq>=0.4.2",
   "rich",
+  "fastapi",
+  "uvicorn",
+  "pywebview",
 ]
 
 [project.optional-dependencies]
@@ -22,6 +25,7 @@ dev = [
 
 [project.scripts]
 bro = "bro_cli.main:main"
+bro-app = "bro_cli.app:main"
 
 [tool.setuptools]
 package-dir = {"" = "."}

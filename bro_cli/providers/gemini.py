@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Callable, Sequence, Any, Optional
 import time
+import os
+from pathlib import Path
 from .base import BaseClient
 
 try:
@@ -35,7 +37,15 @@ SYSTEM_INSTRUCTION = (
     "If you just talk without calling the tool, the task is NOT done."
 )
 
-
+ANALYST_INSTRUCTION = (
+    "You are an expert Systems Analyst, Senior Developer, and Autonomous Agent. "
+    "Your goal is to deeply analyze the user's system, code, and files, and generate comprehensive, well-formatted Markdown reports. "
+    "Use Markdown headers, bold text, lists, and code blocks extensively to organize your output. "
+    "Take your time to thoroughly explain your findings. "
+    "You have native file I/O tools (read_file, write_file, list_directory) as well as execute_terminal_command. "
+    "When asked to analyze a directory, use list_directory first, then read_file on relevant files. "
+    "When asked to write a report to disk, use the write_file tool."
+)
 
 @dataclass
 class ClientError(Exception):
@@ -49,6 +59,32 @@ def execute_terminal_command(command: str) -> str:
     # The actual execution happens via the callback in GeminiClient.
     return ""
 
+def read_file(filepath: str) -> str:
+    """Read and return the contents of a local file."""
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            return f.read()
+    except Exception as e:
+        return f"Error reading file: {str(e)}"
+
+def write_file(filepath: str, content: str) -> str:
+    """Write content to a local file. Overwrites if exists."""
+    try:
+        path = Path(filepath)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write(content)
+        return f"Successfully wrote to {filepath}"
+    except Exception as e:
+        return f"Error writing file: {str(e)}"
+
+def list_directory(path: str) -> str:
+    """List all files and folders in a directory."""
+    try:
+        items = os.listdir(path)
+        return "\n".join(items) if items else "Directory is empty."
+    except Exception as e:
+        return f"Error listing directory: {str(e)}"
 
 class GeminiClient(BaseClient):
     def __init__(
@@ -56,7 +92,8 @@ class GeminiClient(BaseClient):
         api_key: str, 
         use_search: bool = False,
         executor_callback: Callable | None = None,
-        console: Any = None
+        console: Any = None,
+        analyst_mode: bool = False
     ) -> None:
         if genai is None or types is None:
             raise ClientError(
@@ -67,6 +104,7 @@ class GeminiClient(BaseClient):
         self._use_search = use_search
         self._executor = executor_callback
         self._console = console
+        self._analyst_mode = analyst_mode
         self._command_history = [] # Cross-step persistence
         self._current_cwd = None # Tracks state across tool calls
         # Use a model that supports search for search tasks, and flash-2.0 for agentic tasks.
@@ -84,9 +122,16 @@ class GeminiClient(BaseClient):
         
         if self._executor and not disable_tools:
             tools.append(execute_terminal_command)
+            tools.append(read_file)
+            tools.append(write_file)
+            tools.append(list_directory)
+
+        sys_inst = system_instruction
+        if not sys_inst:
+            sys_inst = ANALYST_INSTRUCTION if getattr(self, "_analyst_mode", False) else SYSTEM_INSTRUCTION
 
         return types.GenerateContentConfig(
-            system_instruction=system_instruction or SYSTEM_INSTRUCTION,
+            system_instruction=sys_inst,
             max_output_tokens=3000,
             tools=tools if tools else None,
         )
@@ -151,27 +196,36 @@ class GeminiChatSession:
             # Handle tool calls
             tool_responses = []
             for call in tool_calls:
-                if call.name == "execute_terminal_command" and self._executor:
-                    command = call.args.get("command")
-                    
-                    # Detect and break loops
-                    if self._parent and command in self._parent._command_history:
-                        result = (
-                            f"LOOP DETECTED: You already tried '{command}'. "
-                            "It did not provide the expected result. "
-                            "DO NOT repeat it. Try a different approach or refine your search terms."
-                        )
+                if call.name in ["execute_terminal_command", "read_file", "write_file", "list_directory"]:
+                    if call.name == "execute_terminal_command" and self._executor:
+                        command = call.args.get("command")
+                        
+                        # Detect and break loops
+                        if self._parent and command in self._parent._command_history:
+                            result = (
+                                f"LOOP DETECTED: You already tried '{command}'. "
+                                "It did not provide the expected result. "
+                                "DO NOT repeat it. Try a different approach or refine your search terms."
+                            )
+                        else:
+                            if self._parent:
+                                self._parent._command_history.append(command)
+                            # Pass the current CWD from the parent client
+                            cwd = self._parent._current_cwd if self._parent else None
+                            
+                            result, new_cwd = self._executor(command, cwd=cwd)
+                            
+                            # Update the parent client's CWD for future steps
+                            if self._parent:
+                                self._parent._current_cwd = new_cwd
+                    elif call.name == "read_file":
+                        result = read_file(call.args.get("filepath"))
+                    elif call.name == "write_file":
+                        result = write_file(call.args.get("filepath"), call.args.get("content"))
+                    elif call.name == "list_directory":
+                        result = list_directory(call.args.get("path"))
                     else:
-                        if self._parent:
-                            self._parent._command_history.append(command)
-                        # Pass the current CWD from the parent client
-                        cwd = self._parent._current_cwd if self._parent else None
-                        
-                        result, new_cwd = self._executor(command, cwd=cwd)
-                        
-                        # Update the parent client's CWD for future steps
-                        if self._parent:
-                            self._parent._current_cwd = new_cwd
+                        result = "Error: Tool execution setup failed."
                         
                     tool_responses.append(
                         types.Part.from_function_response(
