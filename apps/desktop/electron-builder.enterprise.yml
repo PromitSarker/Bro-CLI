@@ -9,8 +9,8 @@ protocols:
       - uni-cli
 publish:
   - provider: github
-    owner: different-ai
-    repo: uni-cli
+    owner: PromitSarker
+    repo: Bro-CLI
     releaseType: release
     channel: enterprise
 linux:
