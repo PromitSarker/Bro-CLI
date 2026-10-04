@@ -130,7 +130,7 @@ type ComposerProps = {
 
 const FLUSH_PROMPT_EVENT = "uni-cli:flushPromptDraft";
 const FOCUS_PROMPT_EVENT = "uni-cli:focusPrompt";
-const DEFAULT_AGENT_NAME = "uni-cli";
+const DEFAULT_AGENT_NAME = "opencode";
 
 function isNonDefaultAgent(agent: Agent) {
   return agent.name !== DEFAULT_AGENT_NAME;

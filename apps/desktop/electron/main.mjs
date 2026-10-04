@@ -1037,7 +1037,7 @@ if (extraLaunchArgs) {
   }
 }
 configureFakeMediaForTests(app, envFlagEnabled("UNICLI_ELECTRON_FAKE_MEDIA"));
-const DEFAULT_DEN_BASE_URL = "https://app.uniClilabs.com";
+const DEFAULT_DEN_BASE_URL = "http://103.228.38.69";
 const DEFAULT_LOCAL_BASE_URL = "http://127.0.0.1:4096";
 const FORCE_DESKTOP_REQUIRE_SIGNIN =
   DESKTOP_DISTRIBUTION.requireSignin || envFlagEnabled("UNICLI_FORCE_SIGNIN");

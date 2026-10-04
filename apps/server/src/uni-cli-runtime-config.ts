@@ -78,9 +78,9 @@ export function builduniCliRuntimeConfigObjectFromSnapshot(
       ...(runtimeConfig.managedPolicy.allowZenModel !== false ? ["opencode"] : []),
     ] } : {}),
     permission: { ...engineConfig.permission, ...permissions },
-    default_agent: runtimeConfig.default_agent ?? "uni-cli",
+    default_agent: runtimeConfig.default_agent ?? "opencode",
     agent: {
-      uniCli: {
+      opencode: {
         description: "Uni-CLI default agent",
         mode: "primary",
         temperature: 0.2,

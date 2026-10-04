@@ -36,6 +36,7 @@ apps/desktop/server/
 .env
 .env.*
 !.env.example
+!.env.vps.example
 # Committed local-dev defaults (throwaway secrets) loaded by scripts/dev-local.mjs.
 !.env.dev
 # The migration-release fragment is committed only on the tagged

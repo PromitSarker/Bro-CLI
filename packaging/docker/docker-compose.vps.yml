@@ -1,0 +1,105 @@
+# docker-compose.vps.yml — Den control plane on one public origin (IP or domain)
+#
+# Usage on the VPS (from repo root):
+#   cp packaging/docker/.env.vps.example packaging/docker/.env.vps   # then edit secrets
+#   docker compose --env-file packaging/docker/.env.vps -f packaging/docker/docker-compose.vps.yml up -d --build
+#
+# Routing (nginx, port 80):
+#   /           -> web  (den-web, Next.js)
+#   /api/den/*  -> den  (den-api, prefix stripped) — what the desktop app calls
+#
+# Plain http is for testing only. Move to a domain + TLS before real users.
+
+x-shared: &shared
+  restart: unless-stopped
+
+services:
+  mysql:
+    <<: *shared
+    image: mysql:8.4
+    command:
+      - --performance_schema=OFF
+      - --innodb-buffer-pool-size=128M
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: uni-cli_den
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+    volumes:
+      - den-mysql-data:/var/lib/mysql
+
+  den:
+    <<: *shared
+    build:
+      context: ../../
+      dockerfile: packaging/docker/Dockerfile.den
+    # Schema push then API, same as docker-compose.den-dev.yml.
+    command: ["sh", "-lc", "cd /app/ee/packages/den-db && yes | node --import tsx ./node_modules/drizzle-kit/bin.cjs push --config drizzle.config.ts && node /app/ee/apps/den-api/dist/main.js"]
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8788/health').then((res)=>process.exit(res.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 120s
+    environment:
+      CI: "true"
+      UNICLI_DEV_MODE: ${UNICLI_DEV_MODE:-0}
+      PORT: "8788"
+      DATABASE_URL: mysql://root:${MYSQL_ROOT_PASSWORD}@mysql:3306/uni-cli_den
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET}
+      DEN_DB_ENCRYPTION_KEY: ${DEN_DB_ENCRYPTION_KEY:?set DEN_DB_ENCRYPTION_KEY}
+      BETTER_AUTH_URL: ${PUBLIC_ORIGIN:?set PUBLIC_ORIGIN}
+      DEN_BETTER_AUTH_TRUSTED_ORIGINS: ${PUBLIC_ORIGIN}
+      CORS_ORIGINS: ${PUBLIC_ORIGIN}
+      DEN_API_PUBLIC_URL: ${PUBLIC_ORIGIN}/api/den
+      DEN_MCP_RESOURCE_URL: ${PUBLIC_ORIGIN}/api/den/mcp
+      DEN_ORG_MODE: ${DEN_ORG_MODE:-single_org}
+      DEN_SINGLE_ORG_NAME: ${DEN_SINGLE_ORG_NAME:-Uni-CLI}
+      DEN_SINGLE_ORG_SLUG: ${DEN_SINGLE_ORG_SLUG:-default}
+      DEN_SINGLE_ORG_OWNER_EMAILS: ${DEN_SINGLE_ORG_OWNER_EMAILS:-}
+      DEN_SINGLE_ORG_ALLOW_PUBLIC_SIGNUP: ${DEN_SINGLE_ORG_ALLOW_PUBLIC_SIGNUP:-false}
+      DEN_INITIAL_ADMIN_BOOTSTRAP_CODE: ${DEN_INITIAL_ADMIN_BOOTSTRAP_CODE:-}
+      DEN_REQUIRE_EMAIL_VERIFICATION: "false"
+      PROVISIONER_MODE: stub
+
+  web:
+    <<: *shared
+    build:
+      context: ../../
+      dockerfile: packaging/docker/Dockerfile.den-web
+    depends_on:
+      den:
+        condition: service_healthy
+    environment:
+      CI: "true"
+      UNICLI_DEV_MODE: ${UNICLI_DEV_MODE:-0}
+      DEN_API_BASE: http://den:8788
+      DEN_AUTH_FALLBACK_BASE: http://den:8788
+      DEN_AUTH_ORIGIN: ${PUBLIC_ORIGIN}
+      DEN_WEB_PUBLIC_ORIGIN: ${PUBLIC_ORIGIN}
+      DEN_WEB_UNICLI_AUTH_CALLBACK_URL: ${PUBLIC_ORIGIN}
+      DEN_ORG_MODE: ${DEN_ORG_MODE:-single_org}
+      DEN_SINGLE_ORG_NAME: ${DEN_SINGLE_ORG_NAME:-Uni-CLI}
+      DEN_SINGLE_ORG_SLUG: ${DEN_SINGLE_ORG_SLUG:-default}
+      DEN_SINGLE_ORG_ALLOW_PUBLIC_SIGNUP: ${DEN_SINGLE_ORG_ALLOW_PUBLIC_SIGNUP:-false}
+
+  nginx:
+    <<: *shared
+    image: nginx:1.27-alpine
+    depends_on:
+      - den
+      - web
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.vps.conf:/etc/nginx/conf.d/default.conf:ro
+
+volumes:
+  den-mysql-data:
