@@ -232,7 +232,11 @@ export function UpdatesView(props: UpdatesViewProps) {
         {updateState === "error" && updateErrorMessage ? (
           <Alert variant="destructive">
             <CircleAlert />
-            <AlertDescription>{updateErrorMessage}</AlertDescription>
+            <AlertDescription>
+              {updateErrorMessage.includes("HttpError: 404") || updateErrorMessage.includes("Cannot find channel") 
+                ? "error checking update" 
+                : updateErrorMessage}
+            </AlertDescription>
           </Alert>
         ) : null}
 
