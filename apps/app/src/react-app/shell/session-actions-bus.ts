@@ -8,3 +8,4 @@ export function renameSessionIdFromEvent(event: Event): string | null {
   if (!(event instanceof CustomEvent)) return null;
   return typeof event.detail?.sessionId === "string" ? event.detail.sessionId : null;
 }
+

@@ -12,3 +12,4 @@ export function signedInRoute(
   if (options?.orgSelectionPending) return "/onboarding";
   return activeOrgId?.trim() ? "/session" : "/onboarding";
 }
+

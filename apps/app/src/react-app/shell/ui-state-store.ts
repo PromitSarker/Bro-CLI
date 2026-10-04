@@ -364,3 +364,4 @@ export const useUiStateStore = create<UiStateStore>((set) => ({
 syncApplicationMenuVisible(useUiStateStore.getState().applicationMenuVisible);
 
 useUiStateStore.subscribe((state) => persistUiState(state));
+

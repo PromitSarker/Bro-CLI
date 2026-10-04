@@ -15,3 +15,4 @@ export function shouldHoldWelcomeForDenSession({
 }) {
   return isSignedIn || (hasStoredAuthToken && authStatus === "checking");
 }
+

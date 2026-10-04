@@ -328,7 +328,7 @@ export function ReloadCoordinatorProvider({ children }: { children: ReactNode })
     const timer = window.setTimeout(() => {
       // Re-check at fire time: a task may have started during the debounce
       // window. The effect re-runs when activity ends and reschedules.
-      // A newly submitted task is already busy in the app before OpenCode's
+      // A newly submitted task is already busy in the app before Uni-Code's
       // status endpoint reports it. Even a rollover-capable server can see
       // that gap as idle and dispose the instance. Automatic reloads wait;
       // explicit reloads can still use the server's busy-session rollover.
@@ -425,3 +425,4 @@ export function useReloadCoordinator(): ReloadCoordinatorContextValue {
   }
   return value;
 }
+

@@ -110,3 +110,4 @@ export function AppProviders({ children }: AppProvidersProps) {
     </BootStateProvider>
   );
 }
+

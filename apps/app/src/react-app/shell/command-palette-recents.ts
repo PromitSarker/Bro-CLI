@@ -36,3 +36,4 @@ export function recordPaletteRecent(
   }
   return next;
 }
+

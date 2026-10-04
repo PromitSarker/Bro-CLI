@@ -26,3 +26,4 @@ export function StartupScreen({ message = "Starting Uni-CLI" }: { message?: stri
 export function StartupApp({ startup }: { startup: Promise<ReactNode> }) {
   return use(startup);
 }
+

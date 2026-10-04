@@ -58,7 +58,7 @@ function isuniCliServerReady(info?: BootuniCliServerInfo) {
  * On desktop (Tauri) startup:
  *   1) bootstrap the workspace list
  *   2) if a local workspace is selected, restart the embedded Uni-CLI server
- *   3) start the OpenCode engine pointed at the workspace
+ *   3) start the Uni-Code engine pointed at the workspace
  *   4) activate the workspace on the running Uni-CLI server
  *   5) notify React routes that fresh desktop runtime info is available. Electron
  *      routes read live runtime info directly instead of persisting ephemeral
@@ -247,7 +247,7 @@ export function useDesktopRuntimeBoot() {
 
         // SLOW PATH ─────────────────────────────────────────────────────
         // No running engine. Tauri now mirrors Electron: engine_start boots
-        // uni-cli-server and lets that server manage OpenCode.
+        // uni-cli-server and lets that server manage Uni-Code.
         const localPaths = list.workspaces.flatMap((entry: WorkspaceInfo) => {
           const path = entry.workspaceType !== "remote" ? entry.path?.trim() ?? "" : "";
           return path ? [path] : [];
@@ -355,3 +355,4 @@ export function DesktopRuntimeBoot() {
   if (useEnterpriseActivationRequired()) return null;
   return createElement(ActivatedDesktopRuntimeBoot);
 }
+

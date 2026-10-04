@@ -165,7 +165,7 @@ export async function mapRouteWorkspaceLoads<T, R>(
 /**
  * Coalesce the complete session-list load chain for each workspace.
  *
- * Cold OpenCode reads can legitimately outlive a fixed staleness threshold.
+ * Cold Uni-Code reads can legitimately outlive a fixed staleness threshold.
  * Keeping ownership until the promise settles prevents route, settings, and
  * visibility refreshes from starting overlapping retries for the same
  * workspace while still allowing different workspaces to load concurrently.
@@ -300,3 +300,4 @@ export function planRouteConnectionGap(input: { desktopRuntime: boolean }): Rout
   }
   return { retainExistingState: false, markRouteReady: true };
 }
+

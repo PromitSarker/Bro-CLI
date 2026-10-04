@@ -64,15 +64,16 @@ export function useOpencodeEngineControls(client: OpencodeEngineClient | null | 
     requestEngineMigration(client);
   };
   const items: PaletteItem[] = (["v1", "v2"] satisfies ChatEngine[]).map((engine) => ({
-    id: `opencode.switch-${engine}`, title: `Switch to OpenCode ${engine}`,
+    id: `opencode.switch-${engine}`, title: `Switch to Uni-Code ${engine}`,
     keywords: ["engine", "toggle", "enable", "opencode", engine], group: "actions",
     meta: selected === engine && status ? "Selected" : engine === "v2" ? "Preview" : undefined,
     detail: blockedReason ?? (migrating ? "Wait for chat migration to finish." : undefined),
     disabled: disabled || (Boolean(status) && selected === engine), action: () => select(engine),
   }));
-  items.push({ id: "opencode.migrate-v2", title: "Migrate chats to OpenCode v2", keywords: ["migration", "history", "import", "v1", "v2"],
+  items.push({ id: "opencode.migrate-v2", title: "Migrate chats to Uni-Code v2", keywords: ["migration", "history", "import", "v1", "v2"],
     group: "actions", disabled: disabled || !status?.migration,
     detail: blockedReason ?? (!status?.migration ? "Update Uni-CLI to migrate chats." : undefined),
     action: openMigration });
   return { status, selected, disabled, blockedReason, busy, migrating, error, select, items, message: engineMigrationMessage(migration), openMigration };
 }
+

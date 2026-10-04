@@ -39,3 +39,4 @@ export function getThinkingModeShortcutDirection(
   if (!matches) return null;
   return event.shiftKey ? "reverse" : "forward";
 }
+

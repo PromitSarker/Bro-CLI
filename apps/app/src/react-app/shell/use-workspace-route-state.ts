@@ -802,7 +802,7 @@ export function useWorkspaceRouteState(input: UseWorkspaceRouteStateInput) {
         errors: {},
       });
 
-      // Session list comes from OpenCode's index and can be slow on cold
+      // Session list comes from Uni-Code's index and can be slow on cold
       // boot. Kick it off in the background instead of blocking the route
       // so the UI is interactive immediately; the sidebar shows a
       // loading state per-workspace until the list arrives.
@@ -1599,3 +1599,4 @@ export function useWorkspaceRouteState(input: UseWorkspaceRouteStateInput) {
     runRemoteWorkspaceConnectionCheck,
   };
 }
+

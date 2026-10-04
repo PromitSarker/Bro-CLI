@@ -135,3 +135,4 @@ export function rankPaletteItems(
     return groupItems.length > 0 ? [resultGroup(group, groupItems)] : [];
   });
 }
+

@@ -937,7 +937,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     const workspaceId = routeStateRef.current.runtimeWorkspaceId?.trim() ?? "";
     const orgId = settings.activeOrgId?.trim() ?? "";
     if (!client || !workspaceId || !orgId) return;
-    // Settings only has a safe, exact OpenCode client/directory for the active
+    // Settings only has a safe, exact Uni-Code client/directory for the active
     // workspace here, so sign-out cleanup is intentionally scoped to that
     // workspace instead of guessing across every configured worker.
     await cleanupuniCliCloudMcpAfterSignOut({
@@ -1644,7 +1644,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
       // ignore browser event dispatch failures
     }
 
-    // OpenCode reconnects MCPs async after dispose — the store polls until
+    // Uni-Code reconnects MCPs async after dispose — the store polls until
     // statuses settle so users don't have to collapse/expand the card.
     void pollMcpServersAfterReloadRef.current?.();
 
@@ -1847,7 +1847,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     };
   }, [refreshRouteState]);
 
-  // Load auto-compaction state from OpenCode config on workspace change.
+  // Load auto-compaction state from Uni-Code config on workspace change.
   useEffect(() => {
     if (!uniCliClient || !selectedWorkspaceId) return;
     const workspaceId = routeStateRef.current.runtimeWorkspaceId?.trim() || selectedWorkspaceId;
@@ -3052,3 +3052,4 @@ export function SettingsSurface(props: SettingsSurfaceProps) {
     </CloudSessionProvider>
   );
 }
+

@@ -44,3 +44,4 @@ export function WebStartupScreen({ message }: { message: string }) {
     </main>
   );
 }
+

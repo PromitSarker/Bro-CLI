@@ -103,3 +103,4 @@ export function notifyDesktopEvent(event: DesktopNotificationEvent): void {
     body: copy.body,
   }).catch(() => undefined);
 }
+

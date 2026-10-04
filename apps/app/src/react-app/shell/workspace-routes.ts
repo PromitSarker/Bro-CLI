@@ -110,3 +110,4 @@ export function legacySessionRoute(sessionId?: string | null) {
   const session = sessionId?.trim();
   return session ? `/session/${encodeURIComponent(session)}` : "/session";
 }
+

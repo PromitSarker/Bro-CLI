@@ -128,3 +128,4 @@ export function useWorkspaceShellLayout(options: WorkspaceShellLayoutOptions) {
     toggleRightSidebar,
   };
 }
+

@@ -21,3 +21,4 @@ export function isFastModeShortcut(event: FastModeShortcutEvent, os: ThinkingMod
     ? event.shiftKey && !event.altKey
     : event.altKey && !event.shiftKey;
 }
+

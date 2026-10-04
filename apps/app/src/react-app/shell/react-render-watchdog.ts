@@ -103,3 +103,4 @@ export function useReactRenderWatchdog(name: string, details?: RenderWatchdogDet
     recordCommit(name, details);
   });
 }
+

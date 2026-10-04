@@ -127,3 +127,4 @@ export function NotificationBell({ align = "end" }: { align?: "start" | "end" })
     </Popover>
   );
 }
+

@@ -206,3 +206,4 @@ export async function ensureDesktopLocaluniCliConnection(
     throw new Error(message);
   }
 }
+

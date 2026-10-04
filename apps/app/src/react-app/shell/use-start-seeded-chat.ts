@@ -17,3 +17,4 @@ export function useStartSeededChat() {
     navigate(workspaceId ? workspaceSessionRoute(workspaceId) : "/session");
   }, [navigate]);
 }
+

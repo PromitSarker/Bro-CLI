@@ -38,3 +38,4 @@ export function AppMenuProvider({ children }: { children: ReactNode }) {
 
   return <>{children}</>;
 }
+

@@ -167,3 +167,4 @@ export function ArchitectureMismatchGate({ children }: ArchitectureMismatchGateP
     </main>
   );
 }
+

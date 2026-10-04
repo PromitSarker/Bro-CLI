@@ -46,3 +46,4 @@ export const onRequestError: Instrumentation.onRequestError = async (error, requ
   const Sentry = await import("@sentry/nextjs");
   return Sentry.captureRequestError(error, request, context);
 };
+

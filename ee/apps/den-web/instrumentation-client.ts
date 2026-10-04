@@ -90,3 +90,4 @@ if (config.backend === "sentry") {
 export const onRouterTransitionStart = config.backend === "sentry"
   ? Sentry.captureRouterTransitionStart
   : () => {};
+

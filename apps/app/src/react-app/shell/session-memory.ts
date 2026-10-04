@@ -175,3 +175,4 @@ export function forgetWorkspaceMemory(workspaceId: string): void {
     writeWorkspaceOrderIds(workspaceOrderIds.filter((id) => id !== wsId));
   }
 }
+

@@ -752,3 +752,4 @@ export function CommandPalette(props: CommandPaletteProps) {
     </>
   );
 }
+

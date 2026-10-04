@@ -354,7 +354,7 @@ function describeTaskCreateError(error: unknown) {
     lower.includes("internal_error") ||
     lower.includes("unexpected server error")
   ) {
-    return "OpenCode is unavailable for this workspace. Retry once it restarts, or restart Uni-CLI if the problem continues.";
+    return "Uni-Code is unavailable for this workspace. Retry once it restarts, or restart Uni-CLI if the problem continues.";
   }
   return message;
 }
@@ -1791,7 +1791,7 @@ export function SessionRoute() {
         const targetSessionId = sessionId.trim() || selectedSessionId;
         if (!targetSessionId) return false;
         try {
-          // Abort any running generation first; OpenCode rejects revert on busy sessions.
+          // Abort any running generation first; Uni-Code rejects revert on busy sessions.
           await abortSessionSafe(opencodeClient, targetSessionId, selectedWorkspaceRoot || undefined, {
             source: "session.revert_to_message.before_revert",
             initiator: "user",
@@ -2957,7 +2957,7 @@ export function SessionRoute() {
       disabled: !opencodeClient,
       args: [{ name: "scope", type: "string", description: "default | both (default: both)" }],
       execute: async (args) => {
-        if (!opencodeClient) return { ok: false, error: "OpenCode client is not connected." };
+        if (!opencodeClient) return { ok: false, error: "Uni-Code client is not connected." };
         const scope = (args && typeof args === "object" && Reflect.get(args, "scope") === "default")
           ? "default"
           : "both";
@@ -3506,7 +3506,7 @@ export function SessionRoute() {
         await workspaceSetRuntimeActive(createdId).catch(() => undefined);
       }
       // First workspace on a fresh install: the Uni-CLI server was started
-      // engine-less (it only spawns OpenCode at boot when a workspace already
+      // engine-less (it only spawns Uni-Code at boot when a workspace already
       // exists), so sessions would hang forever. This boots the engine when
       // it isn't running, same as the old /welcome flow did.
       let sessionBaseUrl = baseUrl;
@@ -3541,7 +3541,7 @@ export function SessionRoute() {
         const firstTaskPrompt = options?.firstTaskPrompt?.trim() ?? "";
         const firstTaskAttachments = options?.firstTaskAttachments ?? [];
         // A workspace registry mutation must not eagerly instantiate an
-        // OpenCode directory. Chat-first creation still needs a session for
+        // Uni-Code directory. Chat-first creation still needs a session for
         // its supplied prompt; ordinary creation lands on the New task state.
         const session = createdOnServer && sessionBaseUrl && sessionToken && (firstTaskPrompt || firstTaskAttachments.length > 0)
           ? await createClient(
@@ -4326,3 +4326,4 @@ export function SessionRoute() {
     </WorkspaceProvider>
   );
 }
+

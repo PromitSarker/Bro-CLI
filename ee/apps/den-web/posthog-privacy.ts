@@ -50,3 +50,4 @@ export function beforeSendPosthog(event: CaptureResult | null): CaptureResult | 
     return null;
   }
 }
+

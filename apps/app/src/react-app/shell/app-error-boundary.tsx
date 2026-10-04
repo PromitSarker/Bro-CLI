@@ -199,3 +199,4 @@ export class AppErrorBoundary extends React.Component<
     return <RecoveryScreen crash={crash} />;
   }
 }
+

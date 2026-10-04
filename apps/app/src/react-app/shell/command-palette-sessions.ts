@@ -55,3 +55,4 @@ export function buildCommandPaletteSessions(
     return b.updatedAt - a.updatedAt;
   });
 }
+

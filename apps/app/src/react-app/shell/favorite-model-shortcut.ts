@@ -42,3 +42,4 @@ export function isFavoriteModelShortcut(event: FavoriteModelShortcutEvent) {
     && !event.altKey
     && !event.metaKey;
 }
+
